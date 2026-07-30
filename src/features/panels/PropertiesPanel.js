@@ -681,6 +681,9 @@ export default class PropertiesPanel {
             </div>
             
             <div class="space-y-2 mb-6 border-b border-slate-200 pb-4">
+                <button id="btn-prop-img-download" class="w-full sketch-btn py-2.5 text-sm font-bold flex items-center justify-center gap-2 text-emerald-600 bg-emerald-50 border-emerald-600">
+                    <i class="fas fa-download"></i> 下載此圖片 (含透明背景)
+                </button>
                 <button id="btn-prop-img-save" class="w-full sketch-btn py-2.5 text-sm font-bold flex items-center justify-center gap-2 text-blue-600 bg-blue-50 border-blue-200">
                     <i class="fas fa-chart-bar transform rotate-90"></i> 存入素材庫
                 </button>
@@ -775,6 +778,19 @@ export default class PropertiesPanel {
             });
         }
         
+        const btnDownload = document.getElementById('btn-prop-img-download');
+        if (btnDownload) {
+            btnDownload.addEventListener('click', () => {
+                const dataUrl = obj.toDataURL({ format: 'png', multiplier: 2 });
+                const a = document.createElement('a');
+                a.href = dataUrl;
+                a.download = `image_${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        }
+        
         const btnSave = document.getElementById('btn-prop-img-save');
         if (btnSave) {
             btnSave.addEventListener('click', () => {
@@ -782,6 +798,7 @@ export default class PropertiesPanel {
                 this.eventBus.emit('ASSETS:SAVE', dataUrl);
             });
         }
+
         
         const btnUnlock = document.getElementById('btn-prop-img-unlock');
         if (btnUnlock) {
