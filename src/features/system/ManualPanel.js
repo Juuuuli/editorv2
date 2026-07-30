@@ -34,7 +34,8 @@ export default class ManualPanel {
                         </div>
                         <div id="notebook-left-scroll-hint" class="absolute bottom-4 left-0 right-0 text-center pointer-events-none transition-opacity duration-300 opacity-0">
                             <span class="bg-indigo-100/90 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-bold shadow-sm inline-flex items-center gap-2 animate-bounce border border-indigo-200">
-                                <i class="fas fa-mouse"></i> ?��?下捲??                            </span>
+                                <i class="fas fa-mouse"></i> 可向下捲動
+                            </span>
                         </div>
                     </div>
 
@@ -50,7 +51,8 @@ export default class ManualPanel {
                         </div>
                         <div id="notebook-right-scroll-hint" class="absolute bottom-4 left-0 right-0 text-center pointer-events-none transition-opacity duration-300 opacity-0">
                             <span class="bg-indigo-100/90 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-bold shadow-sm inline-flex items-center gap-2 animate-bounce border border-indigo-200">
-                                <i class="fas fa-mouse"></i> ?��?下捲??                            </span>
+                                <i class="fas fa-mouse"></i> 可向下捲動
+                            </span>
                         </div>
                     </div>
 
@@ -62,9 +64,9 @@ export default class ManualPanel {
 
                 <!-- Navigation Controls -->
                 <div class="absolute bottom-6 flex gap-6 z-50">
-                    <button id="btn-manual-prev" class="sketch-btn px-6 py-2 bg-white text-slate-700 font-bold shadow-lg hover:bg-slate-50"><i class="fas fa-arrow-left mr-2"></i> 上�???/button>
+                    <button id="btn-manual-prev" class="sketch-btn px-6 py-2 bg-white text-slate-700 font-bold shadow-lg hover:bg-slate-50"><i class="fas fa-arrow-left mr-2"></i> 上一頁</button>
                     <span id="manual-page-indicator" class="bg-white/80 px-4 py-2 rounded-lg font-bold text-slate-700 shadow-md">1 / 8</span>
-                    <button id="btn-manual-next" class="sketch-btn px-6 py-2 bg-white text-slate-700 font-bold shadow-lg hover:bg-slate-50">下�???<i class="fas fa-arrow-right ml-2"></i></button>
+                    <button id="btn-manual-next" class="sketch-btn px-6 py-2 bg-white text-slate-700 font-bold shadow-lg hover:bg-slate-50">下一頁 <i class="fas fa-arrow-right ml-2"></i></button>
                 </div>
             </div>
         `;
@@ -104,38 +106,38 @@ export default class ManualPanel {
                 tabName: "封面",
                 left: `
                     <div class="h-full flex flex-col justify-center items-center text-center px-4">
-                        <h2 class="text-3xl font-bold text-slate-700 mb-6 border-b-2 border-slate-300 pb-2">章�??��?</h2>
+                        <h2 class="text-3xl font-bold text-slate-700 mb-6 border-b-2 border-slate-300 pb-2">章節目錄</h2>
                         <ul class="text-left space-y-4 text-slate-600 text-lg w-full px-8">
-                            <li>1. 系統?�塊說??/li>
-                            <li>2. 工�??�說�?</li>
-                            <li>3. ?��?工具介紹</li>
-                            <li>4. ?�慧?��??�修�?/li>
-                            <li>5. ?�入?�物�?/li>
-                            <li>6. ?��??��??�設�?/li>
-                            <li>8. 後台??API ?��?說�?</li>
+                            <li>1. 系統區塊說明</li>
+                            <li>2. 工作區說明</li>
+                            <li>3. 基礎工具介紹</li>
+                            <li>4. 智慧去背與修補</li>
+                            <li>5. 加入新物件</li>
+                            <li>6. 其它操作與設定</li>
+                            <li>8. 後台與 API 架構說明</li>
                         </ul>
                     </div>
                 `,
                 right: `
                     <div class="h-full flex flex-col justify-center items-center text-center">
                         <i class="fas fa-book-open text-6xl text-indigo-300 mb-6"></i>
-                        <h1 class="text-4xl font-bold text-indigo-800 mb-4 sketch-text">多�?體畫布編輯器 V2</h1>
-                        <h2 class="text-xl text-slate-600 mb-8 font-bold border-b-2 border-indigo-200 pb-4 inline-block">系統?��?說�???/h2>
-                        <p class="text-slate-500 leading-relaxed max-w-sm">歡�?！您?��??�以點�??�側?�「書籤�?籤」�??��??��??��?來�??��?節??/p>
+                        <h1 class="text-4xl font-bold text-indigo-800 mb-4 sketch-text">多媒體畫布編輯器 V2</h1>
+                        <h2 class="text-xl text-slate-600 mb-8 font-bold border-b-2 border-indigo-200 pb-4 inline-block">系統操作說明書</h2>
+                        <p class="text-slate-500 leading-relaxed max-w-sm">歡迎！您隨時可以點擊右側的「書籤標籤」或是下方的按鈕來切換章節。</p>
                     </div>
                 `
             },
             // Page 1: System Layout
             {
-                tabName: "系統?��?",
+                tabName: "系統分區",
                 left: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">1. 系統?�塊說??/h3>
-                    <p class="text-slate-600 leading-relaxed text-lg">系統介面主�??�為?�大?�塊�??�自負責不�??��??��?</p>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">1. 系統區塊說明</h3>
+                    <p class="text-slate-600 leading-relaxed text-lg">系統介面主要分為四大區塊，各自負責不同的功能：</p>
                     <ul class="list-disc pl-6 text-slate-600 space-y-4 mt-6 text-lg">
-                        <li><strong>上方工具?��?</strong> 檔�??�出?�復???��?等全局?�能??/li>
-                        <li><strong>左側?�板�?/strong> ?��??�?�繪?�工?��?屬性設定�?顏色?��?體、�?細�?）�?/li>
-                        <li><strong>中�??��?�?/strong> ?��?主�?設�??�?��?/li>
-                        <li><strong>?�側縮�?�?/strong> 管�??��??�?��??��??�層?�?��?/li>
+                        <li><strong>上方工具列：</strong> 檔案匯出、復原/重做等全局功能。</li>
+                        <li><strong>左側面板：</strong> 提供所有繪圖工具與屬性設定（顏色、字體、粗細等）。</li>
+                        <li><strong>中間畫布：</strong> 您的主要設計區域。</li>
+                        <li><strong>右側縮圖：</strong> 管理您的所有頁面與圖層狀態。</li>
                     </ul>
                 `,
                 right: `
@@ -144,19 +146,19 @@ export default class ManualPanel {
                             <svg viewBox="0 0 800 500" class="w-full h-auto drop-shadow-sm rounded">
                                 <!-- Header -->
                                 <rect x="10" y="10" width="780" height="50" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" rx="5"/>
-                                <text x="400" y="40" font-family="sans-serif" font-size="18" fill="#1e3a8a" text-anchor="middle" font-weight="bold">上方：系統工?��? (復�?/?��?/?�出)</text>
+                                <text x="400" y="40" font-family="sans-serif" font-size="18" fill="#1e3a8a" text-anchor="middle" font-weight="bold">上方：系統工具列 (復原/重做/匯出)</text>
                                 
                                 <!-- Left Sidebar -->
                                 <rect x="10" y="70" width="200" height="420" fill="#fef2f2" stroke="#ef4444" stroke-width="2" rx="5"/>
-                                <text x="110" y="280" font-family="sans-serif" font-size="18" fill="#7f1d1d" text-anchor="middle" font-weight="bold">左側：工??屬�?/text>
+                                <text x="110" y="280" font-family="sans-serif" font-size="18" fill="#7f1d1d" text-anchor="middle" font-weight="bold">左側：工具/屬性</text>
                                 
                                 <!-- Right Sidebar -->
                                 <rect x="590" y="70" width="200" height="420" fill="#f0fdf4" stroke="#22c55e" stroke-width="2" rx="5"/>
-                                <text x="690" y="280" font-family="sans-serif" font-size="18" fill="#14532d" text-anchor="middle" font-weight="bold">?�側：�??�縮??/text>
+                                <text x="690" y="280" font-family="sans-serif" font-size="18" fill="#14532d" text-anchor="middle" font-weight="bold">右側：分頁縮圖</text>
                                 
                                 <!-- Canvas -->
                                 <rect x="220" y="70" width="360" height="420" fill="#f8fafc" stroke="#64748b" stroke-width="2" stroke-dasharray="8,4" rx="5"/>
-                                <text x="400" y="280" font-family="sans-serif" font-size="24" fill="#334155" text-anchor="middle" font-weight="bold">中�?：繪?�畫�?/text>
+                                <text x="400" y="280" font-family="sans-serif" font-size="24" fill="#334155" text-anchor="middle" font-weight="bold">中間：繪圖畫布</text>
                             </svg>
                         </div>
                     </div>
@@ -164,55 +166,55 @@ export default class ManualPanel {
             },
             // Page 2: Workspace
             {
-                tabName: "工�??�",
+                tabName: "工作區",
                 left: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">2. 工�??�說�? (?��?模�?)</h3>
-                    <p class="text-slate-600 mb-4 text-lg">?�畫?�右上�??�以?��?工�??�模�??�此?��?設�??��?工�??��?/p>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">2. 工作區說明 (圖片模式)</h3>
+                    <p class="text-slate-600 mb-4 text-lg">在畫面右上角可以切換工作區模式。此為預設的圖片工作區：</p>
                     <ul class="list-disc pl-5 text-slate-600 space-y-2 mb-6">
-                        <li><strong>?�色�?/strong> ?��??�張海報?�社群�??��?設�??�無?�延伸畫布�??�由?�揮?��???/li>
+                        <li><strong>特色：</strong> 適合單張海報、社群圖文的設計。無限延伸畫布，自由發揮創意。</li>
                     </ul>
                     <div class="flex-1 flex flex-col justify-center mt-4">
-                        <h4 class="text-xl font-bold text-slate-700 mb-4"><i class="fas fa-image text-indigo-400 mr-2"></i> ?��?模�?示�?�?/h4>
+                        <h4 class="text-xl font-bold text-slate-700 mb-4"><i class="fas fa-image text-indigo-400 mr-2"></i> 圖片模式示範：</h4>
                         <div class="sketch p-2 bg-slate-50 w-full mx-auto">
-                            <img src="./manual/image-workspace-demo.png" alt="?��?工�??�" class="w-full rounded block">
+                            <img src="./manual/image-workspace-demo.png" alt="圖片工作區" class="w-full rounded block">
                         </div>
                     </div>
                 `,
                 right: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">工�??�說�? (PDF 模�?)</h3>
-                    <p class="text-slate-600 mb-4 text-lg">?��??�簡??/ PDF工�??�，您將能管�?多�??��?</p>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">工作區說明 (PDF 模式)</h3>
+                    <p class="text-slate-600 mb-4 text-lg">切換至簡報 / PDF工作區，您將能管理多頁面：</p>
                     <ul class="list-disc pl-5 text-slate-600 space-y-2 mb-6">
-                        <li><strong>?�色�?/strong> 專為多�??�件設�??�支??PDF ?�入?��??��?覽�?並�?�?A4 ?�簡?��?例�?/li>
+                        <li><strong>特色：</strong> 專為多頁文件設計。支援 PDF 匯入、分頁預覽，並鎖定 A4 或簡報比例。</li>
                     </ul>
                     <div class="flex-1 flex flex-col justify-center mt-4">
-                        <h4 class="text-xl font-bold text-slate-700 mb-4"><i class="fas fa-file-pdf text-indigo-400 mr-2"></i> PDF 模�?示�?�?/h4>
+                        <h4 class="text-xl font-bold text-slate-700 mb-4"><i class="fas fa-file-pdf text-indigo-400 mr-2"></i> PDF 模式示範：</h4>
                         <div class="sketch p-2 bg-slate-50 w-full mx-auto">
-                            <img src="./manual/pdf-workspace-demo.png" alt="PDF 工�??�" class="w-full rounded block">
+                            <img src="./manual/pdf-workspace-demo.png" alt="PDF 工作區" class="w-full rounded block">
                         </div>
                     </div>
                 `
             },
             // Page 3: Basic Tools
             {
-                tabName: "?��?工具",
+                tabName: "基礎工具",
                 left: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">3. ?��?工具介紹 (1/2)</h3>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">3. 基礎工具介紹 (1/2)</h3>
                     <div class="space-y-8">
                         <div class="flex gap-4 items-start pb-4 border-b border-slate-200 last:border-0">
                             <div class="w-12 h-12 shrink-0 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-xl sketch-panel p-0">
                                 <i class="fas fa-mouse-pointer"></i>
                             </div>
                             <div class="flex-1">
-                                <h5 class="font-bold text-slate-800 mb-3">?��?工具</h5>
+                                <h5 class="font-bold text-slate-800 mb-3">選取工具</h5>
                                 <div class="space-y-6">
                                     <div>
-                                        <p class="text-sm text-slate-600 mb-2"><strong>?��? 1�?/strong>點�??�曳?��?形物�?/p>
+                                        <p class="text-sm text-slate-600 mb-2"><strong>操作 1：</strong>點擊拖曳與變形物件</p>
                                         <div class="sketch p-1 bg-slate-50">
                                             <img src="./manual/select-drag-demo.gif" class="w-full rounded block">
                                         </div>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-slate-600 mb-2"><strong>?��? 2�?/strong>?�曳?�出紅色?��?�?/p>
+                                        <p class="text-sm text-slate-600 mb-2"><strong>操作 2：</strong>拖曳畫出紅色選取框</p>
                                         <div class="sketch p-1 bg-slate-50">
                                             <img src="./manual/select-box-demo.gif" class="w-full rounded block">
                                         </div>
@@ -220,125 +222,125 @@ export default class ManualPanel {
                                 </div>
                             </div>
                         </div>
-                        ${this.generateToolBlock('fas fa-hand-paper', '平移?��?', '?��?滑�?左鍵?�曳?�可平移??, './manual/pan-demo.gif')}
-                        ${this.generateToolBlock('fas fa-shapes', '?�入形�?', '?�畫布�??��??�形，並?�透�?左側?�屬?�」面?�調?��??��??��?�????, './manual/shape-demo.gif')}
+                        ${this.generateToolBlock('fas fa-hand-paper', '平移畫布', '按住滑鼠左鍵拖曳即可平移。', './manual/pan-demo.gif')}
+                        ${this.generateToolBlock('fas fa-shapes', '加入形狀', '在畫布上產生矩形，並可透過左側「屬性」面板調整顏色與邊框樣式。', './manual/shape-demo.gif')}
                     </div>
                 `,
                 right: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">?��?工具介紹 (2/2)</h3>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">基礎工具介紹 (2/2)</h3>
                     <div class="space-y-8">
-                        ${this.generateToolBlock('fas fa-paint-brush', '塗�?筆刷', '?�由?�畫布�?繪製塗�???, './manual/brush-demo.gif')}
-                        ${this.generateToolBlock('fas fa-search-plus', '?�大?��?', '點�??��?以放大�??��?, './manual/zoom-in-demo.gif')}
-                        ${this.generateToolBlock('fas fa-search-minus', '縮�??��?', '點�??��?以縮小�??��?, './manual/zoom-out-demo.gif')}
+                        ${this.generateToolBlock('fas fa-paint-brush', '塗鴉筆刷', '自由在畫布上繪製塗鴉。', './manual/brush-demo.gif')}
+                        ${this.generateToolBlock('fas fa-search-plus', '放大畫布', '點擊畫布以放大視野。', './manual/zoom-in-demo.gif')}
+                        ${this.generateToolBlock('fas fa-search-minus', '縮小畫布', '點擊畫布以縮小視野。', './manual/zoom-out-demo.gif')}
                     </div>
                 `
             },
             // Page 4: Smart Tools
             {
-                tabName: "?�慧工具",
+                tabName: "智慧工具",
                 left: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">4. ?�慧?��??�修�?(1/2)</h3>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">4. 智慧去背與修補 (1/2)</h3>
                     <div class="space-y-8">
-                        ${this.generateToolBlock('fas fa-magic', '一?�去??, '?�自?�辨識主要主體並移除?�景??br><span class="text-orange-500 font-bold">??等�?模�??��??�要�?點�???/span>', './manual/auto-rmbg-demo.gif')}
-                        ${this.generateToolBlock('fas fa-eraser', '塗抹修�?', '塗抹?��?修飾?��??��?AI ?�自?�填補�?br><span class="text-orange-500 font-bold">??等�?模�??��??�要�?點�???/span>', './manual/brush-inpaint-demo.gif')}
-                        ${this.generateToolBlock('fas fa-cut', '?��??��?', '框選?��??��??��??��??��?對該範�??��?主�??��???br><span class="text-orange-500 font-bold">??等�?模�??��??�要�?點�???/span>', './manual/area-rmbg-demo.gif')}
+                        ${this.generateToolBlock('fas fa-magic', '一鍵去背', '全自動辨識主要主體並移除背景。<br><span class="text-orange-500 font-bold">※ 等待模型處理需要一點時間</span>', './manual/auto-rmbg-demo.gif')}
+                        ${this.generateToolBlock('fas fa-eraser', '塗抹修補', '塗抹想要修飾的瑕疵，AI 會自動填補。<br><span class="text-orange-500 font-bold">※ 等待模型處理需要一點時間</span>', './manual/brush-inpaint-demo.gif')}
+                        ${this.generateToolBlock('fas fa-cut', '選框去背', '框選想要去背的範圍，僅針對該範圍內的主體去背。<br><span class="text-orange-500 font-bold">※ 等待模型處理需要一點時間</span>', './manual/area-rmbg-demo.gif')}
                     </div>
                 `,
                 right: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">?�慧?��??�修�?(2/2)</h3>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">智慧去背與修補 (2/2)</h3>
                     <div class="space-y-8">
-                        ${this.generateToolBlock('fas fa-band-aid', '?�慧修�?', '框選不�??�物件�?讓�?一秒�?失�?, './manual/inpaint-demo.gif')}
-                        ${this.generateToolBlock('fas fa-font', '?�慧辨�? (OCR)', '框選?��??��?，�??�為純�?字�?, './manual/ocr-demo.gif')}
-                        ${this.generateToolBlock('fas fa-square', '純色覆�?', '?��?顏色並�??��??��??��?訊�?, './manual/solid-fill-demo.gif')}
+                        ${this.generateToolBlock('fas fa-band-aid', '智慧修補', '框選不要的物件，讓它一秒消失。', './manual/inpaint-demo.gif')}
+                        ${this.generateToolBlock('fas fa-font', '智慧辨識 (OCR)', '框選圖片文字，轉換為純文字。', './manual/ocr-demo.gif')}
+                        ${this.generateToolBlock('fas fa-square', '純色覆蓋', '吸取顏色並覆蓋圖片上的資訊。', './manual/solid-fill-demo.gif')}
                     </div>
                 `
             },
             // Page 5: Add Objects
             {
-                tabName: "?�入?�件",
+                tabName: "加入物件",
                 left: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">5. ?�入?�物�?(1/2)</h3>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">5. 加入新物件 (1/2)</h3>
                     <div class="space-y-8">
-                        ${this.generateToolBlock('fas fa-text-width', '?��??��?', '點�??��??��??��?，支?��?種中?��?字�???, './manual/text-demo.gif')}
-                        ${this.generateToolBlock('fas fa-table', '建�?表格', '繪製?�調?��??�寬度�??�景?��?表格??, './manual/table-demo.gif')}
+                        ${this.generateToolBlock('fas fa-text-width', '新增文字', '點擊新增文字方塊，支援多種中英文字體。', './manual/text-demo.gif')}
+                        ${this.generateToolBlock('fas fa-table', '建立表格', '繪製可調整欄列寬度與背景色的表格。', './manual/table-demo.gif')}
                     </div>
                 `,
                 right: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">?�入?�物�?(2/2)</h3>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">加入新物件 (2/2)</h3>
                     <div class="space-y-8">
-                        ${this.generateToolBlock('fas fa-qrcode', 'QR 條碼', '輸入網�?，�??�產?��???QR 條碼??, './manual/qrcode-demo.gif')}
-                        ${this.generateToolBlock('fas fa-image', '外部?��?', '上傳?�腦中�??��? (JPG/PNG)??, './manual/image-demo.gif')}
+                        ${this.generateToolBlock('fas fa-qrcode', 'QR 條碼', '輸入網址，一鍵產生向量 QR 條碼。', './manual/qrcode-demo.gif')}
+                        ${this.generateToolBlock('fas fa-image', '外部圖片', '上傳電腦中的圖片 (JPG/PNG)。', './manual/image-demo.gif')}
                     </div>
                 `
             },
             // Page 6: Misc Settings
             {
-                tabName: "?��?設�?",
+                tabName: "其它設定",
                 left: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">6. ?��?比�?說�?</h3>
-                    <p class="text-slate-600 mb-4">?�畫?�左上�?，您?�以?��?調整?��??�長寬�?例�?</p>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">6. 畫布比例說明</h3>
+                    <p class="text-slate-600 mb-4">在畫面左上角，您可以隨時調整畫布的長寬比例：</p>
                     <div class="sketch p-2 bg-slate-50 w-full mx-auto mb-6">
-                        <img src="./manual/ratio-switch-demo.gif" alt="比�??��?" class="w-full rounded block">
+                        <img src="./manual/ratio-switch-demo.gif" alt="比例切換" class="w-full rounded block">
                     </div>
                     <ul class="list-disc pl-5 text-slate-600 space-y-3">
-                        <li><strong>16:9 (?��?)�?/strong> ?��? YouTube 封面?�寬?��?簡報??/li>
-                        <li><strong>4:3 (?��?)�?/strong> ?��??�統?��??��??��??��??��?/li>
-                        <li><strong>橫�? / ?��? (PDF)�?/strong> ??PDF 工�??�專用，�?定�?�?A4 比�?，可依�?求�??��?張方?��?/li>
+                        <li><strong>16:9 (圖片)：</strong> 適合 YouTube 封面或寬螢幕簡報。</li>
+                        <li><strong>4:3 (圖片)：</strong> 適合傳統螢幕或一般圖文排版。</li>
+                        <li><strong>橫向 / 直式 (PDF)：</strong> 在 PDF 工作區專用，鎖定標準 A4 比例，可依需求切換紙張方向。</li>
                     </ul>
                 `,
                 right: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">7. ?��?角工?�說??/h3>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6">7. 右下角工具說明</h3>
                     <div class="space-y-8">
-                        ${this.generateToolBlock('fas fa-expand', '?�螢幕模�?, '?��??�?�干?��?專注?�畫布編輯�?, './manual/fullscreen-demo.mp4')}
-                        ${this.generateToolBlock('fas fa-layer-group', '?�層快速�?�?, '快速查?��?調整?�件?��?後�?層�?序�?, './manual/layers-demo.gif')}
-                        ${this.generateToolBlock('fas fa-comment-dots', '?��?評�?', '?��??��??�在?��?上進�??��?討�???, './manual/comments-demo.gif')}
+                        ${this.generateToolBlock('fas fa-expand', '全螢幕模式', '隱藏所有干擾，專注於畫布編輯。', './manual/fullscreen-demo.mp4')}
+                        ${this.generateToolBlock('fas fa-layer-group', '圖層快速預覽', '快速查看與調整物件的前後圖層順序。', './manual/layers-demo.gif')}
+                        ${this.generateToolBlock('fas fa-comment-dots', '留言評論', '與團隊成員在畫布上進行協作討論。', './manual/comments-demo.gif')}
                     </div>
                 `
             },
             // Page 7: API Architecture
             {
-                tabName: "後台??API",
+                tabName: "後台與 API",
                 left: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6"><i class="fas fa-server mr-2"></i> 8. 後台??API ?��?說�?</h3>
-                    <p class="text-slate-600 text-lg leading-relaxed mb-4">?�系統�??�智?�工?�」採?�模組�?設�?，目?�透�?串接?��? API ?��?強大??AI ?��??��??�以下為?��?串接?��??��??��?</p>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6"><i class="fas fa-server mr-2"></i> 8. 後台與 API 架構說明</h3>
+                    <p class="text-slate-600 text-lg leading-relaxed mb-4">本系統的「智慧工具」採用模組化設計，目前透過串接公開 API 提供強大的 AI 運算能力。以下為目前串接的服務清單：</p>
                     
                     <div class="space-y-4 mt-6">
                         <div class="p-4 bg-orange-50 border-l-4 border-orange-400 rounded-r shadow-sm">
-                            <h4 class="font-bold text-orange-800 text-lg mb-1">簡報�?? (PPT / PPTX)</h4>
-                            <p class="text-slate-600 text-sm">?��?串接系統�?span class="font-mono bg-white px-1 rounded text-orange-600">ConvertAPI</span></p>
-                            <p class="text-slate-500 text-sm mt-1">?�途�?將�?業常見�? PPT 簡報?�端轉�??��?�?PDF，以?�匯?�畫布�??��??�面專�???/p>
+                            <h4 class="font-bold text-orange-800 text-lg mb-1">簡報解析 (PPT / PPTX)</h4>
+                            <p class="text-slate-600 text-sm">目前串接系統：<span class="font-mono bg-white px-1 rounded text-orange-600">ConvertAPI</span></p>
+                            <p class="text-slate-500 text-sm mt-1">用途：將企業常見的 PPT 簡報雲端轉換為標準 PDF，以利匯入畫布成為多頁面專案。</p>
                         </div>
 
                         <div class="p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded-r shadow-sm">
-                            <h4 class="font-bold text-indigo-800 text-lg mb-1">?�慧辨�? (OCR)</h4>
-                            <p class="text-slate-600 text-sm">?��?串接系統�?span class="font-mono bg-white px-1 rounded text-indigo-600">OpenAI Vision API (GPT-4o)</span></p>
-                            <p class="text-slate-500 text-sm mt-1">?�途�?辨�?複�??�面?��?寫�?體�?多�?語�???/p>
+                            <h4 class="font-bold text-indigo-800 text-lg mb-1">智慧辨識 (OCR)</h4>
+                            <p class="text-slate-600 text-sm">目前串接系統：<span class="font-mono bg-white px-1 rounded text-indigo-600">OpenAI Vision API (GPT-4o)</span></p>
+                            <p class="text-slate-500 text-sm mt-1">用途：辨識複雜版面、手寫字體與多國語言。</p>
                         </div>
                         
                         <div class="p-4 bg-teal-50 border-l-4 border-teal-400 rounded-r shadow-sm">
-                            <h4 class="font-bold text-teal-800 text-lg mb-1">塗抹修�? / ?�慧修�?</h4>
-                            <p class="text-slate-600 text-sm">?��?串接系統�?span class="font-mono bg-white px-1 rounded text-teal-600">Photoroom API (Inpainting)</span></p>
-                            <p class="text-slate-500 text-sm mt-1">?�途�??��??��?�?AI ?�縫填�?移除?�件後�??�景??/p>
+                            <h4 class="font-bold text-teal-800 text-lg mb-1">塗抹修補 / 智慧修補</h4>
+                            <p class="text-slate-600 text-sm">目前串接系統：<span class="font-mono bg-white px-1 rounded text-teal-600">Photoroom API (Inpainting)</span></p>
+                            <p class="text-slate-500 text-sm mt-1">用途：透過生成式 AI 無縫填補移除物件後的背景。</p>
                         </div>
                     </div>
                 `,
                 right: `
                     <div>
-                        <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6"><i class="fas fa-exchange-alt mr-2"></i> ?��??��?術替?�方�?/h3>
-                        <p class="text-slate-600 text-lg leading-relaxed mb-6">?�系統�?底層介面已�?度�?準�?，具?�極高�??��??�。若?��??��??��?安�??��??�求�??��??�模組�??�無縫替?�為以�??��?�?/p>
+                        <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6"><i class="fas fa-exchange-alt mr-2"></i> 擴充與技術替換方案</h3>
+                        <p class="text-slate-600 text-lg leading-relaxed mb-6">本系統的底層介面已高度標準化，具備極高的擴充性。若未來考量到資安或隱私需求，現有的模組皆可無縫替換為以下方案：</p>
                         
                         <ul class="list-disc pl-6 text-slate-600 space-y-6 text-lg">
                             <li>
-                                <strong>OCR ?�慧辨�? (?�代?��?)</strong><br>
-                                <span class="text-sm text-slate-500">?��? OpenAI ?�端?��??��??��??�端?�緣?��???<code class="text-indigo-500">Tesseract.js</code>，�??�網?�建??<code class="text-indigo-500">Ollama (Vision)</code> 模�?，實?��??�斷網辨識�?/span>
+                                <strong>OCR 智慧辨識 (替代方案)</strong><br>
+                                <span class="text-sm text-slate-500">可從 OpenAI 雲端服務替換為純前端邊緣運算的 <code class="text-indigo-500">Tesseract.js</code>，或內網自建的 <code class="text-indigo-500">Ollama (Vision)</code> 模型，實現完全斷網辨識。</span>
                             </li>
                             <li>
-                                <strong>AI 塗抹修�? (?�代?��?)</strong><br>
-                                <span class="text-sm text-slate-500">?��?使用 Photoroom ?�端?��?，未來可串接私�??�署??<code class="text-indigo-500">Stable Diffusion</code> 伺�??��??��?源�? <code class="text-indigo-500">Lama Cleaner</code>，確保修?��??��?外�???/span>
+                                <strong>AI 塗抹修補 (替代方案)</strong><br>
+                                <span class="text-sm text-slate-500">目前使用 Photoroom 雲端生成，未來可串接私有部署的 <code class="text-indigo-500">Stable Diffusion</code> 伺服器，或開源的 <code class="text-indigo-500">Lama Cleaner</code>，確保修改圖片不外流。</span>
                             </li>
                             <li>
-                                <strong>PPT 簡報�?? (?�代?��?)</strong><br>
-                                <span class="text-sm text-slate-500">?��?依賴?��???ConvertAPI ?�端轉�?外�?系統設�??�容?�自?��? <code class="text-indigo-500">LibreOffice (Gotenberg)</code> 伺�??��??�隨?��??�為 100% ?�網?��?轉�??��???/span>
+                                <strong>PPT 簡報解析 (替代方案)</strong><br>
+                                <span class="text-sm text-slate-500">除了依賴目前的 ConvertAPI 雲端轉檔外，系統設計相容於自架的 <code class="text-indigo-500">LibreOffice (Gotenberg)</code> 伺服器，可隨時切換為 100% 內網離線轉檔架構。</span>
                             </li>
                         </ul>
                     </div>
