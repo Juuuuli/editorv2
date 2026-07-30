@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多媒體畫布編輯器V2 專案一頁式藍圖</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #7b8a9e;
+            --secondary: #b0bbc9;
+            --bg-color: #fafafa;
+            --card-bg: #ffffff;
+            --text-main: #4a5568;
+            --text-muted: #828c9a;
+            --color-warning: #d9b372;
+            --color-success: #79a691;
+            --color-info: #7b9bb3;
+        }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; line-height: 1.4; color: var(--text-main); background-color: var(--bg-color); margin: 0; padding: 0; font-size: 0.95em; }
+        .container { max-width: 96%; margin: 0 auto; padding: 15px 30px; }
+        header { background: linear-gradient(135deg, #dce4ed, #edf2f7); color: var(--text-main); padding: 25px 15px; border-radius: 0 0 10px 10px; text-align: center; margin-bottom: 20px; border: 1px solid #e2e8f0; border-top: none; }
+        .mermaid-wrapper { background: white; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); margin-top: 10px; overflow-x: auto; text-align: center; border: 1px solid #edf2f7; width: 100%; box-sizing: border-box; }
+        .mermaid svg { max-height: 320px; width: auto; }
+        .split-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .split-layout { grid-template-columns: 1fr; } }
+        h1 { margin: 0 0 8px 0; font-size: 2.2em; font-weight: 600; color: #334155; }
+        header p { margin: 0; font-size: 1.05em; color: var(--text-muted); }
+        h2 { color: var(--primary); border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 25px; margin-bottom: 10px; font-size: 1.4em; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 15px; margin-top: 10px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 10px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 10px; }
+        .card { background: var(--card-bg); padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); border: 1px solid #edf2f7; }
+        .card h3 { margin: 0 0 8px 0; color: var(--primary); font-size: 1.1em; font-weight: 600; }
+        .card p { margin: 0; font-size: 0.9em; }
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .tag { background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 6px; font-weight: 500; font-size: 0.85em; border: 1px solid #e2e8f0; }
+        .roadmap-weekly { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; }
+        .week-box { background: white; border: 1px solid #edf2f7; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); display: flex; flex-direction: column; transition: transform 0.2s; }
+        .week-box:hover { transform: translateY(-3px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .week-header-v3 { background: var(--primary); color: white; padding: 12px 15px; border-radius: 7px 7px 0 0; display: flex; flex-direction: column; gap: 2px; }
+        .week-number { font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700; }
+        .week-name { font-size: 1.05em; font-weight: 600; }
+        .week-task-list { padding: 15px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+        .w-task { font-size: 0.85em; padding: 8px 10px; border-radius: 6px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; border-left: 3px solid; background: #f8fafc; color: var(--text-main); }
+        .w-task i { margin-top: 2px; font-size: 0.9em; opacity: 0.7; }
+        .design-task { border-color: var(--color-warning); }
+        .dev-task { border-color: var(--color-success); }
+        .test-task { border-color: var(--color-info); }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>多媒體畫布編輯器V2 Blueprint</h1>
+        <p>極致解耦工具列、智慧修補 API、嚴謹邊界與全圖層管理的編輯平台</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- 第一區塊：業務價值 -->
+        <h2><i class="fas fa-bullseye"></i> 動機與目標效益</h2>
+        <div class="grid-2">
+            <div class="card" style="border-left: 4px solid var(--color-warning);">
+                <h3><i class="fas fa-exclamation-triangle" style="color: var(--color-warning);"></i> 當前痛點</h3>
+                <p>傳統網頁編輯器程式碼往往混雜難以維護，且無法嚴格管控畫布邊界，缺乏針對單圖與多頁文件（PPT/PDF）的專屬防呆工作流。</p>
+            </div>
+            <div class="card" style="border-left: 4px solid var(--color-success);">
+                <h3><i class="fas fa-chart-line" style="color: var(--color-success);"></i> 預期效益 (Metrics)</h3>
+                <p>完美切換雙工作區，透過「絕對功能隔離」的程式碼模組化、精準圖層與群組快捷操作，打造順暢不卡頓的專業體驗。</p>
+            </div>
+        </div>
+
+        <!-- 第二區塊：使用者角色 -->
+        <h2><i class="fas fa-users"></i> 使用者角色 (User Personas)</h2>
+        <div class="grid-4">
+            <div class="card">
+                <h3><i class="fas fa-user-tie"></i> 專業美編人員</h3>
+                <p><strong>需求：</strong> 精準操作圖層、Ctrl+G 群組化，將去背完成的圖片或變色 QR Code 存入素材庫。</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-user-cog"></i> 簡報製作者</h3>
+                <p><strong>需求：</strong> 匯入 PPT/PDF 排版，一旦匯入自動鎖定左上角比例選項以防誤觸，保障排版一致性。</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-shield-alt"></i> 開發工程師</h3>
+                <p><strong>需求：</strong> 確保每個工具(如 OCR、畫筆)皆拆分為獨立檔案，不牽一髮動全身，並有 .env 統一管理 API Key。</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-eye"></i> 一般使用者</h3>
+                <p><strong>需求：</strong> 享受直覺的右上角 Undo/Redo 按鈕、快捷鍵操作與防呆的工具列設計，無痛上手。</p>
+            </div>
+        </div>
+
+        <!-- 第三區塊：核心功能與操作動線 (上下平行排版) -->
+        <h2><i class="fas fa-route"></i> 核心功能與操作動線 (Features & User Journey)</h2>
+        
+        <div class="grid-3" style="margin-bottom: 15px;">
+            <div class="card" style="border-top: 4px solid var(--color-success);">
+                <strong style="color: var(--text-main); font-size: 1em;">1. 物理畫布與防呆機制</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.85em; color: var(--text-muted); line-height: 1.4;">畫布具備邊界碰撞限制，匯入檔案後比例自動鎖定；未匯入檔案前，智慧去背等進階工具強制鎖定。</p>
+            </div>
+            
+            <div class="card" style="border-top: 4px solid var(--color-warning);">
+                <strong style="color: var(--text-main); font-size: 1em;">2. 獨立拆分的控制面板</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.85em; color: var(--text-muted); line-height: 1.4;">細化至檔案層級的左側面板：每項工具皆有獨立 JS 檔，搭配屬性、圖層與素材庫，邏輯互不干擾。</p>
+            </div>
+            
+            <div class="card" style="border-top: 4px solid var(--color-info);">
+                <strong style="color: var(--text-main); font-size: 1em;">3. 快捷操作與 API 串接</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.85em; color: var(--text-muted); line-height: 1.4;">支援 Shift 多選群組 (Ctrl+G)，右上角 Undo/Redo，並透過 .env 串接塗抹修補與 PPT 轉換 API。</p>
+            </div>
+        </div>
+
+        <div class="mermaid-wrapper">
+            <div class="mermaid">
+                graph LR
+                A([上傳檔案/PPT轉換]) --> B{工作區路由}
+                B -->|單頁模式| C[圖片工作區: 鎖定比例]
+                B -->|多頁模式| D[PPT/PDF工作區: 鎖定比例]
+                C --> E[四大面板: 細分獨立工具檔案]
+                D --> E
+                E -->|Shift 群組與邊界碰撞| F[IndexedDB 狀態暫存]
+                F --> G([匯出 JPG/PDF/PPTX])
+                
+                classDef default fill:#f8fafc,stroke:#cbd5e1,stroke-width:1px;
+                classDef action fill:#e0f2fe,stroke:#38bdf8,stroke-width:2px;
+                classDef condition fill:#fef3c7,stroke:#fbbf24,stroke-width:2px;
+                classDef endnode fill:#dcfce7,stroke:#4ade80,stroke-width:2px;
+                
+                class A,C,D,E,F action;
+                class B condition;
+                class G endnode;
+            </div>
+        </div>
+
+        <!-- 第四區塊：系統架構與資料流 -->
+        <h2><i class="fas fa-server"></i> 系統架構與資料流 (Architecture & Data Flow)</h2>
+        <div class="grid-2">
+            <div class="card" style="display: flex; flex-direction: column; justify-content: center;">
+                <h3 style="margin:0 0 10px 0; color:var(--primary); font-size: 1.05em;"><i class="fas fa-layer-group"></i> 核心技術選型</h3>
+                <div class="tags" style="margin-bottom: 20px;">
+                    <span class="tag"><i class="fab fa-js"></i> 前端: Vite + Vanilla JS 模組</span>
+                    <span class="tag"><i class="fab fa-css3"></i> UI: TailwindCSS</span>
+                    <span class="tag"><i class="fas fa-paint-brush"></i> 渲染引擎: Fabric.js</span>
+                    <span class="tag"><i class="fas fa-database"></i> 儲存: IndexedDB</span>
+                </div>
+                
+                <h3 style="margin:0 0 10px 0; color:var(--primary); font-size: 1.05em;"><i class="fas fa-plug"></i> 外部 API 與環境管理</h3>
+                <div class="tags">
+                    <span class="tag" style="background: #fdf2f8; color: #db2777; border-color: #fbcfe8;"><i class="fas fa-cogs"></i> PPT 轉 PDF API</span>
+                    <span class="tag" style="background: #fdf2f8; color: #db2777; border-color: #fbcfe8;"><i class="fas fa-magic"></i> 影像修補 API</span>
+                    <span class="tag" style="background: #f8fafc; color: #64748b; border-color: #cbd5e1;"><i class="fas fa-key"></i> .env 統一金鑰管理</span>
+                </div>
+                
+                <div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 6px; border: 1px dashed #cbd5e1; font-size: 0.9em;">
+                    <strong>嚴格隔離規範：</strong> 所有「工具」內的子模組（如畫筆、OCR、去背、圖形生成等）都必須獨立成單一檔案存放於 <code>src/features/tools/</code>。專屬規則書與規格書將綁定存放在各自模組資料夾內，實現徹底解耦。
+                </div>
+            </div>
+            
+            <div class="mermaid-wrapper" style="margin-top: 0; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                <div class="mermaid">
+                    graph TD
+                    Client([瀏覽器])
+                    Router{雙工作區}
+                    Canvas[Fabric.js 畫布引擎]
+                    Tools[獨立工具模組]
+                    API[PPT轉換/修圖 API]
+                    Env[.env 配置]
+                    
+                    Client -->|匯入/Undo操作| Router
+                    Router -->|初始化| Canvas
+                    Router -->|綁定| Tools
+                    Tools -->|讀取| Env
+                    Tools -->|操作/Shift群組| Canvas
+                    Tools -->|發送請求| API
+                    API -->|回傳結果| Canvas
+                    
+                    classDef client fill:#e0e7ff,stroke:#6366f1,stroke-width:2px;
+                    classDef canvas fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+                    classDef tools fill:#dcfce7,stroke:#22c55e,stroke-width:2px;
+                    classDef ext fill:#fdf2f8,stroke:#db2777,stroke-width:2px;
+                    classDef config fill:#f1f5f9,stroke:#64748b,stroke-width:2px;
+                    
+                    class Client client;
+                    class Router,Canvas canvas;
+                    class Tools tools;
+                    class API ext;
+                    class Env config;
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五區塊：開發里程碑 (以週為單位的卡片網格) -->
+        <h2><i class="fas fa-calendar-alt"></i> 開發里程碑與時程 (Roadmap)</h2>
+        <div class="roadmap-weekly">
+            
+            <div class="week-box">
+                <div class="week-header-v3">
+                    <span class="week-number">Phase 1 (Week 1)</span>
+                    <span class="week-name">工具解耦與畫布建立</span>
+                </div>
+                <div class="week-task-list">
+                    <div class="w-task design-task"><i class="fas fa-file-alt" style="color: var(--color-warning);"></i> <div>確認系統需求書 v2 變更</div></div>
+                    <div class="w-task dev-task"><i class="fas fa-code-branch" style="color: var(--color-success);"></i> <div>建置拆分至檔案級別的 Vite 資料夾架構</div></div>
+                    <div class="w-task dev-task"><i class="fas fa-desktop" style="color: var(--color-success);"></i> <div>實作雙工作區與畫布比例鎖定防呆</div></div>
+                </div>
+            </div>
+
+            <div class="week-box">
+                <div class="week-header-v3">
+                    <span class="week-number">Phase 2 (Week 2-3)</span>
+                    <span class="week-name">獨立模組與快捷 API</span>
+                </div>
+                <div class="week-task-list">
+                    <div class="w-task dev-task"><i class="fas fa-cubes" style="color: var(--color-success);"></i> <div>開發獨立檔案工具 (QR Code, 表格, 修補等)</div></div>
+                    <div class="w-task dev-task"><i class="fas fa-object-group" style="color: var(--color-success);"></i> <div>Shift 多選、Ctrl+G 群組及右上角 Undo/Redo</div></div>
+                    <div class="w-task dev-task"><i class="fas fa-key" style="color: var(--color-success);"></i> <div>配置 .env 並串接修圖與轉換 API</div></div>
+                </div>
+            </div>
+
+            <div class="week-box">
+                <div class="week-header-v3">
+                    <span class="week-number">Phase 3 (Week 4)</span>
+                    <span class="week-name">驗收測試與防禦審查</span>
+                </div>
+                <div class="week-task-list">
+                    <div class="w-task test-task"><i class="fas fa-shield-alt" style="color: var(--color-info);"></i> <div>畫布碰撞與智慧工具預設禁用防呆測試</div></div>
+                    <div class="w-task test-task"><i class="fas fa-search" style="color: var(--color-info);"></i> <div>程式碼解耦審查，確保無胖檔案</div></div>
+                    <div class="w-task dev-task"><i class="fas fa-rocket" style="color: var(--color-success);"></i> <div>效能調校與正式上線</div></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+</body>
+</html>

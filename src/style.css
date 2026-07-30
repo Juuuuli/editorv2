@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  input, textarea, [contenteditable] {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  button {
+    outline: none !important;
+  }
+  button:focus {
+    outline: none !important;
+  }
+}
+
+@layer utilities {
+  .canvas-bg {
+    background-color: #fbfbfb;
+    background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  .sketch {
+    border: 2px solid #334155;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    background-color: white;
+    transition: all 0.2s ease;
+  }
+  .sketch:hover {
+    border-radius: 15px 255px 15px 225px/225px 15px 255px 15px;
+  }
+  .sketch-panel {
+    border: 2px solid #334155;
+    border-radius: 15px 225px 15px 255px/255px 15px 225px 15px;
+    background-color: transparent;
+  }
+  .sketch-btn {
+    border: 1.5px solid #334155;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    box-shadow: 2px 2px 0px rgba(51, 65, 85, 0.15);
+    background-color: white;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .sketch-btn:hover {
+    box-shadow: 3px 3px 0px rgba(51, 65, 85, 0.25);
+    transform: translateY(-1px);
+  }
+  .sketch-btn-disabled {
+    border: 1.5px solid #94a3b8;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    background-color: #f8fafc;
+    color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .sketch-header-group {
+    border: 1.5px solid #334155;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    padding: 2px;
+    display: inline-flex;
+    background: white;
+  }
+  
+  .sketch-tooltip {
+    position: absolute;
+    background-color: #1e293b;
+    color: #f8fafc;
+    border: 2px solid #0f172a;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+  }
+  .sketch-tooltip.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .context-helper {
+    border: 2px solid #334155;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    background-color: #ffffff;
+    box-shadow: 3px 3px 0px rgba(51, 65, 85, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Notebook Modal Styles */
+.notebook-modal { perspective: 2000px; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+.notebook-book { position: relative; width: 1100px; height: 700px; display: flex; transform-style: preserve-3d; }
+.notebook-page { width: 50%; height: 100%; background: #fdfbf7; position: absolute; top: 0; box-shadow: inset 0 0 20px rgba(0,0,0,0.02); transition: transform 0.6s cubic-bezier(0.645, 0.045, 0.355, 1); transform-style: preserve-3d; border: 2px solid #334155; }
+.notebook-page.left { left: 0; transform-origin: right center; border-radius: 20px 0 0 20px; border-right: none; }
+.notebook-page.right { right: 0; transform-origin: left center; border-radius: 0 20px 20px 0; border-left: none; }
+.notebook-page-content { padding: 40px; height: 100%; overflow-y: auto; overflow-x: hidden; -ms-overflow-style: none; scrollbar-width: none; backface-visibility: hidden; }
+.notebook-page-content::-webkit-scrollbar { display: none; }
+.notebook-binder { position: absolute; left: 50%; top: 20px; bottom: 20px; width: 30px; transform: translateX(-50%); z-index: 50; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+.notebook-ring { width: 100%; height: 14px; background: linear-gradient(to right, #94a3b8, #cbd5e1, #94a3b8); border-radius: 10px; border: 1.5px solid #475569; box-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+.notebook-page.flipped.right { transform: rotateY(-180deg); z-index: 10; }
+.notebook-page.flipped.left { transform: rotateY(180deg); z-index: 10; }
+.page-shadow { box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+
+/* Notebook Tabs */
+.notebook-tabs { position: absolute; right: -40px; top: 20px; display: flex; flex-direction: column; gap: 4px; z-index: 1; }
+.notebook-tab { writing-mode: vertical-rl; text-orientation: mixed; padding: 12px 6px; background: #e2e8f0; border: 2px solid #334155; border-left: none; border-radius: 0 8px 8px 0; font-weight: bold; color: #475569; cursor: pointer; transition: all 0.2s; box-shadow: 3px 3px 0 rgba(0,0,0,0.1); font-size: 13px; letter-spacing: 1px; }
+.notebook-tab:hover { background: #cbd5e1; transform: translateX(5px); }
+.notebook-tab.active { background: #818cf8; color: white; transform: translateX(10px); box-shadow: 4px 4px 0 rgba(0,0,0,0.2); }

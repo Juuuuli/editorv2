@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vLLM API 串接指南 — Nemotron Omni</title>
+<style>
+  :root{--bg:#0f1117;--card:#1a1d27;--card2:#212433;--text:#e4e7ef;--muted:#9aa3b8;
+    --line:#2c3142;--green:#34d399;--red:#f87171;--amber:#fbbf24;--blue:#60a5fa;--accent:#818cf8}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.7;padding:40px 20px}
+  .wrap{max-width:960px;margin:0 auto}
+  header{border-left:4px solid var(--accent);padding:4px 0 4px 20px;margin-bottom:8px}
+  h1{font-size:25px;margin:0 0 6px}.sub{color:var(--muted);font-size:14px}
+  h2{font-size:18px;margin:36px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  h2 .n{display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;
+    background:var(--accent);color:#0f1117;border-radius:6px;font-size:13px;margin-right:9px;font-weight:700}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--blue)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:13px}
+  td.k{color:var(--muted);width:32%;white-space:nowrap}
+  code{background:var(--card2);padding:2px 7px;border-radius:5px;font-family:"SF Mono",Consolas,monospace;font-size:13px;color:var(--blue)}
+  pre{position:relative;background:#0b0d13;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.55}
+  pre code{background:none;padding:0;color:var(--text);white-space:pre}
+  .tok{color:#c3a6ff}.str{color:#8be9a8}.cmt{color:#6b7280}
+  .note{border-left:3px solid var(--amber);background:rgba(251,191,36,.07);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;font-size:14px}
+  .note.green{border-color:var(--green);background:rgba(52,211,153,.07)}
+  .note.blue{border-color:var(--blue);background:rgba(96,165,250,.07)}
+  .note.red{border-color:var(--red);background:rgba(248,113,113,.08)}
+  ol,ul{padding-left:22px}li{margin:6px 0}
+  .pill{display:inline-block;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:3px 10px;font-size:12.5px;margin:2px 4px 2px 0}
+  footer{margin-top:46px;color:var(--muted);font-size:12px;text-align:center;border-top:1px solid var(--line);padding-top:18px}
+  .toc a{color:var(--blue);text-decoration:none;font-size:13.5px}
+  .toc a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>vLLM API 串接指南</h1>
+    <div class="sub">模型 Nemotron-3-Nano-Omni-30B（OpenAI 相容 API）　·　DGX Spark @ 10.1.1.103　·　2026-06-17</div>
+  </header>
+
+  <div class="note green">
+    <strong>vLLM 本身就是 OpenAI 相容 API。</strong>你的後端不需要任何特製 client，直接用 OpenAI SDK 或 HTTP 呼叫即可，只要把 <code>base_url</code> 和 <code>api_key</code> 改掉。
+  </div>
+
+  <div class="card toc">
+    <strong>目錄：</strong>
+    <a href="#s1">1. 連線資訊</a> ·
+    <a href="#s2">2. 串接前必讀</a> ·
+    <a href="#s3">3. curl 範例</a> ·
+    <a href="#s4">4. OpenAI SDK</a> ·
+    <a href="#s5">5. 端點一覽</a> ·
+    <a href="#s6">6. 安全與注意事項</a>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="s1"><span class="n">1</span>連線資訊</h2>
+  <table>
+    <tr><td class="k">Base URL（OpenAI 相容）</td><td><code>http://10.1.1.103:11435/v1</code><br><span class="sub">同機可用 <code>http://localhost:11435/v1</code></span></td></tr>
+    <tr><td class="k">API Key</td><td><code>token-123qwe</code></td></tr>
+    <tr><td class="k">認證方式</td><td>HTTP Header：<code>Authorization: Bearer token-123qwe</code></td></tr>
+    <tr><td class="k">模型名稱（model 參數）</td><td><code>nemotron-omni</code></td></tr>
+    <tr><td class="k">最大上下文</td><td>131072 tokens（128K）</td></tr>
+    <tr><td class="k">同時併發上限</td><td>50（超過會排隊）</td></tr>
+    <tr><td class="k">能力</td><td><span class="pill">對話</span><span class="pill">串流</span><span class="pill">推理 reasoning</span><span class="pill">工具呼叫</span><span class="pill">多模態 圖/音/影</span></td></tr>
+  </table>
+
+  <!-- 2 -->
+  <h2 id="s2"><span class="n">2</span>串接前必讀（重要特性）</h2>
+  <div class="note red">
+    <strong>① 這是「推理模型」，輸出分兩段：先 <code>reasoning</code>（思考），後 <code>content</code>（答案）。</strong><br>
+    <code>max_tokens</code> 一定要設大（建議 ≥ 1024）。若設太小，token 會全被思考用光，<code>content</code> 變成 <code>null</code>／空字串。（實測 max_tokens=80 時 content 確實為 null。）
+  </div>
+  <div class="note">
+    <strong>② 思考欄位叫 <code>reasoning</code></strong>（不是 OpenAI 慣例的 <code>reasoning_content</code>）。
+    <ul style="margin:6px 0 0">
+      <li>非串流：答案在 <code>choices[0].message.content</code>，思考在 <code>choices[0].message.reasoning</code>。</li>
+      <li>串流：delta 會先收到一連串 <code>delta.reasoning</code>，再收到 <code>delta.content</code> —— 後端兩個都要處理。</li>
+    </ul>
+  </div>
+  <div class="note blue">
+    <strong>③ 多模態</strong>：每個請求每種模態（image / audio / video）最多 1 個。
+  </div>
+
+  <!-- 3 -->
+  <h2 id="s3"><span class="n">3</span>curl 範例</h2>
+
+  <h3>3.1 健康檢查 / 列出模型</h3>
+  <pre><code>curl http://10.1.1.103:11435/health
+
+curl http://10.1.1.103:11435/v1/models \
+  -H "Authorization: Bearer token-123qwe"</code></pre>
+
+  <h3>3.2 基本對話（非串流）</h3>
+  <pre><code>curl http://10.1.1.103:11435/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer token-123qwe" \
+  -d '{
+    "model": "nemotron-omni",
+    "messages": [
+      {"role": "system", "content": "你是一個簡潔的繁體中文助理。"},
+      {"role": "user", "content": "用一句話解釋什麼是 RAG"}
+    ],
+    "max_tokens": 1024,
+    "temperature": 0.3
+  }'</code></pre>
+  <div class="sub">答案在 <code>.choices[0].message.content</code>；思考過程在 <code>.choices[0].message.reasoning</code>。</div>
+
+  <h3>3.3 串流（SSE，逐字輸出）</h3>
+  <pre><code>curl -N http://10.1.1.103:11435/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer token-123qwe" \
+  -d '{
+    "model": "nemotron-omni",
+    "messages": [{"role": "user", "content": "寫一首關於春天的短詩"}],
+    "max_tokens": 1024,
+    "stream": true,
+    "stream_options": {"include_usage": true}
+  }'</code></pre>
+  <div class="sub">每行是 <code>data: {...}</code>；思考 token 在 <code>delta.reasoning</code>，答案 token 在 <code>delta.content</code>，結尾為 <code>data: [DONE]</code>。首字延遲約 0.4 秒。</div>
+
+  <h3>3.4 多模態（圖片）</h3>
+  <pre><code>curl http://10.1.1.103:11435/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer token-123qwe" \
+  -d '{
+    "model": "nemotron-omni",
+    "messages": [{
+      "role": "user",
+      "content": [
+        {"type": "text", "text": "這張圖是什麼？"},
+        {"type": "image_url", "image_url": {"url": "https://example.com/cat.jpg"}}
+      ]
+    }],
+    "max_tokens": 1024
+  }'</code></pre>
+  <div class="sub">也支援 base64：<code>"url": "data:image/jpeg;base64,&lt;...&gt;"</code>。每請求圖/音/影各限 1 個。</div>
+
+  <h3>3.5 工具呼叫（function calling）</h3>
+  <pre><code>curl http://10.1.1.103:11435/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer token-123qwe" \
+  -d '{
+    "model": "nemotron-omni",
+    "messages": [{"role": "user", "content": "台北現在天氣如何？"}],
+    "tools": [{
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "查詢指定城市的天氣",
+        "parameters": {
+          "type": "object",
+          "properties": {"city": {"type": "string", "description": "城市名稱"}},
+          "required": ["city"]
+        }
+      }
+    }],
+    "tool_choice": "auto",
+    "max_tokens": 1024
+  }'</code></pre>
+  <div class="sub">模型要呼叫工具時，結果在 <code>.choices[0].message.tool_calls</code>。</div>
+
+  <!-- 4 -->
+  <h2 id="s4"><span class="n">4</span>OpenAI SDK 串接</h2>
+
+  <h3>Python</h3>
+  <pre><code>from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://10.1.1.103:11435/v1",
+    api_key="token-123qwe",
+)
+
+resp = client.chat.completions.create(
+    model="nemotron-omni",
+    messages=[{"role": "user", "content": "你好，請自我介紹"}],
+    max_tokens=1024,          # 記得設大，否則答案被思考吃光
+    temperature=0.3,
+)
+msg = resp.choices[0].message
+print("思考：", getattr(msg, "reasoning", None))   # 推理過程
+print("答案：", msg.content)                        # 最終回答</code></pre>
+
+  <h3>Node.js（openai 套件）</h3>
+  <pre><code>import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "http://10.1.1.103:11435/v1",
+  apiKey: "token-123qwe",
+});
+
+const r = await client.chat.completions.create({
+  model: "nemotron-omni",
+  messages: [{ role: "user", content: "你好" }],
+  max_tokens: 1024,
+});
+console.log(r.choices[0].message.content);</code></pre>
+
+  <!-- 5 -->
+  <h2 id="s5"><span class="n">5</span>主要端點一覽</h2>
+  <table>
+    <thead><tr><th>端點</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td><code>GET /health</code></td><td>健康檢查（200 = 正常）</td></tr>
+      <tr><td><code>GET /v1/models</code></td><td>列出模型</td></tr>
+      <tr><td><code>POST /v1/chat/completions</code></td><td>對話（主要用這個）</td></tr>
+      <tr><td><code>POST /v1/completions</code></td><td>文字補全（傳統 prompt 模式）</td></tr>
+      <tr><td><code>POST /tokenize</code> · <code>/detokenize</code></td><td>計算 / 還原 token</td></tr>
+      <tr><td><code>GET /metrics</code></td><td>Prometheus 監控指標</td></tr>
+      <tr><td><code>GET /docs</code></td><td>互動式 API 文件（Swagger，可線上試打）</td></tr>
+    </tbody>
+  </table>
+  <div class="sub">互動文件可直接瀏覽：<code>http://10.1.1.103:11435/docs</code></div>
+
+  <!-- 6 -->
+  <h2 id="s6"><span class="n">6</span>安全與注意事項</h2>
+  <div class="card">
+    <ul>
+      <li><strong>無 TLS（http，非 https）</strong>：目前純內網 http，API key 為明文傳輸。僅限信任的內網使用；若要對外，需在前面加反向代理（nginx / caddy）做 TLS。</li>
+      <li><strong>併發</strong>：同時最多 50 路；50 人同時生成時每人約 8 tok/s（一段 256 字約 32 秒）。<strong>建議後端優先用串流</strong>，首字僅約 0.4 秒，體感較佳。</li>
+      <li><strong>逾時設定</strong>：長回答請把 client timeout 設足夠（建議 ≥ 120 秒）。</li>
+      <li><strong>max_tokens</strong>：因為是推理模型，務必設大（≥ 1024），否則 content 可能為空。</li>
+    </ul>
+  </div>
+
+  <footer>
+    vLLM 0.19.0 (NVIDIA NGC 26.04) · Nemotron Omni 30B FP8 · DGX Spark @ 10.1.1.103:11435<br>
+    本指南所有端點與回應格式均經線上實測確認。
+  </footer>
+
+</div>
+</body>
+</html>

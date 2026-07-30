@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>專案一頁式藍圖 (Product Blueprint)</title>
+    <!-- 引入外部字體與圖示 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #7b8a9e;    /* 清淡的莫蘭迪灰藍 */
+            --secondary: #b0bbc9;  /* 柔和的淺灰藍 */
+            --bg-color: #fafafa;   /* 極淡的灰白背景 */
+            --card-bg: #ffffff;
+            --text-main: #4a5568;  /* 柔和的深灰色字體 */
+            --text-muted: #828c9a; /* 淡灰色字體 */
+            
+            --color-warning: #d9b372;
+            --color-success: #79a691;
+            --color-info: #7b9bb3;
+        }
+        
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; line-height: 1.4; color: var(--text-main); background-color: var(--bg-color); margin: 0; padding: 0; font-size: 0.95em; }
+        
+        /* 【關鍵修改】取消最大寬度限制，讓內容往左右延伸填滿整個螢幕，解決左右空虛的問題 */
+        .container { max-width: 96%; margin: 0 auto; padding: 15px 30px; }
+        
+        header { background: linear-gradient(135deg, #dce4ed, #edf2f7); color: var(--text-main); padding: 25px 15px; border-radius: 0 0 10px 10px; text-align: center; margin-bottom: 20px; border: 1px solid #e2e8f0; border-top: none; }
+        .timeline-item h3 { margin: 0 0 5px 0; font-size: 1.05em; font-weight: 600; color: var(--text-main); }
+        .timeline-item p { margin: 0; font-size: 0.9em; color: var(--text-muted); }
+        
+        .mermaid-wrapper { background: white; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); margin-top: 10px; overflow-x: auto; text-align: center; border: 1px solid #edf2f7; width: 100%; box-sizing: border-box; }
+        /* 放寬圖表高度限制，讓它有空間自然舒展 */
+        .mermaid svg { max-height: 320px; width: auto; }
+        
+        /* 兩欄排版，左側文字，右側圖表，填滿版面 */
+        .split-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .split-layout { grid-template-columns: 1fr; } }
+        
+        h1 { margin: 0 0 8px 0; font-size: 2.2em; font-weight: 600; color: #334155; }
+        header p { margin: 0; font-size: 1.05em; color: var(--text-muted); }
+        
+        h2 { color: var(--primary); border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 25px; margin-bottom: 10px; font-size: 1.4em; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        
+        /* 網格系統會隨著螢幕變寬，自動把卡片往左右排列填滿空間 */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 15px; margin-top: 10px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 10px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 10px; }
+        
+        .card { background: var(--card-bg); padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); border: 1px solid #edf2f7; }
+        .card h3 { margin: 0 0 8px 0; color: var(--primary); font-size: 1.1em; font-weight: 600; }
+        .card p { margin: 0; font-size: 0.9em; }
+        
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .tag { background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 6px; font-weight: 500; font-size: 0.85em; border: 1px solid #e2e8f0; }
+        
+        /* 替代方案三：以週為單位的卡片網格 (Weekly Kanban Style) */
+        .roadmap-weekly { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; }
+        .week-box { background: white; border: 1px solid #edf2f7; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); display: flex; flex-direction: column; transition: transform 0.2s; }
+        .week-box:hover { transform: translateY(-3px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .week-header-v3 { background: var(--primary); color: white; padding: 12px 15px; border-radius: 7px 7px 0 0; display: flex; flex-direction: column; gap: 2px; }
+        .week-number { font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700; }
+        .week-name { font-size: 1.05em; font-weight: 600; }
+        
+        .week-task-list { padding: 15px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+        .w-task { font-size: 0.85em; padding: 8px 10px; border-radius: 6px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; border-left: 3px solid; background: #f8fafc; color: var(--text-main); }
+        .w-task i { margin-top: 2px; font-size: 0.9em; opacity: 0.7; }
+        .design-task { border-color: var(--color-warning); }
+        .dev-task { border-color: var(--color-success); }
+        .test-task { border-color: var(--color-info); }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Web 圖片文字編輯系統 Blueprint</h1>
+        <p>專業的瀏覽器端圖片與 PDF 編輯神器，輕鬆搞定去印、OCR 與簡報修改</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- 第一區塊：業務價值 -->
+        <h2><i class="fas fa-bullseye"></i> 動機與目標效益</h2>
+        <div class="grid-2">
+            <div class="card" style="border-left: 4px solid var(--color-warning);">
+                <h3><i class="fas fa-exclamation-triangle" style="color: var(--color-warning);"></i> 當前痛點</h3>
+                <p>現有軟體操作門檻高，修改單張圖片或 PDF 文字常需動用 Photoshop 等專業工具，耗時且無法批次處理簡報檔。</p>
+            </div>
+            <div class="card" style="border-left: 4px solid var(--color-success);">
+                <h3><i class="fas fa-chart-line" style="color: var(--color-success);"></i> 預期效益 (Metrics)</h3>
+                <p>免安裝直接在瀏覽器運行，結合 OCR 與智慧修補，節省 90% 以上的圖文修改時間，並確保進度不遺失。</p>
+            </div>
+        </div>
+
+        <!-- 第二區塊：使用者角色 -->
+        <h2><i class="fas fa-users"></i> 使用者角色 (User Personas)</h2>
+        <div class="grid-4">
+            <div class="card">
+                <h3><i class="fas fa-user-tie"></i> 行銷企劃人員</h3>
+                <p><strong>需求：</strong> 快速修改海報或簡報圖檔中的活動文字、替換 QR Code 與 Logo</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-user-cog"></i> 教材編輯者</h3>
+                <p><strong>需求：</strong> 匯入多頁 PDF 教材，快速去浮水印、辨識文字並重新排版，最後匯出 PPTX</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-shield-alt"></i> 社群小編</h3>
+                <p><strong>需求：</strong> 利用吸色去背、純色覆蓋與圖層功能，快速製作梗圖或貼文素材</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-eye"></i> 一般使用者</h3>
+                <p><strong>需求：</strong> 免註冊登入，隨開即用，不怕修改進度遺失的自動存檔功能</p>
+            </div>
+        </div>
+
+        <!-- 第三區塊：核心功能與操作動線 (上下平行排版) -->
+        <h2><i class="fas fa-route"></i> 核心功能與操作動線 (Features & User Journey)</h2>
+        
+        <!-- 上半部：功能清單 (橫向三欄平行) -->
+        <div class="grid-3" style="margin-bottom: 15px;">
+            <div class="card" style="border-top: 4px solid var(--color-success);">
+                <strong style="color: var(--text-main); font-size: 1em;">1. 智慧去印與 OCR 辨識</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.85em; color: var(--text-muted); line-height: 1.4;">提供塗抹與選框去印功能自動修補背景，並結合 Tesseract.js 實現框選文字自動轉為可編輯文字方塊。</p>
+            </div>
+            
+            <div class="card" style="border-top: 4px solid var(--color-warning);">
+                <strong style="color: var(--text-main); font-size: 1em;">2. 豐富的物件編輯系統</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.85em; color: var(--text-muted); line-height: 1.4;">支援插入自訂文字（字距、行距、字重）、圖片/Logo、QR Code 與純色色塊，並可自由拖曳縮放。</p>
+            </div>
+            
+            <div class="card" style="border-top: 4px solid var(--color-info);">
+                <strong style="color: var(--text-main); font-size: 1em;">3. 跨格式匯出與進度保護</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.85em; color: var(--text-muted); line-height: 1.4;">支援匯入圖片與多頁 PDF，編輯後可無縫匯出為 PNG, PDF 或 PPTX，同時具備 IndexedDB 自動暫存功能。</p>
+            </div>
+        </div>
+
+        <!-- 下半部：使用者動線 Mermaid 圖 (全寬展現，不再被壓縮) -->
+        <div class="mermaid-wrapper">
+            <div class="mermaid">
+                graph LR
+                A([上傳圖片/PDF]) --> B{選擇模式}
+                B -->|處理文字| C[OCR文字辨識]
+                B -->|處理瑕疵| D[塗抹/選框去印]
+                C --> E[排版編輯與樣式調整]
+                D --> E
+                E --> G([匯出 JPG/PDF/PPTX])
+                
+                classDef default fill:#f8fafc,stroke:#cbd5e1,stroke-width:1px;
+                classDef action fill:#e0f2fe,stroke:#38bdf8,stroke-width:2px;
+                classDef condition fill:#fef3c7,stroke:#fbbf24,stroke-width:2px;
+                classDef endnode fill:#dcfce7,stroke:#4ade80,stroke-width:2px;
+                
+                class A,C,D,E action;
+                class B condition;
+                class G endnode;
+            </div>
+        </div>
+
+        <!-- 第四區塊：系統架構與資料流 -->
+        <h2><i class="fas fa-server"></i> 系統架構與資料流 (Architecture & Data Flow)</h2>
+        <div class="grid-2">
+            <!-- 左側：技術清單與說明 -->
+            <div class="card" style="display: flex; flex-direction: column; justify-content: center;">
+                <h3 style="margin:0 0 10px 0; color:var(--primary); font-size: 1.05em;"><i class="fas fa-layer-group"></i> 核心技術選型</h3>
+                <div class="tags" style="margin-bottom: 20px;">
+                    <span class="tag"><i class="fab fa-js"></i> 前端: Vanilla JS / HTML</span>
+                    <span class="tag"><i class="fab fa-css3"></i> UI: TailwindCSS</span>
+                    <span class="tag"><i class="fas fa-paint-brush"></i> 渲染: HTML5 Canvas</span>
+                    <span class="tag"><i class="fas fa-database"></i> 儲存: IndexedDB</span>
+                </div>
+                
+                <h3 style="margin:0 0 10px 0; color:var(--primary); font-size: 1.05em;"><i class="fas fa-plug"></i> 核心依賴套件</h3>
+                <div class="tags">
+                    <span class="tag" style="background: #fdf2f8; color: #db2777; border-color: #fbcfe8;"><i class="fas fa-file-pdf"></i> PDF.js / jsPDF</span>
+                    <span class="tag" style="background: #fdf2f8; color: #db2777; border-color: #fbcfe8;"><i class="fas fa-file-powerpoint"></i> PptxGenJS</span>
+                    <span class="tag" style="background: #fdf2f8; color: #db2777; border-color: #fbcfe8;"><i class="fas fa-font"></i> Tesseract.js</span>
+                </div>
+                
+                <div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 6px; border: 1px dashed #cbd5e1; font-size: 0.9em;">
+                    <strong>架構說明：</strong> 純前端無伺服器架構。透過 Canvas API 處理所有影像運算與物件圖層，並使用 Tesseract.js 進行端側 OCR 辨識，最後經由 IndexedDB 保留編輯狀態，保障隱私與效能。
+                </div>
+            </div>
+            
+            <!-- 右側：系統架構圖 (改為 Flowchart 比較美觀且豐富) -->
+            <div class="mermaid-wrapper" style="margin-top: 0; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                <div class="mermaid">
+                    graph TD
+                    Client([前端瀏覽器 Browser])
+                    Canvas[HTML5 Canvas 畫布引擎]
+                    Tools[修補與編輯工具列]
+                    DB[(IndexedDB 本地暫存)]
+                    Ext1[Tesseract.js OCR]
+                    Ext2[PDF.js / jsPDF]
+                    Ext3[PptxGenJS]
+                    
+                    Client -->|載入與渲染| Canvas
+                    Client -->|操作| Tools
+                    Tools -->|修改像素/物件| Canvas
+                    Canvas -->|自動備份狀態| DB
+                    Tools -->|辨識文字| Ext1
+                    Client -->|匯入/匯出 PDF| Ext2
+                    Client -->|匯出 PPTX| Ext3
+                    
+                    classDef client fill:#e0e7ff,stroke:#6366f1,stroke-width:2px;
+                    classDef canvas fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+                    classDef tools fill:#dcfce7,stroke:#22c55e,stroke-width:2px;
+                    classDef db fill:#f1f5f9,stroke:#64748b,stroke-width:2px;
+                    classDef ext fill:#fdf2f8,stroke:#db2777,stroke-width:2px;
+                    
+                    class Client client;
+                    class Canvas canvas;
+                    class Tools tools;
+                    class DB db;
+                    class Ext1,Ext2,Ext3 ext;
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五區塊：開發里程碑 (以週為單位的卡片網格) -->
+        <h2><i class="fas fa-calendar-alt"></i> 開發里程碑與時程 (Roadmap)</h2>
+        <div class="roadmap-weekly">
+            
+            <!-- Week 1 -->
+            <div class="week-box">
+                <div class="week-header-v3">
+                    <span class="week-number">Phase 1 (Week 1)</span>
+                    <span class="week-name">核心畫布與解析</span>
+                </div>
+                <div class="week-task-list">
+                    <div class="w-task design-task"><i class="fas fa-file-alt" style="color: var(--color-warning);"></i> <div>確認系統需求書與專案藍圖</div></div>
+                    <div class="w-task design-task"><i class="fas fa-layer-group" style="color: var(--color-warning);"></i> <div>Tailwind UI 介面實作與工具列佈局</div></div>
+                    <div class="w-task dev-task"><i class="fas fa-paint-brush" style="color: var(--color-success);"></i> <div>HTML5 Canvas 引擎初始化與圖片載入</div></div>
+                    <div class="w-task dev-task"><i class="fas fa-file-pdf" style="color: var(--color-success);"></i> <div>PDF.js 整合與多頁縮圖管理</div></div>
+                </div>
+            </div>
+
+            <!-- Week 2 -->
+            <div class="week-box">
+                <div class="week-header-v3">
+                    <span class="week-number">Phase 2 (Week 2-3)</span>
+                    <span class="week-name">進階編輯與修補功能</span>
+                </div>
+                <div class="week-task-list">
+                    <div class="w-task dev-task"><i class="fas fa-font" style="color: var(--color-success);"></i> <div>Tesseract.js OCR 整合與文字圖層系統</div></div>
+                    <div class="w-task dev-task"><i class="fas fa-magic" style="color: var(--color-success);"></i> <div>選框去印、塗抹去印與背景吸色演算法</div></div>
+                    <div class="w-task test-task"><i class="fas fa-database" style="color: var(--color-info);"></i> <div>IndexedDB 進度暫存與 Undo/Redo 系統整合</div></div>
+                </div>
+            </div>
+
+            <!-- Week 3 -->
+            <div class="week-box">
+                <div class="week-header-v3">
+                    <span class="week-number">Phase 3 (Week 4)</span>
+                    <span class="week-name">匯出模組與上線</span>
+                </div>
+                <div class="week-task-list">
+                    <div class="w-task dev-task"><i class="fas fa-file-powerpoint" style="color: var(--color-success);"></i> <div>PptxGenJS 與 jsPDF 匯出引擎開發</div></div>
+                    <div class="w-task test-task"><i class="fas fa-bug" style="color: var(--color-info);"></i> <div>各類設備與瀏覽器相容性測試</div></div>
+                    <div class="w-task dev-task"><i class="fas fa-rocket" style="color: var(--color-success);"></i> <div>效能調校與正式版本部署</div></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // 初始化 Mermaid 圖表
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>部署方案評估 (加入說明書後)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-indigo-600 px-8 py-6 text-white">
+            <h1 class="text-3xl font-bold mb-2"><i class="fas fa-server mr-3"></i>部署方案評估 (加入說明書功能後)</h1>
+            <p class="text-indigo-100 text-lg">針對目前加入了大量 GIF 與 MP4 說明的 EditorV2，評估「單一檔案 (方案C)」的適用性</p>
+        </div>
+
+        <!-- Content -->
+        <div class="p-8">
+            
+            <div class="bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-lg mb-8">
+                <h2 class="text-xl font-bold text-rose-800 mb-2">結論：目前非常不適合繼續使用原本的方案 C (例如打包成單一 HTML 或純本機點擊)</h2>
+                <p class="text-rose-700">因為說明書導入了大量的 GIF 動圖以及 MP4 影片，這會讓舊有的簡單打包測試方案產生嚴重的效能與載入問題。</p>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 border-b-2 border-slate-200 pb-2 mb-6">為什麼不再適合？ (主要痛點)</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-lg flex justify-center items-center text-xl mb-4">
+                        <i class="fas fa-weight-hanging"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">1. 檔案體積過於龐大</h4>
+                    <p class="text-slate-600 leading-relaxed">
+                        如果將 20 幾個 GIF 和 MP4 影片轉換成 Base64 塞進單一 HTML，檔案大小可能會輕易暴增至 <strong>20MB ~ 30MB</strong> 以上。這會導致瀏覽器開啟時卡頓、甚至崩潰。
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-lg flex justify-center items-center text-xl mb-4">
+                        <i class="fas fa-photo-video"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">2. 影片無法正常串流 (Streaming)</h4>
+                    <p class="text-slate-600 leading-relaxed">
+                        MP4 影片非常不適合直接寫入 HTML (Base64) 內。正常情況下，瀏覽器會一邊下載一邊播放影片（Streaming）；若包在 HTML 裡，瀏覽器必須將整包檔案吃進記憶體才能播，會造成嚴重的效能浪費。
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex justify-center items-center text-xl mb-4">
+                        <i class="fas fa-ban"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">3. CORS 與安全性阻擋 (file://)</h4>
+                    <p class="text-slate-600 leading-relaxed">
+                        如果只是把整個資料夾 (ZIP) 傳給別人，讓他們點擊 <code>index.html</code> 開啟，現代瀏覽器會基於安全性 (CORS) 阻擋 ESM (ES Modules) 載入，導致完全白畫面。
+                    </p>
+                </div>
+                
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-lg flex justify-center items-center text-xl mb-4">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">4. 載入體驗極差</h4>
+                    <p class="text-slate-600 leading-relaxed">
+                        對於其他測試者來說，要等這幾十 MB 的巨型檔案完全解析完畢才會出現畫面，會以為系統壞掉了。
+                    </p>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 border-b-2 border-slate-200 pb-2 mb-6">現在推薦的正確測試方案</h3>
+            
+            <div class="space-y-4">
+                <div class="flex gap-4 items-start p-5 bg-emerald-50 rounded-lg border border-emerald-100">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-emerald-500 mt-1"></i>
+                    <div>
+                        <h4 class="font-bold text-emerald-800 text-lg">首選推薦：部署至 Vercel 或 Netlify (免費雲端服務)</h4>
+                        <p class="text-emerald-700 mt-1 mb-2">這是目前現代前端（特別是 Vite 專案）最標準的作法。您只需要將程式碼推送到 GitHub，即可自動發布成一個有真實網址 (https://...) 的網站。</p>
+                        <ul class="list-disc pl-5 text-emerald-600 text-sm">
+                            <li><strong>優點：</strong> 影片與圖片可享受 CDN 加速載入、他人只需要點擊網址就能馬上測試、不佔用對方的硬碟空間。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 items-start p-5 bg-sky-50 rounded-lg border border-sky-100">
+                    <i class="fab fa-github text-3xl text-sky-500 mt-1"></i>
+                    <div>
+                        <h4 class="font-bold text-sky-800 text-lg">次要推薦：GitHub Pages</h4>
+                        <p class="text-sky-700 mt-1 mb-2">直接利用 GitHub 內建的免費網頁代管功能。</p>
+                        <ul class="list-disc pl-5 text-sky-600 text-sm">
+                            <li><strong>優點：</strong> 也是給別人一個網址即可測試。設定上稍微需要了解 GitHub Actions，但完全免費且穩定。</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

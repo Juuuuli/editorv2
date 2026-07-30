@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系統部署與 Server 需求分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+    </style>
+</head>
+<body class="text-slate-800 p-6 md:p-12">
+    <div class="max-w-4xl mx-auto space-y-8">
+        <!-- Header -->
+        <header class="text-center space-y-4">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-600 mb-4 shadow-sm">
+                <i class="fas fa-server text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">系統部署與架構策略報告</h1>
+            <p class="text-lg text-slate-500">針對「內部測試」與「正式上線」的兩種部署方案解析</p>
+        </header>
+
+        <!-- Current Status & Risk -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <section class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold mb-3 flex items-center text-indigo-700">
+                    <i class="fas fa-microchip mr-2"></i>當前系統架構
+                </h2>
+                <p class="text-slate-600 text-sm leading-relaxed mb-3">
+                    目前系統為 <strong>100% 純前端架構 (Vite + Fabric.js)</strong>，所有運算都在瀏覽器內完成，無需後端資料庫，理論上可以直接託管於任何靜態網頁伺服器。
+                </p>
+            </section>
+
+            <section class="rounded-2xl p-6 shadow-sm bg-gradient-to-br from-rose-50 to-orange-50 border border-rose-100">
+                <h2 class="text-xl font-bold mb-3 flex items-center text-rose-700">
+                    <i class="fas fa-shield-halved mr-2"></i>核心資安挑戰
+                </h2>
+                <p class="text-slate-700 text-sm leading-relaxed mb-2">
+                    我們使用了 <strong>Clipdrop</strong> (去背) 與 <strong>ConvertAPI</strong> (PPT 轉檔) 兩個付費 API。如果直接發布前端程式碼，金鑰將以純文字暴露，任何人都能盜用金鑰並刷爆您的額度。
+                </p>
+            </section>
+        </div>
+
+        <!-- Option C: Current Implementation -->
+        <section class="glass-card rounded-2xl p-8 shadow-sm border-t-4 border-slate-600 relative overflow-hidden">
+            <div class="absolute top-0 right-0 bg-slate-600 text-white px-4 py-1 rounded-bl-lg font-bold text-sm">執行中</div>
+            <h2 class="text-2xl font-bold mb-2 flex items-center text-slate-800">
+                方案 C：內部測試直上 (免 Server 架構)
+            </h2>
+            <p class="text-slate-500 mb-6">適用情境：提供給主管或內部少數人員進行功能預覽、體驗測試。</p>
+            
+            <div class="space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-800 flex items-center mb-2"><i class="fas fa-lock text-slate-400 mr-2"></i>1. 全螢幕密碼大門 (Password Gate)</h3>
+                    <p class="text-sm text-slate-600">在進入系統前，我們已加入了一道全螢幕的密碼驗證畫面 (目前設定為 <code>DEMO2026</code>)。這能阻擋 99% 的搜尋引擎爬蟲與路人，避免他們誤觸按鈕消耗 API 額度。</p>
+                </div>
+                
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-800 flex items-center mb-2"><i class="fas fa-cloud-arrow-up text-slate-400 mr-2"></i>2. 隱蔽的靜態網址部署</h3>
+                    <p class="text-sm text-slate-600">將專案編譯打包後 (<code>dist</code> 資料夾)，直接丟上 <strong>Netlify Drop</strong> 等靜態託管平台。系統會隨機產生一組亂碼網址，只要不對外公開，外人幾乎不可能找到。</p>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-800 flex items-center mb-2"><i class="fas fa-money-bill-wave text-slate-400 mr-2"></i>3. 第三方平台額度控管 (最後防線)</h3>
+                    <p class="text-sm text-slate-600">請務必前往 Clipdrop 與 ConvertAPI 的管理後台，設定<strong>帳單消費上限 (Billing Limits)</strong> (例如設定 5 美金)。這樣即使密碼遭到破解，也能確保損失在絕對可控範圍內。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Option A: Future Implementation -->
+        <section class="glass-card rounded-2xl p-8 shadow-sm border-t-4 border-emerald-500">
+            <h2 class="text-2xl font-bold mb-2 flex items-center text-emerald-800">
+                方案 A：正式對外上線 (中介 Server 隱藏金鑰)
+            </h2>
+            <p class="text-slate-500 mb-6">適用情境：專案正式對公眾開放，需要 100% 確保 API 金鑰安全且不可見。</p>
+            
+            <p class="text-slate-700 mb-5">
+                我們<strong>不需要</strong>去租用昂貴的雲端主機 (如 AWS EC2) 或是寫一整套龐大的後端，只需利用 <strong>Vercel Serverless Functions</strong> 來當作「傳聲筒 (Proxy)」，預計 1~2 小時即可改建完成。
+            </p>
+
+            <div class="relative border-l-2 border-emerald-200 ml-4 pl-6 space-y-6">
+                <div>
+                    <span class="absolute -left-3 top-1 bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                    <h3 class="font-bold text-slate-800">建立後端 API (Serverless 函式)</h3>
+                    <p class="text-sm text-slate-600 mt-1">在專案根目錄新增一個 <code>api/</code> 資料夾，並撰寫 Node.js 程式碼 (例如 <code>api/convert-ppt.js</code>)。這段程式碼將會在 Vercel 的雲端獨立運行，負責幫前端拿著金鑰去向 ConvertAPI 溝通。</p>
+                </div>
+
+                <div>
+                    <span class="absolute -left-3 top-1 bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                    <h3 class="font-bold text-slate-800">將金鑰從前端拔除 (變更變數名稱)</h3>
+                    <p class="text-sm text-slate-600 mt-1">將原本寫在 <code>.env</code> 裡的 <code>VITE_CONVERTAPI_SECRET</code> 改名為 <code>CONVERTAPI_SECRET</code>。在 Vite 的架構中，只要不加 <code>VITE_</code> 前綴，金鑰就絕對不會被打包進前端程式碼中，確保金鑰只活在後端。</p>
+                </div>
+
+                <div>
+                    <span class="absolute -left-3 top-1 bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                    <h3 class="font-bold text-slate-800">修改前端的呼叫對象</h3>
+                    <p class="text-sm text-slate-600 mt-1">原本前端是直接呼叫：<code>fetch('https://v2.convertapi.com/...')</code><br>改為呼叫自己的後端：<code>fetch('/api/convert-ppt')</code><br>前端只需要負責交出檔案，完全不用知道金鑰是什麼。</p>
+                </div>
+
+                <div>
+                    <span class="absolute -left-3 top-1 bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                    <h3 class="font-bold text-slate-800">一鍵部署至 Vercel</h3>
+                    <p class="text-sm text-slate-600 mt-1">將專案與 GitHub 連動後部署到 Vercel 平台。在 Vercel 後台將 <code>CONVERTAPI_SECRET</code> 填入環境變數設定中。Vercel 會自動為您架設好靜態前端，並同時把 <code>api/</code> 資料夾變為高效能的中介 Server。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Option B: Brief Mention -->
+        <section class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 opacity-80">
+            <h2 class="text-lg font-bold mb-2 flex items-center text-blue-700">
+                方案 B：使用者自帶金鑰 (BYOK 模式)
+            </h2>
+            <p class="text-slate-600 text-sm leading-relaxed">
+                如果您完全不想碰觸任何後端與 Vercel，可以在系統內實作一個「設定頁面」。強制每個使用者註冊自己的 Clipdrop 與 ConvertAPI 帳號，並將他們的金鑰儲存在自己的瀏覽器中。這樣能做到 100% 無伺服器且零資安風險，但<strong>會嚴重損害使用者的體驗</strong>，不適合作為對外營利的標準商業模式。
+            </p>
+        </section>
+
+    </div>
+</body>
+</html>
