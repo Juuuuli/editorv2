@@ -17,7 +17,9 @@ export default class ClipdropAPI {
         const formData = new FormData();
         formData.append('image_file', imageBlob);
 
-        const response = await fetch('/api/clipdrop/remove-background/v1', {
+        const baseUrl = import.meta.env.DEV ? '/api/clipdrop' : 'https://clipdrop-api.co';
+        
+        const response = await fetch(`${baseUrl}/remove-background/v1`, {
             method: 'POST',
             headers: {
                 'x-api-key': this.getApiKey()
@@ -46,7 +48,9 @@ export default class ClipdropAPI {
         formData.append('image_file', imageBlob);
         formData.append('mask_file', maskBlob);
 
-        const response = await fetch('/api/clipdrop/cleanup/v1', {
+        const baseUrl = import.meta.env.DEV ? '/api/clipdrop' : 'https://clipdrop-api.co';
+
+        const response = await fetch(`${baseUrl}/cleanup/v1`, {
             method: 'POST',
             headers: {
                 'x-api-key': this.getApiKey()
