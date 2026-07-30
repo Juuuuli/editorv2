@@ -47,7 +47,81 @@ if (fabric.Textbox) {
             }
         }
     };
+
+    fabric.Text.prototype._renderChars = function(method, ctx, line, left, top, lineIndex) {
+      // set proper line offset
+      var lineHeight = this.getHeightOfLine(lineIndex),
+          isJustify = this.textAlign.indexOf('justify') !== -1,
+          actualStyle,
+          nextStyle,
+          charsToRender = '',
+          charBox,
+          boxWidth = 0,
+          timeToRender,
+          path = this.path,
+          shortCut = !isJustify && this.charSpacing === 0 && this.isEmptyStyles(lineIndex) && !path,
+          isLtr = this.direction === 'ltr', sign = this.direction === 'ltr' ? 1 : -1,
+          drawingLeft, currentDirection = ctx.canvas.getAttribute('dir');
+      ctx.save();
+      if (currentDirection !== this.direction) {
+        ctx.canvas.setAttribute('dir', isLtr ? 'ltr' : 'rtl');
+        ctx.direction = isLtr ? 'ltr' : 'rtl';
+        ctx.textAlign = isLtr ? 'left' : 'right';
+      }
+      top -= lineHeight * this._fontSizeFraction / this.lineHeight;
+      if (shortCut) {
+        // render all the line in one pass without checking
+        this._renderChar(method, ctx, lineIndex, 0, line.join(''), left, top, lineHeight);
+        ctx.restore();
+        return;
+      }
+      for (var i = 0, len = line.length - 1; i <= len; i++) {
+        timeToRender = i === len || this.charSpacing || path;
+        charsToRender += line[i];
+        charBox = this.__charBounds[lineIndex][i];
+        if (boxWidth === 0) {
+          left += sign * (charBox.kernedWidth - charBox.width);
+          boxWidth += charBox.width;
+        }
+        else {
+          boxWidth += charBox.kernedWidth;
+        }
+        if (isJustify && !timeToRender) {
+          if (this._reSpaceAndTab.test(line[i])) {
+            timeToRender = true;
+          } else {
+            // CJK 修正：在 Justify 模式下，強制每個字元單獨渲染以套用擴展後的 kernedWidth
+            timeToRender = true;
+          }
+        }
+        if (!timeToRender) {
+          // if we have charSpacing, we render char by char
+          actualStyle = actualStyle || this.getCompleteStyleDeclaration(lineIndex, i);
+          nextStyle = this.getCompleteStyleDeclaration(lineIndex, i + 1);
+          timeToRender = fabric.util.hasStyleChanged(actualStyle, nextStyle, false);
+        }
+        if (timeToRender) {
+          if (path) {
+            ctx.save();
+            ctx.translate(charBox.renderLeft, charBox.renderTop);
+            ctx.rotate(charBox.angle);
+            this._renderChar(method, ctx, lineIndex, i, charsToRender, -boxWidth / 2, 0, lineHeight);
+            ctx.restore();
+          }
+          else {
+            drawingLeft = left;
+            this._renderChar(method, ctx, lineIndex, i, charsToRender, drawingLeft, top, lineHeight);
+          }
+          charsToRender = '';
+          actualStyle = nextStyle;
+          left += sign * boxWidth;
+          boxWidth = 0;
+        }
+      }
+      ctx.restore();
+    };
 }
+
 
 /**
  * 畫布核心引擎
