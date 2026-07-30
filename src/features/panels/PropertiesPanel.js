@@ -831,6 +831,8 @@ export default class PropertiesPanel {
     }
 
     enterCropMode(targetImage) {
+        if (document.getElementById('crop-overlay-buttons')) return; // 防止重複進入裁切模式
+        
         const canvas = this.canvasEngine.canvas;
         
         // 1. 保留右側面板原本的屬性介面 (不修改 this.container.innerHTML)
