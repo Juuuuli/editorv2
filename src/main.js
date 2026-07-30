@@ -19,6 +19,13 @@ import ManualPanel from './features/system/ManualPanel.js';
 import ContextualHelper from './features/system/ContextualHelper.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 顯示版本號
+    const versionBadge = document.getElementById('app-version-badge');
+    if (versionBadge && typeof __APP_VERSION__ !== 'undefined') {
+        versionBadge.textContent = 'v' + __APP_VERSION__;
+        versionBadge.classList.remove('hidden');
+    }
+
     // 實例化全域 EventBus
     const eventBus = new EventBus();
 
