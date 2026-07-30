@@ -424,8 +424,14 @@ export default class SmartTools {
             }
 
             // 4. 生成覆蓋用矩形與可編輯文字
-            // 計算字體大小: 利用面積估算，確保文字能剛好塞入這個寬高的框中
-            const estimatedFontSize = Math.max(12, Math.min(h, Math.floor(Math.sqrt((w * h) / (Math.max(1, textContent.length) * 1.2)))));
+            const lines = textContent.split('\n');
+            const maxLineLength = Math.max(...lines.map(l => l.length), 1);
+            const lineCount = lines.length;
+            
+            // 計算字體大小: 找出符合寬度與高度的最大可能字級
+            const fontSizeByWidth = w / maxLineLength;
+            const fontSizeByHeight = h / (lineCount * 1.16); // fabric 預設行高約 1.16
+            const estimatedFontSize = Math.max(12, Math.floor(Math.min(fontSizeByWidth, fontSizeByHeight)));
 
             const coverRect = new fabric.Rect({
                 left: minX,
@@ -453,7 +459,7 @@ export default class SmartTools {
                 cornerStrokeColor: '#ffffff',
                 borderColor: '#334155',
                 cornerSize: 10,
-                padding: 5
+                padding: 0
             });
 
             // 如果是選取框，辨識完就移除原選取框
