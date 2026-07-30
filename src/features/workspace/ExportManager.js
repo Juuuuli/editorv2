@@ -117,6 +117,10 @@ export default class ExportManager {
         const artboard = this.canvasEngine.artboard;
         if (!artboard) return;
         
+        // 暫存當前視角並歸零 (避免擷取到平移或縮放偏移的畫面)
+        const originalVpt = this.canvasEngine.canvas.viewportTransform.slice();
+        this.canvasEngine.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+        
         const dataUrl = this.canvasEngine.canvas.toDataURL({
             format: 'png',
             left: artboard.left,
@@ -125,6 +129,9 @@ export default class ExportManager {
             height: artboard.height,
             multiplier: 2 // 高解析度
         });
+
+        // 恢復視角
+        this.canvasEngine.canvas.setViewportTransform(originalVpt);
         
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataUrl);
