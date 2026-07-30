@@ -328,12 +328,19 @@ export default class PropertiesPanel {
             </div>
             
             <div class="mb-4">
-                <label class="block text-[10px] font-bold text-slate-500 mb-1">對齊方式</label>
-                <div class="sketch flex bg-white" id="prop-text-align">
-                    <button data-align="left" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 ${align === 'left' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-align-left"></i></button>
-                    <button data-align="center" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 border-l border-r border-slate-300 ${align === 'center' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-align-center"></i></button>
-                    <button data-align="right" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 border-r border-slate-300 ${align === 'right' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-align-right"></i></button>
-                    <button data-align="justify" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 ${align === 'justify' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-align-justify"></i></button>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">文字樣式與對齊</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="sketch flex bg-white" id="prop-text-style">
+                        <button data-style="bold" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 border-r border-slate-300 ${data.target.fontWeight === 'bold' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-bold"></i></button>
+                        <button data-style="italic" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 border-r border-slate-300 ${data.target.fontStyle === 'italic' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-italic"></i></button>
+                        <button data-style="underline" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 ${data.target.underline ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-underline"></i></button>
+                    </div>
+                    <div class="sketch flex bg-white" id="prop-text-align">
+                        <button data-align="left" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 border-r border-slate-300 ${align === 'left' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-align-left"></i></button>
+                        <button data-align="center" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 border-r border-slate-300 ${align === 'center' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-align-center"></i></button>
+                        <button data-align="right" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 border-r border-slate-300 ${align === 'right' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-align-right"></i></button>
+                        <button data-align="justify" class="flex-1 py-1.5 text-slate-500 hover:text-indigo-600 ${align === 'justify' ? 'text-indigo-600 bg-indigo-50' : ''}"><i class="fas fa-align-justify"></i></button>
+                    </div>
                 </div>
             </div>
             
@@ -494,6 +501,31 @@ export default class PropertiesPanel {
 
         const fontZhSelect = document.getElementById('prop-font-zh');
         if (fontZhSelect) fontZhSelect.addEventListener('change', updateTextFont);
+
+        const styleButtons = document.querySelectorAll('#prop-text-style button');
+        styleButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const style = e.currentTarget.dataset.style;
+                if (style === 'bold') {
+                    const current = this.activeObject.fontWeight === 'bold';
+                    this.activeObject.set('fontWeight', current ? 'normal' : 'bold');
+                    e.currentTarget.classList.toggle('text-indigo-600', !current);
+                    e.currentTarget.classList.toggle('bg-indigo-50', !current);
+                } else if (style === 'italic') {
+                    const current = this.activeObject.fontStyle === 'italic';
+                    this.activeObject.set('fontStyle', current ? 'normal' : 'italic');
+                    e.currentTarget.classList.toggle('text-indigo-600', !current);
+                    e.currentTarget.classList.toggle('bg-indigo-50', !current);
+                } else if (style === 'underline') {
+                    const current = !!this.activeObject.underline;
+                    this.activeObject.set('underline', !current);
+                    e.currentTarget.classList.toggle('text-indigo-600', !current);
+                    e.currentTarget.classList.toggle('bg-indigo-50', !current);
+                }
+                this.canvasEngine.canvas.requestRenderAll();
+                this.eventBus.emit('CANVAS:DIRTY', true);
+            });
+        });
 
         const alignButtons = document.querySelectorAll('#prop-text-align button');
         alignButtons.forEach(btn => {
