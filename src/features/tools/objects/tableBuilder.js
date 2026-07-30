@@ -53,7 +53,7 @@ export const buildTableGroup = (options) => {
                     width: Math.max(10, colW - 20),
                     fontSize: cellFontSize,
                     fontFamily: cellFontFamily,
-                    splitByGrapheme: false,
+                    splitByGrapheme: true,
                 });
                 
                 const requiredH = tempText.height + 20; // 10px padding top/bottom
@@ -271,7 +271,7 @@ export const buildTableGroup = (options) => {
                 fill: cellFill,
                 fontFamily: cellFontFamily,
                 textAlign: cellTextAlign,
-                splitByGrapheme: false,
+                splitByGrapheme: true,
                 isCell: true,
                 rowIndex: r,
                 colIndex: c,

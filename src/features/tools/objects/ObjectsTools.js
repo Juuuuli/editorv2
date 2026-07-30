@@ -396,7 +396,7 @@ export default class ObjectsTools {
             left: x,
             top: y,
             width: 300, // 預設寬度
-            splitByGrapheme: false, // 中文自動換行
+            splitByGrapheme: true, // 中文自動換行與對齊
             fontFamily: 'Noto Sans TC',
             fontSize: 48,
             fill: '#334155',

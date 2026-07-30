@@ -1,5 +1,54 @@
 import { fabric } from 'fabric';
 
+// 修正 Fabric.js 無法針對無空白字元的中文字進行「分散對齊 (justify)」的問題，並支援單行強制平均分配
+if (fabric.Textbox) {
+    fabric.Textbox.prototype.enlargeSpaces = function() {
+        var diffSpace, currentLineWidth, numberOfSpaces, accumulatedSpace, line, charBound, spaces;
+        for (var i = 0, len = this._textLines.length; i < len; i++) {
+            if (this.textAlign !== 'justify' && (i === len - 1 || this.isEndOfWrapping(i))) {
+                continue;
+            }
+            accumulatedSpace = 0;
+            line = this._textLines[i];
+            currentLineWidth = this.getLineWidth(i);
+            
+            if (currentLineWidth < this.width) {
+                spaces = this.textLines[i].match(this._reSpacesAndTabs);
+                if (spaces) {
+                    numberOfSpaces = spaces.length;
+                    diffSpace = (this.width - currentLineWidth) / numberOfSpaces;
+                    for (var j = 0, jlen = line.length; j <= jlen; j++) {
+                        charBound = this.__charBounds[i][j];
+                        if (this._reSpaceAndTab.test(line[j])) {
+                            charBound.width += diffSpace;
+                            charBound.kernedWidth += diffSpace;
+                            charBound.left += accumulatedSpace;
+                            accumulatedSpace += diffSpace;
+                        } else {
+                            charBound.left += accumulatedSpace;
+                        }
+                    }
+                } else {
+                    // CJK 修正：若沒有空白字元，則平均分配給所有字元（除最後一個）
+                    numberOfSpaces = line.length - 1;
+                    if (numberOfSpaces > 0) {
+                        diffSpace = (this.width - currentLineWidth) / numberOfSpaces;
+                        for (var j = 0, jlen = line.length; j <= jlen; j++) {
+                            charBound = this.__charBounds[i][j];
+                            charBound.left += accumulatedSpace;
+                            if (j < jlen - 1) {
+                                charBound.width += diffSpace;
+                                charBound.kernedWidth += diffSpace;
+                                accumulatedSpace += diffSpace;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+}
+
 /**
  * 畫布核心引擎
  * 封裝 Fabric.js，負責管理畫布大小、物件群組與撞牆碰撞邏輯
