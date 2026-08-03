@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>發布與 API 授權策略分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-6 md:p-12">
+
+    <div class="max-w-5xl mx-auto">
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-4">
+                產品釋出與 API 授權策略分析
+            </h1>
+            <p class="text-lg text-slate-500">探討如何將編輯器提供給外部使用者，以及安全的 API 金鑰管理方式</p>
+        </header>
+
+        <!-- 區塊一：釋出方式 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold border-b-2 border-indigo-100 pb-2 mb-6 flex items-center">
+                <i class="fas fa-rocket text-indigo-500 mr-3"></i>一、版本釋出方式 (Deployment)
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- 選項 1 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-lg flex items-center justify-center text-2xl mb-4">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">1. 純前端網頁 (GitHub Pages)</h3>
+                    <p class="text-sm text-slate-600 mb-4">您目前使用的方式。使用者透過瀏覽器即可開啟，無須安裝。</p>
+                    <ul class="text-sm space-y-2 text-slate-700">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i><strong>優點：</strong> 免費、傳播速度最快。</li>
+                        <li><i class="fas fa-times text-rose-500 mr-2"></i><strong>缺點：</strong> 無法安全隱藏您的 API Key，除非讓使用者自己輸入。且內網伺服器 (如 vLLM) 外部無法連線。</li>
+                    </ul>
+                </div>
+                <!-- 選項 2 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition">
+                    <div class="w-12 h-12 bg-purple-50 text-purple-500 rounded-lg flex items-center justify-center text-2xl mb-4">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">2. 桌面應用程式 (Electron/Tauri)</h3>
+                    <p class="text-sm text-slate-600 mb-4">將網頁打包成 Windows (.exe) 或 Mac (.dmg) 的獨立軟體。</p>
+                    <ul class="text-sm space-y-2 text-slate-700">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i><strong>優點：</strong> 感覺更專業、可離線存檔、能更安全地把 API Key 寫死在軟體底層。</li>
+                        <li><i class="fas fa-times text-rose-500 mr-2"></i><strong>缺點：</strong> 使用者需要下載安裝，且有軟體憑證簽章問題。</li>
+                    </ul>
+                </div>
+                <!-- 選項 3 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition">
+                    <div class="w-12 h-12 bg-teal-50 text-teal-500 rounded-lg flex items-center justify-center text-2xl mb-4">
+                        <i class="fab fa-docker"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">3. 企業私有部署 (Docker)</h3>
+                    <p class="text-sm text-slate-600 mb-4">將編輯器與後端打包成容器，交給其他公司的 IT 部門架設。</p>
+                    <ul class="text-sm space-y-2 text-slate-700">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i><strong>優點：</strong> 最適合企業賣斷或授權，能解決內網 (如 vLLM) 連線問題。</li>
+                        <li><i class="fas fa-times text-rose-500 mr-2"></i><strong>缺點：</strong> 對一般個人使用者門檻極高。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 區塊二：API 金鑰設定方式 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold border-b-2 border-indigo-100 pb-2 mb-6 flex items-center">
+                <i class="fas fa-key text-indigo-500 mr-3"></i>二、讓使用者自訂 API Key 的做法 (BYOK)
+            </h2>
+            <p class="text-slate-600 mb-6">如果我們維持在 GitHub Pages，絕對不能把您的金鑰放在程式碼裡。我們必須採用 <strong>BYOK (Bring Your Own Key)</strong> 策略：</p>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6">
+                    <h3 class="text-lg font-bold mb-3 text-indigo-700">做法：建立「系統設定」面板</h3>
+                    <p class="text-sm text-slate-600 mb-4">
+                        在網頁右上角新增一個「設定」按鈕。當使用者第一次使用「去背」或「PDF匯出」時，彈出視窗要求他們輸入自己的 API Key。
+                    </p>
+                    
+                    <div class="bg-slate-50 p-4 rounded-lg font-mono text-sm mb-4 border border-slate-100 text-slate-700">
+                        // 1. 儲存使用者的 Key 到他們的瀏覽器 (LocalStorage)<br>
+                        localStorage.setItem('USER_CLIPDROP_KEY', '使用者輸入的字串');<br><br>
+                        // 2. 呼叫 API 時，改抓 LocalStorage 的 Key<br>
+                        const apiKey = localStorage.getItem('USER_CLIPDROP_KEY');
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h4 class="font-bold text-green-700 mb-1"><i class="fas fa-shield-alt mr-2"></i>優勢</h4>
+                            <p class="text-sm text-green-800">您完全不需要付擔伺服器與 API 費用。使用者的金鑰只存在他們自己的電腦裡，非常安全。</p>
+                        </div>
+                        <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                            <h4 class="font-bold text-amber-700 mb-1"><i class="fas fa-exclamation-triangle mr-2"></i>補充說明：CORS 問題</h4>
+                            <p class="text-sm text-amber-800">有些 API (如 OpenAI) 會阻擋從「前端網頁」直接呼叫 (CORS 限制)。不過 Clipdrop 與 ConvertAPI 目前在設計上是允許直接呼叫的。如果未來遇到阻擋，使用者可能還是得透過 Proxy 才能打通 API。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 區塊三：進階補充 (B2B 或 B2C 營運) -->
+        <section>
+            <h2 class="text-2xl font-bold border-b-2 border-indigo-100 pb-2 mb-6 flex items-center">
+                <i class="fas fa-lightbulb text-indigo-500 mr-3"></i>三、補充建議：如果想把這當作一個商業產品？
+            </h2>
+            <div class="glass-card rounded-xl p-6">
+                <p class="text-slate-600 mb-4">如果您未來希望開放給大眾使用，但不想要使用者「覺得麻煩去申請一堆 API Key」，您可以考慮 <strong>BaaS (Backend as a Service) 架構</strong>：</p>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <div class="bg-indigo-100 text-indigo-600 rounded-full w-6 h-6 flex items-center justify-center mt-1 mr-3 shrink-0"><i class="fas fa-server text-xs"></i></div>
+                        <div>
+                            <strong class="text-slate-800 block">架設一個輕量中繼後端 (Vercel / Cloudflare Workers)</strong>
+                            <p class="text-sm text-slate-500">網頁不直接呼叫 Clipdrop，而是呼叫您架設的免費後端。API Key 藏在您的後端裡。這樣使用者打開網頁就能直接用。</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="bg-indigo-100 text-indigo-600 rounded-full w-6 h-6 flex items-center justify-center mt-1 mr-3 shrink-0"><i class="fas fa-users text-xs"></i></div>
+                        <div>
+                            <strong class="text-slate-800 block">加入會員登入機制 (Firebase Auth)</strong>
+                            <p class="text-sm text-slate-500">為了避免您的 API 額度被惡意刷爆，中繼後端可以檢查使用者是否登入，並限制每個帳號每天只能去背 10 次。</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <footer class="mt-12 text-center text-slate-400 text-sm pb-8">
+            系統分析報告
+        </footer>
+    </div>
+
+</body>
+</html>
