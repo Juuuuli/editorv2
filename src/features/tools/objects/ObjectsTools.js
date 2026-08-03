@@ -310,6 +310,10 @@ export default class ObjectsTools {
         const newGroup = buildTableGroup(options);
         newGroup.set({
             left, top,
+            angle: tableGroup.angle || 0,
+            opacity: tableGroup.opacity !== undefined ? tableGroup.opacity : 1,
+            flipX: tableGroup.flipX || false,
+            flipY: tableGroup.flipY || false,
             scaleX: tableGroup.scaleX,
             scaleY: tableGroup.scaleY
         });
@@ -564,6 +568,10 @@ export default class ObjectsTools {
         
         newGroup.set({
             left, top,
+            angle: tableGroup.angle || 0,
+            opacity: tableGroup.opacity !== undefined ? tableGroup.opacity : 1,
+            flipX: tableGroup.flipX || false,
+            flipY: tableGroup.flipY || false,
             scaleX: tableGroup.scaleX,
             scaleY: tableGroup.scaleY
         });
