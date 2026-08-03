@@ -49,7 +49,7 @@ export default class DashboardManager {
         // 建立 Dashboard 頂層容器
         this.dashboardContainer = document.createElement('div');
         this.dashboardContainer.id = 'dashboard-view';
-        this.dashboardContainer.className = 'fixed inset-0 z-40 bg-slate-50 flex flex-col overflow-y-auto custom-scrollbar transition-opacity duration-300';
+        this.dashboardContainer.className = 'fixed inset-0 z-[60] bg-slate-50 flex flex-col overflow-y-auto custom-scrollbar transition-opacity duration-300';
         
         this.dashboardContainer.innerHTML = `
             <!-- Dashboard Header -->
