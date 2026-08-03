@@ -376,10 +376,18 @@ export default class DashboardManager {
 
     async loadProjects() {
         this.projects = await this.storageEngine.getAllProjects();
-        // 自動修復曾被誤設為 IMAGE 的簡報預設專案
+        // 自動修復曾被誤設為 IMAGE 的簡報預設專案，並清除舊版含黑邊的 JPEG 縮圖快取
         for (const p of this.projects) {
+            let changed = false;
             if (p.name && p.name.includes('簡報') && p.type === 'IMAGE') {
                 p.type = 'PDF';
+                changed = true;
+            }
+            if (p.coverThumbnail && p.coverThumbnail.startsWith('data:image/jpeg')) {
+                p.coverThumbnail = null;
+                changed = true;
+            }
+            if (changed) {
                 await this.storageEngine.saveProject(p);
             }
         }
@@ -437,15 +445,19 @@ export default class DashboardManager {
             const pageCount = (proj.pages && proj.pages.length) ? proj.pages.length : Object.keys(proj.pageStates || {}).length || 1;
 
             const thumbnailContent = proj.coverThumbnail
-                ? `<img src="${proj.coverThumbnail}" class="w-full h-full object-contain p-2" alt="${proj.name}">`
-                : `<div class="w-full h-full flex flex-col items-center justify-center text-slate-300">
-                    <i class="fas ${isPdf ? 'fa-file-powerpoint' : 'fa-image'} text-4xl mb-2"></i>
-                    <span class="text-xs font-bold text-slate-400">點擊開啟專案</span>
+                ? `<div class="w-full h-full flex items-center justify-center p-3">
+                     <img src="${proj.coverThumbnail}" class="max-h-full max-w-full object-contain rounded-md shadow-sm border border-slate-300/80 bg-white" alt="${proj.name}">
+                   </div>`
+                : `<div class="w-full h-full flex items-center justify-center p-3">
+                     <div class="w-28 h-20 rounded-md border border-slate-300/80 bg-white shadow-sm flex flex-col items-center justify-center text-slate-400">
+                         <i class="fas ${isPdf ? 'fa-file-powerpoint' : 'fa-image'} text-2xl mb-1 text-slate-300"></i>
+                         <span class="text-[10px] font-bold text-slate-400">${isPdf ? '簡報畫布' : '圖片畫布'}</span>
+                     </div>
                    </div>`;
 
             card.innerHTML = `
-                <!-- 縮圖區 -->
-                <div class="h-44 bg-slate-100 border-b-2 border-slate-700 relative overflow-hidden flex items-center justify-center group-hover:bg-indigo-50/40 transition">
+                <!-- 縮圖區 (統一底色 bg-slate-100/90) -->
+                <div class="h-44 bg-slate-100/90 border-b-2 border-slate-700 relative overflow-hidden flex items-center justify-center group-hover:bg-slate-200/60 transition select-none">
                     ${thumbnailContent}
                     <div class="absolute top-3 left-3 flex items-center space-x-1.5">
                         <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${isPdf ? 'bg-indigo-600 text-white' : 'bg-teal-600 text-white'} shadow-sm">

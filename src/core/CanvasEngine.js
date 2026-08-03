@@ -528,8 +528,7 @@ export default class CanvasEngine {
             width: this.artboard.width,
             height: this.artboard.height,
             multiplier: multiplier,
-            format: 'jpeg',
-            quality: 0.8
+            format: 'png'
         });
 
         this.canvas.setViewportTransform(originalVpt);
