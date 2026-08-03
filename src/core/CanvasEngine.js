@@ -504,28 +504,37 @@ export default class CanvasEngine {
     updateThumbnail() {
         if (!this.eventBus || !this.artboard) return;
         
-        // 暫存當前視角 (避免擷取到平移偏移的畫面，JPEG 透明區塊會變黑邊)
-        const originalVpt = this.canvas.viewportTransform.slice();
-        this.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+        const dataUrl = this.getArtboardThumbnailDataURL(0.1);
+        if (dataUrl) {
+            this.eventBus.emit('CANVAS:THUMBNAIL_UPDATED', { 
+                pageId: this.currentPageId, 
+                dataUrl: dataUrl 
+            });
+        }
+    }
 
-        // 擷取工作板範圍的縮圖 (縮小為 10% 以節省效能)
+    /**
+     * 擷取底板範圍之乾淨居中縮圖 (供 Dashboard 封面與縮圖面板使用)
+     */
+    getArtboardThumbnailDataURL(multiplier = 0.25) {
+        if (!this.artboard) return null;
+        const originalVpt = this.canvas.viewportTransform ? this.canvas.viewportTransform.slice() : [1, 0, 0, 1, 0, 0];
+        this.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+        this.canvas.renderAll();
+
         const dataUrl = this.canvas.toDataURL({
             left: this.artboard.left,
             top: this.artboard.top,
             width: this.artboard.width,
             height: this.artboard.height,
-            multiplier: 0.1,
+            multiplier: multiplier,
             format: 'jpeg',
-            quality: 0.6
+            quality: 0.8
         });
-        
-        // 恢復視角
-        this.canvas.setViewportTransform(originalVpt);
 
-        this.eventBus.emit('CANVAS:THUMBNAIL_UPDATED', { 
-            pageId: this.currentPageId, 
-            dataUrl: dataUrl 
-        });
+        this.canvas.setViewportTransform(originalVpt);
+        this.canvas.renderAll();
+        return dataUrl;
     }
 
     onObjectSelected(e) {

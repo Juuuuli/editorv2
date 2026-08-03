@@ -214,80 +214,46 @@ export default class DashboardManager {
 
         document.body.appendChild(this.dashboardContainer);
 
-        // 在 Header 增加「首頁」按鈕與「專案標題」可點擊編輯
-        this.injectHeaderControls();
+        // 綁定 Header 控制項目 (首頁按鈕、專案標題與自動儲存指示器)
+        this.initHeaderControls();
     }
 
-    injectHeaderControls() {
-        const header = document.querySelector('header');
-        if (!header) return;
-
-        const leftGroup = header.querySelector('.flex.items-center.gap-4');
-        if (leftGroup) {
-            // 新增返回儀表板按鈕
-            const btnHome = document.createElement('button');
-            btnHome.id = 'btn-back-to-dashboard';
-            btnHome.className = 'sketch-btn px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-[2px_2px_0px_#334155] mr-2';
-            btnHome.innerHTML = `<i class="fas fa-home mr-1.5 text-indigo-600"></i> 首頁專案`;
-            btnHome.title = '儲存並返回專案管理儀表板';
-            leftGroup.prepend(btnHome);
-
+    initHeaderControls() {
+        const btnHome = document.getElementById('btn-back-to-dashboard');
+        if (btnHome) {
             btnHome.addEventListener('click', () => {
                 this.closeProjectToDashboard();
             });
+        }
 
-            // 新增可點擊編輯的專案標題與 Auto-save 標記
-            const titleContainer = document.createElement('div');
-            titleContainer.className = 'flex items-center space-x-2 ml-2';
-            titleContainer.innerHTML = `
-                <div class="relative group flex items-center">
-                    <span id="current-project-title-display" class="font-bold text-sm text-slate-700 hover:text-indigo-600 cursor-pointer border-b border-transparent hover:border-indigo-400 px-1 py-0.5 rounded transition">
-                        未命名專案
-                    </span>
-                    <i class="fas fa-pencil-alt text-xs text-slate-400 ml-1 opacity-0 group-hover:opacity-100 transition"></i>
-                    <input type="text" id="current-project-title-input" class="hidden bg-white border border-indigo-500 rounded px-2 py-0.5 text-sm font-bold text-slate-800 focus:outline-none w-48 shadow-sm">
-                </div>
-                <span id="auto-save-indicator" class="text-[11px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span> 已自動儲存
-                </span>
-            `;
+        const titleDisplay = document.getElementById('current-project-title-display');
+        const titleInput = document.getElementById('current-project-title-input');
 
-            // 將標題元件插入版本標籤旁
-            const versionBadge = document.getElementById('app-version-badge');
-            if (versionBadge && versionBadge.parentElement) {
-                versionBadge.parentElement.after(titleContainer);
-            }
+        if (titleDisplay && titleInput) {
+            titleDisplay.addEventListener('click', () => {
+                titleInput.value = titleDisplay.textContent.trim();
+                titleDisplay.classList.add('hidden');
+                titleInput.classList.remove('hidden');
+                titleInput.focus();
+                titleInput.select();
+            });
 
-            // 綁定編輯標題邏輯
-            const titleDisplay = document.getElementById('current-project-title-display');
-            const titleInput = document.getElementById('current-project-title-input');
+            const saveTitle = async () => {
+                const newTitle = titleInput.value.trim() || '未命名專案';
+                titleDisplay.textContent = newTitle;
+                titleInput.classList.add('hidden');
+                titleDisplay.classList.remove('hidden');
 
-            if (titleDisplay && titleInput) {
-                titleDisplay.addEventListener('click', () => {
-                    titleInput.value = titleDisplay.textContent.trim();
-                    titleDisplay.classList.add('hidden');
-                    titleInput.classList.remove('hidden');
-                    titleInput.focus();
-                    titleInput.select();
-                });
+                if (this.currentProjectId) {
+                    await this.storageEngine.renameProject(this.currentProjectId, newTitle);
+                    this.showAutoSaveFeedback('已更新標題');
+                }
+            };
 
-                const saveTitle = async () => {
-                    const newTitle = titleInput.value.trim() || '未命名專案';
-                    titleDisplay.textContent = newTitle;
-                    titleInput.classList.add('hidden');
-                    titleDisplay.classList.remove('hidden');
-
-                    if (this.currentProjectId) {
-                        await this.storageEngine.renameProject(this.currentProjectId, newTitle);
-                        this.showAutoSaveFeedback('已更新標題');
-                    }
-                };
-
-                titleInput.addEventListener('blur', saveTitle);
-                titleInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') saveTitle();
-                });
-            }
+            titleInput.addEventListener('blur', saveTitle);
+            titleInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') saveTitle();
+            });
         }
     }
 
@@ -410,6 +376,13 @@ export default class DashboardManager {
 
     async loadProjects() {
         this.projects = await this.storageEngine.getAllProjects();
+        // 自動修復曾被誤設為 IMAGE 的簡報預設專案
+        for (const p of this.projects) {
+            if (p.name && p.name.includes('簡報') && p.type === 'IMAGE') {
+                p.type = 'PDF';
+                await this.storageEngine.saveProject(p);
+            }
+        }
         this.updateCounts();
         this.renderProjectCards();
     }
@@ -602,9 +575,10 @@ export default class DashboardManager {
             titleDisplay.textContent = project.name;
         }
 
-        // 切換工作區模式 (IMAGE / PDF)
+        // 切換工作區模式 (IMAGE / PDF)，傳入 force=true 避免無謂未儲存提示
         if (this.workspaceManager) {
-            this.workspaceManager.switchMode(project.type || 'PDF');
+            this.workspaceManager.setDirty(false);
+            this.workspaceManager.switchMode(project.type || 'PDF', true);
         }
 
         // 調整畫布底板尺寸
@@ -632,6 +606,9 @@ export default class DashboardManager {
 
         // 切換到活動頁面並還原畫布物件
         this.canvasEngine.loadPageState(activePageId);
+        if (typeof this.canvasEngine.fitToScreen === 'function') {
+            this.canvasEngine.fitToScreen();
+        }
 
         // 隱藏 Dashboard，顯示 Editor
         this.dashboardContainer.classList.add('opacity-0', 'pointer-events-none');
@@ -703,23 +680,27 @@ export default class DashboardManager {
         const currentProj = await this.storageEngine.getProject(this.currentProjectId);
         if (!currentProj) return;
 
-        // 產生封面縮圖
-        let coverThumbnail = currentProj.coverThumbnail;
+        // 產生居中乾淨的底板縮圖 (避免平移偏移與黑邊)
+        let coverThumbnail = null;
         try {
-            coverThumbnail = this.canvasEngine.canvas.toDataURL({
-                format: 'jpeg',
-                quality: 0.6,
-                multiplier: 0.2
-            });
+            if (typeof this.canvasEngine.getArtboardThumbnailDataURL === 'function') {
+                coverThumbnail = this.canvasEngine.getArtboardThumbnailDataURL(0.25);
+            } else {
+                coverThumbnail = this.canvasEngine.canvas.toDataURL({
+                    format: 'jpeg',
+                    quality: 0.6,
+                    multiplier: 0.2
+                });
+            }
         } catch (e) {
             console.warn('[DashboardManager] 縮圖生成略過 (可能含跨域圖片)');
         }
 
-        currentProj.coverThumbnail = coverThumbnail;
+        currentProj.coverThumbnail = coverThumbnail || currentProj.coverThumbnail;
         currentProj.currentPageId = this.canvasEngine.currentPageId;
         currentProj.pageStates = this.canvasEngine.pageStates;
         currentProj.pageSizes = this.canvasEngine.pageSizes || {};
-        currentProj.type = this.workspaceManager ? this.workspaceManager.currentMode : 'PDF';
+        currentProj.type = this.workspaceManager ? this.workspaceManager.currentMode : (currentProj.type || 'PDF');
         currentProj.dimension = {
             width: this.canvasEngine.artboard ? this.canvasEngine.artboard.width : 1280,
             height: this.canvasEngine.artboard ? this.canvasEngine.artboard.height : 720

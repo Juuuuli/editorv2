@@ -35,10 +35,10 @@ export default class WorkspaceManager {
         });
     }
 
-    switchMode(newMode) {
+    switchMode(newMode, force = false) {
         if (this.currentMode === newMode) return;
         
-        if (this.isDirty) {
+        if (!force && this.isDirty) {
             const confirmSwitch = window.confirm("目前畫布有未儲存的變更，切換工作區將清除畫布，是否繼續？");
             if (!confirmSwitch) return;
         }

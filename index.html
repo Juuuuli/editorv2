@@ -88,65 +88,93 @@
     </div>
 
     <!-- Header -->
-    <header class="h-16 bg-white border-b-2 border-slate-700 flex items-center justify-between px-4 shrink-0 z-10">
-        <!-- Left: Logo & Title -->
-        <div class="flex items-center gap-4">
-            <div class="sketch flex items-center justify-center w-8 h-8 font-bold text-slate-700 shadow-[2px_2px_0px_#cbd5e1]">
-                <i class="fas fa-image"></i>
+    <header class="h-14 bg-white border-b-2 border-slate-700 flex items-center justify-between px-3 shrink-0 z-10 select-none">
+        <!-- Left: Home, Title & Status -->
+        <div class="flex items-center gap-2 min-w-0">
+            <button id="btn-back-to-dashboard" class="sketch-btn px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-[2px_2px_0px_#334155]" title="儲存並返回專案管理儀表板">
+                <i class="fas fa-home mr-1.5 text-indigo-600"></i> 首頁
+            </button>
+
+            <div class="h-5 w-[1px] bg-slate-300 mx-0.5"></div>
+
+            <div class="flex items-center gap-1.5 min-w-0">
+                <div class="sketch flex items-center justify-center w-6 h-6 font-bold text-xs text-slate-700 shadow-[1.5px_1.5px_0px_#cbd5e1] shrink-0">
+                    <i class="fas fa-cubes"></i>
+                </div>
+                <div class="relative group flex items-center min-w-0">
+                    <span id="current-project-title-display" class="font-bold text-xs text-slate-800 hover:text-indigo-600 cursor-pointer truncate max-w-[160px] md:max-w-[220px] px-1 py-0.5 rounded border border-transparent hover:border-indigo-300 transition" title="點擊編輯專案名稱">
+                        未命名專案
+                    </span>
+                    <i class="fas fa-pencil-alt text-[10px] text-slate-400 ml-1 opacity-0 group-hover:opacity-100 transition shrink-0"></i>
+                    <input type="text" id="current-project-title-input" class="hidden bg-white border border-indigo-500 rounded px-1.5 py-0.5 text-xs font-bold text-slate-800 focus:outline-none w-36 shadow-sm">
+                </div>
             </div>
-            <span class="font-bold text-lg text-slate-800 tracking-wider">多媒體畫布編輯器 <span id="app-version-badge" class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md ml-2 font-mono hidden"></span></span>
-            
+
+            <span id="auto-save-indicator" class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span> 已自動儲存
+            </span>
+        </div>
+
+        <!-- Center: Workspaces & Ratios -->
+        <div class="flex items-center gap-2 shrink-0">
+            <!-- Workspace Mode Switcher -->
+            <div class="sketch-header-group flex">
+                <button id="tab-image-workspace" class="px-2.5 py-1 text-xs font-bold hover:bg-slate-100 text-slate-600 border-r-2 border-slate-700/20 flex items-center">
+                    <i class="fas fa-image mr-1 text-[11px]"></i> 圖片
+                </button>
+                <button id="tab-pdf-workspace" class="px-2.5 py-1 text-xs font-bold bg-indigo-50 text-indigo-700 flex items-center">
+                    <i class="fas fa-file-powerpoint mr-1 text-[11px]"></i> 簡報/PDF
+                </button>
+            </div>
+
             <!-- Ratio Buttons -->
-            <div id="group-ratio-image" class="sketch-header-group ml-4 bg-indigo-50">
-                <button id="btn-ratio-16-9" class="px-3 py-1 text-xs font-bold rounded hover:bg-slate-100 text-indigo-700 border-r-2 border-slate-700/20 active-ratio">16:9</button>
-                <button id="btn-ratio-4-3" class="px-3 py-1 text-xs font-bold rounded hover:bg-slate-100 text-slate-500">4:3</button>
+            <div id="group-ratio-image" class="sketch-header-group bg-indigo-50">
+                <button id="btn-ratio-16-9" class="px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-indigo-700 border-r-2 border-slate-700/20 active-ratio">16:9</button>
+                <button id="btn-ratio-4-3" class="px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-slate-500">4:3</button>
             </div>
-            <div id="group-ratio-pdf" class="sketch-header-group ml-2 bg-slate-50" style="display: none;">
-                <button id="btn-ratio-landscape" class="px-3 py-1 text-xs font-bold rounded hover:bg-slate-100 text-slate-500 border-r-2 border-slate-700/20">橫式</button>
-                <button id="btn-ratio-portrait" class="px-3 py-1 text-xs font-bold rounded hover:bg-slate-100 text-indigo-700 active-ratio">直式</button>
+            <div id="group-ratio-pdf" class="sketch-header-group bg-slate-50" style="display: none;">
+                <button id="btn-ratio-landscape" class="px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-slate-500 border-r-2 border-slate-700/20">橫式</button>
+                <button id="btn-ratio-portrait" class="px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-indigo-700 active-ratio">直式</button>
             </div>
         </div>
 
-        <!-- Right: Actions -->
-        <div class="flex items-center gap-3">
-            <div class="flex gap-2 text-slate-400">
-                <button id="btn-undo" class="p-1 hover:text-slate-600 transition" title="復原"><i class="fas fa-undo"></i></button>
-                <button id="btn-redo" class="p-1 hover:text-slate-600 transition" title="重做"><i class="fas fa-redo"></i></button>
+        <!-- Right: Undo/Redo, Manual, Import, Export, Version -->
+        <div class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center gap-1 text-slate-500 mr-1">
+                <button id="btn-undo" class="w-7 h-7 rounded hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition text-xs" title="復原 (Ctrl+Z)"><i class="fas fa-undo"></i></button>
+                <button id="btn-redo" class="w-7 h-7 rounded hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition text-xs" title="重做 (Ctrl+Y)"><i class="fas fa-redo"></i></button>
             </div>
-            
-            <button id="btn-manual" class="sketch-btn ml-2 px-3 py-1.5 text-sm font-bold flex items-center gap-2 bg-blue-50 text-blue-700 border-blue-800" title="系統說明書">
-                <i class="fas fa-book"></i> 說明書
+
+            <button id="btn-manual" class="sketch-btn px-2.5 py-1 text-xs font-bold flex items-center gap-1.5 bg-blue-50 text-blue-700 border-blue-800 shadow-[1.5px_1.5px_0px_#334155]" title="系統說明書">
+                <i class="fas fa-book text-[11px]"></i> 說明書
             </button>
             
-            <div class="relative ml-4">
-                <button id="btn-export-dropdown" class="sketch-btn px-4 py-1.5 text-sm font-bold flex items-center gap-2 bg-purple-50 text-purple-700 border-purple-800">
-                    <i class="fas fa-download"></i> 匯出檔案
+            <button id="btn-import-project" class="sketch-btn px-2.5 py-1 text-xs font-bold flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-800 shadow-[1.5px_1.5px_0px_#334155]" title="匯入圖檔或專案">
+                <i class="fas fa-file-import text-[11px]"></i> 匯入
+            </button>
+            <input type="file" id="input-import-project" accept="image/*" class="hidden">
+
+            <div class="relative">
+                <button id="btn-export-dropdown" class="sketch-btn px-3 py-1 text-xs font-bold flex items-center gap-1.5 bg-purple-50 text-purple-700 border-purple-800 shadow-[1.5px_1.5px_0px_#334155]">
+                    <i class="fas fa-download text-[11px]"></i> 匯出 <i class="fas fa-chevron-down text-[9px] opacity-70"></i>
                 </button>
-                <div id="export-options" class="hidden absolute top-full right-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-xl z-50 overflow-hidden">
-                    <button class="w-full px-4 py-2 text-sm text-left hover:bg-slate-50 font-bold text-slate-700 flex items-center gap-2" data-export-type="json">
+                <div id="export-options" class="hidden absolute top-full right-0 mt-1 w-44 bg-white border border-slate-200 rounded-lg shadow-xl z-50 overflow-hidden">
+                    <button class="w-full px-3 py-1.5 text-xs text-left hover:bg-slate-50 font-bold text-slate-700 flex items-center gap-2" data-export-type="json">
                         <i class="fas fa-file-code text-indigo-500 w-4 text-center"></i> 匯出 JSON 專案
                     </button>
-                    <button class="w-full px-4 py-2 text-sm text-left hover:bg-slate-50 font-bold text-slate-700 flex items-center gap-2 border-t border-slate-100" data-export-type="image">
+                    <button class="w-full px-3 py-1.5 text-xs text-left hover:bg-slate-50 font-bold text-slate-700 flex items-center gap-2 border-t border-slate-100" data-export-type="image">
                         <i class="fas fa-image text-emerald-500 w-4 text-center"></i> 匯出 PNG 圖片
                     </button>
-                    <button class="w-full px-4 py-2 text-sm text-left hover:bg-slate-50 font-bold text-slate-700 flex items-center gap-2 border-t border-slate-100" data-export-type="pdf">
+                    <button class="w-full px-3 py-1.5 text-xs text-left hover:bg-slate-50 font-bold text-slate-700 flex items-center gap-2 border-t border-slate-100" data-export-type="pdf">
                         <i class="fas fa-file-pdf text-rose-500 w-4 text-center"></i> 匯出 PDF 文件
                     </button>
-                    <button class="w-full px-4 py-2 text-sm text-left hover:bg-slate-50 font-bold text-slate-700 flex items-center gap-2 border-t border-slate-100" data-export-type="ppt">
+                    <button class="w-full px-3 py-1.5 text-xs text-left hover:bg-slate-50 font-bold text-slate-700 flex items-center gap-2 border-t border-slate-100" data-export-type="ppt">
                         <i class="fas fa-file-powerpoint text-orange-500 w-4 text-center"></i> 匯出 PPTX 簡報
                     </button>
                 </div>
             </div>
-            
-            <button id="btn-import-project" class="sketch-btn px-4 py-1.5 text-sm font-bold flex items-center gap-2 bg-emerald-50 text-emerald-700 border-emerald-800">
-                <i class="fas fa-file-import"></i> 匯入檔案
-            </button>
-            <input type="file" id="input-import-project" accept="image/*" class="hidden">
-            
-            <div class="sketch-header-group ml-2">
-                <button id="tab-image-workspace" class="px-4 py-1.5 text-xs font-bold hover:bg-slate-100 text-slate-600 border-r-2 border-slate-700/20">圖片</button>
-                <button id="tab-pdf-workspace" class="px-4 py-1.5 text-xs font-bold bg-indigo-50 text-indigo-700">簡報/PDF</button>
-            </div>
+
+            <span id="app-version-badge" class="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-mono hidden"></span>
         </div>
     </header>
 
