@@ -62,7 +62,7 @@ export default class DashboardManager {
                     <div>
                         <div class="flex items-center space-x-2">
                             <h1 class="text-2xl font-black text-slate-800 tracking-wide">專案儀表板</h1>
-                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200">檔案管理 v1.2</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200">檔案管理 v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.2.2'}</span>
                         </div>
                         <p class="text-xs text-slate-500 font-medium">隨時管理、複製、刪除或開啟您的多媒體專案</p>
                     </div>
@@ -462,9 +462,22 @@ export default class DashboardManager {
             const isPdf = proj.type === 'PDF';
             const pageCount = (proj.pages && proj.pages.length) ? proj.pages.length : Object.keys(proj.pageStates || {}).length || 1;
 
-            const thumbnailContent = proj.coverThumbnail
+            // 確保縮圖優先呈現第 1 頁 (即使曾暫存於其他頁面)
+            let coverSrc = proj.coverThumbnail;
+            if (!coverSrc && proj.pages && proj.pages.length > 0 && proj.pages[0].thumbnail) {
+                coverSrc = proj.pages[0].thumbnail;
+            }
+            if (!coverSrc && proj.pageStates) {
+                const pids = Object.keys(proj.pageStates);
+                if (pids.length > 0 && Array.isArray(proj.pageStates[pids[0]])) {
+                    const bgObj = proj.pageStates[pids[0]].find(o => o.type === 'image' && o.src);
+                    if (bgObj && bgObj.src) coverSrc = bgObj.src;
+                }
+            }
+
+            const thumbnailContent = coverSrc
                 ? `<div class="w-full h-full flex items-center justify-center p-3">
-                     <img src="${proj.coverThumbnail}" class="max-h-full max-w-full object-contain rounded-md shadow-sm border border-slate-300/80 bg-white" alt="${proj.name}">
+                     <img src="${coverSrc}" class="max-h-full max-w-full object-contain rounded-md shadow-sm border border-slate-300/80 bg-white" alt="${proj.name}">
                    </div>`
                 : `<div class="w-full h-full flex items-center justify-center p-3">
                      <div class="w-28 h-20 rounded-md border border-slate-300/80 bg-white shadow-sm flex flex-col items-center justify-center text-slate-400">
@@ -626,11 +639,12 @@ export default class DashboardManager {
             this.canvasEngine.pageStates[activePageId] = [];
         }
 
-        // 觸發專案載入事件，讓 ThumbnailsPanel 更新縮圖清單
+        // 觸發專案載入事件，讓 ThumbnailsPanel 更新縮圖清單並傳遞已存在的頁面縮圖
         this.eventBus.emit('PROJECT:IMPORTED', {
             projectData: {
                 pageStates: this.canvasEngine.pageStates,
-                currentPageId: activePageId
+                currentPageId: activePageId,
+                pages: project.pages || []
             }
         });
 
@@ -711,12 +725,12 @@ export default class DashboardManager {
         if (!currentProj) return;
 
         // 產生居中乾淨的底板縮圖 (避免平移偏移與黑邊)
-        let coverThumbnail = null;
+        let currentThumbnail = null;
         try {
             if (typeof this.canvasEngine.getArtboardThumbnailDataURL === 'function') {
-                coverThumbnail = this.canvasEngine.getArtboardThumbnailDataURL(0.25);
+                currentThumbnail = this.canvasEngine.getArtboardThumbnailDataURL(0.25);
             } else {
-                coverThumbnail = this.canvasEngine.canvas.toDataURL({
+                currentThumbnail = this.canvasEngine.canvas.toDataURL({
                     format: 'jpeg',
                     quality: 0.6,
                     multiplier: 0.2
@@ -726,8 +740,40 @@ export default class DashboardManager {
             console.warn('[DashboardManager] 縮圖生成略過 (可能含跨域圖片)');
         }
 
-        currentProj.coverThumbnail = coverThumbnail || currentProj.coverThumbnail;
-        currentProj.currentPageId = this.canvasEngine.currentPageId;
+        const pageIds = Object.keys(this.canvasEngine.pageStates || {});
+        const firstPageId = pageIds[0] || 'page-1';
+        const currentPageId = this.canvasEngine.currentPageId || firstPageId;
+        const isEditingFirstPage = (currentPageId === firstPageId);
+
+        // 專案卡片縮圖固定鎖定在「第 1 頁 (首頁)」：
+        // 只有當前正在編輯第 1 頁、或專案原本無封面縮圖時，才更新 coverThumbnail
+        if (currentThumbnail) {
+            if (isEditingFirstPage || !currentProj.coverThumbnail) {
+                currentProj.coverThumbnail = currentThumbnail;
+            }
+        }
+
+        // 同步更新每一頁在 pages 陣列中的個別縮圖
+        const updatedPages = (currentProj.pages || []).slice();
+        pageIds.forEach((pid) => {
+            let pageEntry = updatedPages.find(p => p.id === pid);
+            if (!pageEntry) {
+                pageEntry = { id: pid, active: pid === currentPageId, thumbnail: null };
+                updatedPages.push(pageEntry);
+            }
+            if (pid === currentPageId && currentThumbnail) {
+                pageEntry.thumbnail = currentThumbnail;
+            }
+            pageEntry.active = (pid === currentPageId);
+        });
+
+        // 若無封面縮圖但第 1 頁有縮圖，則指派第 1 頁為封面
+        if (!currentProj.coverThumbnail && updatedPages.length > 0 && updatedPages[0].thumbnail) {
+            currentProj.coverThumbnail = updatedPages[0].thumbnail;
+        }
+
+        currentProj.pages = updatedPages;
+        currentProj.currentPageId = currentPageId;
         currentProj.pageStates = this.canvasEngine.pageStates;
         currentProj.pageSizes = this.canvasEngine.pageSizes || {};
         currentProj.type = this.workspaceManager ? this.workspaceManager.currentMode : (currentProj.type || 'PDF');

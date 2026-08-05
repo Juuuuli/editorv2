@@ -299,10 +299,17 @@ export default class FileImportManager {
             this.canvasEngine.pageSizes = pageSizes; // 儲存頁面大小，供 CanvasEngine 參考
             
             // 觸發專案匯入事件，ThumbnailsPanel 會接收並建立頁面列表
+            const importedPages = pageIds.map((pid, idx) => ({
+                id: pid,
+                active: idx === 0,
+                thumbnail: thumbnails[pid] || null
+            }));
+
             this.eventBus.emit('PROJECT:IMPORTED', { 
                 projectData: { 
                     pageStates: pageStates, 
-                    currentPageId: pageIds[0] 
+                    currentPageId: pageIds[0],
+                    pages: importedPages
                 } 
             });
 
@@ -317,6 +324,7 @@ export default class FileImportManager {
                     dataUrl: thumbnails[pageId] 
                 });
             }
+            this.eventBus.emit('CANVAS:DIRTY', true);
         } catch (error) {
             console.error('Error importing PDF:', error);
             alert('讀取 PDF 失敗');

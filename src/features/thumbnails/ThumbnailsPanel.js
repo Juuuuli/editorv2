@@ -60,14 +60,28 @@ export default class ThumbnailsPanel {
                 }
             });
         }
-        // 處理匯入專案時的重構
+        // 處理匯入/開啟專案時的重構
         this.eventBus.on('PROJECT:IMPORTED', ({ projectData }) => {
             if (projectData && projectData.pageStates) {
-                this.pages = Object.keys(projectData.pageStates).map(id => ({
-                    id: id,
-                    active: id === projectData.currentPageId,
-                    thumbnail: null
-                }));
+                const incomingPages = projectData.pages || [];
+                this.pages = Object.keys(projectData.pageStates).map(id => {
+                    const existing = incomingPages.find(p => p.id === id);
+                    let thumb = existing ? existing.thumbnail : null;
+                    
+                    // 若無儲存的縮圖，嘗試直接從該頁畫布物件中提取背景圖 (PDF / PPT / 圖片)
+                    if (!thumb && projectData.pageStates[id]) {
+                        const bgImg = projectData.pageStates[id].find(o => o.type === 'image' && o.src);
+                        if (bgImg && bgImg.src) {
+                            thumb = bgImg.src;
+                        }
+                    }
+
+                    return {
+                        id: id,
+                        active: id === projectData.currentPageId,
+                        thumbnail: thumb || null
+                    };
+                });
                 // 確保至少有一頁 active
                 if (!this.pages.find(p => p.active) && this.pages.length > 0) {
                     this.pages[0].active = true;
