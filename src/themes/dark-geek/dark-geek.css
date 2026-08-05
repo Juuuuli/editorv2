@@ -1,0 +1,540 @@
+/* ==========================================================================
+   🌙 深色極客 (Dark Geek / Midnight Studio) - 獨立風格模組
+   ========================================================================== */
+
+/* 全域底色與預設文字 */
+[data-theme="dark"], body.theme-dark {
+  background-color: #090d16 !important;
+  color: #f8fafc !important;
+}
+
+/* 頂部 Header 列 */
+[data-theme="dark"] header {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+/* 頂部左側：首頁按鈕、專案名稱、自動儲存狀態 */
+[data-theme="dark"] #btn-back-to-dashboard {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+  box-shadow: 2px 2px 0px #020617 !important;
+}
+[data-theme="dark"] #btn-back-to-dashboard i {
+  color: #818cf8 !important;
+}
+[data-theme="dark"] header .bg-slate-300 {
+  background-color: #334155 !important;
+}
+[data-theme="dark"] #current-project-title-display {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] #current-project-title-display:hover {
+  color: #818cf8 !important;
+  border-color: #6366f1 !important;
+}
+[data-theme="dark"] #current-project-title-input {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #818cf8 !important;
+}
+[data-theme="dark"] #auto-save-indicator {
+  background-color: rgba(6, 78, 59, 0.4) !important;
+  color: #34d399 !important;
+  border-color: #065f46 !important;
+}
+
+/* 頂部中間：工作區切換與比例 */
+[data-theme="dark"] .sketch-header-group {
+  background-color: #0b1120 !important;
+  border-color: #334155 !important;
+}
+[data-theme="dark"] #tab-image-workspace,
+[data-theme="dark"] #tab-pdf-workspace {
+  color: #94a3b8 !important;
+  background-color: transparent !important;
+}
+[data-theme="dark"] #tab-image-workspace.bg-indigo-50,
+[data-theme="dark"] #tab-pdf-workspace.bg-indigo-50 {
+  background-color: #1e293b !important;
+  color: #818cf8 !important;
+}
+[data-theme="dark"] #group-ratio-image,
+[data-theme="dark"] #group-ratio-pdf {
+  background-color: #0b1120 !important;
+  border-color: #334155 !important;
+}
+[data-theme="dark"] #group-ratio-image button,
+[data-theme="dark"] #group-ratio-pdf button {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] #group-ratio-image button.active-ratio,
+[data-theme="dark"] #group-ratio-pdf button.active-ratio {
+  background-color: #1e293b !important;
+  color: #818cf8 !important;
+}
+
+/* 頂部右側：復原、說明書、匯入、匯出、設定 */
+[data-theme="dark"] #btn-undo,
+[data-theme="dark"] #btn-redo {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] #btn-undo:hover,
+[data-theme="dark"] #btn-redo:hover {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] #btn-manual {
+  background-color: #1e293b !important;
+  color: #60a5fa !important;
+  border-color: #1e3a8a !important;
+}
+[data-theme="dark"] #btn-import-project {
+  background-color: #1e293b !important;
+  color: #34d399 !important;
+  border-color: #065f46 !important;
+}
+[data-theme="dark"] #btn-export-dropdown {
+  background-color: #1e293b !important;
+  color: #c084fc !important;
+  border-color: #581c87 !important;
+}
+[data-theme="dark"] #btn-header-settings {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+[data-theme="dark"] #app-version-badge {
+  background-color: #1e293b !important;
+  color: #94a3b8 !important;
+  border-color: #334155 !important;
+}
+
+/* 左側邊欄與標籤 (Unified Left Sidebar & Tabs) */
+[data-theme="dark"] aside {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] #sidebar-tabs {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+/* 所有標籤按鈕統一底色，避免單一標籤突兀變色 */
+[data-theme="dark"] .tab-btn {
+  background-color: #0f172a !important;
+  color: #94a3b8 !important;
+  border-bottom-color: transparent !important;
+}
+
+[data-theme="dark"] .tab-btn:hover {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .tab-btn.active,
+[data-theme="dark"] #sidebar-tabs .border-indigo-500 {
+  background-color: #0f172a !important;
+  color: #818cf8 !important;
+  border-bottom-color: #6366f1 !important;
+}
+
+/* 左側面板內容區 */
+[data-theme="dark"] .sidebar-panel,
+[data-theme="dark"] #panel-tools,
+[data-theme="dark"] #panel-properties,
+[data-theme="dark"] #panel-assets,
+[data-theme="dark"] #panel-layers {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .sidebar-panel h3 {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .sidebar-panel .sketch-panel,
+[data-theme="dark"] .sidebar-panel .bg-slate-50\/50,
+[data-theme="dark"] .sidebar-panel .bg-slate-50 {
+  background-color: #141e33 !important;
+  border-color: #334155 !important;
+}
+
+/* 圖層面板項目 (Layers Panel) */
+[data-theme="dark"] .layer-item {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .layer-item:hover {
+  background-color: #243247 !important;
+  border-color: #6366f1 !important;
+}
+[data-theme="dark"] .layer-item.bg-indigo-50 {
+  background-color: #2e3a52 !important;
+  border-color: #818cf8 !important;
+}
+[data-theme="dark"] .layer-item span,
+[data-theme="dark"] .layer-item .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+/* 空狀態提示文字 */
+[data-theme="dark"] #prop-empty-state,
+[data-theme="dark"] #panel-layers .text-slate-500,
+[data-theme="dark"] #panel-assets .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+/* 一般通用 Sketch 元件深色風格 */
+[data-theme="dark"] .sketch {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .sketch-panel {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .sketch-btn {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+  box-shadow: 2px 2px 0px #020617 !important;
+}
+
+[data-theme="dark"] .sketch-btn:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  border-color: #818cf8 !important;
+  box-shadow: 3px 3px 0px #020617 !important;
+}
+
+/* 中間畫布工作區 (Canvas Area) */
+[data-theme="dark"] .canvas-bg {
+  background-color: #090d16 !important;
+  background-image: linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px) !important;
+}
+
+/* 右側頁面縮圖清單 (Right Thumbnails Panel) */
+[data-theme="dark"] #thumbnails-container {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] #thumbnails-container > div:first-child {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] #thumbnails-count {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] #btn-add-page {
+  background-color: #1e293b !important;
+  color: #818cf8 !important;
+  border-color: #475569 !important;
+}
+
+[data-theme="dark"] #thumbnails-list {
+  background-color: #090d16 !important;
+}
+
+[data-theme="dark"] .page-item {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 2px 2px 0px #020617 !important;
+}
+
+[data-theme="dark"] .page-item:hover {
+  background-color: #243247 !important;
+  border-color: #6366f1 !important;
+}
+
+[data-theme="dark"] .page-item.bg-blue-50 {
+  background-color: #1e293b !important;
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 0 2px #6366f1, 3px 3px 0px #020617 !important;
+}
+
+[data-theme="dark"] .page-item-title,
+[data-theme="dark"] .page-item .text-slate-700,
+[data-theme="dark"] .page-item .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .copy-page-btn,
+[data-theme="dark"] .delete-page-btn {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .copy-page-btn {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .copy-page-btn:hover {
+  color: #ffffff !important;
+  background-color: #334155 !important;
+}
+
+/* 儀表板深色適配 (Dashboard in Dark Mode) */
+[data-theme="dark"] #dashboard-view {
+  background-color: #090d16 !important;
+  background: radial-gradient(circle at top, #111827 0%, #090d16 100%) !important;
+}
+
+[data-theme="dark"] #dashboard-view header {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] #dashboard-view h1,
+[data-theme="dark"] #dashboard-view h2,
+[data-theme="dark"] #dashboard-view h3 {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] #dashboard-search-input {
+  background-color: #0b1120 !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] #dashboard-search-input:focus {
+  background-color: #1e293b !important;
+  border-color: #818cf8 !important;
+}
+
+[data-theme="dark"] .dashboard-filter-btn {
+  background-color: #1e293b !important;
+  color: #94a3b8 !important;
+  border: 1px solid #334155 !important;
+}
+
+[data-theme="dark"] .dashboard-filter-btn:hover {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+/* 專案卡片深色修復 (Dashboard Project Cards) */
+[data-theme="dark"] .project-card,
+[data-theme="dark"] .glass-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 4px 4px 0px #020617 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .project-card:hover,
+[data-theme="dark"] .glass-card:hover {
+  border-color: #818cf8 !important;
+  box-shadow: 6px 6px 0px #020617 !important;
+}
+
+[data-theme="dark"] .project-card-thumbnail {
+  background-color: #0b1120 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .project-card-thumbnail:hover {
+  background-color: #111a2e !important;
+}
+
+[data-theme="dark"] .project-card-info {
+  background-color: #1e293b !important;
+}
+
+[data-theme="dark"] .project-card-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .project-card-date {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .project-page-badge {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .btn-card-menu {
+  background-color: #0f172a !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .card-dropdown {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+  box-shadow: 3px 3px 0px #020617 !important;
+}
+
+[data-theme="dark"] .card-dropdown button {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .card-dropdown button:hover {
+  background-color: #334155 !important;
+  color: #818cf8 !important;
+}
+
+/* 系統設定彈窗深色適配 (Settings Modal in Dark Mode) */
+[data-theme="dark"] .settings-modal-card {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  box-shadow: 8px 8px 0px #020617 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .settings-modal-header {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .modal-header-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .modal-header-subtitle {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .settings-modal-sidebar {
+  background-color: #0b1120 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .settings-modal-content {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .settings-modal-footer {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .modal-footer-tip {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .settings-tab-btn {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .settings-tab-btn:hover {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .settings-tab-btn.active {
+  background-color: #1e293b !important;
+  color: #818cf8 !important;
+  border: 1px solid #6366f1 !important;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.25) !important;
+}
+
+[data-theme="dark"] .panel-section-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .setting-card-item {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .setting-card-item:hover {
+  background-color: #243247 !important;
+}
+
+[data-theme="dark"] .setting-item-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .setting-item-desc {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .modal-about-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .modal-about-version {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .modal-about-box {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+/* 新建專案彈窗深色適配 */
+[data-theme="dark"] #modal-create-project > div {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+  box-shadow: 6px 6px 0px #020617 !important;
+}
+
+[data-theme="dark"] #modal-create-project input {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] #modal-create-project .template-card {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] #modal-create-project .template-card:hover {
+  border-color: #6366f1 !important;
+  background-color: #131c2e !important;
+}
+
+[data-theme="dark"] #modal-create-project .template-card.border-indigo-600 {
+  border-color: #6366f1 !important;
+  background-color: rgba(99, 102, 241, 0.15) !important;
+}
+
+[data-theme="dark"] #modal-create-project .template-card div {
+  color: #f8fafc !important;
+}
+
+/* 雜項元件與文字 */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] #export-options,
+[data-theme="dark"] #context-menu {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] #export-options button:hover {
+  background-color: #334155 !important;
+  color: #818cf8 !important;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

@@ -1,0 +1,27 @@
+/* ==========================================================================
+   💼 專業冷灰 (Pro Slate) - 獨立風格模組
+   ========================================================================== */
+
+[data-theme="pro-slate"], body.theme-pro-slate {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="pro-slate"] header,
+[data-theme="pro-slate"] aside,
+[data-theme="pro-slate"] .sketch-panel,
+[data-theme="pro-slate"] .glass-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="pro-slate"] .sketch-btn {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+[data-theme="pro-slate"] .canvas-bg {
+  background-color: #0b0f19 !important;
+}

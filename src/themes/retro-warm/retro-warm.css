@@ -1,0 +1,28 @@
+/* ==========================================================================
+   📜 復古文青 (Retro Warm) - 獨立風格模組
+   ========================================================================== */
+
+[data-theme="retro-warm"], body.theme-retro-warm {
+  background-color: #f7f3e8 !important;
+  color: #453426 !important;
+}
+
+[data-theme="retro-warm"] header,
+[data-theme="retro-warm"] aside,
+[data-theme="retro-warm"] .sketch-panel,
+[data-theme="retro-warm"] .glass-card {
+  background-color: #fffdfa !important;
+  border-color: #6b5344 !important;
+  color: #453426 !important;
+}
+
+[data-theme="retro-warm"] .sketch-btn {
+  background-color: #fcf9f2 !important;
+  color: #523e30 !important;
+  border-color: #6b5344 !important;
+}
+
+[data-theme="retro-warm"] .canvas-bg {
+  background-color: #f2ebd9 !important;
+  background-image: linear-gradient(to right, #e3d8c1 1px, transparent 1px), linear-gradient(to bottom, #e3d8c1 1px, transparent 1px) !important;
+}

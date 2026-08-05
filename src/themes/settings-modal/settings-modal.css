@@ -1,0 +1,81 @@
+/* ==========================================================================
+   系統設定彈窗與主題卡片隔離樣式模組
+   ========================================================================== */
+.settings-modal-card {
+  width: 720px !important;
+  height: 520px !important;
+  max-width: 94vw !important;
+  max-height: 90vh !important;
+  box-sizing: border-box !important;
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+.settings-modal-header {
+  background-color: #f8fafc;
+  border-color: #334155;
+}
+
+.settings-modal-sidebar {
+  background-color: #f1f5f9;
+  border-color: #334155;
+}
+
+.settings-modal-content {
+  background-color: #ffffff;
+}
+
+.settings-modal-footer {
+  background-color: #f8fafc;
+  border-color: #334155;
+}
+
+.settings-tab-btn {
+  color: #64748b;
+}
+
+.settings-tab-btn:hover {
+  background-color: rgba(203, 213, 225, 0.6);
+  color: #1e293b;
+}
+
+.settings-tab-btn.active {
+  background-color: #e0e7ff !important;
+  color: #4338ca !important;
+  border: 1px solid #c7d2fe !important;
+}
+
+/* ==========================================================================
+   主題預覽卡片色彩隔離（保證在任何主題下字體與背景皆清晰可見）
+   ========================================================================== */
+.theme-preview-dark {
+  background-color: #0b1120 !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+.theme-preview-dark .theme-card-title { color: #f8fafc !important; }
+.theme-preview-dark .theme-card-desc { color: #94a3b8 !important; }
+
+.theme-preview-light {
+  background-color: #ffffff !important;
+  border-color: #334155 !important;
+  color: #1e293b !important;
+}
+.theme-preview-light .theme-card-title { color: #1e293b !important; }
+.theme-preview-light .theme-card-desc { color: #64748b !important; }
+
+.theme-preview-pro {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+.theme-preview-pro .theme-card-title { color: #f8fafc !important; }
+.theme-preview-pro .theme-card-desc { color: #94a3b8 !important; }
+
+.theme-preview-retro {
+  background-color: #fdfbf7 !important;
+  border-color: #78553d !important;
+  color: #453426 !important;
+}
+.theme-preview-retro .theme-card-title { color: #453426 !important; }
+.theme-preview-retro .theme-card-desc { color: #786450 !important; }
