@@ -1,331 +1,895 @@
 /* ==========================================================================
-   系統與外觀設定彈窗 (Universal Settings Modal Styles)
-   特色：所有主題下維持統一的深色工作站外觀，讓 4 種主題預覽卡片具備最高辨識度
+   ⚙️ 系統設定彈窗與金鑰保險箱多風格適配模組 (Settings Modal & API Vault Multi-Theme)
+   支援風格：經典手繪 (Light), 深色極客 (Dark), 專業冷灰 (Pro-Slate), 復古文青 (Retro-Warm)
    ========================================================================== */
 
-/* 彈窗主體卡片 - 鎖定尺寸，禁止隨內容自動縮放 */
-.settings-modal-card,
-[data-theme] .settings-modal-card {
-  width: 760px !important;
-  height: 540px !important;
-  max-width: 95vw !important;
-  max-height: 90vh !important;
-  box-sizing: border-box !important;
-  background-color: #162032 !important;
-  border: 1px solid #334155 !important;
-  border-radius: 16px !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65) !important;
-  color: #f8fafc !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
+/* --------------------------------------------------------------------------
+   0. 📐 固定長寬尺寸鎖定 (Fixed Dimensions Lock)
+   無論內容多寡、分頁切換，介面長寬始終完全鎖定，內容超出自動於中段垂直滾動
+   -------------------------------------------------------------------------- */
+.settings-modal-card {
+    width: 760px !important;
+    height: 540px !important;
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
-/* 頂部標題列 */
-.settings-modal-header,
-[data-theme] .settings-modal-header {
-  background-color: #0f172a !important;
-  border-bottom: 1px solid #334155 !important;
-  padding: 16px 20px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
+#api-vault-card {
+    width: 580px !important;
+    height: 560px !important;
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
-.modal-header-title,
-[data-theme] .modal-header-title {
-  color: #f8fafc !important;
-  font-weight: 700 !important;
-  font-size: 16px !important;
-}
-
-.modal-header-subtitle,
-[data-theme] .modal-header-subtitle {
-  color: #94a3b8 !important;
-  font-size: 12px !important;
-}
-
-/* 左側分頁選單邊欄 */
-.settings-modal-sidebar,
-[data-theme] .settings-modal-sidebar {
-  background-color: #0b101b !important;
-  border-right: 1px solid #334155 !important;
-  width: 180px !important;
-  flex-shrink: 0 !important;
-  padding: 12px !important;
-}
-
-.settings-tab-btn,
-[data-theme] .settings-tab-btn {
-  color: #94a3b8 !important;
-  border-radius: 8px !important;
-  padding: 10px 14px !important;
-  font-weight: 600 !important;
-  font-size: 13px !important;
-  transition: all 0.15s ease !important;
-  border: 1px solid transparent !important;
-}
-
-.settings-tab-btn:hover,
-[data-theme] .settings-tab-btn:hover {
-  background-color: #162032 !important;
-  color: #f8fafc !important;
-}
-
-.settings-tab-btn.active,
-[data-theme] .settings-tab-btn.active {
-  background-color: #162032 !important;
-  color: #38bdf8 !important;
-  border: 1px solid #0284c7 !important;
-  box-shadow: 0 0 12px rgba(2, 132, 199, 0.25) !important;
-}
-
-/* 右側主要設定內容區 */
-.settings-modal-content,
-[data-theme] .settings-modal-content {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
-  padding: 20px !important;
-  flex: 1 !important;
-  overflow-y: auto !important;
-}
-
-.panel-section-title,
-[data-theme] .panel-section-title {
-  color: #f8fafc !important;
-  font-weight: 700 !important;
-  font-size: 14px !important;
-  margin-bottom: 12px !important;
-}
-
-/* 底部操作列 */
-.settings-modal-footer,
-[data-theme] .settings-modal-footer {
-  background-color: #0f172a !important;
-  border-top: 1px solid #334155 !important;
-  padding: 14px 20px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-}
-
-.modal-footer-tip,
-[data-theme] .modal-footer-tip {
-  color: #94a3b8 !important;
-  font-size: 12px !important;
-}
-
+/* 關閉按鈕通用平滑樣式 */
 #btn-close-settings-modal,
-[data-theme] #btn-close-settings-modal {
-  background-color: transparent !important;
-  color: #94a3b8 !important;
-  border-radius: 9999px !important;
-  transition: all 0.15s ease !important;
-}
-#btn-close-settings-modal:hover,
-[data-theme] #btn-close-settings-modal:hover {
-  background-color: #1e293b !important;
-  color: #ffffff !important;
+#btn-close-api-vault {
+    background-color: transparent !important;
+    border-radius: 9999px !important;
+    transition: all 0.15s ease !important;
 }
 
-#btn-save-settings-modal,
-[data-theme] #btn-save-settings-modal {
-  background-color: #4f46e5 !important;
-  color: #ffffff !important;
-  border: 1px solid #6366f1 !important;
-  border-radius: 8px !important;
-  font-weight: 700 !important;
-  padding: 8px 20px !important;
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4) !important;
-  transition: all 0.15s ease !important;
-}
-#btn-save-settings-modal:hover,
-[data-theme] #btn-save-settings-modal:hover {
-  background-color: #4338ca !important;
-}
 
 /* --------------------------------------------------------------------------
-   設定內部其他面板項目（畫布輔助、關於系統）
+   1. 🎨 經典手繪 (Light Sketch) - [data-theme="light"] 或預設
+   特色：純白底卡片、2.5px 手繪黑線邊框、硬陰影、亮黃手繪按鈕與活潑標籤
    -------------------------------------------------------------------------- */
-.setting-card-item,
-[data-theme] .setting-card-item {
-  background-color: #162032 !important;
-  border: 1px solid #334155 !important;
-  border-radius: 10px !important;
-  padding: 14px 16px !important;
+[data-theme="light"] #settings-modal-overlay,
+[data-theme="light"] #api-vault-modal,
+body:not([data-theme]) #settings-modal-overlay,
+body:not([data-theme]) #api-vault-modal {
+    background-color: rgba(15, 23, 42, 0.45) !important;
+    backdrop-filter: blur(4px) !important;
 }
 
-.setting-item-title,
-[data-theme] .setting-item-title {
-  color: #f8fafc !important;
-  font-weight: 600 !important;
+[data-theme="light"] .settings-modal-card,
+[data-theme="light"] #api-vault-card,
+body:not([data-theme]) .settings-modal-card,
+body:not([data-theme]) #api-vault-card {
+    background-color: #ffffff !important;
+    border: 2.5px solid #1e293b !important;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px !important;
+    box-shadow: 6px 6px 0px #1e293b !important;
+    color: #0f172a !important;
 }
 
-.setting-item-desc,
-[data-theme] .setting-item-desc {
-  color: #94a3b8 !important;
-  font-size: 12px !important;
+[data-theme="light"] .settings-modal-header,
+[data-theme="light"] #api-vault-header,
+body:not([data-theme]) .settings-modal-header,
+body:not([data-theme]) #api-vault-header {
+    background-color: #ffffff !important;
+    border-bottom: 2.5px solid #1e293b !important;
+    color: #0f172a !important;
 }
 
-.modal-about-title,
-[data-theme] .modal-about-title {
-  color: #f8fafc !important;
-  font-weight: 700 !important;
+[data-theme="light"] .modal-header-title,
+[data-theme="light"] #api-vault-title,
+body:not([data-theme]) .modal-header-title,
+body:not([data-theme]) #api-vault-title {
+    color: #0f172a !important;
+    font-weight: 900 !important;
 }
 
-.modal-about-version,
-[data-theme] .modal-about-version {
-  color: #94a3b8 !important;
+[data-theme="light"] .modal-header-subtitle,
+[data-theme="light"] #api-vault-subtitle,
+body:not([data-theme]) .modal-header-subtitle,
+body:not([data-theme]) #api-vault-subtitle {
+    color: #64748b !important;
+    font-weight: 600 !important;
 }
 
-.modal-about-box,
-[data-theme] .modal-about-box {
-  background-color: #162032 !important;
-  border: 1px solid #334155 !important;
-  border-radius: 10px !important;
-  color: #e2e8f0 !important;
+[data-theme="light"] #api-vault-logo-box,
+body:not([data-theme]) #api-vault-logo-box {
+    background-color: #fef08a !important;
+    border: 2px solid #1e293b !important;
+    border-radius: 12px !important;
+    color: #854d0e !important;
+    box-shadow: 2px 2px 0px #1e293b !important;
 }
+
+[data-theme="light"] #btn-close-settings-modal,
+[data-theme="light"] #btn-close-api-vault,
+body:not([data-theme]) #btn-close-settings-modal,
+body:not([data-theme]) #btn-close-api-vault {
+    color: #64748b !important;
+}
+[data-theme="light"] #btn-close-settings-modal:hover,
+[data-theme="light"] #btn-close-api-vault:hover,
+body:not([data-theme]) #btn-close-settings-modal:hover,
+body:not([data-theme]) #btn-close-api-vault:hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .settings-modal-sidebar,
+body:not([data-theme]) .settings-modal-sidebar {
+    background-color: #f8fafc !important;
+    border-right: 2.5px solid #1e293b !important;
+}
+
+[data-theme="light"] .settings-tab-btn,
+body:not([data-theme]) .settings-tab-btn {
+    color: #475569 !important;
+    border: 1.5px solid transparent !important;
+    border-radius: 10px !important;
+}
+[data-theme="light"] .settings-tab-btn:hover,
+body:not([data-theme]) .settings-tab-btn:hover {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+[data-theme="light"] .settings-tab-btn.active,
+body:not([data-theme]) .settings-tab-btn.active {
+    background-color: #fde047 !important;
+    color: #0f172a !important;
+    border: 2px solid #1e293b !important;
+    box-shadow: 2px 2px 0px #1e293b !important;
+    font-weight: 900 !important;
+}
+
+[data-theme="light"] .settings-modal-content,
+[data-theme="light"] #api-vault-body,
+body:not([data-theme]) .settings-modal-content,
+body:not([data-theme]) #api-vault-body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .panel-section-title,
+[data-theme="light"] .vault-card-label,
+body:not([data-theme]) .panel-section-title,
+body:not([data-theme]) .vault-card-label {
+    color: #0f172a !important;
+    font-weight: 900 !important;
+}
+
+[data-theme="light"] .setting-card-item,
+[data-theme="light"] .vault-section-card,
+[data-theme="light"] .modal-about-box,
+body:not([data-theme]) .setting-card-item,
+body:not([data-theme]) .vault-section-card,
+body:not([data-theme]) .modal-about-box {
+    background-color: #f8fafc !important;
+    border: 2px solid #1e293b !important;
+    border-radius: 12px !important;
+    color: #0f172a !important;
+    box-shadow: 2px 2px 0px rgba(30, 41, 59, 0.08) !important;
+}
+
+[data-theme="light"] .setting-item-title,
+body:not([data-theme]) .setting-item-title {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+[data-theme="light"] .setting-item-desc,
+[data-theme="light"] .vault-card-desc,
+[data-theme="light"] .modal-about-version,
+body:not([data-theme]) .setting-item-desc,
+body:not([data-theme]) .vault-card-desc,
+body:not([data-theme]) .modal-about-version {
+    color: #64748b !important;
+}
+
+[data-theme="light"] .vault-input-field,
+body:not([data-theme]) .vault-input-field {
+    background-color: #ffffff !important;
+    border: 2px solid #1e293b !important;
+    border-radius: 10px !important;
+    color: #0f172a !important;
+    box-shadow: 1.5px 1.5px 0px rgba(30, 41, 59, 0.08) !important;
+}
+[data-theme="light"] .vault-input-field:focus,
+body:not([data-theme]) .vault-input-field:focus {
+    background-color: #ffffff !important;
+    border-color: #f59e0b !important;
+    box-shadow: 2.5px 2.5px 0px #1e293b !important;
+}
+
+[data-theme="light"] .vault-sub-label,
+body:not([data-theme]) .vault-sub-label {
+    color: #334155 !important;
+}
+
+[data-theme="light"] .vault-badge-active,
+body:not([data-theme]) .vault-badge-active {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    border: 1px solid #86efac !important;
+}
+[data-theme="light"] .vault-badge-preview,
+body:not([data-theme]) .vault-badge-preview {
+    background-color: #f3e8ff !important;
+    color: #6b21a8 !important;
+    border: 1px solid #d8b4fe !important;
+}
+
+[data-theme="light"] .settings-modal-footer,
+[data-theme="light"] #api-vault-footer,
+body:not([data-theme]) .settings-modal-footer,
+body:not([data-theme]) #api-vault-footer {
+    background-color: #f8fafc !important;
+    border-top: 2.5px solid #1e293b !important;
+}
+
+[data-theme="light"] .modal-footer-tip,
+body:not([data-theme]) .modal-footer-tip {
+    color: #64748b !important;
+}
+
+[data-theme="light"] #btn-cancel-api-vault,
+body:not([data-theme]) #btn-cancel-api-vault {
+    color: #64748b !important;
+    border: 1.5px solid transparent !important;
+}
+[data-theme="light"] #btn-cancel-api-vault:hover,
+body:not([data-theme]) #btn-cancel-api-vault:hover {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+[data-theme="light"] #btn-save-settings-modal,
+[data-theme="light"] #btn-save-api-vault,
+body:not([data-theme]) #btn-save-settings-modal,
+body:not([data-theme]) #btn-save-api-vault {
+    background-color: #fde047 !important;
+    color: #0f172a !important;
+    border: 2px solid #1e293b !important;
+    border-radius: 12px !important;
+    box-shadow: 3px 3px 0px #1e293b !important;
+    font-weight: 900 !important;
+}
+[data-theme="light"] #btn-save-settings-modal:hover,
+[data-theme="light"] #btn-save-api-vault:hover,
+body:not([data-theme]) #btn-save-settings-modal:hover,
+body:not([data-theme]) #btn-save-api-vault:hover {
+    background-color: #facc15 !important;
+    transform: translate(1px, 1px) !important;
+    box-shadow: 2px 2px 0px #1e293b !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. 🌙 深色極客 (Dark Geek) - [data-theme="dark"]
+   特色：曜石黑底、霓虹藍細邊框、光暈發光陰影、科技暗夜感
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] #settings-modal-overlay,
+[data-theme="dark"] #api-vault-modal {
+    background-color: rgba(2, 6, 23, 0.85) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+[data-theme="dark"] .settings-modal-card,
+[data-theme="dark"] #api-vault-card {
+    background-color: #0b1120 !important;
+    border: 1.5px solid rgba(99, 102, 241, 0.4) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.25), inset 0 0 20px rgba(56, 189, 248, 0.05) !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .settings-modal-header,
+[data-theme="dark"] #api-vault-header {
+    background: linear-gradient(135deg, #090d16 0%, #1e1b4b 100%) !important;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.3) !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .modal-header-title,
+[data-theme="dark"] #api-vault-title {
+    color: #f8fafc !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    letter-spacing: -0.02em !important;
+}
+
+[data-theme="dark"] .modal-header-subtitle,
+[data-theme="dark"] #api-vault-subtitle {
+    color: #38bdf8 !important;
+    font-family: monospace !important;
+}
+
+[data-theme="dark"] #api-vault-logo-box {
+    background-color: rgba(99, 102, 241, 0.2) !important;
+    border: 1.5px solid #38bdf8 !important;
+    border-radius: 12px !important;
+    color: #38bdf8 !important;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4) !important;
+}
+
+[data-theme="dark"] #btn-close-settings-modal,
+[data-theme="dark"] #btn-close-api-vault {
+    color: #94a3b8 !important;
+}
+[data-theme="dark"] #btn-close-settings-modal:hover,
+[data-theme="dark"] #btn-close-api-vault:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .settings-modal-sidebar {
+    background-color: #080d1a !important;
+    border-right: 1px solid #1e293b !important;
+}
+
+[data-theme="dark"] .settings-tab-btn {
+    color: #94a3b8 !important;
+    border: 1px solid transparent !important;
+    border-radius: 10px !important;
+}
+[data-theme="dark"] .settings-tab-btn:hover {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+}
+[data-theme="dark"] .settings-tab-btn.active {
+    background-color: #0f172a !important;
+    color: #38bdf8 !important;
+    border: 1px solid #38bdf8 !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.35) !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .settings-modal-content,
+[data-theme="dark"] #api-vault-body {
+    background-color: #0b1120 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .panel-section-title,
+[data-theme="dark"] .vault-card-label {
+    color: #f8fafc !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .setting-card-item,
+[data-theme="dark"] .vault-section-card,
+[data-theme="dark"] .modal-about-box {
+    background-color: #0f172a !important;
+    border: 1px solid #334155 !important;
+    border-radius: 14px !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .setting-item-title {
+    color: #f8fafc !important;
+    font-weight: 600 !important;
+}
+[data-theme="dark"] .setting-item-desc,
+[data-theme="dark"] .vault-card-desc,
+[data-theme="dark"] .modal-about-version {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .vault-input-field {
+    background-color: #131d31 !important;
+    border: 1px solid #334155 !important;
+    border-radius: 10px !important;
+    color: #f8fafc !important;
+}
+[data-theme="dark"] .vault-input-field:focus {
+    background-color: #1a253c !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.35) !important;
+}
+
+[data-theme="dark"] .vault-sub-label {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .vault-badge-active {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+    color: #34d399 !important;
+    border: 1px solid #059669 !important;
+}
+[data-theme="dark"] .vault-badge-preview {
+    background-color: rgba(168, 85, 247, 0.2) !important;
+    color: #c084fc !important;
+    border: 1px solid #7e22ce !important;
+}
+
+[data-theme="dark"] .settings-modal-footer,
+[data-theme="dark"] #api-vault-footer {
+    background-color: #080d1a !important;
+    border-top: 1px solid #1e293b !important;
+}
+
+[data-theme="dark"] .modal-footer-tip {
+    color: #64748b !important;
+}
+
+[data-theme="dark"] #btn-cancel-api-vault {
+    color: #94a3b8 !important;
+}
+[data-theme="dark"] #btn-cancel-api-vault:hover {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] #btn-save-settings-modal,
+[data-theme="dark"] #btn-save-api-vault {
+    background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #38bdf8 !important;
+    box-shadow: 0 0 16px rgba(6, 182, 212, 0.4) !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+}
+[data-theme="dark"] #btn-save-settings-modal:hover,
+[data-theme="dark"] #btn-save-api-vault:hover {
+    box-shadow: 0 0 24px rgba(6, 182, 212, 0.6) !important;
+    transform: translateY(-1px) !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. 💼 專業冷灰 (Pro Slate) - [data-theme="pro-slate"]
+   特色：深灰石墨頂部、極簡純白內容區、1px 精密邊框與 Sky Blue SaaS 鈕
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"] #settings-modal-overlay,
+[data-theme="pro-slate"] #api-vault-modal {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    backdrop-filter: blur(6px) !important;
+}
+
+[data-theme="pro-slate"] .settings-modal-card,
+[data-theme="pro-slate"] #api-vault-card {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+    color: #0f172a !important;
+}
+
+[data-theme="pro-slate"] .settings-modal-header,
+[data-theme="pro-slate"] #api-vault-header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    border-bottom: 1px solid #334155 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] .modal-header-title,
+[data-theme="pro-slate"] #api-vault-title {
+    color: #f8fafc !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-weight: 800 !important;
+}
+
+[data-theme="pro-slate"] .modal-header-subtitle,
+[data-theme="pro-slate"] #api-vault-subtitle {
+    color: #94a3b8 !important;
+}
+
+[data-theme="pro-slate"] #api-vault-logo-box {
+    background-color: #0284c7 !important;
+    border: 1px solid #38bdf8 !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+}
+
+[data-theme="pro-slate"] #btn-close-settings-modal,
+[data-theme="pro-slate"] #btn-close-api-vault {
+    color: #94a3b8 !important;
+}
+[data-theme="pro-slate"] #btn-close-settings-modal:hover,
+[data-theme="pro-slate"] #btn-close-api-vault:hover {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+[data-theme="pro-slate"] .settings-modal-sidebar {
+    background-color: #f1f5f9 !important;
+    border-right: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="pro-slate"] .settings-tab-btn {
+    color: #64748b !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+}
+[data-theme="pro-slate"] .settings-tab-btn:hover {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+[data-theme="pro-slate"] .settings-tab-btn.active {
+    background-color: #ffffff !important;
+    color: #0284c7 !important;
+    border: 1px solid #0284c7 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="pro-slate"] .settings-modal-content,
+[data-theme="pro-slate"] #api-vault-body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
+[data-theme="pro-slate"] .panel-section-title,
+[data-theme="pro-slate"] .vault-card-label {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="pro-slate"] .setting-card-item,
+[data-theme="pro-slate"] .vault-section-card,
+[data-theme="pro-slate"] .modal-about-box {
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    color: #0f172a !important;
+}
+
+[data-theme="pro-slate"] .setting-item-title {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+[data-theme="pro-slate"] .setting-item-desc,
+[data-theme="pro-slate"] .vault-card-desc,
+[data-theme="pro-slate"] .modal-about-version {
+    color: #64748b !important;
+}
+
+[data-theme="pro-slate"] .vault-input-field {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    color: #0f172a !important;
+}
+[data-theme="pro-slate"] .vault-input-field:focus {
+    background-color: #ffffff !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+[data-theme="pro-slate"] .vault-sub-label {
+    color: #334155 !important;
+}
+
+[data-theme="pro-slate"] .vault-badge-active {
+    background-color: #e0f2fe !important;
+    color: #0369a1 !important;
+    border: 1px solid #7dd3fc !important;
+}
+[data-theme="pro-slate"] .vault-badge-preview {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="pro-slate"] .settings-modal-footer,
+[data-theme="pro-slate"] #api-vault-footer {
+    background-color: #f8fafc !important;
+    border-top: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="pro-slate"] .modal-footer-tip {
+    color: #94a3b8 !important;
+}
+
+[data-theme="pro-slate"] #btn-cancel-api-vault {
+    color: #64748b !important;
+}
+[data-theme="pro-slate"] #btn-cancel-api-vault:hover {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+[data-theme="pro-slate"] #btn-save-settings-modal,
+[data-theme="pro-slate"] #btn-save-api-vault {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+    border: 1px solid #0369a1 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2) !important;
+    font-weight: 600 !important;
+}
+[data-theme="pro-slate"] #btn-save-settings-modal:hover,
+[data-theme="pro-slate"] #btn-save-api-vault:hover {
+    background-color: #0369a1 !important;
+    box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.3) !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. 📜 復古文青 (Retro Warm) - [data-theme="retro-warm"]
+   特色：羊皮紙暖底、深胡桃木色頂部、古典襯線字、焦糖琥珀封蠟印章質感
+   -------------------------------------------------------------------------- */
+[data-theme="retro-warm"] #settings-modal-overlay,
+[data-theme="retro-warm"] #api-vault-modal {
+    background-color: rgba(54, 38, 28, 0.55) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+[data-theme="retro-warm"] .settings-modal-card,
+[data-theme="retro-warm"] #api-vault-card {
+    background-color: #fdfbf7 !important;
+    border: 2.5px solid #78350f !important;
+    border-radius: 16px !important;
+    box-shadow: 6px 6px 0px #451a03 !important;
+    color: #451a03 !important;
+    font-family: 'Georgia', 'Noto Serif TC', serif !important;
+}
+
+[data-theme="retro-warm"] .settings-modal-header,
+[data-theme="retro-warm"] #api-vault-header {
+    background: linear-gradient(135deg, #451a03 0%, #78350f 100%) !important;
+    border-bottom: 2.5px solid #78350f !important;
+    color: #fef3c7 !important;
+}
+
+[data-theme="retro-warm"] .modal-header-title,
+[data-theme="retro-warm"] #api-vault-title {
+    font-family: 'Georgia', 'Noto Serif TC', serif !important;
+    color: #fef3c7 !important;
+    letter-spacing: 0.04em !important;
+}
+
+[data-theme="retro-warm"] .modal-header-subtitle,
+[data-theme="retro-warm"] #api-vault-subtitle {
+    color: #fde68a !important;
+    font-family: 'Georgia', serif !important;
+    font-style: italic !important;
+}
+
+[data-theme="retro-warm"] #api-vault-logo-box {
+    background-color: #fef3c7 !important;
+    border: 2px solid #78350f !important;
+    border-radius: 10px !important;
+    color: #92400e !important;
+    box-shadow: 2px 2px 0px #451a03 !important;
+}
+
+[data-theme="retro-warm"] #btn-close-settings-modal,
+[data-theme="retro-warm"] #btn-close-api-vault {
+    color: #fde68a !important;
+}
+[data-theme="retro-warm"] #btn-close-settings-modal:hover,
+[data-theme="retro-warm"] #btn-close-api-vault:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="retro-warm"] .settings-modal-sidebar {
+    background-color: #f5eedc !important;
+    border-right: 2px solid #78350f !important;
+    font-family: 'Georgia', serif !important;
+}
+
+[data-theme="retro-warm"] .settings-tab-btn {
+    color: #8c7863 !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+}
+[data-theme="retro-warm"] .settings-tab-btn:hover {
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    color: #451a03 !important;
+}
+[data-theme="retro-warm"] .settings-tab-btn.active {
+    background-color: #fdfbf7 !important;
+    color: #78350f !important;
+    border: 1.5px solid #78350f !important;
+    box-shadow: 2px 2px 0px #451a03 !important;
+    font-weight: 900 !important;
+}
+
+[data-theme="retro-warm"] .settings-modal-content,
+[data-theme="retro-warm"] #api-vault-body {
+    background-color: #fdfbf7 !important;
+    color: #451a03 !important;
+}
+
+[data-theme="retro-warm"] .panel-section-title,
+[data-theme="retro-warm"] .vault-card-label {
+    color: #451a03 !important;
+    font-family: 'Georgia', serif !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="retro-warm"] .setting-card-item,
+[data-theme="retro-warm"] .vault-section-card,
+[data-theme="retro-warm"] .modal-about-box {
+    background-color: #f5eedc !important;
+    border: 1.5px solid #b45309 !important;
+    border-radius: 12px !important;
+    color: #451a03 !important;
+}
+
+[data-theme="retro-warm"] .setting-item-title {
+    color: #451a03 !important;
+    font-family: 'Georgia', serif !important;
+    font-weight: 700 !important;
+}
+[data-theme="retro-warm"] .setting-item-desc,
+[data-theme="retro-warm"] .vault-card-desc,
+[data-theme="retro-warm"] .modal-about-version {
+    color: #78553d !important;
+    font-family: 'Georgia', serif !important;
+}
+
+[data-theme="retro-warm"] .vault-input-field {
+    background-color: #fffbeb !important;
+    border: 1.5px solid #b45309 !important;
+    border-radius: 8px !important;
+    color: #451a03 !important;
+    font-family: 'Georgia', serif !important;
+}
+[data-theme="retro-warm"] .vault-input-field:focus {
+    background-color: #ffffff !important;
+    border-color: #78350f !important;
+    box-shadow: 2px 2px 0px #78350f !important;
+}
+
+[data-theme="retro-warm"] .vault-sub-label {
+    color: #5c4738 !important;
+    font-family: 'Georgia', serif !important;
+}
+
+[data-theme="retro-warm"] .vault-badge-active {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+    border: 1px solid #d97706 !important;
+}
+[data-theme="retro-warm"] .vault-badge-preview {
+    background-color: #f5eedc !important;
+    color: #78350f !important;
+    border: 1px solid #b45309 !important;
+}
+
+[data-theme="retro-warm"] .settings-modal-footer,
+[data-theme="retro-warm"] #api-vault-footer {
+    background-color: #f5eedc !important;
+    border-top: 2px solid #78350f !important;
+}
+
+[data-theme="retro-warm"] .modal-footer-tip {
+    color: #8c7863 !important;
+    font-family: 'Georgia', serif !important;
+}
+
+[data-theme="retro-warm"] #btn-cancel-api-vault {
+    color: #78350f !important;
+}
+[data-theme="retro-warm"] #btn-cancel-api-vault:hover {
+    background-color: #eadeca !important;
+}
+
+[data-theme="retro-warm"] #btn-save-settings-modal,
+[data-theme="retro-warm"] #btn-save-api-vault {
+    background: linear-gradient(135deg, #92400e 0%, #78350f 100%) !important;
+    color: #fef3c7 !important;
+    border: 2px solid #451a03 !important;
+    box-shadow: 3px 3px 0px #451a03 !important;
+    font-family: 'Georgia', serif !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+}
+[data-theme="retro-warm"] #btn-save-settings-modal:hover,
+[data-theme="retro-warm"] #btn-save-api-vault:hover {
+    background: #78350f !important;
+    transform: translate(1px, 1px) !important;
+    box-shadow: 2px 2px 0px #451a03 !important;
+}
+
 
 /* ==========================================================================
    4 款主題預覽卡片色彩徹底隔離（無視任何外部主題，精準渲染各主題色彩）
    ========================================================================== */
-.theme-card-option,
-[data-theme] .theme-card-option {
-  border-radius: 12px !important;
-  transition: all 0.2s ease !important;
+.theme-card-option {
+    border-radius: 12px !important;
+    transition: all 0.2s ease !important;
 }
 
 /* 選中狀態外框 */
-.theme-card-option.is-active,
-[data-theme] .theme-card-option.is-active {
-  box-shadow: 0 0 0 2px #6366f1, 0 4px 14px rgba(99, 102, 241, 0.35) !important;
+.theme-card-option.is-active {
+    box-shadow: 0 0 0 2px #6366f1, 0 4px 14px rgba(99, 102, 241, 0.35) !important;
 }
-.theme-card-option.is-active .theme-card-tag,
-[data-theme] .theme-card-option.is-active .theme-card-tag {
-  background-color: #4f46e5 !important;
-  color: #ffffff !important;
+.theme-card-option.is-active .theme-card-tag {
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
 }
 
 /* 1. 🌙 深色極客 (Dark Mode) - 黑曜深藍 */
-.theme-card-option.theme-preview-dark,
-[data-theme] .theme-card-option.theme-preview-dark {
-  background-color: #0b1120 !important;
-  border: 1.5px solid #334155 !important;
-  color: #f8fafc !important;
+.theme-card-option.theme-preview-dark {
+    background-color: #0b1120 !important;
+    border: 1.5px solid #334155 !important;
+    color: #f8fafc !important;
 }
-.theme-card-option.theme-preview-dark:hover,
-[data-theme] .theme-card-option.theme-preview-dark:hover {
-  border-color: #6366f1 !important;
+.theme-card-option.theme-preview-dark:hover {
+    border-color: #6366f1 !important;
 }
-.theme-card-option.theme-preview-dark .theme-card-title,
-[data-theme] .theme-card-option.theme-preview-dark .theme-card-title {
-  color: #f8fafc !important;
-  font-weight: 700 !important;
+.theme-card-option.theme-preview-dark .theme-card-title {
+    color: #f8fafc !important;
+    font-weight: 700 !important;
 }
-.theme-card-option.theme-preview-dark .theme-card-desc,
-[data-theme] .theme-card-option.theme-preview-dark .theme-card-desc {
-  color: #94a3b8 !important;
-  font-size: 11px !important;
+.theme-card-option.theme-preview-dark .theme-card-desc {
+    color: #94a3b8 !important;
+    font-size: 11px !important;
 }
-.theme-card-option.theme-preview-dark .theme-card-tag:not(.bg-indigo-600),
-[data-theme] .theme-card-option.theme-preview-dark .theme-card-tag:not(.bg-indigo-600) {
-  background-color: #1e293b !important;
-  color: #cbd5e1 !important;
+.theme-card-option.theme-preview-dark .theme-card-tag:not(.bg-indigo-600) {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
 }
-.theme-card-option.theme-preview-dark i.fa-moon,
-[data-theme] .theme-card-option.theme-preview-dark i.fa-moon {
-  color: #818cf8 !important;
+.theme-card-option.theme-preview-dark i.fa-moon {
+    color: #818cf8 !important;
 }
 
 /* 2. ☀️ 經典手繪 (Light Sketch) - 純白手繪插畫 */
-.theme-card-option.theme-preview-light,
-[data-theme] .theme-card-option.theme-preview-light {
-  background-color: #ffffff !important;
-  border: 1.5px solid #cbd5e1 !important;
-  color: #1e293b !important;
+.theme-card-option.theme-preview-light {
+    background-color: #ffffff !important;
+    border: 1.5px solid #cbd5e1 !important;
+    color: #1e293b !important;
 }
-.theme-card-option.theme-preview-light:hover,
-[data-theme] .theme-card-option.theme-preview-light:hover {
-  border-color: #6366f1 !important;
+.theme-card-option.theme-preview-light:hover {
+    border-color: #6366f1 !important;
 }
-.theme-card-option.theme-preview-light .theme-card-title,
-[data-theme] .theme-card-option.theme-preview-light .theme-card-title {
-  color: #1e293b !important;
-  font-weight: 700 !important;
+.theme-card-option.theme-preview-light .theme-card-title {
+    color: #1e293b !important;
+    font-weight: 700 !important;
 }
-.theme-card-option.theme-preview-light .theme-card-desc,
-[data-theme] .theme-card-option.theme-preview-light .theme-card-desc {
-  color: #64748b !important;
-  font-size: 11px !important;
+.theme-card-option.theme-preview-light .theme-card-desc {
+    color: #64748b !important;
+    font-size: 11px !important;
 }
-.theme-card-option.theme-preview-light .theme-card-tag:not(.bg-indigo-600),
-[data-theme] .theme-card-option.theme-preview-light .theme-card-tag:not(.bg-indigo-600) {
-  background-color: #f1f5f9 !important;
-  color: #475569 !important;
+.theme-card-option.theme-preview-light .theme-card-tag:not(.bg-indigo-600) {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
 }
-.theme-card-option.theme-preview-light i.fa-sun,
-[data-theme] .theme-card-option.theme-preview-light i.fa-sun {
-  color: #475569 !important;
+.theme-card-option.theme-preview-light i.fa-sun {
+    color: #475569 !important;
 }
 
 /* 3. 💼 專業冷灰 (Pro Slate) - 現代冷灰工作室 */
-.theme-card-option.theme-preview-pro,
-[data-theme] .theme-card-option.theme-preview-pro {
-  background-color: #e2e8f0 !important;
-  border: 1.5px solid #94a3b8 !important;
-  color: #0f172a !important;
+.theme-card-option.theme-preview-pro {
+    background-color: #e2e8f0 !important;
+    border: 1.5px solid #94a3b8 !important;
+    color: #0f172a !important;
 }
-.theme-card-option.theme-preview-pro:hover,
-[data-theme] .theme-card-option.theme-preview-pro:hover {
-  border-color: #0284c7 !important;
+.theme-card-option.theme-preview-pro:hover {
+    border-color: #0284c7 !important;
 }
-.theme-card-option.theme-preview-pro .theme-card-title,
-[data-theme] .theme-card-option.theme-preview-pro .theme-card-title {
-  color: #0f172a !important;
-  font-weight: 700 !important;
+.theme-card-option.theme-preview-pro .theme-card-title {
+    color: #0f172a !important;
+    font-weight: 700 !important;
 }
-.theme-card-option.theme-preview-pro .theme-card-desc,
-[data-theme] .theme-card-option.theme-preview-pro .theme-card-desc {
-  color: #475569 !important;
-  font-size: 11px !important;
+.theme-card-option.theme-preview-pro .theme-card-desc {
+    color: #475569 !important;
+    font-size: 11px !important;
 }
-.theme-card-option.theme-preview-pro .theme-card-tag:not(.bg-indigo-600),
-[data-theme] .theme-card-option.theme-preview-pro .theme-card-tag:not(.bg-indigo-600) {
-  background-color: #cbd5e1 !important;
-  color: #1e293b !important;
+.theme-card-option.theme-preview-pro .theme-card-tag:not(.bg-indigo-600) {
+    background-color: #cbd5e1 !important;
+    color: #1e293b !important;
 }
-.theme-card-option.theme-preview-pro i.fa-cube,
-[data-theme] .theme-card-option.theme-preview-pro i.fa-cube {
-  color: #0284c7 !important;
+.theme-card-option.theme-preview-pro i.fa-cube {
+    color: #0284c7 !important;
 }
 
 /* 4. 📜 復古文青 (Retro Warm) - 羊皮紙暖調 */
-.theme-card-option.theme-preview-retro,
-[data-theme] .theme-card-option.theme-preview-retro {
-  background-color: #fdfbf7 !important;
-  border: 1.5px solid #78553d !important;
-  color: #453426 !important;
+.theme-card-option.theme-preview-retro {
+    background-color: #fdfbf7 !important;
+    border: 1.5px solid #78553d !important;
+    color: #453426 !important;
 }
-.theme-card-option.theme-preview-retro:hover,
-[data-theme] .theme-card-option.theme-preview-retro:hover {
-  border-color: #b45309 !important;
+.theme-card-option.theme-preview-retro:hover {
+    border-color: #b45309 !important;
 }
-.theme-card-option.theme-preview-retro .theme-card-title,
-[data-theme] .theme-card-option.theme-preview-retro .theme-card-title {
-  color: #453426 !important;
-  font-weight: 700 !important;
+.theme-card-option.theme-preview-retro .theme-card-title {
+    color: #453426 !important;
+    font-weight: 700 !important;
 }
-.theme-card-option.theme-preview-retro .theme-card-desc,
-[data-theme] .theme-card-option.theme-preview-retro .theme-card-desc {
-  color: #786450 !important;
-  font-size: 11px !important;
+.theme-card-option.theme-preview-retro .theme-card-desc {
+    color: #786450 !important;
+    font-size: 11px !important;
 }
-.theme-card-option.theme-preview-retro .theme-card-tag:not(.bg-indigo-600),
-[data-theme] .theme-card-option.theme-preview-retro .theme-card-tag:not(.bg-indigo-600) {
-  background-color: #f5eedc !important;
-  color: #5c4738 !important;
+.theme-card-option.theme-preview-retro .theme-card-tag:not(.bg-indigo-600) {
+    background-color: #f5eedc !important;
+    color: #5c4738 !important;
 }
-.theme-card-option.theme-preview-retro i.fa-feather-alt,
-[data-theme] .theme-card-option.theme-preview-retro i.fa-feather-alt {
-  color: #78553d !important;
+.theme-card-option.theme-preview-retro i.fa-feather-alt {
+    color: #78553d !important;
 }

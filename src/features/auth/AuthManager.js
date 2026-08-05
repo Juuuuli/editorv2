@@ -385,74 +385,75 @@ export default class AuthManager {
         const vaultData = this.getApiVaultData();
 
         this.apiVaultModal.innerHTML = `
-            <div class="sketch-panel max-w-lg w-full bg-white rounded-2xl shadow-2xl border-2 border-slate-700 overflow-hidden flex flex-col animate-scale-in">
-                <!-- Vault Header -->
-                <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 p-5 text-white flex items-center justify-between border-b-2 border-slate-700">
+            <!-- 固定長寬卡片：寬 580px、高 560px，內容滾動，尺寸絕不隨內容跳動 -->
+            <div id="api-vault-card" class="w-[580px] h-[560px] max-w-[95vw] max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-scale-in">
+                <!-- Vault Header (固定高度 64px) -->
+                <div id="api-vault-header" class="h-16 px-6 shrink-0 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-400/30 flex items-center justify-center text-lg shadow-inner">
+                        <div id="api-vault-logo-box" class="w-10 h-10 rounded-xl flex items-center justify-center text-lg">
                             <i class="fas fa-shield-alt"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-black tracking-wide">系統金鑰保險箱 (API Vault)</h3>
-                            <p class="text-xs text-slate-400">本機安全儲存 AI 模型連接金鑰與伺服器端點</p>
+                            <h3 id="api-vault-title" class="text-base font-black tracking-wide">系統金鑰保險箱 (API Vault)</h3>
+                            <p id="api-vault-subtitle" class="text-xs">本機安全儲存 AI 模型連接金鑰與伺服器端點</p>
                         </div>
                     </div>
-                    <button id="btn-close-api-vault" class="w-8 h-8 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition">
+                    <button id="btn-close-api-vault" class="w-8 h-8 rounded-lg flex items-center justify-center transition">
                         <i class="fas fa-times text-lg"></i>
                     </button>
                 </div>
 
-                <!-- Vault Content -->
-                <div class="p-6 space-y-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                <!-- Vault Content (固定填滿中間高度，支援獨立滾動) -->
+                <div id="api-vault-body" class="p-6 space-y-4 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
                     <!-- Clipdrop Key -->
-                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <div class="vault-section-card p-4 rounded-xl space-y-2">
                         <div class="flex items-center justify-between">
-                            <label class="text-xs font-bold text-slate-800 flex items-center gap-2">
+                            <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Clipdrop API Key (智慧生圖/去背)
                             </label>
-                            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">現行運作中</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold vault-badge-active">現行運作中</span>
                         </div>
-                        <p class="text-[11px] text-slate-500">用於高畫質智慧去背、AI 物件消除、影像邊界擴展等功能。</p>
-                        <input type="password" id="vault-clipdrop-key" value="${vaultData.clipdropKey || ''}" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="輸入 Clipdrop API 金鑰...">
+                        <p class="text-[11px] vault-card-desc">用於高畫質智慧去背、AI 物件消除、影像邊界擴展等功能。</p>
+                        <input type="password" id="vault-clipdrop-key" value="${vaultData.clipdropKey || ''}" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono transition" placeholder="輸入 Clipdrop API 金鑰...">
                     </div>
 
                     <!-- Spark (星火/企業私有模型) 預備通道 (Sprint 4 Preview) -->
-                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                    <div class="vault-section-card p-4 rounded-xl space-y-3">
                         <div class="flex items-center justify-between">
-                            <label class="text-xs font-bold text-slate-800 flex items-center gap-2">
+                            <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
                                 <span class="w-2 h-2 rounded-full bg-purple-500"></span> Spark (星火/私有模型) 連接器
                             </label>
-                            <span class="text-[10px] px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-bold">Sprint 4 預備</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold vault-badge-preview">Sprint 4 預備</span>
                         </div>
-                        <p class="text-[11px] text-slate-500">供公司內網 Spark 伺服器或企業專屬大模型介接使用。</p>
+                        <p class="text-[11px] vault-card-desc">供公司內網 Spark 伺服器或企業專屬大模型介接使用。</p>
                         
                         <div class="space-y-2">
                             <div>
-                                <label class="text-[11px] font-bold text-slate-600 block mb-0.5">API Endpoint (伺服器端點)</label>
-                                <input type="text" id="vault-spark-endpoint" value="${vaultData.sparkEndpoint || ''}" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                                <label class="text-[11px] font-bold block mb-0.5 vault-sub-label">API Endpoint (伺服器端點)</label>
+                                <input type="text" id="vault-spark-endpoint" value="${vaultData.sparkEndpoint || ''}" class="vault-input-field w-full rounded-lg px-3 py-1.5 text-xs font-mono transition">
                             </div>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="text-[11px] font-bold text-slate-600 block mb-0.5">APP ID</label>
-                                    <input type="text" id="vault-spark-appid" value="${vaultData.sparkAppId || ''}" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="例如: 8a7b6c5d">
+                                    <label class="text-[11px] font-bold block mb-0.5 vault-sub-label">APP ID</label>
+                                    <input type="text" id="vault-spark-appid" value="${vaultData.sparkAppId || ''}" class="vault-input-field w-full rounded-lg px-3 py-1.5 text-xs font-mono transition" placeholder="例如: 8a7b6c5d">
                                 </div>
                                 <div>
-                                    <label class="text-[11px] font-bold text-slate-600 block mb-0.5">API Secret</label>
-                                    <input type="password" id="vault-spark-secret" value="${vaultData.sparkApiSecret || ''}" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="••••••••">
+                                    <label class="text-[11px] font-bold block mb-0.5 vault-sub-label">API Secret</label>
+                                    <input type="password" id="vault-spark-secret" value="${vaultData.sparkApiSecret || ''}" class="vault-input-field w-full rounded-lg px-3 py-1.5 text-xs font-mono transition" placeholder="••••••••">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Vault Footer -->
-                <div class="p-4 bg-slate-100 border-t border-slate-200 flex items-center justify-between">
-                    <span id="vault-save-feedback" class="text-xs text-emerald-600 font-bold hidden">
+                <!-- Vault Footer (固定高度 56px) -->
+                <div id="api-vault-footer" class="h-14 px-6 shrink-0 flex items-center justify-between">
+                    <span id="vault-save-feedback" class="text-xs font-bold hidden">
                         <i class="fas fa-check-circle mr-1"></i> 金鑰已安全保存至本機！
                     </span>
                     <div class="flex items-center gap-2 ml-auto">
-                        <button id="btn-cancel-api-vault" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition">取消</button>
-                        <button id="btn-save-api-vault" class="sketch-btn px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-[2px_2px_0px_#334155] flex items-center gap-2">
+                        <button id="btn-cancel-api-vault" class="px-4 py-2 text-xs font-bold rounded-xl transition">取消</button>
+                        <button id="btn-save-api-vault" class="px-5 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition">
                             <i class="fas fa-save"></i> 儲存設定
                         </button>
                     </div>
