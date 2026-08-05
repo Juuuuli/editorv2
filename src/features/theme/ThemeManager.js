@@ -113,20 +113,20 @@ export default class ThemeManager {
         modal.className = 'fixed inset-0 z-[9990] bg-slate-900/75 backdrop-blur-sm hidden flex items-center justify-center p-4 select-none opacity-0 transition-opacity duration-200';
 
         modal.innerHTML = `
-            <!-- 固定邊框大小卡片：寬 720px、高 520px，內容過多自動上下滾動，內容過少也不會縮小 -->
-            <div class="settings-modal-card sketch-panel w-[720px] h-[520px] max-w-[94vw] max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border-2 border-slate-700 animate-in fade-in zoom-in duration-200">
+            <!-- 固定邊框大小卡片：寬 760px、高 540px，內容過多自動上下滾動，內容過少也不會縮小 -->
+            <div class="settings-modal-card w-[760px] h-[540px] max-w-[95vw] max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-700 animate-in fade-in zoom-in duration-200">
                 <!-- Modal Header (固定高度 64px) -->
-                <div class="settings-modal-header h-16 px-6 border-b-2 border-slate-700 flex items-center justify-between shrink-0 bg-slate-50">
+                <div class="settings-modal-header h-16 px-6 border-b border-slate-700 flex items-center justify-between shrink-0 bg-slate-900">
                     <div class="flex items-center space-x-3">
                         <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md text-base shrink-0">
                             <i class="fas fa-sliders-h"></i>
                         </div>
                         <div>
-                            <h2 class="text-base font-black text-slate-800 modal-header-title">系統與外觀設定</h2>
-                            <p class="text-xs text-slate-500 modal-header-subtitle">自訂編輯器風格、操作偏好與畫布輔助工具</p>
+                            <h2 class="text-base font-black text-slate-100 modal-header-title">系統與外觀設定</h2>
+                            <p class="text-xs text-slate-400 modal-header-subtitle">自訂編輯器風格、操作偏好與畫布輔助工具</p>
                         </div>
                     </div>
-                    <button id="btn-close-settings-modal" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition">
+                    <button id="btn-close-settings-modal" class="w-8 h-8 rounded-full hover:bg-slate-800 text-slate-400 hover:text-slate-100 flex items-center justify-center transition">
                         <i class="fas fa-times text-base"></i>
                     </button>
                 </div>
@@ -134,30 +134,30 @@ export default class ThemeManager {
                 <!-- Modal Body with Tabs (固定填滿中間高度，可內部滾動) -->
                 <div class="settings-modal-body flex flex-1 overflow-hidden min-h-0">
                     <!-- Left Tab Nav (固定寬度 180px) -->
-                    <div class="settings-modal-sidebar w-48 border-r-2 border-slate-700 p-3 space-y-1.5 shrink-0 bg-slate-100/70 overflow-y-auto">
+                    <div class="settings-modal-sidebar w-48 border-r border-slate-700 p-3 space-y-1.5 shrink-0 bg-slate-950 overflow-y-auto">
                         <button data-settings-tab="theme" class="settings-tab-btn active w-full px-3 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2.5 transition text-left">
                             <i class="fas fa-palette text-sm w-4 text-center"></i>
                             <span>主題與風格</span>
                         </button>
-                        <button data-settings-tab="canvas" class="settings-tab-btn w-full px-3 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2.5 transition text-left text-slate-600 hover:bg-slate-200/60">
+                        <button data-settings-tab="canvas" class="settings-tab-btn w-full px-3 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2.5 transition text-left text-slate-400 hover:bg-slate-800/60">
                             <i class="fas fa-ruler-combined text-sm w-4 text-center"></i>
                             <span>畫布輔助</span>
                         </button>
-                        <button data-settings-tab="about" class="settings-tab-btn w-full px-3 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2.5 transition text-left text-slate-600 hover:bg-slate-200/60">
+                        <button data-settings-tab="about" class="settings-tab-btn w-full px-3 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2.5 transition text-left text-slate-400 hover:bg-slate-800/60">
                             <i class="fas fa-info-circle text-sm w-4 text-center"></i>
                             <span>關於系統</span>
                         </button>
                     </div>
 
                     <!-- Right Tab Panels (可獨立垂直滾動) -->
-                    <div class="settings-modal-content flex-1 p-6 overflow-y-auto bg-white min-h-0" id="settings-tab-content">
+                    <div class="settings-modal-content flex-1 p-6 overflow-y-auto bg-slate-900 min-h-0" id="settings-tab-content">
                         <!-- Tab 1: 主題切換 -->
                         <div id="settings-panel-theme" class="space-y-4">
                             <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5 panel-section-title">
-                                    <i class="fas fa-brush text-indigo-500"></i> 介面視覺主題 (Sprint 2)
+                                <h3 class="text-sm font-black text-slate-100 flex items-center gap-1.5 panel-section-title">
+                                    <i class="fas fa-brush text-indigo-400"></i> 介面視覺主題 (Sprint 2)
                                 </h3>
-                                <span class="text-[11px] px-2 py-0.5 rounded bg-indigo-50 text-indigo-600 font-bold border border-indigo-200 badge-info">即時切換套用</span>
+                                <span class="text-[11px] px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 font-bold border border-indigo-700/60 badge-info">即時切換套用</span>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="theme-options-grid">
@@ -167,23 +167,23 @@ export default class ThemeManager {
 
                         <!-- Tab 2: 畫布輔助 -->
                         <div id="settings-panel-canvas" class="hidden space-y-4">
-                            <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5 mb-2 panel-section-title">
-                                <i class="fas fa-magic text-indigo-500"></i> 編輯器輔助功能
+                            <h3 class="text-sm font-black text-slate-100 flex items-center gap-1.5 mb-2 panel-section-title">
+                                <i class="fas fa-magic text-indigo-400"></i> 編輯器輔助功能
                             </h3>
                             <div class="space-y-3">
-                                <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer transition setting-card-item">
+                                <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 cursor-pointer transition setting-card-item">
                                     <div>
-                                        <div class="text-xs font-bold text-slate-800 setting-item-title">自動吸附與智慧參考線</div>
+                                        <div class="text-xs font-bold text-slate-200 setting-item-title">自動吸附與智慧參考線</div>
                                         <div class="text-[11px] text-slate-400 mt-0.5 setting-item-desc">物件移動時自動對齊畫布邊緣與其他圖元中心</div>
                                     </div>
-                                    <input type="checkbox" id="setting-smart-guides" checked class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                    <input type="checkbox" id="setting-smart-guides" checked class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 bg-slate-900 border-slate-600">
                                 </label>
-                                <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer transition setting-card-item">
+                                <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 cursor-pointer transition setting-card-item">
                                     <div>
-                                        <div class="text-xs font-bold text-slate-800 setting-item-title">高解析背景預渲染</div>
+                                        <div class="text-xs font-bold text-slate-200 setting-item-title">高解析背景預渲染</div>
                                         <div class="text-[11px] text-slate-400 mt-0.5 setting-item-desc">PDF/PPT 匯入時自動產生 Retina 2x 高解析背景</div>
                                     </div>
-                                    <input type="checkbox" id="setting-retina-render" checked class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                    <input type="checkbox" id="setting-retina-render" checked class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 bg-slate-900 border-slate-600">
                                 </label>
                             </div>
                         </div>
@@ -194,20 +194,20 @@ export default class ThemeManager {
                                 <div class="w-12 h-12 mx-auto bg-gradient-to-tr from-indigo-600 to-purple-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg mb-2">
                                     <i class="fas fa-cubes"></i>
                                 </div>
-                                <h3 class="text-sm font-black text-slate-800 modal-about-title">多媒體畫布編輯器 V2</h3>
-                                <p class="text-xs text-slate-500 mt-0.5 font-mono modal-about-version">系統版本: v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.3.0'}</p>
+                                <h3 class="text-sm font-black text-slate-100 modal-about-title">多媒體畫布編輯器 V2</h3>
+                                <p class="text-xs text-slate-400 mt-0.5 font-mono modal-about-version">系統版本: v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.3.0'}</p>
                             </div>
-                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 text-xs space-y-2 text-slate-600 modal-about-box">
+                            <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700 text-xs space-y-2 text-slate-300 modal-about-box">
                                 <div class="flex justify-between">
-                                    <span class="font-bold">目前架構：</span>
+                                    <span class="font-bold text-slate-400">目前架構：</span>
                                     <span>Sprint 2 (顏色模板與主題切換)</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="font-bold">資料儲存庫：</span>
+                                    <span class="font-bold text-slate-400">資料儲存庫：</span>
                                     <span>瀏覽器原生 IndexedDB (免聯網永久存檔)</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="font-bold">畫布核心：</span>
+                                    <span class="font-bold text-slate-400">畫布核心：</span>
                                     <span>Fabric.js + PDF.js + ONNX AI 去背引擎</span>
                                 </div>
                             </div>
@@ -216,11 +216,11 @@ export default class ThemeManager {
                 </div>
 
                 <!-- Modal Footer (固定高度 56px) -->
-                <div class="settings-modal-footer h-14 px-6 border-t-2 border-slate-700 bg-slate-50 flex items-center justify-between shrink-0">
+                <div class="settings-modal-footer h-14 px-6 border-t border-slate-700 bg-slate-900 flex items-center justify-between shrink-0">
                     <div class="text-[11px] text-slate-400 font-medium modal-footer-tip">
-                        <i class="fas fa-info-circle mr-1"></i> 主題切換已自動記憶於您的瀏覽器
+                        <i class="fas fa-info-circle mr-1 text-slate-400"></i> 主題切換已自動記憶於您的瀏覽器
                     </div>
-                    <button id="btn-save-settings-modal" class="sketch-btn px-5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md">
+                    <button id="btn-save-settings-modal" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-md transition">
                         完成設定
                     </button>
                 </div>
@@ -270,7 +270,7 @@ export default class ThemeManager {
         return this.themes.map(t => {
             const isSelected = t.id === this.currentTheme;
             return `
-                <div class="theme-card-option ${t.cardClass} sketch-panel p-3.5 rounded-xl cursor-pointer border-2 transition relative flex flex-col justify-between ${isSelected ? 'is-active ring-2 ring-indigo-500 border-indigo-600 shadow-md' : 'hover:border-indigo-400 hover:shadow-sm'}" data-theme-id="${t.id}">
+                <div class="theme-card-option ${t.cardClass} p-3.5 rounded-xl cursor-pointer border transition relative flex flex-col justify-between ${isSelected ? 'is-active ring-2 ring-indigo-500 border-indigo-600 shadow-md' : 'hover:border-indigo-400 hover:shadow-sm'}" data-theme-id="${t.id}">
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <div class="flex items-center space-x-2">

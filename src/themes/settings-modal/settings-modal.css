@@ -27,6 +27,9 @@
   background-color: #0f172a !important;
   border-bottom: 1px solid #334155 !important;
   padding: 16px 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 }
 
 .modal-header-title,
@@ -101,6 +104,9 @@
   background-color: #0f172a !important;
   border-top: 1px solid #334155 !important;
   padding: 14px 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 }
 
 .modal-footer-tip,
@@ -111,15 +117,30 @@
 
 #btn-close-settings-modal,
 [data-theme] #btn-close-settings-modal {
-  background-color: #4f46e5 !important;
-  color: #ffffff !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  padding: 8px 18px !important;
+  background-color: transparent !important;
+  color: #94a3b8 !important;
+  border-radius: 9999px !important;
   transition: all 0.15s ease !important;
 }
 #btn-close-settings-modal:hover,
 [data-theme] #btn-close-settings-modal:hover {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+#btn-save-settings-modal,
+[data-theme] #btn-save-settings-modal {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+  border: 1px solid #6366f1 !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  padding: 8px 20px !important;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4) !important;
+  transition: all 0.15s ease !important;
+}
+#btn-save-settings-modal:hover,
+[data-theme] #btn-save-settings-modal:hover {
   background-color: #4338ca !important;
 }
 
@@ -166,57 +187,145 @@
 }
 
 /* ==========================================================================
-   4 款主題預覽卡片色彩隔離（直觀展現各主題背景色與真實風格）
+   4 款主題預覽卡片色彩徹底隔離（無視任何外部主題，精準渲染各主題色彩）
    ========================================================================== */
+.theme-card-option,
+[data-theme] .theme-card-option {
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+/* 選中狀態外框 */
+.theme-card-option.is-active,
+[data-theme] .theme-card-option.is-active {
+  box-shadow: 0 0 0 2px #6366f1, 0 4px 14px rgba(99, 102, 241, 0.35) !important;
+}
+.theme-card-option.is-active .theme-card-tag,
+[data-theme] .theme-card-option.is-active .theme-card-tag {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+}
 
 /* 1. 🌙 深色極客 (Dark Mode) - 黑曜深藍 */
-.theme-preview-dark,
-[data-theme] .theme-preview-dark {
+.theme-card-option.theme-preview-dark,
+[data-theme] .theme-card-option.theme-preview-dark {
   background-color: #0b1120 !important;
   border: 1.5px solid #334155 !important;
-  border-radius: 10px !important;
   color: #f8fafc !important;
 }
-.theme-preview-dark .theme-card-title,
-[data-theme] .theme-preview-dark .theme-card-title { color: #f8fafc !important; font-weight: 700 !important; }
-.theme-preview-dark .theme-card-desc,
-[data-theme] .theme-preview-dark .theme-card-desc { color: #94a3b8 !important; font-size: 12px !important; }
+.theme-card-option.theme-preview-dark:hover,
+[data-theme] .theme-card-option.theme-preview-dark:hover {
+  border-color: #6366f1 !important;
+}
+.theme-card-option.theme-preview-dark .theme-card-title,
+[data-theme] .theme-card-option.theme-preview-dark .theme-card-title {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+.theme-card-option.theme-preview-dark .theme-card-desc,
+[data-theme] .theme-card-option.theme-preview-dark .theme-card-desc {
+  color: #94a3b8 !important;
+  font-size: 11px !important;
+}
+.theme-card-option.theme-preview-dark .theme-card-tag:not(.bg-indigo-600),
+[data-theme] .theme-card-option.theme-preview-dark .theme-card-tag:not(.bg-indigo-600) {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+.theme-card-option.theme-preview-dark i.fa-moon,
+[data-theme] .theme-card-option.theme-preview-dark i.fa-moon {
+  color: #818cf8 !important;
+}
 
 /* 2. ☀️ 經典手繪 (Light Sketch) - 純白手繪插畫 */
-.theme-preview-light,
-[data-theme] .theme-preview-light {
+.theme-card-option.theme-preview-light,
+[data-theme] .theme-card-option.theme-preview-light {
   background-color: #ffffff !important;
-  border: 1.5px solid #334155 !important;
-  border-radius: 10px !important;
+  border: 1.5px solid #cbd5e1 !important;
   color: #1e293b !important;
 }
-.theme-preview-light .theme-card-title,
-[data-theme] .theme-preview-light .theme-card-title { color: #1e293b !important; font-weight: 700 !important; }
-.theme-preview-light .theme-card-desc,
-[data-theme] .theme-preview-light .theme-card-desc { color: #64748b !important; font-size: 12px !important; }
+.theme-card-option.theme-preview-light:hover,
+[data-theme] .theme-card-option.theme-preview-light:hover {
+  border-color: #6366f1 !important;
+}
+.theme-card-option.theme-preview-light .theme-card-title,
+[data-theme] .theme-card-option.theme-preview-light .theme-card-title {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+}
+.theme-card-option.theme-preview-light .theme-card-desc,
+[data-theme] .theme-card-option.theme-preview-light .theme-card-desc {
+  color: #64748b !important;
+  font-size: 11px !important;
+}
+.theme-card-option.theme-preview-light .theme-card-tag:not(.bg-indigo-600),
+[data-theme] .theme-card-option.theme-preview-light .theme-card-tag:not(.bg-indigo-600) {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+}
+.theme-card-option.theme-preview-light i.fa-sun,
+[data-theme] .theme-card-option.theme-preview-light i.fa-sun {
+  color: #475569 !important;
+}
 
 /* 3. 💼 專業冷灰 (Pro Slate) - 現代冷灰工作室 */
-.theme-preview-pro,
-[data-theme] .theme-preview-pro {
+.theme-card-option.theme-preview-pro,
+[data-theme] .theme-card-option.theme-preview-pro {
   background-color: #e2e8f0 !important;
   border: 1.5px solid #94a3b8 !important;
-  border-radius: 10px !important;
   color: #0f172a !important;
 }
-.theme-preview-pro .theme-card-title,
-[data-theme] .theme-preview-pro .theme-card-title { color: #0f172a !important; font-weight: 700 !important; }
-.theme-preview-pro .theme-card-desc,
-[data-theme] .theme-preview-pro .theme-card-desc { color: #475569 !important; font-size: 12px !important; }
+.theme-card-option.theme-preview-pro:hover,
+[data-theme] .theme-card-option.theme-preview-pro:hover {
+  border-color: #0284c7 !important;
+}
+.theme-card-option.theme-preview-pro .theme-card-title,
+[data-theme] .theme-card-option.theme-preview-pro .theme-card-title {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+.theme-card-option.theme-preview-pro .theme-card-desc,
+[data-theme] .theme-card-option.theme-preview-pro .theme-card-desc {
+  color: #475569 !important;
+  font-size: 11px !important;
+}
+.theme-card-option.theme-preview-pro .theme-card-tag:not(.bg-indigo-600),
+[data-theme] .theme-card-option.theme-preview-pro .theme-card-tag:not(.bg-indigo-600) {
+  background-color: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+.theme-card-option.theme-preview-pro i.fa-cube,
+[data-theme] .theme-card-option.theme-preview-pro i.fa-cube {
+  color: #0284c7 !important;
+}
 
 /* 4. 📜 復古文青 (Retro Warm) - 羊皮紙暖調 */
-.theme-preview-retro,
-[data-theme] .theme-preview-retro {
+.theme-card-option.theme-preview-retro,
+[data-theme] .theme-card-option.theme-preview-retro {
   background-color: #fdfbf7 !important;
   border: 1.5px solid #78553d !important;
-  border-radius: 10px !important;
   color: #453426 !important;
 }
-.theme-preview-retro .theme-card-title,
-[data-theme] .theme-preview-retro .theme-card-title { color: #453426 !important; font-weight: 700 !important; }
-.theme-preview-retro .theme-card-desc,
-[data-theme] .theme-preview-retro .theme-card-desc { color: #786450 !important; font-size: 12px !important; }
+.theme-card-option.theme-preview-retro:hover,
+[data-theme] .theme-card-option.theme-preview-retro:hover {
+  border-color: #b45309 !important;
+}
+.theme-card-option.theme-preview-retro .theme-card-title,
+[data-theme] .theme-card-option.theme-preview-retro .theme-card-title {
+  color: #453426 !important;
+  font-weight: 700 !important;
+}
+.theme-card-option.theme-preview-retro .theme-card-desc,
+[data-theme] .theme-card-option.theme-preview-retro .theme-card-desc {
+  color: #786450 !important;
+  font-size: 11px !important;
+}
+.theme-card-option.theme-preview-retro .theme-card-tag:not(.bg-indigo-600),
+[data-theme] .theme-card-option.theme-preview-retro .theme-card-tag:not(.bg-indigo-600) {
+  background-color: #f5eedc !important;
+  color: #5c4738 !important;
+}
+.theme-card-option.theme-preview-retro i.fa-feather-alt,
+[data-theme] .theme-card-option.theme-preview-retro i.fa-feather-alt {
+  color: #78553d !important;
+}
