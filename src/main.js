@@ -20,6 +20,7 @@ import ContextualHelper from './features/system/ContextualHelper.js';
 import ProjectStorageEngine from './features/storage/ProjectStorageEngine.js';
 import DashboardManager from './features/dashboard/DashboardManager.js';
 import ThemeManager from './features/theme/ThemeManager.js';
+import AuthManager from './features/auth/AuthManager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 顯示版本號
@@ -32,29 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 實例化全域 EventBus
     const eventBus = new EventBus();
 
-    // 內部測試防護 (Password Gate)
-    const passwordGate = document.getElementById('password-gate');
-    const pwdInput = document.getElementById('demo-password-input');
-    const pwdError = document.getElementById('demo-password-error');
-    const btnLogin = document.getElementById('btn-demo-login');
-    
-    if (sessionStorage.getItem('demo_unlocked') === 'true') {
-        passwordGate.classList.add('hidden');
-    } else {
-        const attemptLogin = () => {
-            if (pwdInput.value === 'DEMO2026') {
-                sessionStorage.setItem('demo_unlocked', 'true');
-                passwordGate.classList.add('hidden');
-            } else {
-                pwdError.classList.remove('hidden');
-                pwdInput.classList.add('border-rose-500');
-            }
-        };
-        btnLogin.addEventListener('click', attemptLogin);
-        pwdInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') attemptLogin();
-        });
-    }
+    // ★ 實例化角色帳號、身分認證與金鑰保險箱 (Sprint 3)
+    const authManager = new AuthManager(eventBus);
 
     // 綁定 Loading UI
     const loadingOverlay = document.getElementById('loading-overlay');
