@@ -1,27 +1,729 @@
 /* ==========================================================================
-   💼 專業冷灰 (Pro Slate) - 獨立風格模組
+   💼 專業冷灰 (Pro Slate) - 現代專業生產力設計工具風格
+   特點：幾何圓角、精緻微陰影、冷灰藍調、告別手繪風格，提供高度統一的儀表板與編輯介面
    ========================================================================== */
 
-[data-theme="pro-slate"], body.theme-pro-slate {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-}
-
-[data-theme="pro-slate"] header,
-[data-theme="pro-slate"] aside,
+/* --------------------------------------------------------------------------
+   1. 幾何精準化與手繪風格消除 (Geometric & Anti-Sketch Overrides)
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"] .sketch,
 [data-theme="pro-slate"] .sketch-panel,
+[data-theme="pro-slate"] .sketch-btn,
+[data-theme="pro-slate"] .sketch-header-group,
+[data-theme="pro-slate"] .sketch-tooltip,
+[data-theme="pro-slate"] .context-helper,
+[data-theme="pro-slate"] .page-item,
+[data-theme="pro-slate"] .project-card,
 [data-theme="pro-slate"] .glass-card {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
+  border-radius: 8px !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+[data-theme="pro-slate"] .sketch:hover,
+[data-theme="pro-slate"] .sketch-btn:hover {
+  border-radius: 8px !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="pro-slate"] .sketch-btn:active {
+  transform: translateY(0) !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. 全域底色與文字 (Global Base & Typography)
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"], body.theme-pro-slate {
+  background-color: #0b101b !important;
   color: #f1f5f9 !important;
 }
 
-[data-theme="pro-slate"] .sketch-btn {
-  background-color: #334155 !important;
+/* --------------------------------------------------------------------------
+   3. 專案儀表板 (Dashboard in Pro Slate)
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"] #dashboard-view {
+  background-color: #0b101b !important;
+  background: radial-gradient(circle at 50% 0%, #162032 0%, #0b101b 100%) !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="pro-slate"] #dashboard-view header {
+  background-color: #162032 !important;
+  border-bottom: 1px solid #334155 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="pro-slate"] #dashboard-view h1,
+[data-theme="pro-slate"] #dashboard-view h2,
+[data-theme="pro-slate"] #dashboard-view h3 {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="pro-slate"] #dashboard-view p,
+[data-theme="pro-slate"] #dashboard-view span.text-slate-500,
+[data-theme="pro-slate"] #dashboard-view span.text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+/* 搜尋欄 */
+[data-theme="pro-slate"] #dashboard-search-input {
+  background-color: #0b101b !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.2s ease !important;
+}
+[data-theme="pro-slate"] #dashboard-search-input:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25) !important;
+}
+
+/* 頂部按鈕 (匯入、新建、設定) */
+[data-theme="pro-slate"] #dashboard-view #btn-import-project-file {
+  background-color: #0f172a !important;
+  color: #38bdf8 !important;
+  border: 1px solid #0284c7 !important;
+  border-radius: 8px !important;
+}
+[data-theme="pro-slate"] #dashboard-view #btn-import-project-file:hover {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="pro-slate"] #dashboard-view #btn-create-project-trigger {
+  background: linear-gradient(135deg, #0284c7, #0369a1) !important;
+  color: #ffffff !important;
+  border: 1px solid #38bdf8 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3) !important;
+}
+[data-theme="pro-slate"] #dashboard-view #btn-create-project-trigger:hover {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+}
+
+[data-theme="pro-slate"] #dashboard-view #btn-dashboard-settings {
+  background-color: #0f172a !important;
+  color: #94a3b8 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+}
+[data-theme="pro-slate"] #dashboard-view #btn-dashboard-settings:hover {
+  background-color: #1e293b !important;
   color: #f8fafc !important;
   border-color: #475569 !important;
 }
 
+/* 篩選分頁標籤 */
+[data-theme="pro-slate"] .dashboard-filter-btn {
+  background-color: #162032 !important;
+  color: #94a3b8 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+}
+[data-theme="pro-slate"] .dashboard-filter-btn:hover {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #475569 !important;
+}
+[data-theme="pro-slate"] .dashboard-filter-btn.active {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35) !important;
+}
+
+/* 專案卡片 (Project Cards) */
+[data-theme="pro-slate"] .project-card,
+[data-theme="pro-slate"] .glass-card {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  color: #f1f5f9 !important;
+  overflow: hidden !important;
+}
+
+[data-theme="pro-slate"] .project-card:hover,
+[data-theme="pro-slate"] .glass-card:hover {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.2) !important;
+  transform: translateY(-2.5px) !important;
+}
+
+[data-theme="pro-slate"] .project-card-thumbnail {
+  background-color: #0b101b !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+[data-theme="pro-slate"] .project-card-thumbnail:hover {
+  background-color: #0f172a !important;
+}
+
+[data-theme="pro-slate"] .project-card-info {
+  background-color: #162032 !important;
+}
+
+[data-theme="pro-slate"] .project-card-title {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="pro-slate"] .project-card-date {
+  color: #94a3b8 !important;
+}
+
+[data-theme="pro-slate"] .project-page-badge {
+  background-color: #0b101b !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+}
+
+[data-theme="pro-slate"] .btn-card-menu {
+  background-color: #0b101b !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+}
+
+[data-theme="pro-slate"] .card-dropdown {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="pro-slate"] .card-dropdown button {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="pro-slate"] .card-dropdown button:hover {
+  background-color: #1e293b !important;
+  color: #38bdf8 !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. 專案內部 Header 列 (Editor Header in Pro Slate)
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"] header {
+  background-color: #162032 !important;
+  border-bottom: 1px solid #334155 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* 首頁按鈕與專案名稱 */
+[data-theme="pro-slate"] #btn-back-to-dashboard {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+[data-theme="pro-slate"] #btn-back-to-dashboard:hover {
+  background-color: #1e293b !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+}
+[data-theme="pro-slate"] #btn-back-to-dashboard i {
+  color: #38bdf8 !important;
+}
+
+[data-theme="pro-slate"] header .bg-slate-300 {
+  background-color: #334155 !important;
+}
+
+[data-theme="pro-slate"] #current-project-title-display {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+[data-theme="pro-slate"] #current-project-title-display:hover {
+  color: #38bdf8 !important;
+  border-color: #0284c7 !important;
+}
+[data-theme="pro-slate"] #current-project-title-input {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #38bdf8 !important;
+  border-radius: 6px !important;
+}
+[data-theme="pro-slate"] #auto-save-indicator {
+  background-color: rgba(14, 165, 233, 0.12) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  border-radius: 9999px !important;
+}
+
+/* 頂部工作區切換與比例控制器 */
+[data-theme="pro-slate"] .sketch-header-group {
+  background-color: #0b101b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  padding: 3px !important;
+}
+
+[data-theme="pro-slate"] #tab-image-workspace,
+[data-theme="pro-slate"] #tab-pdf-workspace {
+  color: #94a3b8 !important;
+  background-color: transparent !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  transition: all 0.15s ease !important;
+}
+[data-theme="pro-slate"] #tab-image-workspace.bg-indigo-50,
+[data-theme="pro-slate"] #tab-pdf-workspace.bg-indigo-50 {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.3) !important;
+}
+
+[data-theme="pro-slate"] #group-ratio-image,
+[data-theme="pro-slate"] #group-ratio-pdf {
+  background-color: #0b101b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+}
+[data-theme="pro-slate"] #group-ratio-image button,
+[data-theme="pro-slate"] #group-ratio-pdf button {
+  color: #94a3b8 !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+}
+[data-theme="pro-slate"] #group-ratio-image button.active-ratio,
+[data-theme="pro-slate"] #group-ratio-pdf button.active-ratio {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.3) !important;
+}
+
+/* 頂部右側動作按鈕 */
+[data-theme="pro-slate"] #btn-undo,
+[data-theme="pro-slate"] #btn-redo {
+  color: #94a3b8 !important;
+  border-radius: 6px !important;
+}
+[data-theme="pro-slate"] #btn-undo:hover,
+[data-theme="pro-slate"] #btn-redo:hover {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] #btn-manual {
+  background-color: #0f172a !important;
+  color: #38bdf8 !important;
+  border: 1px solid #0284c7 !important;
+  border-radius: 6px !important;
+}
+[data-theme="pro-slate"] #btn-manual:hover {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="pro-slate"] #btn-import-project {
+  background-color: #0f172a !important;
+  color: #34d399 !important;
+  border: 1px solid #059669 !important;
+  border-radius: 6px !important;
+}
+[data-theme="pro-slate"] #btn-import-project:hover {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="pro-slate"] #btn-export-dropdown {
+  background: linear-gradient(135deg, #0284c7, #0369a1) !important;
+  color: #ffffff !important;
+  border: 1px solid #38bdf8 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3) !important;
+}
+[data-theme="pro-slate"] #btn-export-dropdown:hover {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+}
+
+[data-theme="pro-slate"] #btn-editor-settings,
+[data-theme="pro-slate"] #btn-header-settings {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+}
+[data-theme="pro-slate"] #btn-editor-settings:hover,
+[data-theme="pro-slate"] #btn-header-settings:hover {
+  background-color: #1e293b !important;
+  color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+}
+
+[data-theme="pro-slate"] #app-version-badge {
+  background-color: #0f172a !important;
+  color: #94a3b8 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. 左側邊欄與各工具面板 (Left Sidebar & Panels in Pro Slate)
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"] aside {
+  background-color: #162032 !important;
+  border-right: 1px solid #334155 !important;
+}
+
+[data-theme="pro-slate"] #sidebar-tabs {
+  background-color: #0f172a !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+[data-theme="pro-slate"] .tab-btn {
+  background-color: #0f172a !important;
+  color: #94a3b8 !important;
+  border-bottom: 2px solid transparent !important;
+  font-weight: 600 !important;
+  transition: all 0.15s ease !important;
+}
+[data-theme="pro-slate"] .tab-btn:hover {
+  background-color: #162032 !important;
+  color: #f8fafc !important;
+}
+[data-theme="pro-slate"] .tab-btn.active,
+[data-theme="pro-slate"] #sidebar-tabs .border-indigo-500 {
+  background-color: #162032 !important;
+  color: #38bdf8 !important;
+  border-bottom: 2px solid #38bdf8 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="pro-slate"] .sidebar-panel,
+[data-theme="pro-slate"] #panel-tools,
+[data-theme="pro-slate"] #panel-properties,
+[data-theme="pro-slate"] #panel-assets,
+[data-theme="pro-slate"] #panel-layers {
+  background-color: #162032 !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="pro-slate"] .sidebar-panel h3 {
+  color: #94a3b8 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+}
+
+/* 左側工具項目按鈕 (Modern Studio Tool Buttons) */
+[data-theme="pro-slate"] #panel-tools button,
+[data-theme="pro-slate"] .sidebar-panel .sketch-btn {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+[data-theme="pro-slate"] #panel-tools button:hover,
+[data-theme="pro-slate"] .sidebar-panel .sketch-btn:hover {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3) !important;
+  transform: translateY(-1px) !important;
+}
+
+[data-theme="pro-slate"] .sidebar-panel .sketch-panel,
+[data-theme="pro-slate"] .sidebar-panel .bg-slate-50\/50,
+[data-theme="pro-slate"] .sidebar-panel .bg-slate-50 {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+}
+
+/* 圖層面板項目 (Layers Item) */
+[data-theme="pro-slate"] .layer-item {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  color: #f1f5f9 !important;
+}
+[data-theme="pro-slate"] .layer-item:hover {
+  background-color: #1e293b !important;
+  border-color: #38bdf8 !important;
+}
+[data-theme="pro-slate"] .layer-item.bg-indigo-50 {
+  background-color: #1e3a5f !important;
+  border-color: #0284c7 !important;
+}
+[data-theme="pro-slate"] .layer-item span,
+[data-theme="pro-slate"] .layer-item .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. 中間畫布工作區 (Canvas Workspace in Pro Slate)
+   -------------------------------------------------------------------------- */
 [data-theme="pro-slate"] .canvas-bg {
-  background-color: #0b0f19 !important;
+  background-color: #0b101b !important;
+  background-image: linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. 右側頁面縮圖清單 (Right Thumbnails Panel in Pro Slate)
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"] #thumbnails-container {
+  background-color: #162032 !important;
+  border-left: 1px solid #334155 !important;
+}
+
+[data-theme="pro-slate"] #thumbnails-container > div:first-child {
+  background-color: #162032 !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+[data-theme="pro-slate"] #thumbnails-count {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="pro-slate"] #btn-add-page {
+  background-color: #0f172a !important;
+  color: #38bdf8 !important;
+  border: 1px solid #0284c7 !important;
+  border-radius: 6px !important;
+}
+[data-theme="pro-slate"] #btn-add-page:hover {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="pro-slate"] #thumbnails-list {
+  background-color: #0b101b !important;
+}
+
+/* 頁面卡片項目 (Clean Geometric Page Card) */
+[data-theme="pro-slate"] .page-item {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+  overflow: hidden !important;
+}
+
+[data-theme="pro-slate"] .page-item:hover {
+  background-color: #1e293b !important;
+  border-color: #38bdf8 !important;
+  transform: translateY(-1.5px) !important;
+}
+
+[data-theme="pro-slate"] .page-item.bg-blue-50 {
+  background-color: #162032 !important;
+  border: 2px solid #0284c7 !important;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.35) !important;
+}
+
+[data-theme="pro-slate"] .page-item-title,
+[data-theme="pro-slate"] .page-item .text-slate-700,
+[data-theme="pro-slate"] .page-item .text-slate-800 {
+  color: #f8fafc !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="pro-slate"] .copy-page-btn,
+[data-theme="pro-slate"] .delete-page-btn {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+}
+
+[data-theme="pro-slate"] .copy-page-btn {
+  color: #cbd5e1 !important;
+}
+[data-theme="pro-slate"] .copy-page-btn:hover {
+  color: #ffffff !important;
+  background-color: #0284c7 !important;
+  border-color: #38bdf8 !important;
+}
+
+[data-theme="pro-slate"] .delete-page-btn {
+  color: #fda4af !important;
+}
+[data-theme="pro-slate"] .delete-page-btn:hover {
+  color: #ffffff !important;
+  background-color: #e11d48 !important;
+  border-color: #f43f5e !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. 系統設定與建立專案彈窗 (Modals in Pro Slate)
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"] .settings-modal-card {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] .settings-modal-header {
+  background-color: #0f172a !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+[data-theme="pro-slate"] .modal-header-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] .modal-header-subtitle {
+  color: #94a3b8 !important;
+}
+
+[data-theme="pro-slate"] .settings-modal-sidebar {
+  background-color: #0b101b !important;
+  border-right: 1px solid #334155 !important;
+}
+
+[data-theme="pro-slate"] .settings-modal-content {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] .settings-modal-footer {
+  background-color: #0f172a !important;
+  border-top: 1px solid #334155 !important;
+}
+
+[data-theme="pro-slate"] .modal-footer-tip {
+  color: #94a3b8 !important;
+}
+
+[data-theme="pro-slate"] .settings-tab-btn {
+  color: #94a3b8 !important;
+  border-radius: 8px !important;
+}
+
+[data-theme="pro-slate"] .settings-tab-btn:hover {
+  background-color: #162032 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] .settings-tab-btn.active {
+  background-color: #162032 !important;
+  color: #38bdf8 !important;
+  border: 1px solid #0284c7 !important;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.25) !important;
+}
+
+[data-theme="pro-slate"] .panel-section-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] .setting-card-item {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+}
+
+[data-theme="pro-slate"] .setting-card-item:hover {
+  background-color: #1e293b !important;
+  border-color: #38bdf8 !important;
+}
+
+[data-theme="pro-slate"] .setting-item-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] .setting-item-desc {
+  color: #94a3b8 !important;
+}
+
+[data-theme="pro-slate"] .modal-about-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] .modal-about-version {
+  color: #94a3b8 !important;
+}
+
+[data-theme="pro-slate"] .modal-about-box {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+  color: #e2e8f0 !important;
+}
+
+/* 新建專案彈窗 */
+[data-theme="pro-slate"] #modal-create-project > div {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 16px !important;
+  color: #f8fafc !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-theme="pro-slate"] #modal-create-project input {
+  background-color: #0b101b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="pro-slate"] #modal-create-project .template-card {
+  background-color: #0b101b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+}
+
+[data-theme="pro-slate"] #modal-create-project .template-card:hover {
+  border-color: #38bdf8 !important;
+  background-color: #162032 !important;
+}
+
+[data-theme="pro-slate"] #modal-create-project .template-card.border-indigo-600 {
+  border-color: #0284c7 !important;
+  background-color: rgba(2, 132, 199, 0.15) !important;
+}
+
+[data-theme="pro-slate"] #modal-create-project .template-card div {
+  color: #f8fafc !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. 雜項元件 (Inputs, Dropdowns, Menus & Scrollbars)
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"] input,
+[data-theme="pro-slate"] select,
+[data-theme="pro-slate"] textarea {
+  background-color: #0b101b !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+}
+
+[data-theme="pro-slate"] #export-options,
+[data-theme="pro-slate"] #context-menu {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  color: #f8fafc !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="pro-slate"] #export-options button:hover {
+  background-color: #1e293b !important;
+  color: #38bdf8 !important;
+}
+
+[data-theme="pro-slate"] ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+[data-theme="pro-slate"] ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }

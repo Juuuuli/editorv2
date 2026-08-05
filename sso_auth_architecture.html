@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSO 帳號權限架構圖 (多主機分散式與 Key 發放完整版)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #141c2e;
+      --card-border: #23314d;
+      --admin-bg: #1a233a;
+      --admin-border: #3b82f6;
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+      --text-muted: #64748b;
+      
+      --c-api1: #10b981;  /* 綠色 */
+      --c-api2: #06b6d4;  /* 青色 */
+      --c-api3: #a855f7;  /* 紫色 */
+      --c-key:  #f59e0b;  /* 橘黃色 */
+      --c-nav:  #ec4899;  /* 粉紅 */
+      --c-server: #38bdf8;/* 伺服器標籤 */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', 'Inter', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    header h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    header p {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+    }
+
+    /* 頂部操作按鈕列 */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-sub);
+      padding: 0.45rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .filter-btn.btn-all.active { border-color: #3b82f6; background: rgba(59, 130, 246, 0.2); }
+    .filter-btn.btn-init.active { border-color: var(--c-key); background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .filter-btn.btn-api1.active { border-color: var(--c-api1); background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .filter-btn.btn-api2.active { border-color: var(--c-api2); background: rgba(6, 182, 212, 0.2); color: #22d3ee; }
+    .filter-btn.btn-api3.active { border-color: var(--c-api3); background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+
+    /* 白板畫布容器 */
+    .board-container {
+      position: relative;
+      background: #0f1626;
+      border: 2px solid #23334e;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      margin-bottom: 2rem;
+      overflow: visible;
+    }
+
+    /* 網格版面 (左 260px, 中 380px, 右 380px) */
+    .board-grid {
+      display: grid;
+      grid-template-columns: 270px 1fr 380px;
+      gap: 3.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    @media (max-width: 1080px) {
+      .board-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+
+    /* 通用方塊樣式 (獨立伺服器主機卡片) */
+    .wb-box {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .wb-box:hover {
+      border-color: #3b82f6;
+    }
+
+    /* 獨立主機/電腦標籤 */
+    .server-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--c-server);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.6rem;
+    }
+
+    .wb-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* 系統內部的 Key 與 Token 小卡 */
+    .key-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px dashed rgba(245, 158, 11, 0.5);
+      color: #fbbf24;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 0.4rem;
+    }
+
+    .token-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* 中央 帳號 Admin (特殊強調) */
+    .wb-admin {
+      background: var(--admin-bg);
+      border: 2px solid var(--admin-border);
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.15);
+    }
+
+    .admin-section {
+      background: rgba(11, 15, 25, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 0.75rem 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .admin-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .admin-section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .admin-list {
+      list-style: none;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    .admin-list li {
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* 登入表單 UI 模擬 */
+    .login-mock {
+      background: rgba(11, 15, 25, 0.6);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      margin: 0.5rem 0;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .input-pill {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin: 0.25rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: #cbd5e1;
+    }
+
+    /* 桶子快取 */
+    .storage-bucket {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #1e293b;
+      border: 1px solid #475569;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    /* 動態箭頭 SVG 連線層 */
+    .svg-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .flow-line {
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      transition: opacity 0.3s ease, stroke-width 0.3s ease;
+    }
+
+    .line-api1 { stroke: var(--c-api1); }
+    .line-api2 { stroke: var(--c-api2); }
+    .line-api3 { stroke: var(--c-api3); }
+    .line-key  { stroke: var(--c-key);  stroke-dasharray: 6, 4; }
+    .line-nav  { stroke: var(--c-nav);  stroke-dasharray: 5, 5; }
+
+    .line-badge {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      position: absolute;
+      pointer-events: auto;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      z-index: 3;
+    }
+
+    .b-api1 { background: #065f46; color: #6ee7b7; border: 1px solid #10b981; }
+    .b-api2 { background: #155e75; color: #67e8f9; border: 1px solid #06b6d4; }
+    .b-api3 { background: #581c87; color: #d8b4fe; border: 1px solid #a855f7; }
+    .b-key  { background: #78350f; color: #fde68a; border: 1px solid #f59e0b; }
+    .b-nav  { background: #831843; color: #fbcfe8; border: 1px solid #ec4899; }
+
+    /* 下方精簡白話說明卡片 */
+    .explain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .simple-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.3rem;
+      position: relative;
+    }
+
+    .simple-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .simple-card-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+
+    .simple-card h3 {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .simple-card p {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+
+    .simple-card strong {
+      color: #fff;
+    }
+
+    .step-box {
+      background: rgba(11, 15, 25, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      margin-top: 0.6rem;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+    }
+
+    .highlight-glow {
+      box-shadow: 0 0 22px rgba(59, 130, 246, 0.45) !important;
+      border-color: #38bdf8 !important;
+    }
+
+    .dimmed {
+      opacity: 0.25;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <header>
+      <h1>SSO 帳號權限全景架構圖 (多主機分散式架構)</h1>
+      <p>所有系統皆架設在獨立電腦/主機 ｜ 釐清各系統的 Key 何時發放、怎麼發放與 Token 運作機制</p>
+    </header>
+
+    <!-- 點擊快速過濾/高亮某條路徑 -->
+    <div class="filter-bar">
+      <button class="filter-btn btn-all active" onclick="setFilter('all')">👁️ 顯示全部路徑</button>
+      <button class="filter-btn btn-init" onclick="setFilter('init')">🔑 系統初次建置：Key 發放流程</button>
+      <button class="filter-btn btn-api1" onclick="setFilter('api1')">🟢 API 1：登入發放使用者 Token</button>
+      <button class="filter-btn btn-api2" onclick="setFilter('api2')">🔵 API 2：重開免登驗證</button>
+      <button class="filter-btn btn-api3" onclick="setFilter('api3')">🟣 API 3：跨系統 2 SSO 鑑權</button>
+    </div>
+
+    <!-- 白板還原畫布 -->
+    <div class="board-container" id="boardCanvas">
+      
+      <!-- SVG 連線箭頭層 -->
+      <svg class="svg-layer" viewBox="0 0 1200 580" preserveAspectRatio="none" id="svgConnections">
+        <defs>
+          <marker id="arrow-api1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M1,1 L7,4 L1,7 Z" fill="var(--c-api1)" />
+          </marker>
+          <marker id="arrow-api2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M1,1 L7,4 L1,7 Z" fill="var(--c-api2)" />
+          </marker>
+          <marker id="arrow-api3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M1,1 L7,4 L1,7 Z" fill="var(--c-api3)" />
+          </marker>
+          <marker id="arrow-nav" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M1,1 L7,4 L1,7 Z" fill="var(--c-nav)" />
+          </marker>
+          <marker id="arrow-key" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M1,1 L7,4 L1,7 Z" fill="var(--c-key)" />
+          </marker>
+        </defs>
+
+        <!-- API 1: 系統1 ➔ 中央Admin (輸入帳密驗證) -->
+        <path id="path-api1" class="flow-line line-api1" d="M 820,130 C 730,120 690,140 600,150" marker-end="url(#arrow-api1)" />
+
+        <!-- API 2: 系統1 自身 Token 驗證 / 續期 -->
+        <path id="path-api2" class="flow-line line-api2" d="M 1170,120 C 1200,120 1200,190 1160,190" marker-end="url(#arrow-api2)" />
+
+        <!-- 網址跳轉: 系統1 ➔ 系統2 (帶著 Token) -->
+        <path id="path-nav" class="flow-line line-nav" d="M 970,250 L 970,350" marker-end="url(#arrow-nav)" />
+
+        <!-- API 3: 系統2 ➔ 中央Admin (跨站檢查 Token 與權限) -->
+        <path id="path-api3" class="flow-line line-api3" d="M 820,440 C 720,460 690,430 600,390" marker-end="url(#arrow-api3)" />
+
+        <!-- Key: 系統4 (外部/排程) ➔ 中央Admin (使用 API Key) -->
+        <path id="path-key" class="flow-line line-key" d="M 240,460 C 280,460 310,420 340,390" marker-end="url(#arrow-key)" />
+      </svg>
+
+      <!-- 浮動文字標籤 (對應連線) -->
+      <div class="line-badge b-api1" style="top: 24%; left: 59%;" id="badge-api1">
+        API 1：送帳密 ➔ Admin 驗證發 Token
+      </div>
+
+      <div class="line-badge b-api2" style="top: 31%; left: 95%;" id="badge-api2">
+        API 2：重開頁面 ➔ 驗證 Token 是否過期
+      </div>
+
+      <div class="line-badge b-nav" style="top: 52%; left: 81%;" id="badge-nav">
+        🔗 切換網址 (攜帶同一張 Token)
+      </div>
+
+      <div class="line-badge b-api3" style="top: 76%; left: 59%;" id="badge-api3">
+        API 3：系統 2 帶「系統2 Key + Token」向 Admin 鑑權
+      </div>
+
+      <div class="line-badge b-key" style="top: 76%; left: 24%;" id="badge-key">
+        帶系統 4 Key 直通執行 (免人類帳密)
+      </div>
+
+      <!-- 網格內容 -->
+      <div class="board-grid">
+
+        <!-- 左側：系統 3 與 系統 4 (各自在獨立主機) -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+          
+          <!-- 系統 3 -->
+          <div class="wb-box" id="box-sys3" style="min-height: 190px;">
+            <div class="server-tag">🖥️ 獨立主機 C (192.168.1.30)</div>
+            <div class="wb-title">
+              <span>③ 系統 3</span>
+              <span class="token-badge">模組 3</span>
+            </div>
+            <div class="key-badge">🔑 系統 3 專屬 Key (配妥於 .env)</div>
+            <p style="font-size: 0.78rem; color: var(--text-sub); margin-top: 0.4rem;">
+              常規業務子系統（例：財務系統）。持 Token 即可進入。
+            </p>
+          </div>
+
+          <!-- 系統 4 -->
+          <div class="wb-box" id="box-sys4" style="min-height: 220px; border-color: rgba(245, 158, 11, 0.4);">
+            <div class="server-tag">🖥️ 獨立主機 D (192.168.1.40)</div>
+            <div class="wb-title">
+              <span>④ 系統 4</span>
+              <span class="key-badge" style="background:rgba(245,158,11,0.25);">🔑 API Key</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #fbbf24; font-weight: 600; margin-bottom: 0.2rem;">
+              無人值守 / 外部排程服務
+            </p>
+            <p style="font-size: 0.78rem; color: var(--text-sub);">
+              建置時從 Admin 取得一組長效 <strong>Key (API Key)</strong>，系統 4 程式發出請求時自動帶上 Key 直接執行。
+            </p>
+          </div>
+
+        </div>
+
+        <!-- 中間：中央 帳號 Admin (獨立主機) -->
+        <div class="wb-box wb-admin" id="box-admin">
+          <div class="server-tag" style="color:#93c5fd; border-color:rgba(147,197,253,0.3);">🖥️ 中央認證主機 (auth.company.com)</div>
+          <div class="wb-title" style="border-bottom: 1px solid rgba(59, 130, 246, 0.3); padding-bottom: 0.5rem; margin-bottom: 0.8rem;">
+            <span style="color: #60a5fa; font-size: 1.15rem;">🏢 帳號 Admin (IdP 中心)</span>
+          </div>
+
+          <!-- 1. 帳號 -->
+          <div class="admin-section">
+            <div class="admin-section-title">👤 1. 帳號紀錄 (人員資料庫)</div>
+            <ul class="admin-list">
+              <li>• 儲存帳號、加密密碼、人員基本資料</li>
+              <li>• 比對 API 1 傳來的帳號密碼</li>
+            </ul>
+          </div>
+
+          <!-- 2. 模組管理與 Key 發放中心 -->
+          <div class="admin-section" style="border-color: rgba(245, 158, 11, 0.3);">
+            <div class="admin-section-title" style="color:#fbbf24;">📦 2. 模組管理 (系統註冊與 Key 發放)</div>
+            <ul class="admin-list">
+              <li>• 註冊系統 1 ➔ 產生 <strong>Key 1</strong> (配置給系統 1 電腦)</li>
+              <li>• 註冊系統 2 ➔ 產生 <strong>Key 2</strong> (配置給系統 2 電腦)</li>
+              <li>• 註冊系統 3 ➔ 產生 <strong>Key 3</strong> (配置給系統 3 電腦)</li>
+              <li>• 註冊系統 4 ➔ 產生 <strong>Key 4</strong> (配置給系統 4 電腦)</li>
+            </ul>
+          </div>
+
+          <!-- 3. 權限管理 -->
+          <div class="admin-section">
+            <div class="admin-section-title">🛡️ 3. 權限對應 (人員 ⇄ 模組)</div>
+            <ul class="admin-list">
+              <li>• 人員 A ➔ 擁有 [系統 1] + [系統 2] 使用權</li>
+              <li>• 登入成功時將授權包入 <strong>使用者 Token</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 右側：系統 1 與 系統 2 (各自在獨立主機) -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+          
+          <!-- 系統 1 -->
+          <div class="wb-box" id="box-sys1" style="min-height: 250px;">
+            <div class="server-tag">🖥️ 獨立主機 A (app1.company.com)</div>
+            <div class="wb-title">
+              <span>① 系統 1</span>
+              <span style="font-size:0.8rem; color:#34d399; font-weight:700;">(主頁模組)</span>
+            </div>
+
+            <div class="key-badge">🔑 系統 1 專屬 Key (配妥於 .env)</div>
+
+            <!-- 登入框 -->
+            <div class="login-mock">
+              <div style="font-size: 0.75rem; margin-bottom: 0.2rem; color:#94a3b8;">登入介面 (Login UI)：</div>
+              <div class="input-pill">帳號: admin_user</div>
+              <div class="input-pill">密碼: ••••••••</div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.4rem;">
+              <span class="token-badge">🎟️ 使用者 Token</span>
+              <div class="storage-bucket" title="白板上的圓柱桶圖示">
+                <span>🗄️ 快取 (Redis)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 系統 2 -->
+          <div class="wb-box" id="box-sys2" style="min-height: 200px;">
+            <div class="server-tag">🖥️ 獨立主機 B (app2.company.com)</div>
+            <div class="wb-title">
+              <span>② 系統 2</span>
+              <span style="font-size:0.8rem; color:#c084fc; font-weight:700;">(次模組)</span>
+            </div>
+
+            <div class="key-badge">🔑 系統 2 專屬 Key (配妥於 .env)</div>
+
+            <p style="font-size:0.78rem; color:var(--text-sub); margin: 0.4rem 0;">
+              從系統 1 點連結跳轉過來，不需重打密碼。
+            </p>
+            <div style="background: rgba(168, 85, 247, 0.1); border: 1px dashed rgba(168, 85, 247, 0.3); border-radius: 6px; padding: 0.45rem; font-size: 0.75rem; color:#d8b4fe;">
+              ⚡ <strong>API 3 鑑權：</strong>系統 2 帶自己的 Key + 使用者的 Token 向 Admin 查驗權限，確認有效直接進！
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 下方深度白話解答：Key 是什麼？何時發放？怎麼發放？ -->
+    <div style="margin-bottom: 1.2rem; font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+      <span>💡</span> 關鍵解惑：系統 Key 是什麼？何時發放？怎麼發放？
+    </div>
+
+    <div class="explain-grid">
+      
+      <!-- 疑問 1: Key 的發放時機與方式 -->
+      <div class="simple-card" style="border-left: 3px solid var(--c-key);">
+        <div class="simple-card-header">
+          <div class="simple-card-num" style="background: rgba(245, 158, 11, 0.2); color: var(--c-key);">1</div>
+          <h3>Key 到底在「什麼時候發放」？「怎麼發放」？</h3>
+        </div>
+        <p>
+          <strong>發放時機：【各系統初次架設上線時 (只發一次)】</strong>
+        </p>
+        <div class="step-box">
+          <strong>具體發放 3 步驟：</strong><br/>
+          <strong>步驟 1：</strong> 管理員在「帳號 Admin」後台點選【新增模組 ➔ 系統 1、2、3、4】。<br/>
+          <strong>步驟 2：</strong> Admin 為每個系統自動產出一組「專屬 Key (密鑰)」。<br/>
+          <strong>步驟 3：</strong> 工程師把 Key 複製貼到該台電腦的設定檔（<code>.env</code>）裡。<br/>
+          ➔ <strong>各系統的電腦從此擁有專屬身分證！</strong>
+        </div>
+      </div>
+
+      <!-- 疑問 2: 為什麼每個系統都要有 Key？ -->
+      <div class="simple-card" style="border-left: 3px solid #38bdf8;">
+        <div class="simple-card-header">
+          <div class="simple-card-num" style="background: rgba(56, 189, 248, 0.2); color: var(--c-server);">2</div>
+          <h3>既然各系統在不同電腦，為什麼每個系統都要 Key？</h3>
+        </div>
+        <p>
+          因為各系統電腦互相獨立，Admin 必須防止駭客冒充：
+        </p>
+        <div class="step-box">
+          • <strong>系統身分識別：</strong> 系統 2 要向 Admin 查 API 3 時，必須出示 <code>系統 2 Key</code>，Admin 才能確認「這真的是我認可的合法系統 2 主機」。<br/>
+          • <strong>系統 4 (無人機器)：</strong> 沒有真人輸入帳密，系統 4 直接用它的 <code>系統 4 Key</code> 呼叫 Admin 執行自動備份。
+        </div>
+      </div>
+
+      <!-- 疑問 3: Key 與 Token 差在哪？ -->
+      <div class="simple-card" style="border-left: 3px solid var(--c-api1);">
+        <div class="simple-card-header">
+          <div class="simple-card-num" style="background: rgba(16, 185, 129, 0.2); color: var(--c-api1);">3</div>
+          <h3>超簡短總結：Key (系統鑰匙) vs Token (人員票券)</h3>
+        </div>
+        <p>
+          只要分清<strong>「給誰用的」</strong>就完全懂了：
+        </p>
+        <div class="step-box">
+          • <strong>Key (系統身分證)：</strong> 發給<strong>「電腦 / 系統」</strong>。建置時發放一次，長效固定，放在伺服器內。<br/>
+          • <strong>Token (個人通行證)：</strong> 發給<strong>「登入的使用者」</strong>。每次輸入帳密時臨時產生，跟著瀏覽器跑，過期自動重發。
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function setFilter(type) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector('.btn-' + type).classList.add('active');
+
+      const paths = {
+        api1: document.getElementById('path-api1'),
+        api2: document.getElementById('path-api2'),
+        api3: document.getElementById('path-api3'),
+        nav:  document.getElementById('path-nav'),
+        key:  document.getElementById('path-key')
+      };
+
+      const badges = {
+        api1: document.getElementById('badge-api1'),
+        api2: document.getElementById('badge-api2'),
+        api3: document.getElementById('badge-api3'),
+        nav:  document.getElementById('badge-nav'),
+        key:  document.getElementById('badge-key')
+      };
+
+      const boxes = {
+        sys1: document.getElementById('box-sys1'),
+        sys2: document.getElementById('box-sys2'),
+        sys3: document.getElementById('box-sys3'),
+        sys4: document.getElementById('box-sys4'),
+        admin: document.getElementById('box-admin')
+      };
+
+      // 重設
+      Object.values(paths).forEach(p => p.style.opacity = '1');
+      Object.values(badges).forEach(b => b.style.opacity = '1');
+      Object.values(boxes).forEach(b => {
+        b.classList.remove('highlight-glow');
+        b.classList.remove('dimmed');
+      });
+
+      if (type === 'all') return;
+
+      if (type === 'init') {
+        paths.api1.style.opacity = '0.1';
+        paths.api2.style.opacity = '0.1';
+        paths.api3.style.opacity = '0.1';
+        paths.nav.style.opacity = '0.1';
+        badges.api1.style.opacity = '0.1';
+        badges.api2.style.opacity = '0.1';
+        badges.api3.style.opacity = '0.1';
+        badges.nav.style.opacity = '0.1';
+        boxes.admin.classList.add('highlight-glow');
+        boxes.sys1.classList.add('highlight-glow');
+        boxes.sys2.classList.add('highlight-glow');
+        boxes.sys3.classList.add('highlight-glow');
+        boxes.sys4.classList.add('highlight-glow');
+      } else if (type === 'api1') {
+        paths.api2.style.opacity = '0.1';
+        paths.api3.style.opacity = '0.1';
+        paths.nav.style.opacity = '0.1';
+        paths.key.style.opacity = '0.1';
+        badges.api2.style.opacity = '0.1';
+        badges.api3.style.opacity = '0.1';
+        badges.nav.style.opacity = '0.1';
+        badges.key.style.opacity = '0.1';
+        boxes.sys1.classList.add('highlight-glow');
+        boxes.admin.classList.add('highlight-glow');
+        boxes.sys2.classList.add('dimmed');
+        boxes.sys3.classList.add('dimmed');
+        boxes.sys4.classList.add('dimmed');
+      } else if (type === 'api2') {
+        paths.api1.style.opacity = '0.1';
+        paths.api3.style.opacity = '0.1';
+        paths.nav.style.opacity = '0.1';
+        paths.key.style.opacity = '0.1';
+        badges.api1.style.opacity = '0.1';
+        badges.api3.style.opacity = '0.1';
+        badges.nav.style.opacity = '0.1';
+        badges.key.style.opacity = '0.1';
+        boxes.sys1.classList.add('highlight-glow');
+        boxes.admin.classList.add('dimmed');
+        boxes.sys2.classList.add('dimmed');
+        boxes.sys3.classList.add('dimmed');
+        boxes.sys4.classList.add('dimmed');
+      } else if (type === 'api3') {
+        paths.api1.style.opacity = '0.1';
+        paths.api2.style.opacity = '0.1';
+        paths.key.style.opacity = '0.1';
+        badges.api1.style.opacity = '0.1';
+        badges.api2.style.opacity = '0.1';
+        badges.key.style.opacity = '0.1';
+        boxes.sys1.classList.add('highlight-glow');
+        boxes.sys2.classList.add('highlight-glow');
+        boxes.admin.classList.add('highlight-glow');
+        boxes.sys3.classList.add('dimmed');
+        boxes.sys4.classList.add('dimmed');
+      }
+    }
+  </script>
+</body>
+</html>
