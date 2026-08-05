@@ -7,8 +7,8 @@
                          │
         ┌────────────────┴────────────────┐
         ▼                                 ▼
-   [ 帳號密碼登入 ]                 [ 註冊新帳號 (RBAC) ]
-   (預設: admin / admin888)         (Admin / Editor / Viewer)
+    [ 帳號密碼登入 ]                 [ 註冊新帳號 (RBAC) ]
+    (預設: admin_master / Admin@Canvas2026#ProSecure!)  (Admin / Editor / Viewer)
         │                                 │
         └────────────────┬────────────────┘
                          ▼

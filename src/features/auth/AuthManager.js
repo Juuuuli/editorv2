@@ -15,13 +15,13 @@ export default class AuthManager {
         this.storageKeySession = 'editorv2_current_user';
         this.storageKeyApiVault = 'editorv2_api_vault';
         
-        // 預設公用最高管理者
+        // 預設公用最高管理者 (高強度憑證)
         this.defaultMasterAdmin = {
             id: 'user_master_admin',
-            username: 'admin',
-            password: 'admin888',
-            name: '最高管理者 (Admin)',
-            email: 'admin@editor.local',
+            username: 'admin_master',
+            password: 'Admin@Canvas2026#ProSecure!',
+            name: '系統最高管理者 (Admin)',
+            email: 'admin.master@editor.local',
             role: 'admin', // 'admin', 'editor', 'viewer'
             avatarColor: '#4f46e5',
             createdAt: Date.now()
@@ -71,13 +71,21 @@ export default class AuthManager {
                 const initialUsers = [this.defaultMasterAdmin];
                 localStorage.setItem(this.storageKeyUsers, JSON.stringify(initialUsers));
             } else {
-                const users = JSON.parse(raw);
-                // 確保預設管理員帳號永遠存在
-                const hasAdmin = users.some(u => u.username === 'admin');
-                if (!hasAdmin) {
+                let users = JSON.parse(raw);
+                // 確保預設高強度管理者帳號存在並更新為最新憑證
+                const masterIdx = users.findIndex(u => u.username === 'admin_master' || u.username === 'admin');
+                if (masterIdx >= 0) {
+                    users[masterIdx] = {
+                        ...users[masterIdx],
+                        username: 'admin_master',
+                        password: 'Admin@Canvas2026#ProSecure!',
+                        name: '系統最高管理者 (Admin)',
+                        role: 'admin'
+                    };
+                } else {
                     users.unshift(this.defaultMasterAdmin);
-                    localStorage.setItem(this.storageKeyUsers, JSON.stringify(users));
                 }
+                localStorage.setItem(this.storageKeyUsers, JSON.stringify(users));
             }
         } catch (e) {
             console.error('[AuthManager] 初始化使用者資料庫失敗:', e);
@@ -170,10 +178,12 @@ export default class AuthManager {
         const users = this.getAllUsers();
         const cleanUser = username.trim().toLowerCase();
         
-        const found = users.find(u => 
-            (u.username.toLowerCase() === cleanUser || (u.email && u.email.toLowerCase() === cleanUser)) && 
-            u.password === password
-        );
+        const found = users.find(u => {
+            const matchUser = u.username.toLowerCase() === cleanUser || 
+                              (u.email && u.email.toLowerCase() === cleanUser) ||
+                              (cleanUser === 'admin' && u.username.toLowerCase() === 'admin_master');
+            return matchUser && u.password === password;
+        });
 
         if (found) {
             const sessionUser = {
@@ -296,8 +306,8 @@ export default class AuthManager {
                             <div class="flex items-center gap-2 text-left">
                                 <span class="w-7 h-7 rounded-lg bg-amber-200 text-amber-800 flex items-center justify-center font-bold text-xs">👑</span>
                                 <div>
-                                    <div class="text-xs font-black text-amber-900">公用最高管理者帳號</div>
-                                    <div class="text-[11px] font-mono text-amber-700">帳號: <strong>admin</strong> │ 密碼: <strong>admin888</strong></div>
+                                    <div class="text-xs font-black text-amber-900">公用最高管理者憑證 (高強度)</div>
+                                    <div class="text-[11px] font-mono text-amber-700">帳號: <strong>admin_master</strong> │ 密碼: <strong>Admin@Canvas2026#ProSecure!</strong></div>
                                 </div>
                             </div>
                             <button type="button" id="btn-quick-fill-admin" class="sketch-btn px-2.5 py-1 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white border-amber-700 shadow-[1.5px_1.5px_0px_#78350f] shrink-0" title="自動填入公用最高管理者帳密">
@@ -728,8 +738,8 @@ export default class AuthManager {
         const loginPwdEl = document.getElementById('login-password');
         if (btnQuickAdmin && loginUserEl && loginPwdEl) {
             btnQuickAdmin.addEventListener('click', () => {
-                loginUserEl.value = 'admin';
-                loginPwdEl.value = 'admin888';
+                loginUserEl.value = 'admin_master';
+                loginPwdEl.value = 'Admin@Canvas2026#ProSecure!';
                 loginUserEl.classList.add('bg-amber-50');
                 loginPwdEl.classList.add('bg-amber-50');
                 setTimeout(() => {
