@@ -116,7 +116,7 @@ export default class ManualPanel {
                             <li>4. 智慧去背與修補</li>
                             <li>5. 加入新物件</li>
                             <li>6. 其它操作與設定</li>
-                            <li>8. 後台與 API 架構說明</li>
+                            <li>7. 後台與 API 架構說明</li>
                         </ul>
                     </div>
                 `,
@@ -301,9 +301,9 @@ export default class ManualPanel {
             },
             // Page 7: API Architecture
             {
-                tabName: "後台與 API",
+                tabName: "後台架構",
                 left: `
-                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6"><i class="fas fa-server mr-2"></i> 8. 後台與 API 架構說明</h3>
+                    <h3 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6"><i class="fas fa-server mr-2"></i> 7. 後台與 API 架構說明</h3>
                     <p class="text-slate-600 text-lg leading-relaxed mb-4">本系統的「智慧工具」採用模組化設計，目前透過串接公開 API 提供強大的 AI 運算能力。以下為目前串接的服務清單：</p>
                     
                     <div class="space-y-4 mt-6">

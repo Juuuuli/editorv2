@@ -100,45 +100,58 @@
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
 }
 
-/* 說明書側邊書籤標籤 */
+/* 說明書側邊書籤標籤 (自適應書本高度，徹底防止溢出) */
 .notebook-tabs {
   position: absolute;
-  right: -38px;
-  top: 20px;
+  right: -34px;
+  top: 24px;
+  bottom: 24px;
+  width: 34px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 4px;
   z-index: 1;
+  pointer-events: auto;
 }
 
 .notebook-tab {
+  flex: 1;
+  max-height: 70px;
+  min-height: 40px;
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  padding: 12px 6px;
+  padding: 6px 3px;
   background: #e2e8f0;
   border: 2px solid #334155;
   border-left: none;
   border-radius: 0 8px 8px 0;
-  font-weight: bold;
+  font-weight: 700;
   color: #475569;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-  font-size: 13px;
-  letter-spacing: 1px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.12);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
 }
 
 .notebook-tab:hover {
   background: #cbd5e1;
-  transform: translateX(5px);
+  transform: translateX(4px);
   color: #1e293b;
 }
 
 .notebook-tab.active {
   background: #6366f1;
   color: #ffffff;
-  transform: translateX(10px);
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+  transform: translateX(8px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+  z-index: 2;
 }
 
 /* 說明書筆記本色彩隔離（保證深色模式下維持經典手繪質感與清晰深色字） */
