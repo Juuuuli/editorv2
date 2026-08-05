@@ -170,7 +170,7 @@ export default class ThumbnailsPanel {
                     <div class="aspect-[16/9] bg-white border border-slate-300 flex items-center justify-center relative rounded pointer-events-none overflow-hidden">
                         ${thumbContent}
                     </div>
-                    <div class="mt-2 ml-1 text-xs font-bold text-slate-700 pointer-events-none">Page ${index + 1}</div>
+                    <div class="page-item-title mt-2 ml-1 text-xs font-bold text-slate-700 pointer-events-none">Page ${index + 1}</div>
                     
                     <div class="absolute top-2 left-2 sketch w-6 h-6 bg-indigo-500 text-white flex justify-center items-center text-[10px] font-bold pointer-events-none">
                         ${index + 1}
