@@ -70,8 +70,8 @@ export default class DashboardManager {
 
                 <div class="flex items-center space-x-3">
                     <!-- 搜尋列 -->
-                    <div class="relative w-64 md:w-72">
-                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <div class="relative flex items-center w-64 md:w-72">
+                        <i class="fas fa-search absolute left-3.5 text-slate-400 text-sm pointer-events-none"></i>
                         <input type="text" id="dashboard-search-input" class="w-full bg-slate-100 border border-slate-300 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="搜尋專案名稱...">
                     </div>
 

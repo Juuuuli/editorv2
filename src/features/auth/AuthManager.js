@@ -291,19 +291,19 @@ export default class AuthManager {
                     <form id="form-auth-login" class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1 auth-input-label">使用者帳號 / 信箱</label>
-                            <div class="relative">
-                                <i class="fas fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm auth-input-icon"></i>
-                                <input type="text" id="login-username" required class="auth-input-field w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="請輸入帳號或 Email">
+                            <div class="auth-input-wrapper">
+                                <i class="fas fa-user auth-input-icon"></i>
+                                <input type="text" id="login-username" required class="auth-input-field" placeholder="請輸入帳號或 Email">
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1 auth-input-label">密碼</label>
-                            <div class="relative">
-                                <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm auth-input-icon"></i>
-                                <input type="password" id="login-password" required class="auth-input-field w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="••••••••">
-                                <button type="button" id="btn-toggle-login-pwd" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                                    <i class="fas fa-eye text-sm"></i>
+                            <div class="auth-input-wrapper">
+                                <i class="fas fa-lock auth-input-icon"></i>
+                                <input type="password" id="login-password" required class="auth-input-field" placeholder="••••••••">
+                                <button type="button" id="btn-toggle-login-pwd" title="顯示/隱藏密碼">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
