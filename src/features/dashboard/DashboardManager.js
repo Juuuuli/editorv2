@@ -62,7 +62,7 @@ export default class DashboardManager {
                     <div>
                         <div class="flex items-center space-x-2">
                             <h1 class="text-2xl font-black text-slate-800 tracking-wide">專案儀表板</h1>
-                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200">檔案管理 v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.2.2'}</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200">檔案管理 v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.3.0'}</span>
                         </div>
                         <p class="text-xs text-slate-500 font-medium">隨時管理、複製、刪除或開啟您的多媒體專案</p>
                     </div>
