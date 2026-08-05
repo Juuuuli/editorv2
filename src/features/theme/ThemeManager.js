@@ -13,7 +13,7 @@ export default class ThemeManager {
                 tag: '推薦',
                 desc: '黑曜藍深色背景，夜間護眼，科技感與清晰對比',
                 icon: 'fa-moon',
-                bgPreview: 'bg-slate-900 border-slate-700 text-white',
+                cardClass: 'theme-preview-dark',
                 colors: ['#0f172a', '#1e293b', '#6366f1', '#38bdf8']
             },
             {
@@ -22,7 +22,7 @@ export default class ThemeManager {
                 tag: '預設',
                 desc: '溫暖手繪雙線邊框、高對比手繪插畫風格',
                 icon: 'fa-sun',
-                bgPreview: 'bg-white border-slate-700 text-slate-800',
+                cardClass: 'theme-preview-light',
                 colors: ['#ffffff', '#f8fafc', '#334155', '#4f46e5']
             },
             {
@@ -31,7 +31,7 @@ export default class ThemeManager {
                 tag: '效率',
                 desc: '冷灰現代極簡介面，專注於畫布創作與設計',
                 icon: 'fa-laptop-code',
-                bgPreview: 'bg-slate-800 border-slate-600 text-slate-100',
+                cardClass: 'theme-preview-pro',
                 colors: ['#0f172a', '#1e293b', '#38bdf8', '#64748b']
             },
             {
@@ -40,7 +40,7 @@ export default class ThemeManager {
                 tag: '典雅',
                 desc: '羊皮紙暖調與莫蘭迪大地色系，柔和手感',
                 icon: 'fa-feather-alt',
-                bgPreview: 'bg-[#fdfbf7] border-[#5c4738] text-[#423223]',
+                cardClass: 'theme-preview-retro',
                 colors: ['#fdfbf7', '#f5eedc', '#d97706', '#5c4738']
             }
         ];
@@ -52,7 +52,7 @@ export default class ThemeManager {
         // 套用儲存的主題
         this.applyTheme(this.currentTheme, false);
 
-        // 建立設定與主題彈窗 DOM
+        // 建立設定與主題彈窗 DOM (固定尺寸，支援滾動)
         this.createSettingsModalDOM();
 
         // 綁定事件
@@ -110,30 +110,31 @@ export default class ThemeManager {
 
         modal = document.createElement('div');
         modal.id = 'settings-modal-overlay';
-        modal.className = 'fixed inset-0 z-[9990] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4 select-none opacity-0 transition-opacity duration-200';
+        modal.className = 'fixed inset-0 z-[9990] bg-slate-900/75 backdrop-blur-sm hidden flex items-center justify-center p-4 select-none opacity-0 transition-opacity duration-200';
 
         modal.innerHTML = `
-            <div class="settings-modal-card sketch-panel bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] border-2 border-slate-700 animate-in fade-in zoom-in duration-200">
-                <!-- Modal Header -->
-                <div class="px-6 py-4 border-b-2 border-slate-700 flex items-center justify-between bg-slate-50">
+            <!-- 固定邊框大小卡片：寬 720px、高 520px，內容過多自動上下滾動，內容過少也不會縮小 -->
+            <div class="settings-modal-card sketch-panel w-[720px] h-[520px] max-w-[94vw] max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border-2 border-slate-700 animate-in fade-in zoom-in duration-200">
+                <!-- Modal Header (固定高度 64px) -->
+                <div class="settings-modal-header h-16 px-6 border-b-2 border-slate-700 flex items-center justify-between shrink-0 bg-slate-50">
                     <div class="flex items-center space-x-3">
-                        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md text-base">
+                        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md text-base shrink-0">
                             <i class="fas fa-sliders-h"></i>
                         </div>
                         <div>
-                            <h2 class="text-lg font-black text-slate-800">系統與外觀設定</h2>
-                            <p class="text-xs text-slate-500">自訂編輯器風格、操作偏好與畫布輔助工具</p>
+                            <h2 class="text-base font-black text-slate-800 modal-header-title">系統與外觀設定</h2>
+                            <p class="text-xs text-slate-500 modal-header-subtitle">自訂編輯器風格、操作偏好與畫布輔助工具</p>
                         </div>
                     </div>
-                    <button id="btn-close-settings-modal" class="w-8 h-8 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition">
+                    <button id="btn-close-settings-modal" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition">
                         <i class="fas fa-times text-base"></i>
                     </button>
                 </div>
 
-                <!-- Modal Body with Tabs -->
-                <div class="flex flex-1 overflow-hidden">
-                    <!-- Left Tab Nav -->
-                    <div class="w-44 bg-slate-100/70 border-r-2 border-slate-700 p-3 space-y-1.5 shrink-0">
+                <!-- Modal Body with Tabs (固定填滿中間高度，可內部滾動) -->
+                <div class="settings-modal-body flex flex-1 overflow-hidden min-h-0">
+                    <!-- Left Tab Nav (固定寬度 180px) -->
+                    <div class="settings-modal-sidebar w-48 border-r-2 border-slate-700 p-3 space-y-1.5 shrink-0 bg-slate-100/70 overflow-y-auto">
                         <button data-settings-tab="theme" class="settings-tab-btn active w-full px-3 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2.5 transition text-left">
                             <i class="fas fa-palette text-sm w-4 text-center"></i>
                             <span>主題與風格</span>
@@ -148,39 +149,39 @@ export default class ThemeManager {
                         </button>
                     </div>
 
-                    <!-- Right Tab Panels -->
-                    <div class="flex-1 p-6 overflow-y-auto bg-white" id="settings-tab-content">
+                    <!-- Right Tab Panels (可獨立垂直滾動) -->
+                    <div class="settings-modal-content flex-1 p-6 overflow-y-auto bg-white min-h-0" id="settings-tab-content">
                         <!-- Tab 1: 主題切換 -->
                         <div id="settings-panel-theme" class="space-y-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5">
+                            <div class="flex items-center justify-between mb-1">
+                                <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5 panel-section-title">
                                     <i class="fas fa-brush text-indigo-500"></i> 介面視覺主題 (Sprint 2)
                                 </h3>
-                                <span class="text-[11px] px-2 py-0.5 rounded bg-indigo-50 text-indigo-600 font-bold border border-indigo-200">即時切換套用</span>
+                                <span class="text-[11px] px-2 py-0.5 rounded bg-indigo-50 text-indigo-600 font-bold border border-indigo-200 badge-info">即時切換套用</span>
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="theme-options-grid">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="theme-options-grid">
                                 ${this.renderThemeCardsHTML()}
                             </div>
                         </div>
 
                         <!-- Tab 2: 畫布輔助 -->
                         <div id="settings-panel-canvas" class="hidden space-y-4">
-                            <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5 mb-2">
+                            <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5 mb-2 panel-section-title">
                                 <i class="fas fa-magic text-indigo-500"></i> 編輯器輔助功能
                             </h3>
                             <div class="space-y-3">
-                                <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition">
+                                <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer transition setting-card-item">
                                     <div>
-                                        <div class="text-xs font-bold text-slate-800">自動吸附與智慧參考線</div>
-                                        <div class="text-[11px] text-slate-400">物件移動時自動對齊畫布邊緣與其他圖元中心</div>
+                                        <div class="text-xs font-bold text-slate-800 setting-item-title">自動吸附與智慧參考線</div>
+                                        <div class="text-[11px] text-slate-400 mt-0.5 setting-item-desc">物件移動時自動對齊畫布邊緣與其他圖元中心</div>
                                     </div>
                                     <input type="checkbox" id="setting-smart-guides" checked class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
                                 </label>
-                                <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition">
+                                <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer transition setting-card-item">
                                     <div>
-                                        <div class="text-xs font-bold text-slate-800">高解析背景預渲染</div>
-                                        <div class="text-[11px] text-slate-400">PDF/PPT 匯入時自動產生 Retina 2x 高解析背景</div>
+                                        <div class="text-xs font-bold text-slate-800 setting-item-title">高解析背景預渲染</div>
+                                        <div class="text-[11px] text-slate-400 mt-0.5 setting-item-desc">PDF/PPT 匯入時自動產生 Retina 2x 高解析背景</div>
                                     </div>
                                     <input type="checkbox" id="setting-retina-render" checked class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
                                 </label>
@@ -189,14 +190,14 @@ export default class ThemeManager {
 
                         <!-- Tab 3: 關於系統 -->
                         <div id="settings-panel-about" class="hidden space-y-4">
-                            <div class="text-center py-4">
-                                <div class="w-14 h-14 mx-auto bg-gradient-to-tr from-indigo-600 to-purple-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg mb-3">
+                            <div class="text-center py-2">
+                                <div class="w-12 h-12 mx-auto bg-gradient-to-tr from-indigo-600 to-purple-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg mb-2">
                                     <i class="fas fa-cubes"></i>
                                 </div>
-                                <h3 class="text-base font-black text-slate-800">多媒體畫布編輯器 V2</h3>
-                                <p class="text-xs text-slate-500 mt-1 font-mono">系統版本: v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.2.2'}</p>
+                                <h3 class="text-sm font-black text-slate-800 modal-about-title">多媒體畫布編輯器 V2</h3>
+                                <p class="text-xs text-slate-500 mt-0.5 font-mono modal-about-version">系統版本: v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.2.2'}</p>
                             </div>
-                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 text-xs space-y-2 text-slate-600">
+                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 text-xs space-y-2 text-slate-600 modal-about-box">
                                 <div class="flex justify-between">
                                     <span class="font-bold">目前架構：</span>
                                     <span>Sprint 2 (顏色模板與主題切換)</span>
@@ -214,9 +215,9 @@ export default class ThemeManager {
                     </div>
                 </div>
 
-                <!-- Modal Footer -->
-                <div class="px-6 py-3 border-t-2 border-slate-700 bg-slate-50 flex items-center justify-between">
-                    <div class="text-[11px] text-slate-400 font-medium">
+                <!-- Modal Footer (固定高度 56px) -->
+                <div class="settings-modal-footer h-14 px-6 border-t-2 border-slate-700 bg-slate-50 flex items-center justify-between shrink-0">
+                    <div class="text-[11px] text-slate-400 font-medium modal-footer-tip">
                         <i class="fas fa-info-circle mr-1"></i> 主題切換已自動記憶於您的瀏覽器
                     </div>
                     <button id="btn-save-settings-modal" class="sketch-btn px-5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md">
@@ -269,20 +270,20 @@ export default class ThemeManager {
         return this.themes.map(t => {
             const isSelected = t.id === this.currentTheme;
             return `
-                <div class="theme-card-option sketch-panel p-3.5 rounded-xl cursor-pointer border-2 transition relative flex flex-col justify-between ${t.bgPreview} ${isSelected ? 'ring-2 ring-indigo-500 border-indigo-600 shadow-md' : 'hover:border-indigo-400 hover:shadow-sm'}" data-theme-id="${t.id}">
+                <div class="theme-card-option ${t.cardClass} sketch-panel p-3.5 rounded-xl cursor-pointer border-2 transition relative flex flex-col justify-between ${isSelected ? 'is-active ring-2 ring-indigo-500 border-indigo-600 shadow-md' : 'hover:border-indigo-400 hover:shadow-sm'}" data-theme-id="${t.id}">
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <div class="flex items-center space-x-2">
                                 <i class="fas ${t.icon} text-sm"></i>
-                                <span class="font-bold text-xs">${t.name}</span>
+                                <span class="font-bold text-xs theme-card-title">${t.name}</span>
                             </div>
-                            <span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'}">${isSelected ? '使用中' : t.tag}</span>
+                            <span class="theme-card-tag text-[9px] px-1.5 py-0.5 rounded font-bold ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-200/80 text-slate-700'}">${isSelected ? '使用中' : t.tag}</span>
                         </div>
-                        <p class="text-[11px] opacity-75 mb-3">${t.desc}</p>
+                        <p class="text-[11px] theme-card-desc mb-3 leading-relaxed">${t.desc}</p>
                     </div>
 
                     <!-- 調色盤預覽圓點 -->
-                    <div class="flex items-center justify-between pt-2 border-t border-current/10">
+                    <div class="flex items-center justify-between pt-2 border-t border-black/10 dark:border-white/10">
                         <div class="flex items-center space-x-1.5">
                             ${t.colors.map(c => `<span class="w-3.5 h-3.5 rounded-full border border-black/20" style="background-color: ${c};"></span>`).join('')}
                         </div>
@@ -301,22 +302,22 @@ export default class ThemeManager {
         cards.forEach(card => {
             const isSelected = card.dataset.themeId === this.currentTheme;
             const check = card.querySelector('.theme-active-check');
-            const badge = card.querySelector('span.text-\\[9px\\]');
+            const badge = card.querySelector('.theme-card-tag');
             
             if (isSelected) {
-                card.classList.add('ring-2', 'ring-indigo-500', 'border-indigo-600', 'shadow-md');
+                card.classList.add('is-active', 'ring-2', 'ring-indigo-500', 'border-indigo-600', 'shadow-md');
                 if (check) check.classList.remove('hidden');
                 if (badge) {
                     badge.textContent = '使用中';
-                    badge.className = 'text-[9px] px-1.5 py-0.5 rounded font-bold bg-indigo-600 text-white';
+                    badge.className = 'theme-card-tag text-[9px] px-1.5 py-0.5 rounded font-bold bg-indigo-600 text-white';
                 }
             } else {
-                card.classList.remove('ring-2', 'ring-indigo-500', 'border-indigo-600', 'shadow-md');
+                card.classList.remove('is-active', 'ring-2', 'ring-indigo-500', 'border-indigo-600', 'shadow-md');
                 if (check) check.classList.add('hidden');
                 const themeData = this.themes.find(t => t.id === card.dataset.themeId);
                 if (badge && themeData) {
                     badge.textContent = themeData.tag;
-                    badge.className = 'text-[9px] px-1.5 py-0.5 rounded font-bold bg-slate-200 text-slate-700';
+                    badge.className = 'theme-card-tag text-[9px] px-1.5 py-0.5 rounded font-bold bg-slate-200/80 text-slate-700';
                 }
             }
         });
@@ -329,9 +330,9 @@ export default class ThemeManager {
         // 更新按鈕樣式
         modal.querySelectorAll('.settings-tab-btn').forEach(btn => {
             if (btn.dataset.settingsTab === tabName) {
-                btn.className = 'settings-tab-btn active w-full px-3 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2.5 transition text-left bg-indigo-50 text-indigo-700 border border-indigo-200';
+                btn.classList.add('active');
             } else {
-                btn.className = 'settings-tab-btn w-full px-3 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2.5 transition text-left text-slate-600 hover:bg-slate-200/60';
+                btn.classList.remove('active');
             }
         });
 

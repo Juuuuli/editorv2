@@ -100,6 +100,102 @@
   }
 }
 
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ==========================================================================
+   Settings Modal Layout (固定邊框尺寸與內部滾動)
+   ========================================================================== */
+.settings-modal-card {
+  width: 720px !important;
+  height: 520px !important;
+  max-width: 94vw !important;
+  max-height: 90vh !important;
+  box-sizing: border-box !important;
+}
+
+/* Light Theme 預設設定彈窗樣式 */
+.settings-modal-card {
+  background-color: #ffffff;
+  color: #1e293b;
+}
+.settings-modal-header {
+  background-color: #f8fafc;
+  border-color: #334155;
+}
+.settings-modal-sidebar {
+  background-color: #f1f5f9;
+  border-color: #334155;
+}
+.settings-modal-content {
+  background-color: #ffffff;
+}
+.settings-modal-footer {
+  background-color: #f8fafc;
+  border-color: #334155;
+}
+
+.settings-tab-btn {
+  color: #64748b;
+}
+.settings-tab-btn:hover {
+  background-color: rgba(203, 213, 225, 0.6);
+  color: #1e293b;
+}
+.settings-tab-btn.active {
+  background-color: #e0e7ff !important;
+  color: #4338ca !important;
+  border: 1px solid #c7d2fe !important;
+}
+
+/* ==========================================================================
+   主題預覽卡片色彩隔離（保證在任何主題下字體與背景皆清晰可見）
+   ========================================================================== */
+.theme-preview-dark {
+  background-color: #0b1120 !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+.theme-preview-dark .theme-card-title { color: #f8fafc !important; }
+.theme-preview-dark .theme-card-desc { color: #94a3b8 !important; }
+
+.theme-preview-light {
+  background-color: #ffffff !important;
+  border-color: #334155 !important;
+  color: #1e293b !important;
+}
+.theme-preview-light .theme-card-title { color: #1e293b !important; }
+.theme-preview-light .theme-card-desc { color: #64748b !important; }
+
+.theme-preview-pro {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+.theme-preview-pro .theme-card-title { color: #f8fafc !important; }
+.theme-preview-pro .theme-card-desc { color: #94a3b8 !important; }
+
+.theme-preview-retro {
+  background-color: #fdfbf7 !important;
+  border-color: #78553d !important;
+  color: #453426 !important;
+}
+.theme-preview-retro .theme-card-title { color: #453426 !important; }
+.theme-preview-retro .theme-card-desc { color: #786450 !important; }
+
 /* ==========================================================================
    Design Tokens & Theme System (Sprint 2 - Multi-Theme Support)
    ========================================================================== */
@@ -186,35 +282,25 @@
   background-color: #334155 !important;
 }
 
-/* 儀表板深色適配 */
-[data-theme="dark"] #dashboard-container {
-  background: radial-gradient(circle at top, #1e293b 0%, #090d16 100%) !important;
+/* 儀表板深色適配 (Dashboard in Dark Mode) */
+[data-theme="dark"] #dashboard-view {
+  background-color: #090d16 !important;
+  background: radial-gradient(circle at top, #111827 0%, #090d16 100%) !important;
 }
 
-[data-theme="dark"] #dashboard-container header {
-  background-color: rgba(15, 23, 42, 0.9) !important;
+[data-theme="dark"] #dashboard-view header {
+  background-color: rgba(15, 23, 42, 0.95) !important;
   border-color: #334155 !important;
 }
 
-[data-theme="dark"] .glass-card {
-  background-color: #1e293b !important;
-  border-color: #475569 !important;
-  box-shadow: 4px 4px 0px #020617 !important;
+[data-theme="dark"] #dashboard-view h1,
+[data-theme="dark"] #dashboard-view h2,
+[data-theme="dark"] #dashboard-view h3 {
   color: #f8fafc !important;
 }
 
-[data-theme="dark"] .glass-card:hover {
-  border-color: #818cf8 !important;
-  box-shadow: 6px 6px 0px #020617 !important;
-}
-
-[data-theme="dark"] #dashboard-container .bg-slate-100\/90 {
-  background-color: #0f172a !important;
-  border-color: #334155 !important;
-}
-
 [data-theme="dark"] #dashboard-search-input {
-  background-color: #0f172a !important;
+  background-color: #0b1120 !important;
   color: #f8fafc !important;
   border-color: #334155 !important;
 }
@@ -224,19 +310,206 @@
   border-color: #818cf8 !important;
 }
 
-/* 雜項元件與文字 */
-[data-theme="dark"] .text-slate-800 { color: #f8fafc !important; }
-[data-theme="dark"] .text-slate-700 { color: #e2e8f0 !important; }
-[data-theme="dark"] .text-slate-600 { color: #cbd5e1 !important; }
-[data-theme="dark"] .text-slate-500 { color: #94a3b8 !important; }
-[data-theme="dark"] .text-slate-400 { color: #64748b !important; }
-[data-theme="dark"] .bg-slate-50 { background-color: #0f172a !important; }
-[data-theme="dark"] .bg-slate-100 { background-color: #1e293b !important; }
-[data-theme="dark"] .bg-slate-200 { background-color: #334155 !important; }
-[data-theme="dark"] .border-slate-700 { border-color: #475569 !important; }
-[data-theme="dark"] .border-slate-300 { border-color: #334155 !important; }
-[data-theme="dark"] .border-slate-200 { border-color: #1e293b !important; }
+[data-theme="dark"] .dashboard-filter-btn {
+  background-color: #1e293b !important;
+  color: #94a3b8 !important;
+  border: 1px solid #334155 !important;
+}
 
+[data-theme="dark"] .dashboard-filter-btn:hover {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+/* 專案卡片深色修復 (Dashboard Project Cards) */
+[data-theme="dark"] .project-card,
+[data-theme="dark"] .glass-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 4px 4px 0px #020617 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .project-card:hover,
+[data-theme="dark"] .glass-card:hover {
+  border-color: #818cf8 !important;
+  box-shadow: 6px 6px 0px #020617 !important;
+}
+
+[data-theme="dark"] .project-card-thumbnail {
+  background-color: #0b1120 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .project-card-thumbnail:hover {
+  background-color: #111a2e !important;
+}
+
+[data-theme="dark"] .project-card-info {
+  background-color: #1e293b !important;
+}
+
+[data-theme="dark"] .project-card-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .project-card-date {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .project-page-badge {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .btn-card-menu {
+  background-color: #0f172a !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .card-dropdown {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+  box-shadow: 3px 3px 0px #020617 !important;
+}
+
+[data-theme="dark"] .card-dropdown button {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .card-dropdown button:hover {
+  background-color: #334155 !important;
+  color: #818cf8 !important;
+}
+
+/* 系統設定彈窗深色適配 (Settings Modal in Dark Mode) */
+[data-theme="dark"] .settings-modal-card {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  box-shadow: 8px 8px 0px #020617 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .settings-modal-header {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .modal-header-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .modal-header-subtitle {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .settings-modal-sidebar {
+  background-color: #0b1120 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .settings-modal-content {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .settings-modal-footer {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .modal-footer-tip {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .settings-tab-btn {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .settings-tab-btn:hover {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .settings-tab-btn.active {
+  background-color: #1e293b !important;
+  color: #818cf8 !important;
+  border: 1px solid #6366f1 !important;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.25) !important;
+}
+
+[data-theme="dark"] .panel-section-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .setting-card-item {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .setting-card-item:hover {
+  background-color: #243247 !important;
+}
+
+[data-theme="dark"] .setting-item-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .setting-item-desc {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .modal-about-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .modal-about-version {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .modal-about-box {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+/* 新建專案彈窗深色適配 */
+[data-theme="dark"] #modal-create-project > div {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+  box-shadow: 6px 6px 0px #020617 !important;
+}
+
+[data-theme="dark"] #modal-create-project input {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] #modal-create-project .template-card {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] #modal-create-project .template-card:hover {
+  border-color: #6366f1 !important;
+  background-color: #131c2e !important;
+}
+
+[data-theme="dark"] #modal-create-project .template-card.border-indigo-600 {
+  border-color: #6366f1 !important;
+  background-color: rgba(99, 102, 241, 0.15) !important;
+}
+
+[data-theme="dark"] #modal-create-project .template-card div {
+  color: #f8fafc !important;
+}
+
+/* 雜項元件與文字 */
 [data-theme="dark"] input,
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {

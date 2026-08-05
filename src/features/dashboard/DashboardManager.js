@@ -454,7 +454,7 @@ export default class DashboardManager {
 
         filtered.forEach(proj => {
             const card = document.createElement('div');
-            card.className = 'glass-card group rounded-2xl overflow-hidden border-2 border-slate-700 bg-white shadow-[4px_4px_0px_#334155] hover:shadow-[6px_6px_0px_#334155] transition flex flex-col cursor-pointer';
+            card.className = 'glass-card project-card group rounded-2xl overflow-hidden border-2 border-slate-700 bg-white shadow-[4px_4px_0px_#334155] hover:shadow-[6px_6px_0px_#334155] transition flex flex-col cursor-pointer';
             card.dataset.id = proj.id;
 
             const timeStr = new Date(proj.updatedAt || proj.createdAt).toLocaleString('zh-TW', {
@@ -492,14 +492,14 @@ export default class DashboardManager {
                    </div>`;
 
             card.innerHTML = `
-                <!-- 縮圖區 (統一底色 bg-slate-100/90) -->
-                <div class="h-44 bg-slate-100/90 border-b-2 border-slate-700 relative overflow-hidden flex items-center justify-center group-hover:bg-slate-200/60 transition select-none">
+                <!-- 縮圖區 -->
+                <div class="project-card-thumbnail h-44 bg-slate-100/90 border-b-2 border-slate-700 relative overflow-hidden flex items-center justify-center group-hover:bg-slate-200/60 transition select-none">
                     ${thumbnailContent}
                     <div class="absolute top-3 left-3 flex items-center space-x-1.5">
                         <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${isPdf ? 'bg-indigo-600 text-white' : 'bg-teal-600 text-white'} shadow-sm">
                             ${isPdf ? '📊 簡報/PDF' : '🖼️ 圖片'}
                         </span>
-                        ${isPdf ? `<span class="px-2 py-1 rounded-lg text-[10px] font-bold bg-white/90 text-slate-700 border border-slate-300 shadow-sm">${pageCount} 頁</span>` : ''}
+                        ${isPdf ? `<span class="project-page-badge px-2 py-1 rounded-lg text-[10px] font-bold bg-white/90 text-slate-700 border border-slate-300 shadow-sm">${pageCount} 頁</span>` : ''}
                     </div>
 
                     <!-- 操作按鈕選單觸發 -->
@@ -528,10 +528,10 @@ export default class DashboardManager {
                 </div>
 
                 <!-- 資訊區 -->
-                <div class="p-4 flex flex-col justify-between flex-1 bg-white">
+                <div class="project-card-info p-4 flex flex-col justify-between flex-1 bg-white">
                     <div>
-                        <h4 class="font-bold text-sm text-slate-800 truncate mb-1" title="${proj.name}">${proj.name}</h4>
-                        <div class="text-[11px] text-slate-400 flex items-center">
+                        <h4 class="project-card-title font-bold text-sm text-slate-800 truncate mb-1" title="${proj.name}">${proj.name}</h4>
+                        <div class="project-card-date text-[11px] text-slate-400 flex items-center">
                             <i class="far fa-clock mr-1.5"></i> ${timeStr}
                         </div>
                     </div>
