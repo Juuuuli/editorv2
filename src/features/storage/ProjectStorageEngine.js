@@ -199,26 +199,64 @@ export default class ProjectStorageEngine {
     }
 
     /**
-     * 匯入 .editorproj 檔案
+     * 匯入 .editorproj 或 .json 專案檔案 (容錯相容完整專案與簡易 JSON 快照)
      */
     async importProjectFile(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = async (e) => {
                 try {
-                    const project = JSON.parse(e.target.result);
-                    if (!project || !project.pageStates) {
+                    const rawText = e.target.result;
+                    let project;
+                    try {
+                        project = JSON.parse(rawText);
+                    } catch (jsonErr) {
+                        throw new Error('檔案非合法 JSON 格式');
+                    }
+
+                    if (!project || typeof project !== 'object') {
                         throw new Error('無效的專案檔案格式');
                     }
 
-                    // 賦予新 ID 避免衝突
-                    project.id = 'proj_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
-                    project.name = project.name ? `${project.name} (匯入)` : '匯入專案';
-                    project.updatedAt = Date.now();
-                    project.createdAt = Date.now();
+                    // 容錯提取 pageStates (相容完整專案結構、舊版 project.json、或 Fabric 物件陣列)
+                    let pageStates = project.pageStates;
+                    if (!pageStates) {
+                        if (project.objects && Array.isArray(project.objects)) {
+                            pageStates = { 'page-1': project.objects };
+                        } else if (Array.isArray(project)) {
+                            pageStates = { 'page-1': project };
+                        }
+                    }
 
-                    await this.saveProject(project);
-                    resolve(project);
+                    if (!pageStates || typeof pageStates !== 'object' || Object.keys(pageStates).length === 0) {
+                        throw new Error('未在檔案中找到有效的畫布頁面資料 (缺少 pageStates)');
+                    }
+
+                    const pageIds = Object.keys(pageStates);
+                    const cleanName = file.name.replace(/\.(editorproj|json)$/i, '');
+
+                    // 補齊缺失欄位
+                    const newProject = {
+                        id: 'proj_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+                        name: project.name ? `${project.name} (匯入)` : `${cleanName} (匯入)`,
+                        type: project.type || (pageIds.length > 1 ? 'PDF' : 'IMAGE'),
+                        dimension: project.dimension || {
+                            width: (project.pageSizes && project.pageSizes[pageIds[0]] && project.pageSizes[pageIds[0]].width) || 1280,
+                            height: (project.pageSizes && project.pageSizes[pageIds[0]] && project.pageSizes[pageIds[0]].height) || 720,
+                            ratio: '16:9'
+                        },
+                        currentPageId: project.currentPageId || pageIds[0],
+                        coverThumbnail: project.coverThumbnail || null,
+                        pageStates: pageStates,
+                        pageSizes: project.pageSizes || {},
+                        pages: project.pages || pageIds.map((pid, idx) => ({ id: pid, active: idx === 0, thumbnail: null })),
+                        createdAt: Date.now(),
+                        updatedAt: Date.now(),
+                        version: '1.2.1'
+                    };
+
+                    await this.saveProject(newProject);
+                    resolve(newProject);
                 } catch (err) {
                     reject(err);
                 }

@@ -80,15 +80,33 @@ export default class ExportManager {
     
     exportJSON() {
         this.canvasEngine.savePageState();
+        const titleEl = document.getElementById('current-project-title-display');
+        const projName = titleEl ? titleEl.textContent.trim() : '專案';
+        const isPdf = this.workspaceManager ? this.workspaceManager.currentMode === WorkspaceMode.PDF : true;
+        const width = this.canvasEngine.artboard ? this.canvasEngine.artboard.width : 1280;
+        const height = this.canvasEngine.artboard ? this.canvasEngine.artboard.height : 720;
+        const pageIds = Object.keys(this.canvasEngine.pageStates || {});
+
         const projectData = {
-            version: '1.0',
-            currentPageId: this.canvasEngine.currentPageId,
-            pageStates: this.canvasEngine.pageStates
+            version: '1.2.1',
+            name: projName,
+            type: isPdf ? 'PDF' : 'IMAGE',
+            dimension: {
+                width: width,
+                height: height,
+                ratio: `${width}:${height}`
+            },
+            currentPageId: this.canvasEngine.currentPageId || pageIds[0],
+            pageStates: this.canvasEngine.pageStates,
+            pageSizes: this.canvasEngine.pageSizes || {},
+            pages: pageIds.map((pid, idx) => ({ id: pid, active: pid === this.canvasEngine.currentPageId, thumbnail: null })),
+            updatedAt: Date.now(),
+            createdAt: Date.now()
         };
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData));
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData, null, 2));
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "project.json");
+        downloadAnchorNode.setAttribute("download", `${projName}.editorproj`);
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();

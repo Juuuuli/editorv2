@@ -1,8 +1,9 @@
-/**
- * DashboardManager.js
- * 專案檔案管理儀表板管理器 (Canva / Figma 風格)
- * 負責渲染專案首頁、專案列表、建立新專案彈窗、專案搜尋/篩選與專案操作選單
- */
+import * as pdfjsLib from 'pdfjs-dist';
+
+// 初始化 PDF.js worker
+if (typeof window !== 'undefined' && pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+}
 
 export default class DashboardManager {
     constructor(storageEngine, eventBus, canvasEngine, workspaceManager) {
@@ -75,10 +76,10 @@ export default class DashboardManager {
                     </div>
 
                     <!-- 匯入專案按鈕 -->
-                    <button id="btn-import-project-file" class="sketch-btn px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-[2px_2px_0px_#334155]">
-                        <i class="fas fa-file-import mr-2 text-teal-600"></i> 匯入專案檔
+                    <button id="btn-import-project-file" class="sketch-btn px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-[2px_2px_0px_#334155]" title="匯入 .editorproj 專案檔、JSON、PDF、簡報或圖片">
+                        <i class="fas fa-file-import mr-2 text-teal-600"></i> 匯入檔案
                     </button>
-                    <input type="file" id="input-project-file" accept=".editorproj,.json" class="hidden">
+                    <input type="file" id="input-project-file" accept=".editorproj,.json,.pdf,.ppt,.pptx,image/*" class="hidden">
 
                     <!-- 新建專案按鈕 -->
                     <button id="btn-open-create-modal" class="sketch-btn px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center shadow-[3px_3px_0px_#334155]">
@@ -349,7 +350,7 @@ export default class DashboardManager {
             });
         }
 
-        // 匯入檔案按鈕
+        // 匯入檔案按鈕 (支援 .editorproj, .json, .pdf, 圖片, .pptx)
         const btnImportFile = document.getElementById('btn-import-project-file');
         const inputProjectFile = document.getElementById('input-project-file');
 
@@ -359,12 +360,29 @@ export default class DashboardManager {
                 const file = e.target.files[0];
                 if (!file) return;
 
+                const fileName = file.name.toLowerCase();
+                const fileType = file.type;
+
                 try {
-                    this.eventBus.emit('LOADING:START', { message: '正在匯入專案檔案...' });
-                    const importedProj = await this.storageEngine.importProjectFile(file);
-                    await this.loadProjects();
-                    await this.openProject(importedProj.id);
+                    if (fileName.endsWith('.editorproj') || fileName.endsWith('.json') || fileType === 'application/json') {
+                        this.eventBus.emit('LOADING:START', { message: '正在匯入專案檔案...' });
+                        const importedProj = await this.storageEngine.importProjectFile(file);
+                        await this.loadProjects();
+                        await this.openProject(importedProj.id);
+                    } else if (fileName.endsWith('.pdf') || fileType === 'application/pdf') {
+                        this.eventBus.emit('LOADING:START', { message: '正在解析並建立 PDF 專案...' });
+                        await this.importPDFAsNewProject(file);
+                    } else if (fileType.startsWith('image/')) {
+                        this.eventBus.emit('LOADING:START', { message: '正在匯入圖片建立新專案...' });
+                        await this.importImageAsNewProject(file);
+                    } else if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx')) {
+                        this.eventBus.emit('LOADING:START', { message: '正在轉換簡報並建立專案...' });
+                        await this.importPPTAsNewProject(file);
+                    } else {
+                        alert('不支援的檔案格式！請選擇 .editorproj, .json, .pdf, .pptx 或圖片檔案。');
+                    }
                 } catch (err) {
+                    console.error('[DashboardManager] 匯入失敗:', err);
                     alert('匯入失敗: ' + err.message);
                 } finally {
                     this.eventBus.emit('LOADING:END');
@@ -719,6 +737,218 @@ export default class DashboardManager {
         };
 
         await this.storageEngine.saveProject(currentProj);
+    }
+
+    /**
+     * 從 PDF 檔案建立新專案並開啟
+     */
+    async importPDFAsNewProject(file) {
+        const arrayBuffer = await file.arrayBuffer();
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdfDocument = await loadingTask.promise;
+        const numPages = pdfDocument.numPages;
+
+        const pageStates = {};
+        const pageIds = [];
+        const thumbnails = {};
+        const pageSizes = {};
+
+        for (let i = 1; i <= numPages; i++) {
+            const page = await pdfDocument.getPage(i);
+            
+            // 1. 產生高解析度畫布用背景 (scale: 2.0)
+            const viewport = page.getViewport({ scale: 2.0 });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            await page.render({ canvasContext: context, viewport }).promise;
+            const highResDataUrl = canvas.toDataURL('image/png');
+
+            // 2. 產生縮圖 (scale: 0.5)
+            const thumbViewport = page.getViewport({ scale: 0.5 });
+            const thumbCanvas = document.createElement('canvas');
+            const thumbContext = thumbCanvas.getContext('2d');
+            thumbCanvas.width = thumbViewport.width;
+            thumbCanvas.height = thumbViewport.height;
+            await page.render({ canvasContext: thumbContext, viewport: thumbViewport }).promise;
+            const thumbDataUrl = thumbCanvas.toDataURL('image/png');
+
+            const pageId = `page-${Date.now()}-${i}`;
+            pageIds.push(pageId);
+            thumbnails[pageId] = thumbDataUrl;
+            pageSizes[pageId] = { width: viewport.width, height: viewport.height };
+
+            pageStates[pageId] = [{
+                type: 'image',
+                version: '5.3.0',
+                originX: 'center',
+                originY: 'center',
+                left: viewport.width / 2,
+                top: viewport.height / 2,
+                width: viewport.width,
+                height: viewport.height,
+                scaleX: 1,
+                scaleY: 1,
+                src: highResDataUrl,
+                crossOrigin: 'anonymous',
+                selectable: false,
+                evented: false,
+                hasControls: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockScalingX: true,
+                lockScalingY: true,
+                lockRotation: true,
+                layerName: 'PDF 背景'
+            }];
+        }
+
+        const baseName = file.name.replace(/\.pdf$/i, '');
+        const firstSize = pageSizes[pageIds[0]] || { width: 1280, height: 720 };
+
+        const newProject = {
+            id: 'proj_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+            name: baseName || '匯入 PDF 專案',
+            type: 'PDF',
+            dimension: {
+                width: firstSize.width,
+                height: firstSize.height,
+                ratio: `${firstSize.width}:${firstSize.height}`
+            },
+            currentPageId: pageIds[0],
+            coverThumbnail: thumbnails[pageIds[0]] || null,
+            pageStates: pageStates,
+            pageSizes: pageSizes,
+            pages: pageIds.map((pid, idx) => ({ id: pid, active: idx === 0, thumbnail: thumbnails[pid] })),
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            version: '1.2.1'
+        };
+
+        await this.storageEngine.saveProject(newProject);
+        await this.loadProjects();
+        await this.openProject(newProject.id);
+    }
+
+    /**
+     * 從圖片建立新專案並開啟
+     */
+    async importImageAsNewProject(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const dataUrl = e.target.result;
+                const img = new Image();
+                img.onload = async () => {
+                    try {
+                        const width = img.naturalWidth || 1280;
+                        const height = img.naturalHeight || 720;
+                        const baseName = file.name.replace(/\.[^.]+$/, '');
+                        const pageId = `page-${Date.now()}-1`;
+
+                        const newProject = {
+                            id: 'proj_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+                            name: baseName || '匯入圖片專案',
+                            type: 'IMAGE',
+                            dimension: {
+                                width: width,
+                                height: height,
+                                ratio: `${width}:${height}`
+                            },
+                            currentPageId: pageId,
+                            coverThumbnail: dataUrl,
+                            pageStates: {
+                                [pageId]: [{
+                                    type: 'image',
+                                    version: '5.3.0',
+                                    originX: 'center',
+                                    originY: 'center',
+                                    left: width / 2,
+                                    top: height / 2,
+                                    width: width,
+                                    height: height,
+                                    scaleX: 1,
+                                    scaleY: 1,
+                                    src: dataUrl,
+                                    crossOrigin: 'anonymous',
+                                    selectable: false,
+                                    evented: false,
+                                    hasControls: false,
+                                    lockMovementX: true,
+                                    lockMovementY: true,
+                                    lockScalingX: true,
+                                    lockScalingY: true,
+                                    lockRotation: true,
+                                    layerName: '背景圖片'
+                                }]
+                            },
+                            pageSizes: {
+                                [pageId]: { width, height }
+                            },
+                            pages: [{ id: pageId, active: true, thumbnail: dataUrl }],
+                            createdAt: Date.now(),
+                            updatedAt: Date.now(),
+                            version: '1.2.1'
+                        };
+
+                        await this.storageEngine.saveProject(newProject);
+                        await this.loadProjects();
+                        await this.openProject(newProject.id);
+                        resolve();
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+                img.onerror = () => reject(new Error('讀取圖片資訊失敗'));
+                img.src = dataUrl;
+            };
+            reader.onerror = () => reject(new Error('讀取圖片檔案失敗'));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    /**
+     * 從 PPT/PPTX 建立新專案並開啟
+     */
+    async importPPTAsNewProject(file) {
+        const formData = new FormData();
+        formData.append('File', file);
+        
+        const ext = file.name.split('.').pop().toLowerCase();
+        const format = (ext === 'pptx') ? 'pptx' : 'ppt';
+
+        const secret = import.meta.env.VITE_CONVERTAPI_SECRET;
+        if (!secret) {
+            throw new Error("未設定 ConvertAPI 金鑰，無法在線轉換 PPT");
+        }
+        
+        const response = await fetch(`https://v2.convertapi.com/convert/${format}/to/pdf?Secret=${secret}&StoreFile=false`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.Message || `API 回應錯誤 (${response.status})`);
+        }
+
+        const data = await response.json();
+        
+        if (data.Files && data.Files.length > 0 && data.Files[0].FileData) {
+            const base64Data = data.Files[0].FileData;
+            const binaryString = window.atob(base64Data);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            const pdfBlob = new Blob([bytes], { type: 'application/pdf' });
+            const pdfFile = new File([pdfBlob], file.name.replace(/\.pptx?$/i, '.pdf'), { type: 'application/pdf' });
+            
+            await this.importPDFAsNewProject(pdfFile);
+        } else {
+            throw new Error("API 未回傳有效的 PDF 資料");
+        }
     }
 
     showAutoSaveFeedback(msg = '已儲存') {

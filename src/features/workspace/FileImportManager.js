@@ -19,15 +19,11 @@ export default class FileImportManager {
 
         if (btnImport && inputImport) {
             // 變更按鈕文字
-            btnImport.innerHTML = '<i class="fas fa-file-import"></i> 匯入檔案';
+            btnImport.innerHTML = '<i class="fas fa-file-import"></i> 匯入';
 
             btnImport.addEventListener('click', () => {
-                // 根據當前工作區設定 accept 屬性
-                if (this.workspaceManager.currentMode === 'IMAGE') {
-                    inputImport.setAttribute('accept', 'image/*');
-                } else {
-                    inputImport.setAttribute('accept', 'image/*,.pdf,.ppt,.pptx');
-                }
+                // 支援專案檔、圖片、PDF 與 PPT
+                inputImport.setAttribute('accept', '.editorproj,.json,image/*,.pdf,.ppt,.pptx');
                 inputImport.click();
             });
 
@@ -45,14 +41,86 @@ export default class FileImportManager {
         const fileType = file.type;
         const fileName = file.name.toLowerCase();
 
-        if (fileType.startsWith('image/')) {
+        if (fileName.endsWith('.editorproj') || fileName.endsWith('.json') || fileType === 'application/json') {
+            await this.importProject(file);
+        } else if (fileType.startsWith('image/')) {
             await this.importImage(file);
         } else if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
             await this.importPDF(file);
         } else if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx') || fileType.includes('presentation')) {
             await this.importPPT(file);
         } else {
-            alert("不支援的檔案格式！");
+            alert("不支援的檔案格式！請選擇 .editorproj, .json, .pdf, .pptx 或圖片檔案。");
+        }
+    }
+
+    async importProject(file) {
+        this.eventBus.emit('LOADING:START', { message: '正在匯入專案檔案...' });
+        try {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const rawText = e.target.result;
+                    const project = JSON.parse(rawText);
+                    
+                    let pageStates = project.pageStates;
+                    if (!pageStates) {
+                        if (project.objects && Array.isArray(project.objects)) {
+                            pageStates = { 'page-1': project.objects };
+                        } else if (Array.isArray(project)) {
+                            pageStates = { 'page-1': project };
+                        }
+                    }
+                    if (!pageStates || typeof pageStates !== 'object' || Object.keys(pageStates).length === 0) {
+                        throw new Error('專案檔案缺少有效的畫布頁面資料');
+                    }
+
+                    const pageIds = Object.keys(pageStates);
+                    this.canvasEngine.pageStates = pageStates;
+                    this.canvasEngine.pageSizes = project.pageSizes || {};
+
+                    const targetPageId = project.currentPageId || pageIds[0];
+                    this.canvasEngine.currentPageId = targetPageId;
+
+                    if (project.name) {
+                        const titleEl = document.getElementById('current-project-title-display');
+                        if (titleEl) titleEl.textContent = project.name;
+                    }
+
+                    if (project.type === 'IMAGE') {
+                        this.workspaceManager.setMode('IMAGE');
+                    } else {
+                        this.workspaceManager.setMode('PDF');
+                    }
+
+                    if (project.dimension && project.dimension.width && project.dimension.height) {
+                        this.canvasEngine.resizeArtboard(project.dimension.width, project.dimension.height);
+                    }
+
+                    this.eventBus.emit('PROJECT:IMPORTED', {
+                        projectData: {
+                            pageStates: pageStates,
+                            currentPageId: targetPageId
+                        }
+                    });
+                    this.eventBus.emit('PAGE:SWITCH', { newPageId: targetPageId });
+                    this.canvasEngine.saveHistory();
+                    this.eventBus.emit('CANVAS:DIRTY', true);
+                } catch (err) {
+                    console.error('[FileImportManager] 匯入專案失敗:', err);
+                    alert('專案匯入失敗: ' + err.message);
+                } finally {
+                    this.eventBus.emit('LOADING:END');
+                }
+            };
+            reader.onerror = () => {
+                alert('讀取檔案失敗');
+                this.eventBus.emit('LOADING:END');
+            };
+            reader.readAsText(file);
+        } catch (err) {
+            this.eventBus.emit('LOADING:END');
+            alert('匯入失敗: ' + err.message);
         }
     }
 
