@@ -1,81 +1,222 @@
 /* ==========================================================================
-   系統設定彈窗與主題卡片隔離樣式模組
+   系統與外觀設定彈窗 (Universal Settings Modal Styles)
+   特色：所有主題下維持統一的深色工作站外觀，讓 4 種主題預覽卡片具備最高辨識度
    ========================================================================== */
-.settings-modal-card {
-  width: 720px !important;
-  height: 520px !important;
-  max-width: 94vw !important;
+
+/* 彈窗主體卡片 - 鎖定尺寸，禁止隨內容自動縮放 */
+.settings-modal-card,
+[data-theme] .settings-modal-card {
+  width: 760px !important;
+  height: 540px !important;
+  max-width: 95vw !important;
   max-height: 90vh !important;
   box-sizing: border-box !important;
-  background-color: #ffffff;
-  color: #1e293b;
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65) !important;
+  color: #f8fafc !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
-.settings-modal-header {
-  background-color: #f8fafc;
-  border-color: #334155;
+/* 頂部標題列 */
+.settings-modal-header,
+[data-theme] .settings-modal-header {
+  background-color: #0f172a !important;
+  border-bottom: 1px solid #334155 !important;
+  padding: 16px 20px !important;
 }
 
-.settings-modal-sidebar {
-  background-color: #f1f5f9;
-  border-color: #334155;
+.modal-header-title,
+[data-theme] .modal-header-title {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
 }
 
-.settings-modal-content {
-  background-color: #ffffff;
+.modal-header-subtitle,
+[data-theme] .modal-header-subtitle {
+  color: #94a3b8 !important;
+  font-size: 12px !important;
 }
 
-.settings-modal-footer {
-  background-color: #f8fafc;
-  border-color: #334155;
+/* 左側分頁選單邊欄 */
+.settings-modal-sidebar,
+[data-theme] .settings-modal-sidebar {
+  background-color: #0b101b !important;
+  border-right: 1px solid #334155 !important;
+  width: 180px !important;
+  flex-shrink: 0 !important;
+  padding: 12px !important;
 }
 
-.settings-tab-btn {
-  color: #64748b;
+.settings-tab-btn,
+[data-theme] .settings-tab-btn {
+  color: #94a3b8 !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  transition: all 0.15s ease !important;
+  border: 1px solid transparent !important;
 }
 
-.settings-tab-btn:hover {
-  background-color: rgba(203, 213, 225, 0.6);
-  color: #1e293b;
+.settings-tab-btn:hover,
+[data-theme] .settings-tab-btn:hover {
+  background-color: #162032 !important;
+  color: #f8fafc !important;
 }
 
-.settings-tab-btn.active {
-  background-color: #e0e7ff !important;
-  color: #4338ca !important;
-  border: 1px solid #c7d2fe !important;
+.settings-tab-btn.active,
+[data-theme] .settings-tab-btn.active {
+  background-color: #162032 !important;
+  color: #38bdf8 !important;
+  border: 1px solid #0284c7 !important;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.25) !important;
+}
+
+/* 右側主要設定內容區 */
+.settings-modal-content,
+[data-theme] .settings-modal-content {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  padding: 20px !important;
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+.panel-section-title,
+[data-theme] .panel-section-title {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  margin-bottom: 12px !important;
+}
+
+/* 底部操作列 */
+.settings-modal-footer,
+[data-theme] .settings-modal-footer {
+  background-color: #0f172a !important;
+  border-top: 1px solid #334155 !important;
+  padding: 14px 20px !important;
+}
+
+.modal-footer-tip,
+[data-theme] .modal-footer-tip {
+  color: #94a3b8 !important;
+  font-size: 12px !important;
+}
+
+#btn-close-settings-modal,
+[data-theme] #btn-close-settings-modal {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 8px 18px !important;
+  transition: all 0.15s ease !important;
+}
+#btn-close-settings-modal:hover,
+[data-theme] #btn-close-settings-modal:hover {
+  background-color: #4338ca !important;
+}
+
+/* --------------------------------------------------------------------------
+   設定內部其他面板項目（畫布輔助、關於系統）
+   -------------------------------------------------------------------------- */
+.setting-card-item,
+[data-theme] .setting-card-item {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+  padding: 14px 16px !important;
+}
+
+.setting-item-title,
+[data-theme] .setting-item-title {
+  color: #f8fafc !important;
+  font-weight: 600 !important;
+}
+
+.setting-item-desc,
+[data-theme] .setting-item-desc {
+  color: #94a3b8 !important;
+  font-size: 12px !important;
+}
+
+.modal-about-title,
+[data-theme] .modal-about-title {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+.modal-about-version,
+[data-theme] .modal-about-version {
+  color: #94a3b8 !important;
+}
+
+.modal-about-box,
+[data-theme] .modal-about-box {
+  background-color: #162032 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+  color: #e2e8f0 !important;
 }
 
 /* ==========================================================================
-   主題預覽卡片色彩隔離（保證在任何主題下字體與背景皆清晰可見）
+   4 款主題預覽卡片色彩隔離（直觀展現各主題背景色與真實風格）
    ========================================================================== */
-.theme-preview-dark {
+
+/* 1. 🌙 深色極客 (Dark Mode) - 黑曜深藍 */
+.theme-preview-dark,
+[data-theme] .theme-preview-dark {
   background-color: #0b1120 !important;
-  border-color: #334155 !important;
+  border: 1.5px solid #334155 !important;
+  border-radius: 10px !important;
   color: #f8fafc !important;
 }
-.theme-preview-dark .theme-card-title { color: #f8fafc !important; }
-.theme-preview-dark .theme-card-desc { color: #94a3b8 !important; }
+.theme-preview-dark .theme-card-title,
+[data-theme] .theme-preview-dark .theme-card-title { color: #f8fafc !important; font-weight: 700 !important; }
+.theme-preview-dark .theme-card-desc,
+[data-theme] .theme-preview-dark .theme-card-desc { color: #94a3b8 !important; font-size: 12px !important; }
 
-.theme-preview-light {
+/* 2. ☀️ 經典手繪 (Light Sketch) - 純白手繪插畫 */
+.theme-preview-light,
+[data-theme] .theme-preview-light {
   background-color: #ffffff !important;
-  border-color: #334155 !important;
+  border: 1.5px solid #334155 !important;
+  border-radius: 10px !important;
   color: #1e293b !important;
 }
-.theme-preview-light .theme-card-title { color: #1e293b !important; }
-.theme-preview-light .theme-card-desc { color: #64748b !important; }
+.theme-preview-light .theme-card-title,
+[data-theme] .theme-preview-light .theme-card-title { color: #1e293b !important; font-weight: 700 !important; }
+.theme-preview-light .theme-card-desc,
+[data-theme] .theme-preview-light .theme-card-desc { color: #64748b !important; font-size: 12px !important; }
 
-.theme-preview-pro {
-  background-color: #1e293b !important;
-  border-color: #475569 !important;
-  color: #f8fafc !important;
+/* 3. 💼 專業冷灰 (Pro Slate) - 現代冷灰工作室 */
+.theme-preview-pro,
+[data-theme] .theme-preview-pro {
+  background-color: #e2e8f0 !important;
+  border: 1.5px solid #94a3b8 !important;
+  border-radius: 10px !important;
+  color: #0f172a !important;
 }
-.theme-preview-pro .theme-card-title { color: #f8fafc !important; }
-.theme-preview-pro .theme-card-desc { color: #94a3b8 !important; }
+.theme-preview-pro .theme-card-title,
+[data-theme] .theme-preview-pro .theme-card-title { color: #0f172a !important; font-weight: 700 !important; }
+.theme-preview-pro .theme-card-desc,
+[data-theme] .theme-preview-pro .theme-card-desc { color: #475569 !important; font-size: 12px !important; }
 
-.theme-preview-retro {
+/* 4. 📜 復古文青 (Retro Warm) - 羊皮紙暖調 */
+.theme-preview-retro,
+[data-theme] .theme-preview-retro {
   background-color: #fdfbf7 !important;
-  border-color: #78553d !important;
+  border: 1.5px solid #78553d !important;
+  border-radius: 10px !important;
   color: #453426 !important;
 }
-.theme-preview-retro .theme-card-title { color: #453426 !important; }
-.theme-preview-retro .theme-card-desc { color: #786450 !important; }
+.theme-preview-retro .theme-card-title,
+[data-theme] .theme-preview-retro .theme-card-title { color: #453426 !important; font-weight: 700 !important; }
+.theme-preview-retro .theme-card-desc,
+[data-theme] .theme-preview-retro .theme-card-desc { color: #786450 !important; font-size: 12px !important; }

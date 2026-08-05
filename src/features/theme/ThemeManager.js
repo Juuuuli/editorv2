@@ -29,10 +29,10 @@ export default class ThemeManager {
                 id: 'pro-slate',
                 name: '專業冷灰 (Pro Slate)',
                 tag: '效率',
-                desc: '工業鈦金冷灰調，幾何精密無手繪感，專業工作站質感',
+                desc: '現代冷灰工作室，深灰導覽搭配霧面冷灰與純白卡片',
                 icon: 'fa-cube',
                 cardClass: 'theme-preview-pro',
-                colors: ['#181c24', '#222733', '#06b6d4', '#4b5563']
+                colors: ['#1e293b', '#e2e8f0', '#0284c7', '#ffffff']
             },
             {
                 id: 'retro-warm',

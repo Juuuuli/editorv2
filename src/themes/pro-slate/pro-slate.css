@@ -1,7 +1,7 @@
 /* ==========================================================================
-   💼 專業冷灰 (Pro Slate / Industrial Titanium Studio)
-   特點：工業鈦金冷灰調（#181c24 / #222733 / #2b3140）、極度幾何精準、
-   冰藍冷調（#06b6d4）、徹底與深色極客（黑曜深藍）區隔，呈現極致專業生產力軟體質感。
+   💼 專業冷灰 (Pro Slate / Cool Slate Modern Studio)
+   特色：現代冷灰工作室質感（霧面冷灰 #e2e8f0 + 深石墨 #1e293b + 純白卡片 #ffffff）
+   幾何俐落無手繪感、高對比清晰、徹底告別全黑，與「深色極客」呈現截然不同的專業設計站風格
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -16,18 +16,18 @@
 [data-theme="pro-slate"] .page-item,
 [data-theme="pro-slate"] .project-card,
 [data-theme="pro-slate"] .glass-card {
-  border-radius: 6px !important;
+  border-radius: 8px !important;
   border-width: 1px !important;
   border-style: solid !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06) !important;
   transition: all 0.16s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 [data-theme="pro-slate"] .sketch:hover,
 [data-theme="pro-slate"] .sketch-btn:hover {
-  border-radius: 6px !important;
+  border-radius: 8px !important;
   transform: translateY(-1.5px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12) !important;
 }
 
 [data-theme="pro-slate"] .sketch-btn:active {
@@ -38,241 +38,241 @@
    2. 全域底色與文字 (Global Base & Typography)
    -------------------------------------------------------------------------- */
 [data-theme="pro-slate"], body.theme-pro-slate {
-  background-color: #181c24 !important;
-  color: #f3f4f6 !important;
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
 }
 
 /* --------------------------------------------------------------------------
-   3. 專案儀表板 (Dashboard in Pro Slate - Industrial Titanium)
+   3. 專案儀表板 (Dashboard in Cool Slate Studio)
    -------------------------------------------------------------------------- */
 [data-theme="pro-slate"] #dashboard-view {
-  background-color: #181c24 !important;
-  background: radial-gradient(circle at 50% 0%, #222733 0%, #181c24 100%) !important;
-  color: #f3f4f6 !important;
+  background-color: #e2e8f0 !important;
+  background: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #e2e8f0 100%) !important;
+  color: #0f172a !important;
 }
 
+/* 儀表板頂部導覽列 (深石墨俐落冷灰) */
 [data-theme="pro-slate"] #dashboard-view header {
-  background-color: #222733 !important;
-  border-bottom: 1px solid #3d4659 !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+  background-color: #1e293b !important;
+  border-bottom: 1px solid #334155 !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18) !important;
 }
 
-[data-theme="pro-slate"] #dashboard-view h1,
-[data-theme="pro-slate"] #dashboard-view h2,
-[data-theme="pro-slate"] #dashboard-view h3 {
-  color: #f9fafb !important;
+[data-theme="pro-slate"] #dashboard-view header h1,
+[data-theme="pro-slate"] #dashboard-view header h2,
+[data-theme="pro-slate"] #dashboard-view header h3 {
+  color: #f8fafc !important;
   font-weight: 700 !important;
 }
 
-[data-theme="pro-slate"] #dashboard-view p,
-[data-theme="pro-slate"] #dashboard-view span.text-slate-500,
-[data-theme="pro-slate"] #dashboard-view span.text-slate-400 {
-  color: #9ca3af !important;
+[data-theme="pro-slate"] #dashboard-view header p,
+[data-theme="pro-slate"] #dashboard-view header span.text-slate-500,
+[data-theme="pro-slate"] #dashboard-view header span.text-slate-400 {
+  color: #94a3b8 !important;
 }
 
-/* 搜尋欄 */
+/* 搜尋欄 (純白冷灰框) */
 [data-theme="pro-slate"] #dashboard-search-input {
-  background-color: #1b1f28 !important;
-  color: #f9fafb !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25) !important;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2) !important;
   transition: all 0.2s ease !important;
 }
 [data-theme="pro-slate"] #dashboard-search-input:focus {
-  border-color: #06b6d4 !important;
-  background-color: #222733 !important;
-  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.25) !important;
+  border-color: #38bdf8 !important;
+  background-color: #1e293b !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25) !important;
 }
 
-/* 頂部按鈕 (匯入、新建、設定) */
+/* 頂部動作按鈕 */
 [data-theme="pro-slate"] #dashboard-view #btn-import-project-file {
-  background-color: #2b3140 !important;
-  color: #22d3ee !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
+  background-color: #0f172a !important;
+  color: #38bdf8 !important;
+  border: 1px solid #0284c7 !important;
+  border-radius: 8px !important;
 }
 [data-theme="pro-slate"] #dashboard-view #btn-import-project-file:hover {
-  background-color: #0891b2 !important;
+  background-color: #0284c7 !important;
   color: #ffffff !important;
-  border-color: #06b6d4 !important;
 }
 
 [data-theme="pro-slate"] #dashboard-view #btn-create-project-trigger {
-  background: linear-gradient(135deg, #0891b2, #0e7490) !important;
+  background: linear-gradient(135deg, #0284c7, #0369a1) !important;
   color: #ffffff !important;
-  border: 1px solid #22d3ee !important;
-  border-radius: 6px !important;
-  box-shadow: 0 2px 8px rgba(8, 145, 178, 0.35) !important;
+  border: 1px solid #38bdf8 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35) !important;
 }
 [data-theme="pro-slate"] #dashboard-view #btn-create-project-trigger:hover {
-  background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
 }
 
 [data-theme="pro-slate"] #dashboard-view #btn-dashboard-settings {
-  background-color: #2b3140 !important;
-  color: #d1d5db !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
+  background-color: #0f172a !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
 }
 [data-theme="pro-slate"] #dashboard-view #btn-dashboard-settings:hover {
-  background-color: #374151 !important;
+  background-color: #334155 !important;
   color: #ffffff !important;
-  border-color: #4b5563 !important;
 }
 
 /* 篩選分頁標籤 */
 [data-theme="pro-slate"] .dashboard-filter-btn {
-  background-color: #222733 !important;
-  color: #9ca3af !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
 }
 [data-theme="pro-slate"] .dashboard-filter-btn:hover {
-  background-color: #2b3140 !important;
-  color: #f3f4f6 !important;
-  border-color: #4b5563 !important;
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
 }
 [data-theme="pro-slate"] .dashboard-filter-btn.active {
-  background-color: #0891b2 !important;
+  background-color: #0284c7 !important;
   color: #ffffff !important;
-  border-color: #22d3ee !important;
-  box-shadow: 0 2px 8px rgba(8, 145, 178, 0.35) !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3) !important;
 }
 
-/* 專案卡片 (Project Cards in Titanium Style) */
+/* 專案卡片 (Pure Slate White Cards) */
 [data-theme="pro-slate"] .project-card,
 [data-theme="pro-slate"] .glass-card {
-  background-color: #222733 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-  color: #f3f4f6 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+  color: #0f172a !important;
   overflow: hidden !important;
 }
 
 [data-theme="pro-slate"] .project-card:hover,
 [data-theme="pro-slate"] .glass-card:hover {
-  border-color: #06b6d4 !important;
-  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.2) !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.18) !important;
   transform: translateY(-2.5px) !important;
 }
 
 [data-theme="pro-slate"] .project-card-thumbnail {
-  background-color: #181c24 !important;
-  border-bottom: 1px solid #3d4659 !important;
-}
-
-[data-theme="pro-slate"] .project-card-thumbnail:hover {
-  background-color: #1f242e !important;
+  background-color: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
 }
 
 [data-theme="pro-slate"] .project-card-info {
-  background-color: #222733 !important;
+  background-color: #ffffff !important;
 }
 
 [data-theme="pro-slate"] .project-card-title {
-  color: #f9fafb !important;
+  color: #0f172a !important;
   font-weight: 700 !important;
 }
 
 [data-theme="pro-slate"] .project-card-date {
-  color: #9ca3af !important;
+  color: #64748b !important;
 }
 
 [data-theme="pro-slate"] .project-page-badge {
-  background-color: #181c24 !important;
-  color: #d1d5db !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 4px !important;
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
 }
 
 [data-theme="pro-slate"] .btn-card-menu {
-  background-color: #181c24 !important;
-  color: #cbd5e1 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 4px !important;
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+}
+[data-theme="pro-slate"] .btn-card-menu:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
 }
 
 [data-theme="pro-slate"] .card-dropdown {
-  background-color: #222733 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
-  color: #f3f4f6 !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18) !important;
 }
 
 [data-theme="pro-slate"] .card-dropdown button {
-  color: #e5e7eb !important;
+  color: #334155 !important;
 }
 
 [data-theme="pro-slate"] .card-dropdown button:hover {
-  background-color: #2b3140 !important;
-  color: #22d3ee !important;
+  background-color: #f1f5f9 !important;
+  color: #0284c7 !important;
 }
 
 /* --------------------------------------------------------------------------
-   4. 專案內部 Header 列 (Editor Header in Pro Slate)
+   4. 專案內部 Header 列 (Editor Header in Cool Slate Studio)
    -------------------------------------------------------------------------- */
 [data-theme="pro-slate"] header {
-  background-color: #222733 !important;
-  border-bottom: 1px solid #3d4659 !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+  background-color: #1e293b !important;
+  border-bottom: 1px solid #334155 !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.15) !important;
 }
 
 /* 首頁按鈕與專案名稱 */
 [data-theme="pro-slate"] #btn-back-to-dashboard {
-  background-color: #2b3140 !important;
-  color: #e5e7eb !important;
-  border: 1px solid #3d4659 !important;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
   border-radius: 6px !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
 [data-theme="pro-slate"] #btn-back-to-dashboard:hover {
-  background-color: #374151 !important;
-  border-color: #06b6d4 !important;
+  background-color: #334155 !important;
+  border-color: #38bdf8 !important;
   color: #ffffff !important;
 }
 [data-theme="pro-slate"] #btn-back-to-dashboard i {
-  color: #22d3ee !important;
+  color: #38bdf8 !important;
 }
 
 [data-theme="pro-slate"] header .bg-slate-300 {
-  background-color: #3d4659 !important;
+  background-color: #334155 !important;
 }
 
 [data-theme="pro-slate"] #current-project-title-display {
-  color: #f9fafb !important;
+  color: #f8fafc !important;
   font-weight: 700 !important;
 }
 [data-theme="pro-slate"] #current-project-title-display:hover {
-  color: #22d3ee !important;
-  border-color: #0891b2 !important;
+  color: #38bdf8 !important;
+  border-color: #0284c7 !important;
 }
 [data-theme="pro-slate"] #current-project-title-input {
-  background-color: #181c24 !important;
-  color: #f9fafb !important;
-  border: 1px solid #06b6d4 !important;
-  border-radius: 4px !important;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #38bdf8 !important;
+  border-radius: 6px !important;
 }
 [data-theme="pro-slate"] #auto-save-indicator {
-  background-color: rgba(6, 182, 212, 0.12) !important;
-  color: #22d3ee !important;
-  border: 1px solid rgba(34, 211, 238, 0.3) !important;
+  background-color: rgba(56, 189, 248, 0.15) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
   border-radius: 9999px !important;
 }
 
 /* 頂部工作區切換與比例控制器 */
 [data-theme="pro-slate"] .sketch-header-group {
-  background-color: #181c24 !important;
-  border: 1px solid #3d4659 !important;
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
   border-radius: 6px !important;
   padding: 2px !important;
 }
 
 [data-theme="pro-slate"] #tab-image-workspace,
 [data-theme="pro-slate"] #tab-pdf-workspace {
-  color: #9ca3af !important;
+  color: #94a3b8 !important;
   background-color: transparent !important;
   border-radius: 4px !important;
   font-weight: 600 !important;
@@ -280,55 +280,55 @@
 }
 [data-theme="pro-slate"] #tab-image-workspace.bg-indigo-50,
 [data-theme="pro-slate"] #tab-pdf-workspace.bg-indigo-50 {
-  background-color: #0891b2 !important;
+  background-color: #0284c7 !important;
   color: #ffffff !important;
-  box-shadow: 0 1px 4px rgba(8, 145, 178, 0.35) !important;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.35) !important;
 }
 
 [data-theme="pro-slate"] #group-ratio-image,
 [data-theme="pro-slate"] #group-ratio-pdf {
-  background-color: #181c24 !important;
-  border: 1px solid #3d4659 !important;
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
   border-radius: 6px !important;
 }
 [data-theme="pro-slate"] #group-ratio-image button,
 [data-theme="pro-slate"] #group-ratio-pdf button {
-  color: #9ca3af !important;
+  color: #94a3b8 !important;
   border-radius: 4px !important;
   font-weight: 600 !important;
 }
 [data-theme="pro-slate"] #group-ratio-image button.active-ratio,
 [data-theme="pro-slate"] #group-ratio-pdf button.active-ratio {
-  background-color: #0891b2 !important;
+  background-color: #0284c7 !important;
   color: #ffffff !important;
-  box-shadow: 0 1px 4px rgba(8, 145, 178, 0.35) !important;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.35) !important;
 }
 
 /* 頂部右側動作按鈕 */
 [data-theme="pro-slate"] #btn-undo,
 [data-theme="pro-slate"] #btn-redo {
-  color: #9ca3af !important;
+  color: #94a3b8 !important;
   border-radius: 4px !important;
 }
 [data-theme="pro-slate"] #btn-undo:hover,
 [data-theme="pro-slate"] #btn-redo:hover {
-  background-color: #2b3140 !important;
-  color: #f9fafb !important;
+  background-color: #334155 !important;
+  color: #f8fafc !important;
 }
 
 [data-theme="pro-slate"] #btn-manual {
-  background-color: #2b3140 !important;
-  color: #22d3ee !important;
-  border: 1px solid #0891b2 !important;
+  background-color: #0f172a !important;
+  color: #38bdf8 !important;
+  border: 1px solid #0284c7 !important;
   border-radius: 6px !important;
 }
 [data-theme="pro-slate"] #btn-manual:hover {
-  background-color: #0891b2 !important;
+  background-color: #0284c7 !important;
   color: #ffffff !important;
 }
 
 [data-theme="pro-slate"] #btn-import-project {
-  background-color: #2b3140 !important;
+  background-color: #0f172a !important;
   color: #34d399 !important;
   border: 1px solid #059669 !important;
   border-radius: 6px !important;
@@ -339,66 +339,66 @@
 }
 
 [data-theme="pro-slate"] #btn-export-dropdown {
-  background: linear-gradient(135deg, #0891b2, #0e7490) !important;
+  background: linear-gradient(135deg, #0284c7, #0369a1) !important;
   color: #ffffff !important;
-  border: 1px solid #22d3ee !important;
+  border: 1px solid #38bdf8 !important;
   border-radius: 6px !important;
-  box-shadow: 0 2px 8px rgba(8, 145, 178, 0.35) !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35) !important;
 }
 [data-theme="pro-slate"] #btn-export-dropdown:hover {
-  background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
 }
 
 [data-theme="pro-slate"] #btn-editor-settings,
 [data-theme="pro-slate"] #btn-header-settings {
-  background-color: #2b3140 !important;
-  color: #e5e7eb !important;
-  border: 1px solid #3d4659 !important;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
   border-radius: 6px !important;
 }
 [data-theme="pro-slate"] #btn-editor-settings:hover,
 [data-theme="pro-slate"] #btn-header-settings:hover {
-  background-color: #374151 !important;
-  color: #22d3ee !important;
-  border-color: #06b6d4 !important;
+  background-color: #334155 !important;
+  color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
 }
 
 [data-theme="pro-slate"] #app-version-badge {
-  background-color: #181c24 !important;
-  color: #9ca3af !important;
-  border: 1px solid #3d4659 !important;
+  background-color: #0f172a !important;
+  color: #94a3b8 !important;
+  border: 1px solid #334155 !important;
   border-radius: 4px !important;
 }
 
 /* --------------------------------------------------------------------------
-   5. 左側邊欄與工具面板 (Left Sidebar & Panels in Industrial Titanium)
+   5. 左側邊欄與工具面板 (Left Sidebar & Panels in Cool Slate Studio)
    -------------------------------------------------------------------------- */
 [data-theme="pro-slate"] aside {
-  background-color: #222733 !important;
-  border-right: 1px solid #3d4659 !important;
+  background-color: #ffffff !important;
+  border-right: 1px solid #cbd5e1 !important;
 }
 
 [data-theme="pro-slate"] #sidebar-tabs {
-  background-color: #181c24 !important;
-  border-bottom: 1px solid #3d4659 !important;
+  background-color: #f8fafc !important;
+  border-bottom: 1px solid #cbd5e1 !important;
 }
 
 [data-theme="pro-slate"] .tab-btn {
-  background-color: #181c24 !important;
-  color: #9ca3af !important;
+  background-color: #f8fafc !important;
+  color: #64748b !important;
   border-bottom: 2px solid transparent !important;
   font-weight: 600 !important;
   transition: all 0.15s ease !important;
 }
 [data-theme="pro-slate"] .tab-btn:hover {
-  background-color: #222733 !important;
-  color: #f9fafb !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }
 [data-theme="pro-slate"] .tab-btn.active,
 [data-theme="pro-slate"] #sidebar-tabs .border-indigo-500 {
-  background-color: #222733 !important;
-  color: #22d3ee !important;
-  border-bottom: 2px solid #22d3ee !important;
+  background-color: #ffffff !important;
+  color: #0284c7 !important;
+  border-bottom: 2px solid #0284c7 !important;
   font-weight: 700 !important;
 }
 
@@ -407,326 +407,193 @@
 [data-theme="pro-slate"] #panel-properties,
 [data-theme="pro-slate"] #panel-assets,
 [data-theme="pro-slate"] #panel-layers {
-  background-color: #222733 !important;
-  color: #f3f4f6 !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }
 
 [data-theme="pro-slate"] .sidebar-panel h3 {
-  color: #9ca3af !important;
+  color: #475569 !important;
   font-weight: 700 !important;
   font-size: 11px !important;
   letter-spacing: 0.5px !important;
   text-transform: uppercase !important;
 }
 
-/* 左側工具項目按鈕 (Elevated Titanium Tool Buttons) */
+/* 左側工具按鈕 (Elevated Slate Studio Tool Buttons) */
 [data-theme="pro-slate"] #panel-tools button,
 [data-theme="pro-slate"] .sidebar-panel .sketch-btn {
-  background-color: #2b3140 !important;
-  color: #e5e7eb !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
   font-weight: 600 !important;
   font-size: 12px !important;
 }
 
 [data-theme="pro-slate"] #panel-tools button:hover,
 [data-theme="pro-slate"] .sidebar-panel .sketch-btn:hover {
-  background-color: #374151 !important;
-  color: #ffffff !important;
-  border-color: #06b6d4 !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35) !important;
+  background-color: #f0f9ff !important;
+  color: #0284c7 !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 3px 8px rgba(2, 132, 199, 0.15) !important;
   transform: translateY(-1px) !important;
 }
 
 [data-theme="pro-slate"] .sidebar-panel .sketch-panel,
 [data-theme="pro-slate"] .sidebar-panel .bg-slate-50\/50,
 [data-theme="pro-slate"] .sidebar-panel .bg-slate-50 {
-  background-color: #181c24 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
 }
 
 /* 圖層面板項目 (Layers Item) */
 [data-theme="pro-slate"] .layer-item {
-  background-color: #181c24 !important;
-  border: 1px solid #3d4659 !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
   border-radius: 6px !important;
-  color: #f3f4f6 !important;
+  color: #0f172a !important;
 }
 [data-theme="pro-slate"] .layer-item:hover {
-  background-color: #2b3140 !important;
-  border-color: #06b6d4 !important;
+  background-color: #f0f9ff !important;
+  border-color: #38bdf8 !important;
 }
 [data-theme="pro-slate"] .layer-item.bg-indigo-50 {
-  background-color: #164e63 !important;
-  border-color: #0891b2 !important;
+  background-color: #e0f2fe !important;
+  border-color: #0284c7 !important;
 }
 [data-theme="pro-slate"] .layer-item span,
 [data-theme="pro-slate"] .layer-item .text-slate-700 {
-  color: #f9fafb !important;
+  color: #0f172a !important;
 }
 
 /* --------------------------------------------------------------------------
-   6. 中間畫布工作區 (Canvas Workspace in Titanium Gray)
+   6. 中間畫布工作區 (Canvas Workspace in Aluminum Cool Slate)
    -------------------------------------------------------------------------- */
 [data-theme="pro-slate"] .canvas-bg {
-  background-color: #181c24 !important;
-  background-image: linear-gradient(to right, #29303e 1px, transparent 1px), linear-gradient(to bottom, #29303e 1px, transparent 1px) !important;
+  background-color: #cbd5e1 !important;
+  background-image: linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px) !important;
   background-size: 20px 20px !important;
 }
 
 /* --------------------------------------------------------------------------
-   7. 右側頁面縮圖清單 (Right Thumbnails Panel in Titanium Gray)
+   7. 右側頁面縮圖清單 (Right Thumbnails Panel in Cool Slate Studio)
    -------------------------------------------------------------------------- */
 [data-theme="pro-slate"] #thumbnails-container {
-  background-color: #222733 !important;
-  border-left: 1px solid #3d4659 !important;
+  background-color: #ffffff !important;
+  border-left: 1px solid #cbd5e1 !important;
 }
 
 [data-theme="pro-slate"] #thumbnails-container > div:first-child {
-  background-color: #222733 !important;
-  border-bottom: 1px solid #3d4659 !important;
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #cbd5e1 !important;
 }
 
 [data-theme="pro-slate"] #thumbnails-count {
-  color: #f9fafb !important;
+  color: #0f172a !important;
   font-weight: 700 !important;
 }
 
 [data-theme="pro-slate"] #btn-add-page {
-  background-color: #2b3140 !important;
-  color: #22d3ee !important;
-  border: 1px solid #0891b2 !important;
+  background-color: #f8fafc !important;
+  color: #0284c7 !important;
+  border: 1px solid #cbd5e1 !important;
   border-radius: 6px !important;
 }
 [data-theme="pro-slate"] #btn-add-page:hover {
-  background-color: #0891b2 !important;
+  background-color: #0284c7 !important;
   color: #ffffff !important;
+  border-color: #0284c7 !important;
 }
 
 [data-theme="pro-slate"] #thumbnails-list {
-  background-color: #181c24 !important;
+  background-color: #f1f5f9 !important;
 }
 
 /* 頁面卡片項目 (Clean Geometric Page Card) */
 [data-theme="pro-slate"] .page-item {
-  background-color: #222733 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06) !important;
   overflow: hidden !important;
 }
 
 [data-theme="pro-slate"] .page-item:hover {
-  background-color: #2b3140 !important;
-  border-color: #06b6d4 !important;
+  background-color: #f8fafc !important;
+  border-color: #0284c7 !important;
   transform: translateY(-1.5px) !important;
 }
 
 [data-theme="pro-slate"] .page-item.bg-blue-50 {
-  background-color: #222733 !important;
-  border: 2px solid #0891b2 !important;
-  box-shadow: 0 0 12px rgba(8, 145, 178, 0.4) !important;
+  background-color: #ffffff !important;
+  border: 2px solid #0284c7 !important;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.25) !important;
 }
 
 [data-theme="pro-slate"] .page-item-title,
 [data-theme="pro-slate"] .page-item .text-slate-700,
 [data-theme="pro-slate"] .page-item .text-slate-800 {
-  color: #f9fafb !important;
+  color: #0f172a !important;
   font-weight: 600 !important;
 }
 
 [data-theme="pro-slate"] .copy-page-btn,
 [data-theme="pro-slate"] .delete-page-btn {
-  background-color: #181c24 !important;
-  border: 1px solid #3d4659 !important;
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
   border-radius: 4px !important;
 }
 
 [data-theme="pro-slate"] .copy-page-btn {
-  color: #cbd5e1 !important;
+  color: #475569 !important;
 }
 [data-theme="pro-slate"] .copy-page-btn:hover {
   color: #ffffff !important;
-  background-color: #0891b2 !important;
-  border-color: #22d3ee !important;
+  background-color: #0284c7 !important;
+  border-color: #0284c7 !important;
 }
 
 [data-theme="pro-slate"] .delete-page-btn {
-  color: #fda4af !important;
+  color: #e11d48 !important;
 }
 [data-theme="pro-slate"] .delete-page-btn:hover {
   color: #ffffff !important;
   background-color: #e11d48 !important;
-  border-color: #f43f5e !important;
+  border-color: #e11d48 !important;
 }
 
 /* --------------------------------------------------------------------------
-   8. 系統設定與建立專案彈窗 (Modals in Titanium Style)
-   -------------------------------------------------------------------------- */
-[data-theme="pro-slate"] .settings-modal-card {
-  background-color: #222733 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 12px !important;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
-  color: #f9fafb !important;
-}
-
-[data-theme="pro-slate"] .settings-modal-header {
-  background-color: #181c24 !important;
-  border-bottom: 1px solid #3d4659 !important;
-}
-
-[data-theme="pro-slate"] .modal-header-title {
-  color: #f9fafb !important;
-}
-
-[data-theme="pro-slate"] .modal-header-subtitle {
-  color: #9ca3af !important;
-}
-
-[data-theme="pro-slate"] .settings-modal-sidebar {
-  background-color: #181c24 !important;
-  border-right: 1px solid #3d4659 !important;
-}
-
-[data-theme="pro-slate"] .settings-modal-content {
-  background-color: #222733 !important;
-  color: #f9fafb !important;
-}
-
-[data-theme="pro-slate"] .settings-modal-footer {
-  background-color: #181c24 !important;
-  border-top: 1px solid #3d4659 !important;
-}
-
-[data-theme="pro-slate"] .modal-footer-tip {
-  color: #9ca3af !important;
-}
-
-[data-theme="pro-slate"] .settings-tab-btn {
-  color: #9ca3af !important;
-  border-radius: 6px !important;
-}
-
-[data-theme="pro-slate"] .settings-tab-btn:hover {
-  background-color: #2b3140 !important;
-  color: #f9fafb !important;
-}
-
-[data-theme="pro-slate"] .settings-tab-btn.active {
-  background-color: #2b3140 !important;
-  color: #22d3ee !important;
-  border: 1px solid #0891b2 !important;
-  box-shadow: 0 0 10px rgba(8, 145, 178, 0.3) !important;
-}
-
-[data-theme="pro-slate"] .panel-section-title {
-  color: #f9fafb !important;
-}
-
-[data-theme="pro-slate"] .setting-card-item {
-  background-color: #181c24 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 8px !important;
-}
-
-[data-theme="pro-slate"] .setting-card-item:hover {
-  background-color: #2b3140 !important;
-  border-color: #06b6d4 !important;
-}
-
-[data-theme="pro-slate"] .setting-item-title {
-  color: #f9fafb !important;
-}
-
-[data-theme="pro-slate"] .setting-item-desc {
-  color: #9ca3af !important;
-}
-
-[data-theme="pro-slate"] .modal-about-title {
-  color: #f9fafb !important;
-}
-
-[data-theme="pro-slate"] .modal-about-version {
-  color: #9ca3af !important;
-}
-
-[data-theme="pro-slate"] .modal-about-box {
-  background-color: #181c24 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 8px !important;
-  color: #e5e7eb !important;
-}
-
-/* 新建專案彈窗 */
-[data-theme="pro-slate"] #modal-create-project > div {
-  background-color: #222733 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 12px !important;
-  color: #f9fafb !important;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
-}
-
-[data-theme="pro-slate"] #modal-create-project input {
-  background-color: #181c24 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
-  color: #f9fafb !important;
-}
-
-[data-theme="pro-slate"] #modal-create-project .template-card {
-  background-color: #181c24 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 8px !important;
-}
-
-[data-theme="pro-slate"] #modal-create-project .template-card:hover {
-  border-color: #06b6d4 !important;
-  background-color: #2b3140 !important;
-}
-
-[data-theme="pro-slate"] #modal-create-project .template-card.border-indigo-600 {
-  border-color: #0891b2 !important;
-  background-color: rgba(8, 145, 178, 0.2) !important;
-}
-
-[data-theme="pro-slate"] #modal-create-project .template-card div {
-  color: #f9fafb !important;
-}
-
-/* --------------------------------------------------------------------------
-   9. 雜項元件 (Inputs, Dropdowns, Menus & Scrollbars)
+   8. 雜項元件 (Inputs, Dropdowns, Menus & Scrollbars)
    -------------------------------------------------------------------------- */
 [data-theme="pro-slate"] input,
 [data-theme="pro-slate"] select,
 [data-theme="pro-slate"] textarea {
-  background-color: #181c24 !important;
-  color: #f9fafb !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 4px !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
 }
 
 [data-theme="pro-slate"] #export-options,
 [data-theme="pro-slate"] #context-menu {
-  background-color: #222733 !important;
-  border: 1px solid #3d4659 !important;
-  border-radius: 6px !important;
-  color: #f9fafb !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15) !important;
 }
 
 [data-theme="pro-slate"] #export-options button:hover {
-  background-color: #2b3140 !important;
-  color: #22d3ee !important;
+  background-color: #f1f5f9 !important;
+  color: #0284c7 !important;
 }
 
 [data-theme="pro-slate"] ::-webkit-scrollbar-thumb {
-  background: #3d4659;
+  background: #94a3b8;
   border-radius: 4px;
 }
 [data-theme="pro-slate"] ::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+  background: #64748b;
 }
