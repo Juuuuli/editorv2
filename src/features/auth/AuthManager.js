@@ -301,20 +301,6 @@ export default class AuthManager {
                 <div class="p-6">
                     <!-- 1. 登入表單 (Login Form) -->
                     <form id="form-auth-login" class="space-y-4">
-                        <!-- 公用管理者快速填入按鈕 (Master Account Shortcut) -->
-                        <div class="p-3 bg-amber-50 border border-amber-300 rounded-xl flex items-center justify-between shadow-xs">
-                            <div class="flex items-center gap-2 text-left">
-                                <span class="w-7 h-7 rounded-lg bg-amber-200 text-amber-800 flex items-center justify-center font-bold text-xs">👑</span>
-                                <div>
-                                    <div class="text-xs font-black text-amber-900">公用最高管理者憑證 (高強度)</div>
-                                    <div class="text-[11px] font-mono text-amber-700">帳號: <strong>admin_master</strong> │ 密碼: <strong>Admin@Canvas2026#ProSecure!</strong></div>
-                                </div>
-                            </div>
-                            <button type="button" id="btn-quick-fill-admin" class="sketch-btn px-2.5 py-1 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white border-amber-700 shadow-[1.5px_1.5px_0px_#78350f] shrink-0" title="自動填入公用最高管理者帳密">
-                                ⚡ 一鍵填入
-                            </button>
-                        </div>
-
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">使用者帳號 / 信箱</label>
                             <div class="relative">
@@ -732,22 +718,8 @@ export default class AuthManager {
             });
         }
 
-        // 一鍵填入公用管理者
-        const btnQuickAdmin = document.getElementById('btn-quick-fill-admin');
         const loginUserEl = document.getElementById('login-username');
         const loginPwdEl = document.getElementById('login-password');
-        if (btnQuickAdmin && loginUserEl && loginPwdEl) {
-            btnQuickAdmin.addEventListener('click', () => {
-                loginUserEl.value = 'admin_master';
-                loginPwdEl.value = 'Admin@Canvas2026#ProSecure!';
-                loginUserEl.classList.add('bg-amber-50');
-                loginPwdEl.classList.add('bg-amber-50');
-                setTimeout(() => {
-                    loginUserEl.classList.remove('bg-amber-50');
-                    loginPwdEl.classList.remove('bg-amber-50');
-                }, 400);
-            });
-        }
 
         // 密碼顯隱切換
         const btnTogglePwd = document.getElementById('btn-toggle-login-pwd');
