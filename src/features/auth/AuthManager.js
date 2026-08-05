@@ -238,7 +238,7 @@ export default class AuthManager {
 
         this.authGateElement = document.createElement('div');
         this.authGateElement.id = 'auth-gate-modal';
-        this.authGateElement.className = 'fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300 select-none';
+        this.authGateElement.className = 'fixed inset-0 z-[9999] bg-white flex items-center justify-center p-4 transition-all duration-300 select-none';
 
         const currentTheme = localStorage.getItem('editor_theme') || 'light';
 

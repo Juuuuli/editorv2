@@ -9,8 +9,8 @@
    -------------------------------------------------------------------------- */
 [data-theme="light"] #auth-gate-modal,
 body:not([data-theme]) #auth-gate-modal {
-    background-color: rgba(15, 23, 42, 0.45) !important;
-    backdrop-filter: blur(4px) !important;
+    background-color: #ffffff !important;
+    backdrop-filter: blur(40px) !important;
 }
 
 [data-theme="light"] #auth-card-panel,
@@ -197,8 +197,8 @@ body:not([data-theme]) #btn-submit-login:hover {
    特色：曜石黑、電光青、霓虹微發光邊框、等寬字體與科技氛圍
    -------------------------------------------------------------------------- */
 [data-theme="dark"] #auth-gate-modal {
-    background-color: rgba(2, 6, 23, 0.85) !important;
-    backdrop-filter: blur(12px) !important;
+    background-color: #060913 !important;
+    backdrop-filter: blur(40px) !important;
 }
 
 [data-theme="dark"] #auth-card-panel {
@@ -348,8 +348,8 @@ body:not([data-theme]) #btn-submit-login:hover {
    特色：羊皮紙牛皮紙調、深胡桃木、古典襯線字、焦糖琥珀封蠟印章質感
    -------------------------------------------------------------------------- */
 [data-theme="retro-warm"] #auth-gate-modal {
-    background-color: rgba(54, 38, 28, 0.55) !important;
-    backdrop-filter: blur(4px) !important;
+    background-color: #f5eedc !important;
+    backdrop-filter: blur(40px) !important;
 }
 
 [data-theme="retro-warm"] #auth-card-panel {
@@ -507,8 +507,8 @@ body:not([data-theme]) #btn-submit-login:hover {
    特色：現代 SaaS 工作室、1px 冷灰精密邊框、純白操作卡片、極簡 Sky Blue 按鈕
    -------------------------------------------------------------------------- */
 [data-theme="pro-slate"] #auth-gate-modal {
-    background-color: rgba(15, 23, 42, 0.6) !important;
-    backdrop-filter: blur(6px) !important;
+    background-color: #f1f5f9 !important;
+    backdrop-filter: blur(40px) !important;
 }
 
 [data-theme="pro-slate"] #auth-card-panel {
