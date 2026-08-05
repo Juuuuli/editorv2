@@ -240,21 +240,44 @@ export default class AuthManager {
         this.authGateElement.id = 'auth-gate-modal';
         this.authGateElement.className = 'fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300 select-none';
 
+        const currentTheme = localStorage.getItem('editor_theme') || 'light';
+
         this.authGateElement.innerHTML = `
-            <div class="sketch-panel max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-slate-700 flex flex-col animate-scale-in">
+            <div id="auth-card-panel" class="sketch-panel max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-slate-700 flex flex-col animate-scale-in transition-all duration-300">
                 <!-- Auth Header -->
-                <div class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-800 p-6 text-white text-center relative">
-                    <div class="w-14 h-14 bg-white/10 rounded-2xl mx-auto flex items-center justify-center mb-3 shadow-inner border border-white/20">
+                <div id="auth-card-header" class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-800 p-6 text-white text-center relative transition-all duration-300">
+                    <div id="auth-header-logo-box" class="w-14 h-14 bg-white/10 rounded-2xl mx-auto flex items-center justify-center mb-3 shadow-inner border border-white/20 transition-all duration-300">
                         <i class="fas fa-cubes text-2xl text-amber-300"></i>
                     </div>
-                    <h2 class="text-2xl font-black tracking-wide">多媒體畫布編輯器 V2</h2>
-                    <p class="text-xs text-indigo-200 mt-1">Sprint 3 系統登入與權限管理中心</p>
-                    <span class="absolute top-4 right-4 text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-mono border border-amber-400/40">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.0'}</span>
+                    <h2 id="auth-header-title" class="text-2xl font-black tracking-wide">多媒體畫布編輯器 V2</h2>
+                    <p id="auth-header-subtitle" class="text-xs text-indigo-200 mt-1 font-medium">Sprint 3 系統登入與權限管理中心</p>
+                    <span id="auth-version-badge" class="absolute top-4 right-4 text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-mono border border-amber-400/40">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.0'}</span>
+
+                    <!-- Theme Switcher Toolbar (登入介面即時風格切換) -->
+                    <div class="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs">
+                        <span class="text-white/80 text-[11px] font-medium flex items-center gap-1.5">
+                            <i class="fas fa-palette"></i> 介面風格體驗：
+                        </span>
+                        <div class="flex items-center gap-1.5" id="auth-theme-switcher">
+                            <button type="button" data-auth-theme="light" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1 bg-white/20 text-white hover:bg-white/30" title="經典手繪風格 (Light Sketch)">
+                                <span>🎨 手繪</span>
+                            </button>
+                            <button type="button" data-auth-theme="dark" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1 bg-white/20 text-white hover:bg-white/30" title="深色極客風格 (Dark Geek)">
+                                <span>🌙 極客</span>
+                            </button>
+                            <button type="button" data-auth-theme="pro-slate" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1 bg-white/20 text-white hover:bg-white/30" title="專業冷灰風格 (Pro Slate)">
+                                <span>💼 冷灰</span>
+                            </button>
+                            <button type="button" data-auth-theme="retro-warm" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1 bg-white/20 text-white hover:bg-white/30" title="復古文青風格 (Retro Warm)">
+                                <span>📜 復古</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Tabs (登入 / 註冊) -->
-                <div class="flex border-b-2 border-slate-700 bg-slate-100 font-bold text-sm">
-                    <button id="auth-tab-login" class="flex-1 py-3 text-center border-b-2 border-indigo-600 bg-white text-indigo-600 transition flex items-center justify-center gap-2">
+                <div id="auth-tabs-container" class="flex border-b-2 border-slate-700 bg-slate-100 font-bold text-sm">
+                    <button id="auth-tab-login" class="flex-1 py-3 text-center border-b-2 border-indigo-600 bg-white text-indigo-600 transition flex items-center justify-center gap-2 is-active">
                         <i class="fas fa-sign-in-alt"></i> 帳號登入
                     </button>
                     <button id="auth-tab-register" class="flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2">
@@ -263,22 +286,22 @@ export default class AuthManager {
                 </div>
 
                 <!-- Auth Body -->
-                <div class="p-6">
+                <div id="auth-body-container" class="p-6 transition-all duration-300">
                     <!-- 1. 登入表單 (Login Form) -->
                     <form id="form-auth-login" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">使用者帳號 / 信箱</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1 auth-input-label">使用者帳號 / 信箱</label>
                             <div class="relative">
-                                <i class="fas fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                                <input type="text" id="login-username" required class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="請輸入帳號或 Email">
+                                <i class="fas fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm auth-input-icon"></i>
+                                <input type="text" id="login-username" required class="auth-input-field w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="請輸入帳號或 Email">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">密碼</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1 auth-input-label">密碼</label>
                             <div class="relative">
-                                <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                                <input type="password" id="login-password" required class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="••••••••">
+                                <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm auth-input-icon"></i>
+                                <input type="password" id="login-password" required class="auth-input-field w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="••••••••">
                                 <button type="button" id="btn-toggle-login-pwd" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                                     <i class="fas fa-eye text-sm"></i>
                                 </button>
@@ -286,11 +309,11 @@ export default class AuthManager {
                         </div>
 
                         <div class="flex items-center justify-between text-xs text-slate-600">
-                            <label class="flex items-center gap-1.5 cursor-pointer">
+                            <label class="flex items-center gap-1.5 cursor-pointer" id="auth-remember-label">
                                 <input type="checkbox" id="login-remember-me" checked class="rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
                                 <span>記住我的登入狀態</span>
                             </label>
-                            <span class="text-slate-400 text-[11px]">本機安全加密存儲</span>
+                            <span id="auth-encryption-text" class="text-slate-400 text-[11px]">本機安全加密存儲</span>
                         </div>
 
                         <div id="login-error-msg" class="hidden p-2.5 bg-rose-50 border border-rose-200 text-rose-600 text-xs rounded-lg font-bold flex items-center gap-2">
@@ -316,18 +339,18 @@ export default class AuthManager {
 
                         <div class="opacity-60 pointer-events-none space-y-3">
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 mb-1">登入帳號</label>
-                                <input type="text" id="reg-username" disabled class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed" placeholder="例如: designer_alex">
+                                <label class="block text-xs font-bold text-slate-500 mb-1 auth-input-label">登入帳號</label>
+                                <input type="text" id="reg-username" disabled class="auth-input-field w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed" placeholder="例如: designer_alex">
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 mb-1">顯示名稱 / 暱稱</label>
-                                <input type="text" id="reg-name" disabled class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed" placeholder="例如: Alex 視覺設計">
+                                <label class="block text-xs font-bold text-slate-500 mb-1 auth-input-label">顯示名稱 / 暱稱</label>
+                                <input type="text" id="reg-name" disabled class="auth-input-field w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed" placeholder="例如: Alex 視覺設計">
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 mb-1">設定密碼</label>
-                                <input type="password" id="reg-password" disabled class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed" placeholder="••••••••">
+                                <label class="block text-xs font-bold text-slate-500 mb-1 auth-input-label">設定密碼</label>
+                                <input type="password" id="reg-password" disabled class="auth-input-field w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed" placeholder="••••••••">
                             </div>
                         </div>
 
@@ -345,6 +368,7 @@ export default class AuthManager {
         `;
 
         document.body.appendChild(this.authGateElement);
+        this.updateAuthThemeSwitcherUI(currentTheme);
     }
 
     /**
@@ -671,17 +695,34 @@ export default class AuthManager {
 
         if (tabLogin && tabRegister && formLogin && formRegister) {
             tabLogin.addEventListener('click', () => {
-                tabLogin.className = 'flex-1 py-3 text-center border-b-2 border-indigo-600 bg-white text-indigo-600 transition flex items-center justify-center gap-2 font-bold';
-                tabRegister.className = 'flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2 font-bold';
+                tabLogin.classList.add('is-active');
+                tabRegister.classList.remove('is-active');
                 formLogin.classList.remove('hidden');
                 formRegister.classList.add('hidden');
             });
 
             tabRegister.addEventListener('click', () => {
-                tabRegister.className = 'flex-1 py-3 text-center border-b-2 border-emerald-600 bg-white text-emerald-600 transition flex items-center justify-center gap-2 font-bold';
-                tabLogin.className = 'flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2 font-bold';
+                tabRegister.classList.add('is-active');
+                tabLogin.classList.remove('is-active');
                 formRegister.classList.remove('hidden');
                 formLogin.classList.add('hidden');
+            });
+        }
+
+        // 登入彈窗風格快速切換監聽
+        const themeSwitcher = document.getElementById('auth-theme-switcher');
+        if (themeSwitcher) {
+            themeSwitcher.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-auth-theme]');
+                if (!btn) return;
+                const themeId = btn.dataset.authTheme;
+                this.switchModalTheme(themeId);
+            });
+        }
+
+        if (this.eventBus) {
+            this.eventBus.on('THEME:CHANGED', ({ themeId }) => {
+                this.updateAuthThemeSwitcherUI(themeId);
             });
         }
 
@@ -781,5 +822,42 @@ export default class AuthManager {
                 }
             });
         }
+    }
+
+    /**
+     * 切換登入彈窗風格並同步至全域主題
+     */
+    switchModalTheme(themeId) {
+        document.documentElement.setAttribute('data-theme', themeId);
+        document.body.setAttribute('data-theme', themeId);
+        document.body.classList.remove('theme-light', 'theme-dark', 'theme-pro-slate', 'theme-retro-warm');
+        document.body.classList.add(`theme-${themeId}`);
+        localStorage.setItem('editor_theme', themeId);
+
+        this.updateAuthThemeSwitcherUI(themeId);
+
+        if (this.eventBus) {
+            this.eventBus.emit('THEME:SET', { themeId });
+        }
+    }
+
+    /**
+     * 更新登入彈窗右上角主題切換器的高亮狀態
+     */
+    updateAuthThemeSwitcherUI(currentTheme) {
+        const switcher = document.getElementById('auth-theme-switcher');
+        if (!switcher) return;
+
+        const buttons = switcher.querySelectorAll('[data-auth-theme]');
+        buttons.forEach(btn => {
+            const isCurrent = btn.dataset.authTheme === currentTheme;
+            if (isCurrent) {
+                btn.classList.add('ring-2', 'ring-amber-300', 'scale-105', 'bg-white/40', 'shadow-md');
+                btn.classList.remove('bg-white/20');
+            } else {
+                btn.classList.remove('ring-2', 'ring-amber-300', 'scale-105', 'bg-white/40', 'shadow-md');
+                btn.classList.add('bg-white/20');
+            }
+        });
     }
 }

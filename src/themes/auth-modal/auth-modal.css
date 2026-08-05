@@ -1,0 +1,396 @@
+/* ==========================================================================
+   🎭 身分認證與登入彈窗多風格適配模組 (Auth Modal Multi-Theme Styles)
+   支援風格：經典手繪 (Light), 深色極客 (Dark), 專業冷灰 (Pro-Slate), 復古文青 (Retro-Warm)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 經典手繪 (Light Sketch) - [data-theme="light"]
+   -------------------------------------------------------------------------- */
+[data-theme="light"] #auth-card-panel {
+    background-color: #ffffff !important;
+    border: 2.5px solid #1e293b !important;
+    border-radius: 20px !important;
+    box-shadow: 6px 6px 0px #1e293b !important;
+}
+
+[data-theme="light"] #auth-card-header {
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 50%, #3730a3 100%) !important;
+    border-bottom: 2.5px solid #1e293b !important;
+}
+
+[data-theme="light"] #auth-header-logo-box {
+    background-color: #fef08a !important;
+    border: 2px solid #1e293b !important;
+    color: #854d0e !important;
+    box-shadow: 2px 2px 0px #1e293b !important;
+}
+
+[data-theme="light"] #auth-tabs-container {
+    background-color: #f8fafc !important;
+    border-bottom: 2.5px solid #1e293b !important;
+}
+
+[data-theme="light"] #auth-tab-login.is-active {
+    background-color: #ffffff !important;
+    color: #4f46e5 !important;
+    border-bottom: 3px solid #4f46e5 !important;
+}
+
+[data-theme="light"] #auth-tab-register.is-active {
+    background-color: #ffffff !important;
+    color: #4f46e5 !important;
+    border-bottom: 3px solid #4f46e5 !important;
+}
+
+[data-theme="light"] .auth-input-field {
+    background-color: #f8fafc !important;
+    border: 2px solid #334155 !important;
+    color: #0f172a !important;
+    box-shadow: 2px 2px 0px #cbd5e1 !important;
+}
+
+[data-theme="light"] .auth-input-field:focus {
+    background-color: #ffffff !important;
+    border-color: #4f46e5 !important;
+    box-shadow: 2px 2px 0px #4f46e5 !important;
+}
+
+[data-theme="light"] #btn-submit-login {
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+    border: 2px solid #1e293b !important;
+    box-shadow: 3px 3px 0px #1e293b !important;
+}
+
+[data-theme="light"] #btn-submit-login:hover {
+    background-color: #4338ca !important;
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0px #1e293b !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. 🌙 深色極客 (Dark Geek) - [data-theme="dark"]
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] #auth-card-panel {
+    background-color: #0b1120 !important;
+    border: 1.5px solid rgba(99, 102, 241, 0.4) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.25), inset 0 0 20px rgba(56, 189, 248, 0.05) !important;
+}
+
+[data-theme="dark"] #auth-card-header {
+    background: linear-gradient(135deg, #090d16 0%, #1e1b4b 50%, #082f49 100%) !important;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.3) !important;
+}
+
+[data-theme="dark"] #auth-header-logo-box {
+    background-color: rgba(99, 102, 241, 0.15) !important;
+    border: 1.5px solid #38bdf8 !important;
+    color: #38bdf8 !important;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.4) !important;
+}
+
+[data-theme="dark"] #auth-header-title {
+    color: #f8fafc !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    letter-spacing: -0.02em !important;
+}
+
+[data-theme="dark"] #auth-header-subtitle {
+    color: #38bdf8 !important;
+    font-family: monospace !important;
+}
+
+[data-theme="dark"] #auth-version-badge {
+    background-color: rgba(56, 189, 248, 0.15) !important;
+    border-color: #38bdf8 !important;
+    color: #38bdf8 !important;
+}
+
+[data-theme="dark"] #auth-tabs-container {
+    background-color: #080d1a !important;
+    border-bottom: 1px solid #1e293b !important;
+}
+
+[data-theme="dark"] #auth-tab-login,
+[data-theme="dark"] #auth-tab-register {
+    color: #64748b !important;
+}
+
+[data-theme="dark"] #auth-tab-login.is-active,
+[data-theme="dark"] #auth-tab-register.is-active {
+    background-color: #0f172a !important;
+    color: #38bdf8 !important;
+    border-bottom: 2px solid #38bdf8 !important;
+}
+
+[data-theme="dark"] #auth-body-container {
+    background-color: #0b1120 !important;
+}
+
+[data-theme="dark"] .auth-input-label {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .auth-input-field {
+    background-color: #0f172a !important;
+    border: 1px solid #334155 !important;
+    color: #f8fafc !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+}
+
+[data-theme="dark"] .auth-input-field:focus {
+    background-color: #131d31 !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.35) !important;
+}
+
+[data-theme="dark"] .auth-input-icon {
+    color: #6366f1 !important;
+}
+
+[data-theme="dark"] #auth-remember-label {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] #auth-encryption-text {
+    color: #64748b !important;
+}
+
+[data-theme="dark"] #btn-submit-login {
+    background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #38bdf8 !important;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.35) !important;
+    border-radius: 12px !important;
+}
+
+[data-theme="dark"] #btn-submit-login:hover {
+    box-shadow: 0 0 28px rgba(6, 182, 212, 0.6) !important;
+    transform: translateY(-1px) !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. 📜 復古文青 (Retro Warm) - [data-theme="retro-warm"]
+   -------------------------------------------------------------------------- */
+[data-theme="retro-warm"] #auth-card-panel {
+    background-color: #fdfbf7 !important;
+    border: 2.5px solid #78350f !important;
+    border-radius: 16px !important;
+    box-shadow: 6px 6px 0px #451a03 !important;
+}
+
+[data-theme="retro-warm"] #auth-card-header {
+    background: linear-gradient(135deg, #451a03 0%, #78350f 50%, #92400e 100%) !important;
+    border-bottom: 2.5px solid #78350f !important;
+}
+
+[data-theme="retro-warm"] #auth-header-logo-box {
+    background-color: #fef3c7 !important;
+    border: 2px solid #78350f !important;
+    color: #92400e !important;
+    box-shadow: 2px 2px 0px #451a03 !important;
+}
+
+[data-theme="retro-warm"] #auth-header-title {
+    font-family: 'Georgia', 'Noto Serif TC', serif !important;
+    color: #fef3c7 !important;
+    letter-spacing: 0.04em !important;
+}
+
+[data-theme="retro-warm"] #auth-header-subtitle {
+    color: #fde68a !important;
+    font-family: 'Georgia', serif !important;
+    font-style: italic !important;
+}
+
+[data-theme="retro-warm"] #auth-version-badge {
+    background-color: #78350f !important;
+    border-color: #f59e0b !important;
+    color: #fef3c7 !important;
+}
+
+[data-theme="retro-warm"] #auth-tabs-container {
+    background-color: #f5eedc !important;
+    border-bottom: 2px solid #78350f !important;
+    font-family: 'Georgia', serif !important;
+}
+
+[data-theme="retro-warm"] #auth-tab-login,
+[data-theme="retro-warm"] #auth-tab-register {
+    color: #8c7863 !important;
+}
+
+[data-theme="retro-warm"] #auth-tab-login.is-active,
+[data-theme="retro-warm"] #auth-tab-register.is-active {
+    background-color: #fdfbf7 !important;
+    color: #78350f !important;
+    border-bottom: 3px solid #92400e !important;
+    font-weight: 900 !important;
+}
+
+[data-theme="retro-warm"] #auth-body-container {
+    background-color: #fdfbf7 !important;
+}
+
+[data-theme="retro-warm"] .auth-input-label {
+    color: #5c4738 !important;
+    font-family: 'Georgia', serif !important;
+}
+
+[data-theme="retro-warm"] .auth-input-field {
+    background-color: #fffbeb !important;
+    border: 1.5px solid #b45309 !important;
+    color: #451a03 !important;
+    border-radius: 10px !important;
+    font-family: 'Georgia', serif !important;
+    box-shadow: 2px 2px 0px rgba(180, 83, 9, 0.2) !important;
+}
+
+[data-theme="retro-warm"] .auth-input-field:focus {
+    background-color: #ffffff !important;
+    border-color: #78350f !important;
+    box-shadow: 2px 2px 0px #78350f !important;
+}
+
+[data-theme="retro-warm"] .auth-input-icon {
+    color: #92400e !important;
+}
+
+[data-theme="retro-warm"] #auth-remember-label {
+    color: #78350f !important;
+    font-family: 'Georgia', serif !important;
+}
+
+[data-theme="retro-warm"] #auth-encryption-text {
+    color: #a89f91 !important;
+}
+
+[data-theme="retro-warm"] #btn-submit-login {
+    background: linear-gradient(135deg, #92400e 0%, #78350f 100%) !important;
+    color: #fef3c7 !important;
+    border: 2px solid #451a03 !important;
+    box-shadow: 3px 3px 0px #451a03 !important;
+    font-family: 'Georgia', serif !important;
+    border-radius: 12px !important;
+}
+
+[data-theme="retro-warm"] #btn-submit-login:hover {
+    background: #78350f !important;
+    transform: translate(1px, 1px) !important;
+    box-shadow: 2px 2px 0px #451a03 !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. 💼 專業冷灰 (Pro Slate) - [data-theme="pro-slate"]
+   -------------------------------------------------------------------------- */
+[data-theme="pro-slate"] #auth-card-panel {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(15, 23, 42, 0.05) !important;
+}
+
+[data-theme="pro-slate"] #auth-card-header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    border-bottom: 1px solid #334155 !important;
+}
+
+[data-theme="pro-slate"] #auth-header-logo-box {
+    background-color: #0284c7 !important;
+    border: 1px solid #38bdf8 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.3) !important;
+}
+
+[data-theme="pro-slate"] #auth-header-title {
+    color: #f8fafc !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+}
+
+[data-theme="pro-slate"] #auth-header-subtitle {
+    color: #94a3b8 !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+}
+
+[data-theme="pro-slate"] #auth-version-badge {
+    background-color: #334155 !important;
+    border-color: #475569 !important;
+    color: #38bdf8 !important;
+    font-family: monospace !important;
+}
+
+[data-theme="pro-slate"] #auth-tabs-container {
+    background-color: #f1f5f9 !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="pro-slate"] #auth-tab-login,
+[data-theme="pro-slate"] #auth-tab-register {
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+[data-theme="pro-slate"] #auth-tab-login.is-active,
+[data-theme="pro-slate"] #auth-tab-register.is-active {
+    background-color: #ffffff !important;
+    color: #0284c7 !important;
+    border-bottom: 2px solid #0284c7 !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="pro-slate"] #auth-body-container {
+    background-color: #ffffff !important;
+}
+
+[data-theme="pro-slate"] .auth-input-label {
+    color: #334155 !important;
+    font-weight: 600 !important;
+}
+
+[data-theme="pro-slate"] .auth-input-field {
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+}
+
+[data-theme="pro-slate"] .auth-input-field:focus {
+    background-color: #ffffff !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+[data-theme="pro-slate"] .auth-input-icon {
+    color: #64748b !important;
+}
+
+[data-theme="pro-slate"] #auth-remember-label {
+    color: #475569 !important;
+}
+
+[data-theme="pro-slate"] #auth-encryption-text {
+    color: #94a3b8 !important;
+}
+
+[data-theme="pro-slate"] #btn-submit-login {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+    border: 1px solid #0369a1 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2) !important;
+    font-weight: 600 !important;
+}
+
+[data-theme="pro-slate"] #btn-submit-login:hover {
+    background-color: #0369a1 !important;
+    box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.3) !important;
+}

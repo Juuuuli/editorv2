@@ -13,3 +13,6 @@
 
 /* 4. 📜 復古文青 (Retro Warm) 風格資料夾 */
 @import './retro-warm/retro-warm.css';
+
+/* 5. 🎭 系統身分認證登入彈窗多風格適配模組 */
+@import './auth-modal/auth-modal.css';
