@@ -245,30 +245,30 @@ export default class AuthManager {
         this.authGateElement.innerHTML = `
             <div id="auth-card-panel" class="sketch-panel max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-slate-700 flex flex-col animate-scale-in transition-all duration-300">
                 <!-- Auth Header -->
-                <div id="auth-card-header" class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-800 p-6 text-white text-center relative transition-all duration-300">
-                    <div id="auth-header-logo-box" class="w-14 h-14 bg-white/10 rounded-2xl mx-auto flex items-center justify-center mb-3 shadow-inner border border-white/20 transition-all duration-300">
-                        <i class="fas fa-cubes text-2xl text-amber-300"></i>
+                <div id="auth-card-header" class="p-6 text-center relative transition-all duration-300">
+                    <div id="auth-header-logo-box" class="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-3 transition-all duration-300">
+                        <i class="fas fa-cubes text-2xl"></i>
                     </div>
                     <h2 id="auth-header-title" class="text-2xl font-black tracking-wide">多媒體畫布編輯器 V2</h2>
-                    <p id="auth-header-subtitle" class="text-xs text-indigo-200 mt-1 font-medium">Sprint 3 系統登入與權限管理中心</p>
-                    <span id="auth-version-badge" class="absolute top-4 right-4 text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-mono border border-amber-400/40">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.0'}</span>
+                    <p id="auth-header-subtitle" class="text-xs mt-1 font-medium">Sprint 3 系統登入與權限管理中心</p>
+                    <span id="auth-version-badge" class="absolute top-4 right-4 text-[10px] px-2 py-0.5 rounded-full font-mono">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.0'}</span>
 
                     <!-- Theme Switcher Toolbar (登入介面即時風格切換) -->
-                    <div class="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs">
-                        <span class="text-white/80 text-[11px] font-medium flex items-center gap-1.5">
+                    <div class="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs" id="auth-theme-toolbar-container">
+                        <span id="auth-theme-toolbar-label" class="text-[11px] font-medium flex items-center gap-1.5">
                             <i class="fas fa-palette"></i> 介面風格體驗：
                         </span>
                         <div class="flex items-center gap-1.5" id="auth-theme-switcher">
-                            <button type="button" data-auth-theme="light" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1 bg-white/20 text-white hover:bg-white/30" title="經典手繪風格 (Light Sketch)">
+                            <button type="button" data-auth-theme="light" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1" title="經典手繪風格 (Light Sketch)">
                                 <span>🎨 手繪</span>
                             </button>
-                            <button type="button" data-auth-theme="dark" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1 bg-white/20 text-white hover:bg-white/30" title="深色極客風格 (Dark Geek)">
+                            <button type="button" data-auth-theme="dark" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1" title="深色極客風格 (Dark Geek)">
                                 <span>🌙 極客</span>
                             </button>
-                            <button type="button" data-auth-theme="pro-slate" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1 bg-white/20 text-white hover:bg-white/30" title="專業冷灰風格 (Pro Slate)">
+                            <button type="button" data-auth-theme="pro-slate" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1" title="專業冷灰風格 (Pro Slate)">
                                 <span>💼 冷灰</span>
                             </button>
-                            <button type="button" data-auth-theme="retro-warm" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1 bg-white/20 text-white hover:bg-white/30" title="復古文青風格 (Retro Warm)">
+                            <button type="button" data-auth-theme="retro-warm" class="auth-theme-pill px-2 py-0.5 rounded-full text-[10px] font-bold transition flex items-center gap-1" title="復古文青風格 (Retro Warm)">
                                 <span>📜 復古</span>
                             </button>
                         </div>
@@ -277,7 +277,7 @@ export default class AuthManager {
 
                 <!-- Tabs (登入 / 註冊) -->
                 <div id="auth-tabs-container" class="flex border-b-2 border-slate-700 bg-slate-100 font-bold text-sm">
-                    <button id="auth-tab-login" class="flex-1 py-3 text-center border-b-2 border-indigo-600 bg-white text-indigo-600 transition flex items-center justify-center gap-2 is-active">
+                    <button id="auth-tab-login" class="flex-1 py-3 text-center border-b-2 border-amber-500 bg-white text-slate-800 transition flex items-center justify-center gap-2 is-active">
                         <i class="fas fa-sign-in-alt"></i> 帳號登入
                     </button>
                     <button id="auth-tab-register" class="flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2">
@@ -851,13 +851,7 @@ export default class AuthManager {
         const buttons = switcher.querySelectorAll('[data-auth-theme]');
         buttons.forEach(btn => {
             const isCurrent = btn.dataset.authTheme === currentTheme;
-            if (isCurrent) {
-                btn.classList.add('ring-2', 'ring-amber-300', 'scale-105', 'bg-white/40', 'shadow-md');
-                btn.classList.remove('bg-white/20');
-            } else {
-                btn.classList.remove('ring-2', 'ring-amber-300', 'scale-105', 'bg-white/40', 'shadow-md');
-                btn.classList.add('bg-white/20');
-            }
+            btn.classList.toggle('is-active', isCurrent);
         });
     }
 }
