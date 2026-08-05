@@ -206,48 +206,13 @@ export default class AuthManager {
     }
 
     /**
-     * 註冊新帳號
+     * 註冊新帳號 (目前處於封閉測試階段，暫停開放外部註冊)
      */
     register(data, rememberMe = true) {
-        const { username, name, password, email, role = 'editor' } = data;
-        const users = this.getAllUsers();
-        const cleanUser = username.trim().toLowerCase();
-
-        if (users.some(u => u.username.toLowerCase() === cleanUser)) {
-            return { success: false, message: '該帳號名稱已存在，請使用其他帳號！' };
-        }
-
-        const colors = ['#4f46e5', '#0284c7', '#059669', '#d97706', '#dc2626', '#7c3aed', '#db2777'];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-        const newUser = {
-            id: 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
-            username: username.trim(),
-            name: (name && name.trim()) || username.trim(),
-            password: password,
-            email: (email && email.trim()) || '',
-            role: role,
-            avatarColor: randomColor,
-            createdAt: Date.now()
+        return {
+            success: false,
+            message: '⚠️ 目前系統處於內部封閉測試階段，暫停開放公開註冊。請使用內部授權帳號登入！'
         };
-
-        users.push(newUser);
-        localStorage.setItem(this.storageKeyUsers, JSON.stringify(users));
-
-        const sessionUser = {
-            id: newUser.id,
-            username: newUser.username,
-            name: newUser.name,
-            email: newUser.email,
-            role: newUser.role,
-            avatarColor: newUser.avatarColor,
-            lastLoginAt: Date.now()
-        };
-        this.saveSession(sessionUser, rememberMe);
-        if (this.eventBus) {
-            this.eventBus.emit('AUTH:REGISTER_SUCCESS', sessionUser);
-        }
-        return { success: true, user: sessionUser };
     }
 
     /**
@@ -338,39 +303,41 @@ export default class AuthManager {
                         </button>
                     </form>
 
-                    <!-- 2. 註冊表單 (Register Form) -->
+                    <!-- 2. 註冊表單 (Register Form - 暫停開放) -->
                     <form id="form-auth-register" class="space-y-3.5 hidden">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">登入帳號 <span class="text-rose-500">*</span></label>
-                            <input type="text" id="reg-username" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="例如: designer_alex">
+                        <!-- 暫停開放提示橫幅 -->
+                        <div class="p-3 bg-amber-50 border border-amber-300 text-amber-900 text-xs rounded-xl flex items-start gap-2.5 shadow-xs">
+                            <i class="fas fa-lock text-amber-600 mt-0.5 text-sm shrink-0"></i>
+                            <div>
+                                <div class="font-bold">註冊通道暫停開放</div>
+                                <div class="text-[11px] text-amber-700 mt-0.5 leading-relaxed">目前系統處於內部封閉測試與安全維護階段，暫不開放公開註冊。請使用內部授權帳號登入！</div>
+                            </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">顯示名稱 / 暱稱</label>
-                            <input type="text" id="reg-name" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="例如: Alex 視覺設計">
-                        </div>
+                        <div class="opacity-60 pointer-events-none space-y-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">登入帳號</label>
+                                <input type="text" id="reg-username" disabled class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed" placeholder="例如: designer_alex">
+                            </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">設定密碼 <span class="text-rose-500">*</span></label>
-                            <input type="password" id="reg-password" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="至少 4 位數密碼">
-                        </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">顯示名稱 / 暱稱</label>
+                                <input type="text" id="reg-name" disabled class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed" placeholder="例如: Alex 視覺設計">
+                            </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">指派角色權限 (RBAC)</label>
-                            <select id="reg-role" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition font-medium">
-                                <option value="admin">👑 最高管理者 (Admin) - 完整控制與金鑰設定</option>
-                                <option value="editor" selected>✏️ 編輯協作者 (Editor) - 專案與畫布完整編輯</option>
-                                <option value="viewer">👁️ 檢視者 (Viewer) - 僅瀏覽與預覽模式</option>
-                            </select>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">設定密碼</label>
+                                <input type="password" id="reg-password" disabled class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed" placeholder="••••••••">
+                            </div>
                         </div>
 
                         <div id="reg-error-msg" class="hidden p-2.5 bg-rose-50 border border-rose-200 text-rose-600 text-xs rounded-lg font-bold flex items-center gap-2">
                             <i class="fas fa-exclamation-circle"></i>
-                            <span id="reg-error-text">註冊資料有誤</span>
+                            <span id="reg-error-text">目前暫停開放公開註冊</span>
                         </div>
 
-                        <button type="submit" id="btn-submit-register" class="sketch-btn w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition shadow-[2px_2px_0px_#065f46] flex items-center justify-center gap-2">
-                            <i class="fas fa-user-check"></i> 完成註冊並自動登入
+                        <button type="button" id="btn-submit-register" disabled class="w-full py-3 bg-slate-200 text-slate-400 font-bold rounded-xl text-sm cursor-not-allowed flex items-center justify-center gap-2 border border-slate-300 shadow-none transition select-none">
+                            <i class="fas fa-ban"></i> 註冊功能暫停開放
                         </button>
                     </form>
                 </div>
