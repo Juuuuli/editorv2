@@ -68,9 +68,9 @@ export default class DashboardManager {
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
                     <!-- 搜尋列 -->
-                    <div class="relative w-72">
+                    <div class="relative w-64 md:w-72">
                         <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" id="dashboard-search-input" class="w-full bg-slate-100 border border-slate-300 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="搜尋專案名稱...">
                     </div>
@@ -84,6 +84,11 @@ export default class DashboardManager {
                     <!-- 新建專案按鈕 -->
                     <button id="btn-open-create-modal" class="sketch-btn px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center shadow-[3px_3px_0px_#334155]">
                         <i class="fas fa-plus mr-2"></i> 新建專案
+                    </button>
+
+                    <!-- 設定齒輪按鈕 (Sprint 2) -->
+                    <button id="btn-dashboard-settings" class="sketch-btn px-3.5 py-2 text-sm font-bold text-slate-700 hover:text-indigo-600 bg-white hover:bg-slate-50 flex items-center justify-center shadow-[2px_2px_0px_#334155]" title="系統設定與主題切換">
+                        <i class="fas fa-cog text-base"></i>
                     </button>
                 </div>
             </header>
