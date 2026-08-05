@@ -1,28 +1,598 @@
 /* ==========================================================================
-   📜 復古文青 (Retro Warm) - 獨立風格模組
+   📜 復古文青 (Retro Warm / Vintage Kraft Editorial & Botanical)
+   特色：溫潤羊皮紙與牛皮紙燕麥調、胡桃木深暖棕 Header、莫蘭迪大地色系、
+   典雅手帳風格邊框與壓印微陰影、焦糖琥珀與鼠尾草綠點綴，展現沈穩文藝手感
    ========================================================================== */
 
+/* --------------------------------------------------------------------------
+   1. 復古文青全域字體與基底 (Global Base & Editorial Serif)
+   -------------------------------------------------------------------------- */
 [data-theme="retro-warm"], body.theme-retro-warm {
-  background-color: #f7f3e8 !important;
-  color: #453426 !important;
+  background-color: #f5eedc !important;
+  color: #38271d !important;
+  font-family: 'Noto Serif TC', 'Georgia', 'Songti TC', 'STSong', 'Noto Sans TC', serif !important;
 }
 
-[data-theme="retro-warm"] header,
-[data-theme="retro-warm"] aside,
+/* 復古手帳面板與按鈕基礎 (Vintage Journal Panels & Stamp Buttons) */
+[data-theme="retro-warm"] .sketch,
 [data-theme="retro-warm"] .sketch-panel,
+[data-theme="retro-warm"] .sketch-btn,
+[data-theme="retro-warm"] .sketch-header-group,
+[data-theme="retro-warm"] .page-item,
+[data-theme="retro-warm"] .project-card,
 [data-theme="retro-warm"] .glass-card {
-  background-color: #fffdfa !important;
-  border-color: #6b5344 !important;
-  color: #453426 !important;
+  border-radius: 10px !important;
+  border: 1.5px solid #85634b !important;
+  box-shadow: 2px 2px 0px rgba(133, 99, 75, 0.25) !important;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-[data-theme="retro-warm"] .sketch-btn {
-  background-color: #fcf9f2 !important;
-  color: #523e30 !important;
-  border-color: #6b5344 !important;
+[data-theme="retro-warm"] .sketch:hover,
+[data-theme="retro-warm"] .sketch-btn:hover {
+  transform: translateY(-1.5px) !important;
+  box-shadow: 3px 4px 0px rgba(133, 99, 75, 0.35) !important;
 }
 
+[data-theme="retro-warm"] .sketch-btn:active {
+  transform: translateY(0) !important;
+  box-shadow: 1px 1px 0px rgba(133, 99, 75, 0.2) !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. 專案儀表板 (Dashboard in Vintage Kraft Journal)
+   -------------------------------------------------------------------------- */
+[data-theme="retro-warm"] #dashboard-view {
+  background-color: #f5eedc !important;
+  background: radial-gradient(circle at 50% 0%, #fbf8f1 0%, #f5eedc 100%) !important;
+  color: #38271d !important;
+}
+
+/* 儀表板頂部導覽列 (復古深胡桃木色) */
+[data-theme="retro-warm"] #dashboard-view header {
+  background-color: #36261c !important;
+  border-bottom: 2px solid #5c412f !important;
+  box-shadow: 0 4px 16px rgba(54, 38, 28, 0.25) !important;
+}
+
+[data-theme="retro-warm"] #dashboard-view header h1,
+[data-theme="retro-warm"] #dashboard-view header h2,
+[data-theme="retro-warm"] #dashboard-view header h3 {
+  color: #fdfaf5 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+}
+
+[data-theme="retro-warm"] #dashboard-view header p,
+[data-theme="retro-warm"] #dashboard-view header span.text-slate-500,
+[data-theme="retro-warm"] #dashboard-view header span.text-slate-400 {
+  color: #d1c0af !important;
+}
+
+/* 搜尋欄 (牛皮紙質感) */
+[data-theme="retro-warm"] #dashboard-search-input {
+  background-color: #261911 !important;
+  color: #fdfaf5 !important;
+  border: 1.5px solid #5c412f !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.2s ease !important;
+}
+[data-theme="retro-warm"] #dashboard-search-input:focus {
+  border-color: #d97706 !important;
+  background-color: #36261c !important;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.35) !important;
+}
+
+/* 儀表板頂部按鈕 (復古琥珀金與鼠尾草綠) */
+[data-theme="retro-warm"] #dashboard-view #btn-import-project-file {
+  background-color: #261911 !important;
+  color: #a3e635 !important;
+  border: 1.5px solid #65a30d !important;
+  border-radius: 8px !important;
+}
+[data-theme="retro-warm"] #dashboard-view #btn-import-project-file:hover {
+  background-color: #4d7c0f !important;
+  color: #ffffff !important;
+}
+
+[data-theme="retro-warm"] #dashboard-view #btn-create-project-trigger {
+  background: linear-gradient(135deg, #b45309, #854d0e) !important;
+  color: #ffffff !important;
+  border: 1.5px solid #f59e0b !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.4) !important;
+  font-weight: 700 !important;
+}
+[data-theme="retro-warm"] #dashboard-view #btn-create-project-trigger:hover {
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+}
+
+[data-theme="retro-warm"] #dashboard-view #btn-dashboard-settings {
+  background-color: #261911 !important;
+  color: #e6ded3 !important;
+  border: 1.5px solid #5c412f !important;
+  border-radius: 8px !important;
+}
+[data-theme="retro-warm"] #dashboard-view #btn-dashboard-settings:hover {
+  background-color: #5c412f !important;
+  color: #ffffff !important;
+}
+
+/* 篩選標籤按鈕 (牛皮紙標籤) */
+[data-theme="retro-warm"] .dashboard-filter-btn {
+  background-color: #fdfbf7 !important;
+  color: #614634 !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+[data-theme="retro-warm"] .dashboard-filter-btn:hover {
+  background-color: #f7efe1 !important;
+  color: #38271d !important;
+  border-color: #b45309 !important;
+}
+[data-theme="retro-warm"] .dashboard-filter-btn.active {
+  background-color: #b45309 !important;
+  color: #ffffff !important;
+  border-color: #b45309 !important;
+  box-shadow: 2px 2px 0px rgba(133, 99, 75, 0.35) !important;
+}
+
+/* 專案卡片 (Vintage Parchment Cards) */
+[data-theme="retro-warm"] .project-card,
+[data-theme="retro-warm"] .glass-card {
+  background-color: #fdfbf7 !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 12px !important;
+  box-shadow: 3px 3px 0px rgba(133, 99, 75, 0.25) !important;
+  color: #38271d !important;
+  overflow: hidden !important;
+}
+
+[data-theme="retro-warm"] .project-card:hover,
+[data-theme="retro-warm"] .glass-card:hover {
+  border-color: #b45309 !important;
+  box-shadow: 4px 6px 12px rgba(180, 83, 9, 0.22) !important;
+  transform: translateY(-2px) !important;
+}
+
+[data-theme="retro-warm"] .project-card-thumbnail {
+  background-color: #f7f0e1 !important;
+  border-bottom: 1.5px solid #e0d1bb !important;
+}
+
+[data-theme="retro-warm"] .project-card-info {
+  background-color: #fdfbf7 !important;
+}
+
+[data-theme="retro-warm"] .project-card-title {
+  color: #36261c !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="retro-warm"] .project-card-date {
+  color: #7d6554 !important;
+}
+
+[data-theme="retro-warm"] .project-page-badge {
+  background-color: #f2e7d3 !important;
+  color: #523b2b !important;
+  border: 1px solid #c9b49b !important;
+  border-radius: 6px !important;
+}
+
+[data-theme="retro-warm"] .btn-card-menu {
+  background-color: #f2e7d3 !important;
+  color: #614634 !important;
+  border: 1px solid #c9b49b !important;
+  border-radius: 6px !important;
+}
+[data-theme="retro-warm"] .btn-card-menu:hover {
+  background-color: #e5d4bb !important;
+  color: #36261c !important;
+}
+
+[data-theme="retro-warm"] .card-dropdown {
+  background-color: #fdfbf7 !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 8px !important;
+  color: #38271d !important;
+  box-shadow: 0 10px 25px rgba(54, 38, 28, 0.2) !important;
+}
+
+[data-theme="retro-warm"] .card-dropdown button {
+  color: #523b2b !important;
+}
+
+[data-theme="retro-warm"] .card-dropdown button:hover {
+  background-color: #f2e7d3 !important;
+  color: #b45309 !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. 專案內部 Header 列 (Editor Header in Vintage Walnut)
+   -------------------------------------------------------------------------- */
+[data-theme="retro-warm"] header {
+  background-color: #36261c !important;
+  border-bottom: 2px solid #5c412f !important;
+  box-shadow: 0 2px 10px rgba(54, 38, 28, 0.2) !important;
+}
+
+/* 首頁按鈕與專案名稱 */
+[data-theme="retro-warm"] #btn-back-to-dashboard {
+  background-color: #261911 !important;
+  color: #fdfaf5 !important;
+  border: 1.5px solid #5c412f !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+}
+[data-theme="retro-warm"] #btn-back-to-dashboard:hover {
+  background-color: #5c412f !important;
+  border-color: #f59e0b !important;
+  color: #ffffff !important;
+}
+[data-theme="retro-warm"] #btn-back-to-dashboard i {
+  color: #f59e0b !important;
+}
+
+[data-theme="retro-warm"] header .bg-slate-300 {
+  background-color: #5c412f !important;
+}
+
+[data-theme="retro-warm"] #current-project-title-display {
+  color: #fdfaf5 !important;
+  font-weight: 700 !important;
+}
+[data-theme="retro-warm"] #current-project-title-display:hover {
+  color: #f59e0b !important;
+  border-color: #d97706 !important;
+}
+[data-theme="retro-warm"] #current-project-title-input {
+  background-color: #261911 !important;
+  color: #fdfaf5 !important;
+  border: 1.5px solid #d97706 !important;
+  border-radius: 6px !important;
+}
+[data-theme="retro-warm"] #auto-save-indicator {
+  background-color: rgba(245, 158, 11, 0.18) !important;
+  color: #f59e0b !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  border-radius: 9999px !important;
+}
+
+/* 頂部工作區切換與比例控制器 */
+[data-theme="retro-warm"] .sketch-header-group {
+  background-color: #261911 !important;
+  border: 1.5px solid #5c412f !important;
+  border-radius: 8px !important;
+  padding: 2px !important;
+}
+
+[data-theme="retro-warm"] #tab-image-workspace,
+[data-theme="retro-warm"] #tab-pdf-workspace {
+  color: #d1c0af !important;
+  background-color: transparent !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  transition: all 0.15s ease !important;
+}
+[data-theme="retro-warm"] #tab-image-workspace.bg-indigo-50,
+[data-theme="retro-warm"] #tab-pdf-workspace.bg-indigo-50 {
+  background-color: #b45309 !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(180, 83, 9, 0.4) !important;
+}
+
+[data-theme="retro-warm"] #group-ratio-image,
+[data-theme="retro-warm"] #group-ratio-pdf {
+  background-color: #261911 !important;
+  border: 1.5px solid #5c412f !important;
+  border-radius: 8px !important;
+}
+[data-theme="retro-warm"] #group-ratio-image button,
+[data-theme="retro-warm"] #group-ratio-pdf button {
+  color: #d1c0af !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+}
+[data-theme="retro-warm"] #group-ratio-image button.active-ratio,
+[data-theme="retro-warm"] #group-ratio-pdf button.active-ratio {
+  background-color: #b45309 !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(180, 83, 9, 0.4) !important;
+}
+
+/* 頂部右側動作按鈕 */
+[data-theme="retro-warm"] #btn-undo,
+[data-theme="retro-warm"] #btn-redo {
+  color: #d1c0af !important;
+  border-radius: 6px !important;
+}
+[data-theme="retro-warm"] #btn-undo:hover,
+[data-theme="retro-warm"] #btn-redo:hover {
+  background-color: #5c412f !important;
+  color: #ffffff !important;
+}
+
+[data-theme="retro-warm"] #btn-manual {
+  background-color: #261911 !important;
+  color: #f59e0b !important;
+  border: 1.5px solid #b45309 !important;
+  border-radius: 8px !important;
+}
+[data-theme="retro-warm"] #btn-manual:hover {
+  background-color: #b45309 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="retro-warm"] #btn-import-project {
+  background-color: #261911 !important;
+  color: #a3e635 !important;
+  border: 1.5px solid #65a30d !important;
+  border-radius: 8px !important;
+}
+[data-theme="retro-warm"] #btn-import-project:hover {
+  background-color: #4d7c0f !important;
+  color: #ffffff !important;
+}
+
+[data-theme="retro-warm"] #btn-export-dropdown {
+  background: linear-gradient(135deg, #b45309, #854d0e) !important;
+  color: #ffffff !important;
+  border: 1.5px solid #f59e0b !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.4) !important;
+}
+[data-theme="retro-warm"] #btn-export-dropdown:hover {
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+}
+
+[data-theme="retro-warm"] #btn-editor-settings,
+[data-theme="retro-warm"] #btn-header-settings {
+  background-color: #261911 !important;
+  color: #fdfaf5 !important;
+  border: 1.5px solid #5c412f !important;
+  border-radius: 8px !important;
+}
+[data-theme="retro-warm"] #btn-editor-settings:hover,
+[data-theme="retro-warm"] #btn-header-settings:hover {
+  background-color: #5c412f !important;
+  color: #f59e0b !important;
+  border-color: #f59e0b !important;
+}
+
+[data-theme="retro-warm"] #app-version-badge {
+  background-color: #261911 !important;
+  color: #d1c0af !important;
+  border: 1px solid #5c412f !important;
+  border-radius: 6px !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. 左側邊欄與手帳面板 (Left Sidebar in Vintage Warm)
+   -------------------------------------------------------------------------- */
+[data-theme="retro-warm"] aside {
+  background-color: #fdfbf7 !important;
+  border-right: 2px solid #85634b !important;
+}
+
+[data-theme="retro-warm"] #sidebar-tabs {
+  background-color: #f7efe1 !important;
+  border-bottom: 1.5px solid #85634b !important;
+}
+
+[data-theme="retro-warm"] .tab-btn {
+  background-color: #f7efe1 !important;
+  color: #7d6554 !important;
+  border-bottom: 2px solid transparent !important;
+  font-weight: 600 !important;
+  transition: all 0.15s ease !important;
+}
+[data-theme="retro-warm"] .tab-btn:hover {
+  background-color: #fdfbf7 !important;
+  color: #36261c !important;
+}
+[data-theme="retro-warm"] .tab-btn.active,
+[data-theme="retro-warm"] #sidebar-tabs .border-indigo-500 {
+  background-color: #fdfbf7 !important;
+  color: #b45309 !important;
+  border-bottom: 2.5px solid #b45309 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="retro-warm"] .sidebar-panel,
+[data-theme="retro-warm"] #panel-tools,
+[data-theme="retro-warm"] #panel-properties,
+[data-theme="retro-warm"] #panel-assets,
+[data-theme="retro-warm"] #panel-layers {
+  background-color: #fdfbf7 !important;
+  color: #38271d !important;
+}
+
+[data-theme="retro-warm"] .sidebar-panel h3 {
+  color: #614634 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+}
+
+/* 工具按鈕 (Vintage Stamp & Note Buttons) */
+[data-theme="retro-warm"] #panel-tools button,
+[data-theme="retro-warm"] .sidebar-panel .sketch-btn {
+  background-color: #fdfaf5 !important;
+  color: #36261c !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 8px !important;
+  box-shadow: 2px 2px 0px rgba(133, 99, 75, 0.2) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+[data-theme="retro-warm"] #panel-tools button:hover,
+[data-theme="retro-warm"] .sidebar-panel .sketch-btn:hover {
+  background-color: #f7efe1 !important;
+  color: #b45309 !important;
+  border-color: #b45309 !important;
+  box-shadow: 3px 3px 0px rgba(180, 83, 9, 0.3) !important;
+  transform: translateY(-1px) !important;
+}
+
+[data-theme="retro-warm"] .sidebar-panel .sketch-panel,
+[data-theme="retro-warm"] .sidebar-panel .bg-slate-50\/50,
+[data-theme="retro-warm"] .sidebar-panel .bg-slate-50 {
+  background-color: #f7efe1 !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 8px !important;
+}
+
+/* 圖層項目 (Layers Item in Vintage Warm) */
+[data-theme="retro-warm"] .layer-item {
+  background-color: #fdfaf5 !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 8px !important;
+  color: #38271d !important;
+}
+[data-theme="retro-warm"] .layer-item:hover {
+  background-color: #f7efe1 !important;
+  border-color: #b45309 !important;
+}
+[data-theme="retro-warm"] .layer-item.bg-indigo-50 {
+  background-color: #feeed7 !important;
+  border-color: #b45309 !important;
+}
+[data-theme="retro-warm"] .layer-item span,
+[data-theme="retro-warm"] .layer-item .text-slate-700 {
+  color: #38271d !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. 中間畫布工作區 (Canvas Workspace in Kraft Warm Parchment)
+   -------------------------------------------------------------------------- */
 [data-theme="retro-warm"] .canvas-bg {
-  background-color: #f2ebd9 !important;
-  background-image: linear-gradient(to right, #e3d8c1 1px, transparent 1px), linear-gradient(to bottom, #e3d8c1 1px, transparent 1px) !important;
+  background-color: #ede2cd !important;
+  background-image: linear-gradient(to right, #dacaba 1.5px, transparent 1.5px), linear-gradient(to bottom, #dacaba 1.5px, transparent 1.5px) !important;
+  background-size: 20px 20px !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. 右側頁面縮圖清單 (Right Thumbnails Panel in Vintage Journal)
+   -------------------------------------------------------------------------- */
+[data-theme="retro-warm"] #thumbnails-container {
+  background-color: #fdfbf7 !important;
+  border-left: 2px solid #85634b !important;
+}
+
+[data-theme="retro-warm"] #thumbnails-container > div:first-child {
+  background-color: #fdfbf7 !important;
+  border-bottom: 1.5px solid #85634b !important;
+}
+
+[data-theme="retro-warm"] #thumbnails-count {
+  color: #36261c !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="retro-warm"] #btn-add-page {
+  background-color: #f7efe1 !important;
+  color: #b45309 !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 6px !important;
+}
+[data-theme="retro-warm"] #btn-add-page:hover {
+  background-color: #b45309 !important;
+  color: #ffffff !important;
+  border-color: #b45309 !important;
+}
+
+[data-theme="retro-warm"] #thumbnails-list {
+  background-color: #f5eedc !important;
+}
+
+/* 頁面卡片項目 (Vintage Polaroid / Note Page Item) */
+[data-theme="retro-warm"] .page-item {
+  background-color: #fdfbf7 !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 10px !important;
+  box-shadow: 2px 2px 0px rgba(133, 99, 75, 0.2) !important;
+  overflow: hidden !important;
+}
+
+[data-theme="retro-warm"] .page-item:hover {
+  background-color: #ffffff !important;
+  border-color: #b45309 !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 3px 4px 0px rgba(180, 83, 9, 0.25) !important;
+}
+
+[data-theme="retro-warm"] .page-item.bg-blue-50 {
+  background-color: #fdfbf7 !important;
+  border: 2px solid #b45309 !important;
+  box-shadow: 0 0 10px rgba(180, 83, 9, 0.3) !important;
+}
+
+[data-theme="retro-warm"] .page-item-title,
+[data-theme="retro-warm"] .page-item .text-slate-700,
+[data-theme="retro-warm"] .page-item .text-slate-800 {
+  color: #38271d !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="retro-warm"] .copy-page-btn,
+[data-theme="retro-warm"] .delete-page-btn {
+  background-color: #f2e7d3 !important;
+  border: 1px solid #c9b49b !important;
+  border-radius: 4px !important;
+}
+
+[data-theme="retro-warm"] .copy-page-btn {
+  color: #614634 !important;
+}
+[data-theme="retro-warm"] .copy-page-btn:hover {
+  color: #ffffff !important;
+  background-color: #b45309 !important;
+  border-color: #b45309 !important;
+}
+
+[data-theme="retro-warm"] .delete-page-btn {
+  color: #b91c1c !important;
+}
+[data-theme="retro-warm"] .delete-page-btn:hover {
+  color: #ffffff !important;
+  background-color: #b91c1c !important;
+  border-color: #b91c1c !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. 雜項元件 (Inputs, Dropdowns, Menus & Scrollbars)
+   -------------------------------------------------------------------------- */
+[data-theme="retro-warm"] input,
+[data-theme="retro-warm"] select,
+[data-theme="retro-warm"] textarea {
+  background-color: #fdfbf7 !important;
+  color: #38271d !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 6px !important;
+}
+
+[data-theme="retro-warm"] #export-options,
+[data-theme="retro-warm"] #context-menu {
+  background-color: #fdfbf7 !important;
+  border: 1.5px solid #85634b !important;
+  border-radius: 8px !important;
+  color: #38271d !important;
+  box-shadow: 0 10px 30px rgba(54, 38, 28, 0.2) !important;
+}
+
+[data-theme="retro-warm"] #export-options button:hover {
+  background-color: #f7efe1 !important;
+  color: #b45309 !important;
+}
+
+[data-theme="retro-warm"] ::-webkit-scrollbar-thumb {
+  background: #baa18d;
+  border-radius: 4px;
+}
+[data-theme="retro-warm"] ::-webkit-scrollbar-thumb:hover {
+  background: #85634b;
 }
