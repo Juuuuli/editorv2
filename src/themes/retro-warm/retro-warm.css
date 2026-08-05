@@ -83,16 +83,26 @@
   box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.35) !important;
 }
 
-/* 儀表板頂部按鈕 (復古琥珀金與鼠尾草綠) */
+/* 儀表板頂部按鈕 (典雅手帳暖白與焦糖琥珀金) */
 [data-theme="retro-warm"] #dashboard-view #btn-import-project-file {
-  background-color: #261911 !important;
-  color: #a3e635 !important;
-  border: 1.5px solid #65a30d !important;
+  background-color: #fdfaf5 !important;
+  color: #36261c !important;
+  border: 1.5px solid #85634b !important;
   border-radius: 8px !important;
+  box-shadow: 2px 2px 0px rgba(133, 99, 75, 0.25) !important;
+  font-weight: 600 !important;
+}
+[data-theme="retro-warm"] #dashboard-view #btn-import-project-file i {
+  color: #b45309 !important;
 }
 [data-theme="retro-warm"] #dashboard-view #btn-import-project-file:hover {
-  background-color: #4d7c0f !important;
-  color: #ffffff !important;
+  background-color: #f7efe1 !important;
+  color: #b45309 !important;
+  border-color: #b45309 !important;
+  box-shadow: 2px 3px 0px rgba(180, 83, 9, 0.35) !important;
+}
+[data-theme="retro-warm"] #dashboard-view #btn-import-project-file:hover i {
+  color: #b45309 !important;
 }
 
 [data-theme="retro-warm"] #dashboard-view #btn-create-project-trigger {
@@ -326,14 +336,24 @@
 }
 
 [data-theme="retro-warm"] #btn-import-project {
-  background-color: #261911 !important;
-  color: #a3e635 !important;
-  border: 1.5px solid #65a30d !important;
+  background-color: #fdfaf5 !important;
+  color: #36261c !important;
+  border: 1.5px solid #85634b !important;
   border-radius: 8px !important;
+  box-shadow: 2px 2px 0px rgba(133, 99, 75, 0.25) !important;
+  font-weight: 600 !important;
+}
+[data-theme="retro-warm"] #btn-import-project i {
+  color: #b45309 !important;
 }
 [data-theme="retro-warm"] #btn-import-project:hover {
-  background-color: #4d7c0f !important;
-  color: #ffffff !important;
+  background-color: #f7efe1 !important;
+  color: #b45309 !important;
+  border-color: #b45309 !important;
+  box-shadow: 2px 3px 0px rgba(180, 83, 9, 0.35) !important;
+}
+[data-theme="retro-warm"] #btn-import-project:hover i {
+  color: #b45309 !important;
 }
 
 [data-theme="retro-warm"] #btn-export-dropdown {
