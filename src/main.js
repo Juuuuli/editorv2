@@ -15,7 +15,7 @@ import FileImportManager from './features/workspace/FileImportManager.js';
 import RatioManager from './features/workspace/RatioManager.js';
 import ExportManager from './features/workspace/ExportManager.js';
 import FloatingToolsManager from './features/floating_tools/FloatingToolsManager.js';
-import ManualPanel from './features/system/ManualPanel.js';
+import ManualPanel from './features/manual/ManualPanel.js';
 import ContextualHelper from './features/system/ContextualHelper.js';
 import ProjectStorageEngine from './features/storage/ProjectStorageEngine.js';
 import DashboardManager from './features/dashboard/DashboardManager.js';

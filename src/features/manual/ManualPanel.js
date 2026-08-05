@@ -1,3 +1,5 @@
+import './manual.css';
+
 export default class ManualPanel {
     constructor(eventBus) {
         this.eventBus = eventBus;
@@ -398,9 +400,6 @@ export default class ManualPanel {
 
         // If animation is requested, do a fake flip
         if (animate) {
-            // Because we now have left AND right content changing, 
-            // a simple right-flip animation is trickier to look perfect without dual layers.
-            // We'll keep the right-flip aesthetic for consistency.
             this.flipContent.innerHTML = this.rightContent.innerHTML;
             this.flipLayer.classList.remove('hidden');
             this.flipLayer.style.transform = 'rotateY(0deg)';
