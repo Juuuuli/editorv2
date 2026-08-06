@@ -631,6 +631,9 @@ export default class AuthManager {
                         <div class="text-[11px] text-slate-500 truncate mb-1.5 font-mono">@${user.username}</div>
                         ${roleBadges[user.role] || roleBadges.admin}
                     </div>
+                    <button id="menu-btn-collab-share" class="w-full px-4 py-2 text-xs text-left hover:bg-slate-100 font-bold text-slate-700 flex items-center gap-2.5">
+                        <i class="fas fa-share-alt text-teal-600 w-4"></i> 專案協作與分享
+                    </button>
                     <button id="menu-btn-api-vault" class="w-full px-4 py-2 text-xs text-left hover:bg-slate-100 font-bold text-slate-700 flex items-center gap-2.5">
                         <i class="fas fa-key text-amber-500 w-4"></i> 系統金鑰保險箱 (API)
                     </button>
@@ -712,6 +715,16 @@ export default class AuthManager {
         });
 
         // 綁定選單內的按鈕
+        const btnShare = dropdown.querySelector('[id*="menu-btn-collab-share"]');
+        if (btnShare) {
+            btnShare.addEventListener('click', () => {
+                dropdown.classList.add('hidden');
+                if (this.eventBus) {
+                    this.eventBus.emit('COLLAB:OPEN_SHARE_MODAL');
+                }
+            });
+        }
+
         const btnVault = dropdown.querySelector('[id*="menu-btn-api-vault"]');
         if (btnVault) {
             btnVault.addEventListener('click', () => {

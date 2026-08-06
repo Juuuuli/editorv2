@@ -43,6 +43,26 @@ export default class DashboardManager {
 
         // 監聽畫布異動，進行防抖 Auto-Save
         this.setupAutoSave();
+
+        // 檢查 URL 路由 (Deep Linking 直通專案支援)
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlProjectId = urlParams.get('project') || urlParams.get('projectId');
+        const urlRoomId = urlParams.get('room') || urlParams.get('roomId');
+        if (urlProjectId) {
+            const targetProject = await this.storageEngine.getProject(urlProjectId);
+            if (targetProject) {
+                console.log(`[DashboardManager] Deep Linking 直通專案: ${targetProject.name} (${targetProject.id})`);
+                await this.openProject(targetProject.id, false);
+                if (urlRoomId && this.eventBus) {
+                    this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: targetProject.id, roomId: urlRoomId });
+                }
+            } else {
+                alert('查無此專案，已為您導向專案儀表板。');
+                if (this.eventBus) {
+                    this.eventBus.emit('ROUTER:NAVIGATE_DASHBOARD', { replace: true });
+                }
+            }
+        }
     }
 
     createDashboardDOM() {
@@ -267,6 +287,22 @@ export default class DashboardManager {
     }
 
     bindEvents() {
+        // EventBus 路由與協作事件監聽
+        if (this.eventBus) {
+            this.eventBus.on('ROUTER:PROJECT_CHANGED', async (data) => {
+                if (!data || !data.projectId) return;
+                if (this.currentProjectId !== data.projectId) {
+                    await this.openProject(data.projectId, false);
+                }
+            });
+
+            this.eventBus.on('ROUTER:DASHBOARD_REQUESTED', async () => {
+                if (this.currentProjectId) {
+                    await this.closeProjectToDashboard(false);
+                }
+            });
+        }
+
         // 搜尋
         const searchInput = document.getElementById('dashboard-search-input');
         if (searchInput) {
@@ -610,7 +646,7 @@ export default class DashboardManager {
     /**
      * 開啟特定專案進入編輯器
      */
-    async openProject(projectId) {
+    async openProject(projectId, updateRouter = true) {
         const project = await this.storageEngine.getProject(projectId);
         if (!project) {
             alert('專案不存在或已被移除');
@@ -619,6 +655,18 @@ export default class DashboardManager {
 
         this.currentProjectId = project.id;
         console.log(`[DashboardManager] 開啟專案: ${project.name} (${project.id})`);
+
+        // 推送專案 URL 路由並連線協作通道
+        if (updateRouter && this.eventBus) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomId = urlParams.get('room') || null;
+            this.eventBus.emit('ROUTER:NAVIGATE_PROJECT', { projectId: project.id, roomId });
+        }
+        if (this.eventBus) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomId = urlParams.get('room') || null;
+            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || 'main' });
+        }
 
         // 更新 Header 專案標題
         const titleDisplay = document.getElementById('current-project-title-display');
@@ -674,11 +722,21 @@ export default class DashboardManager {
     /**
      * 關閉編輯器並返回 Dashboard
      */
-    async closeProjectToDashboard() {
+    async closeProjectToDashboard(updateRouter = true) {
         if (this.currentProjectId) {
             this.eventBus.emit('LOADING:START', { message: '正在儲存專案...' });
             await this.saveCurrentProjectNow();
             this.eventBus.emit('LOADING:END');
+        }
+
+        this.currentProjectId = null;
+
+        // 導航回儀表板首頁路由與中斷房間通道
+        if (updateRouter && this.eventBus) {
+            this.eventBus.emit('ROUTER:NAVIGATE_DASHBOARD');
+        }
+        if (this.eventBus) {
+            this.eventBus.emit('COLLAB:DISCONNECT_ROOM');
         }
 
         // 重新載入列表

@@ -21,6 +21,8 @@ import ProjectStorageEngine from './features/storage/ProjectStorageEngine.js';
 import DashboardManager from './features/dashboard/DashboardManager.js';
 import ThemeManager from './features/theme/ThemeManager.js';
 import AuthManager from './features/auth/AuthManager.js';
+import ProjectRouter from './core/ProjectRouter.js';
+import CollaborationModule from './features/collaboration/index.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 顯示版本號
@@ -33,8 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 實例化全域 EventBus
     const eventBus = new EventBus();
 
+    // ★ 實例化 SPA 專案路由管理器 (v1.5.0)
+    const projectRouter = new ProjectRouter(eventBus);
+
     // ★ 實例化角色帳號、身分認證與金鑰保險箱 (Sprint 3)
     const authManager = new AuthManager(eventBus);
+
+    // ★ 實例化多人共編與專案分享前置模組 (v1.5.0)
+    const collabModule = new CollaborationModule(eventBus, authManager, projectRouter);
 
     // 綁定 Loading UI
     const loadingOverlay = document.getElementById('loading-overlay');
@@ -87,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化 Floating Tools
     const floatingToolsManager = new FloatingToolsManager(canvasEngine, eventBus);
 
-    console.log('多媒體畫布編輯器V2 - Sprint 1 系統初始化完成');
+    console.log('多媒體畫布編輯器V2 - 系統初始化完成 (v1.5.0)');
 
     // Undo / Redo
     const btnUndo = document.getElementById('btn-undo');
