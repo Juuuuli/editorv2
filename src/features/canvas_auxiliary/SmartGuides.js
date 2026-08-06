@@ -1,7 +1,7 @@
 /**
  * SmartGuides.js
  * 畫布智慧參考線與磁吸對齊引擎 (Canva-style Precision Smart Guides & Alignment Engine)
- * 仿 Canva / Figma 專業排版體驗：極細 1px 向量準線、無殘留即時響應、零覆蓋遮蔽干擾。
+ * 仿 Canva / Figma 專業排版體驗：極細 1px 向量準線、放開滑鼠即時 0ms 清除無殘留、零遮蔽干擾。
  */
 import { fabric } from 'fabric';
 
@@ -39,16 +39,23 @@ export default class SmartGuides {
             this.handleObjectMoving(e.target);
         });
 
-        // 2. 在 Fabric 頂層 contextTop 直繪 1px 精確參考線 (零延遲、不與畫布內容疊加)
+        // 2. 在 Fabric 頂層 contextTop 直繪 1px 精確參考線
         this.canvas.on('after:render', () => {
             if (!this.enabled) return;
             this.renderDirectGuides();
         });
 
-        // 3. 放開滑鼠、移動結束或取消選取時「立即清除」，無殘留延遲
+        // 3. 放開滑鼠、拖曳完成、選取改變或視窗釋放時「立即 0ms 清除」，保證零殘留
         this.canvas.on('object:modified', () => this.clearGuidelines());
         this.canvas.on('mouse:up', () => this.clearGuidelines());
+        this.canvas.on('mouse:down', () => this.clearGuidelines());
         this.canvas.on('selection:cleared', () => this.clearGuidelines());
+        this.canvas.on('selection:updated', () => this.clearGuidelines());
+        this.canvas.on('selection:created', () => this.clearGuidelines());
+
+        window.addEventListener('mouseup', () => this.clearGuidelines());
+        window.addEventListener('pointerup', () => this.clearGuidelines());
+        window.addEventListener('touchend', () => this.clearGuidelines());
 
         // 4. 監聽設定切換
         if (this.eventBus) {
@@ -67,13 +74,25 @@ export default class SmartGuides {
     }
 
     /**
-     * 立即清空參考線並重繪 (Canva 標準：0ms 殘留)
+     * 立即清空參考線並重繪 (Canva 標準：0ms 殘留，立即清除 contextTop 像素)
      */
     clearGuidelines() {
         if (!this.activeGuides.vertical && !this.activeGuides.horizontal) return;
         this.activeGuides.vertical = null;
         this.activeGuides.horizontal = null;
-        this.canvas.requestRenderAll();
+
+        // 強制清除 Fabric 頂層 upper-canvas (contextTop) 上的輔助線像素
+        const ctx = this.canvas.getSelectionContext ? this.canvas.getSelectionContext() : this.canvas.contextTop;
+        if (ctx && this.canvas.width && this.canvas.height) {
+            ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+
+        // 重新繪製控制控制框 (此時不再繪製參考線)
+        if (typeof this.canvas.renderTop === 'function') {
+            this.canvas.renderTop();
+        } else {
+            this.canvas.requestRenderAll();
+        }
     }
 
     /**
