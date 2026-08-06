@@ -24,7 +24,19 @@ export default class AuthManager {
             email: 'admin.master@editor.local',
             role: 'admin', // 'admin', 'editor', 'viewer'
             avatarColor: '#4f46e5',
-            createdAt: Date.now()
+            createdAt: 1700000000000
+        };
+
+        // ★ 新增第二組預設授權協作者帳號 (協作設計師)
+        this.defaultCollabEditor = {
+            id: 'user_collab_alex',
+            username: 'designer_alex',
+            password: 'Canvas@Collab2026#Design!',
+            name: 'Alex (協作設計師)',
+            email: 'alex.designer@editor.local',
+            role: 'editor',
+            avatarColor: '#10b981',
+            createdAt: 1700000001000
         };
 
         this.currentUser = null;
@@ -67,26 +79,43 @@ export default class AuthManager {
     initUsersDatabase() {
         try {
             const raw = localStorage.getItem(this.storageKeyUsers);
-            if (!raw) {
-                const initialUsers = [this.defaultMasterAdmin];
-                localStorage.setItem(this.storageKeyUsers, JSON.stringify(initialUsers));
-            } else {
-                let users = JSON.parse(raw);
-                // 確保預設高強度管理者帳號存在並更新為最新憑證
-                const masterIdx = users.findIndex(u => u.username === 'admin_master' || u.username === 'admin');
-                if (masterIdx >= 0) {
-                    users[masterIdx] = {
-                        ...users[masterIdx],
-                        username: 'admin_master',
-                        password: 'Admin@Canvas2026#ProSecure!',
-                        name: '系統最高管理者 (Admin)',
-                        role: 'admin'
-                    };
-                } else {
-                    users.unshift(this.defaultMasterAdmin);
-                }
-                localStorage.setItem(this.storageKeyUsers, JSON.stringify(users));
+            let users = [];
+            if (raw) {
+                try { users = JSON.parse(raw); } catch (e) { users = []; }
             }
+            if (!Array.isArray(users)) users = [];
+
+            // 確保預設高強度管理者帳號存在並更新為最新憑證
+            const masterIdx = users.findIndex(u => u.username === 'admin_master' || u.username === 'admin');
+            if (masterIdx >= 0) {
+                users[masterIdx] = {
+                    ...users[masterIdx],
+                    username: 'admin_master',
+                    password: 'Admin@Canvas2026#ProSecure!',
+                    name: '系統最高管理者 (Admin)',
+                    role: 'admin',
+                    avatarColor: '#4f46e5'
+                };
+            } else {
+                users.unshift(this.defaultMasterAdmin);
+            }
+
+            // 確保第二隻協作設計師帳號存在
+            const editorIdx = users.findIndex(u => u.username === 'designer_alex' || u.username === 'editor');
+            if (editorIdx >= 0) {
+                users[editorIdx] = {
+                    ...users[editorIdx],
+                    username: 'designer_alex',
+                    password: 'Canvas@Collab2026#Design!',
+                    name: 'Alex (協作設計師)',
+                    role: 'editor',
+                    avatarColor: '#10b981'
+                };
+            } else {
+                users.push(this.defaultCollabEditor);
+            }
+
+            localStorage.setItem(this.storageKeyUsers, JSON.stringify(users));
         } catch (e) {
             console.error('[AuthManager] 初始化使用者資料庫失敗:', e);
         }
@@ -209,7 +238,8 @@ export default class AuthManager {
         const found = users.find(u => {
             const matchUser = u.username.toLowerCase() === cleanUser || 
                               (u.email && u.email.toLowerCase() === cleanUser) ||
-                              (cleanUser === 'admin' && u.username.toLowerCase() === 'admin_master');
+                              (cleanUser === 'admin' && u.username.toLowerCase() === 'admin_master') ||
+                              ((cleanUser === 'editor' || cleanUser === 'alex') && u.username.toLowerCase() === 'designer_alex');
             return matchUser && u.password === password;
         });
 
