@@ -195,7 +195,7 @@ export default class ThemeManager {
                                     <i class="fas fa-cubes"></i>
                                 </div>
                                 <h3 class="text-sm font-black text-slate-100 modal-about-title">多媒體畫布編輯器 V2</h3>
-                                <p class="text-xs text-slate-400 mt-0.5 font-mono modal-about-version">系統版本: v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.0'}</p>
+                                <p class="text-xs text-slate-400 mt-0.5 font-mono modal-about-version">系統版本: v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.1'}</p>
                             </div>
                             <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700 text-xs space-y-2 text-slate-300 modal-about-box">
                                 <div class="flex justify-between">

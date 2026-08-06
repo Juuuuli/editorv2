@@ -279,7 +279,7 @@ export default class AuthManager {
                     </div>
                     <h2 id="auth-header-title" class="text-2xl font-black tracking-wide">多媒體畫布編輯器 V2</h2>
                     <p id="auth-header-subtitle" class="text-xs mt-1 font-medium">Sprint 3 系統登入與權限管理中心</p>
-                    <span id="auth-version-badge" class="absolute top-4 right-4 text-[10px] px-2 py-0.5 rounded-full font-mono">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.0'}</span>
+                    <span id="auth-version-badge" class="absolute top-4 right-4 text-[10px] px-2 py-0.5 rounded-full font-mono">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.1'}</span>
 
                     <!-- Theme Switcher Toolbar (登入介面即時風格切換) -->
                     <div class="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs" id="auth-theme-toolbar-container">
