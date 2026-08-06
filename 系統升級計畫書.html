@@ -92,7 +92,7 @@
             bottom: 0;
             left: 20px;
             width: 2px;
-            background: linear-gradient(to bottom, #6366f1, #14b8a6, #3b82f6);
+            background: linear-gradient(to bottom, #10b981, #6366f1, #38bdf8, #818cf8);
         }
     </style>
 </head>
@@ -115,7 +115,7 @@
             </div>
             <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
                 <a href="#overview" class="hover:text-indigo-400 transition">現況與規範</a>
-                <a href="#features" class="hover:text-indigo-400 transition">五大升級核心</a>
+                <a href="#features" class="hover:text-indigo-400 transition">升級核心規劃</a>
                 <a href="#priority" class="hover:text-indigo-400 transition">升級優先級</a>
                 <a href="#roadmap" class="hover:text-indigo-400 transition">時程排程</a>
                 <a href="#versioning" class="hover:text-indigo-400 transition">版本演進</a>
@@ -123,7 +123,7 @@
             <div class="flex items-center space-x-3">
                 <span class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-2"></span>
-                    目前穩定版本: v1.1.3
+                    目前穩定版本: v1.4.1
                 </span>
             </div>
         </div>
@@ -140,13 +140,13 @@
             <div class="relative z-10 max-w-3xl space-y-4">
                 <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold">
                     <i class="fas fa-bullseye"></i>
-                    <span>會議決議演進綱要 · 邁向 V2.0 多人協作與雲端檔案管理</span>
+                    <span>演進綱要 · 邁向 V2.0 多人協作與雲端檔案管理</span>
                 </div>
                 <h1 class="text-3xl md:text-5xl font-black text-white leading-tight">
                     多媒體畫布編輯器<br><span class="gradient-text">全方位系統升級與架構演進計畫</span>
                 </h1>
                 <p class="text-slate-300 text-base md:text-lg leading-relaxed">
-                    本計畫書根據既有專案規範 (SDLC 隔離原則、手繪風 UI 規則、Fabric.js 雙工作區)、現行程式碼結構，以及最新會議提出的五大核心升級需求進行深度技術架構設計，規劃最穩健、高擴充性的版本演進與工作排程。
+                    本計畫書根據既有專案規範 (SDLC 隔離原則、手繪風 UI 規則、Fabric.js 雙工作區)、現行程式碼結構，以及五大核心升級需求進行深度技術架構設計，規劃最穩健、高擴充性的版本演進與工作排程。
                 </p>
                 <div class="pt-4 flex flex-wrap gap-4 text-xs font-mono text-slate-400">
                     <div class="flex items-center bg-slate-800/80 px-3 py-2 rounded-xl border border-slate-700">
@@ -172,7 +172,7 @@
                         </span>
                         專案現狀檢視與開發規範遵循
                     </h2>
-                    <p class="text-sm text-slate-400 mt-1">深度審查現有需求書 (v0-v2)、標準規範與程式碼目錄結構</p>
+                    <p class="text-sm text-slate-400 mt-1">深度審查現有需求書、標準規範與程式碼目錄結構</p>
                 </div>
             </div>
 
@@ -181,10 +181,10 @@
                 <div class="glass-card rounded-2xl p-6 space-y-4">
                     <div class="flex items-center space-x-3 text-indigo-400">
                         <i class="fas fa-sitemap text-xl"></i>
-                        <h3 class="font-bold text-white text-lg">現行模組架構</h3>
+                        <h3 class="font-bold text-white text-lg">現行模組架構 (`v1.4.1`)</h3>
                     </div>
                     <p class="text-sm text-slate-300 leading-relaxed">
-                        目前採用 <strong class="text-white">Vite + Vanilla JS + Fabric.js</strong>。具備雙工作區（圖片 vs PPT/PDF 多頁模式）、事件匯流排 (<code class="text-xs bg-slate-800 px-1.5 py-0.5 rounded text-indigo-300">EventBus.js</code>) 與狀態快取 (<code class="text-xs bg-slate-800 px-1.5 py-0.5 rounded text-indigo-300">pageStates</code>)。
+                        目前採用 <strong class="text-white">Vite + Vanilla JS + Fabric.js</strong>。已完成檔案管理儀表板、4 款主題系統、角色帳號與 Canva 1px 極細智慧參考線。
                     </p>
                     <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs font-mono text-slate-400 space-y-1">
                         <div>📁 src/core/ <span class="text-slate-500">-> CanvasEngine 核心</span></div>
@@ -216,25 +216,25 @@
                         <h3 class="font-bold text-white text-lg">升級關鍵突破點</h3>
                     </div>
                     <p class="text-sm text-slate-300 leading-relaxed">
-                        目前專案為<strong>「單機純前端靜態頁面」</strong>，專案狀態一旦重整即消失（僅暫存在 RAM）。
+                        已完成本機 IndexedDB 持久化存檔。
                     </p>
                     <div class="bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl text-xs text-amber-200 leading-relaxed">
-                        要實現<strong>「檔案管理」</strong>與<strong>「多人共編」</strong>，必須重構儲存層（引進 IndexedDB 本機資料庫）並架設輕量即時同步協議（WebSocket / WebRTC / CRDTs）。
+                        下一步推進<strong>「專案獨立網址路由 (SPA Routing)」</strong>與<strong>「多人共編通訊層 (Broadcast / WebSocket / CRDTs)」</strong>。
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 第二章：五大升級項目 深度規劃 -->
+        <!-- 第二章：升級核心深度規劃 -->
         <section id="features" class="space-y-8">
             <div class="border-b border-slate-800 pb-4">
                 <h2 class="text-2xl font-bold text-white flex items-center">
                     <span class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center mr-3 text-base">
                         02
                     </span>
-                    五大升級項目 · 深度技術設計
+                    升級核心架構 · 深度技術設計
                 </h2>
-                <p class="text-sm text-slate-400 mt-1">針對會議決議的五大功能進行模組切分、架構設計與實現方案評估</p>
+                <p class="text-sm text-slate-400 mt-1">各模組切分、架構設計與實現方案評估</p>
             </div>
 
             <div class="space-y-6">
@@ -243,22 +243,22 @@
                 <div class="glass-card rounded-2xl p-6 md:p-8 border-l-4 border-l-emerald-500 relative overflow-hidden">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                         <div class="flex items-center space-x-3">
-                            <span class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/30">FEATURE 04 · 基石核心</span>
+                            <span class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/30">FEATURE 04 · 已完成 ✅</span>
                             <h3 class="text-xl font-bold text-white">4. 檔案管理與專案儀表板 (Project Dashboard)</h3>
                         </div>
-                        <span class="text-xs bg-slate-800 text-emerald-400 px-3 py-1 rounded-full border border-slate-700 font-semibold">
-                            優先級：P0 (最優先建置)
+                        <span class="text-xs bg-emerald-950 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800 font-semibold">
+                            v1.2.0 · Sprint 1 (已交付)
                         </span>
                     </div>
 
                     <p class="text-slate-300 text-sm leading-relaxed mb-6">
-                        打造類似 <strong>Canva / Figma</strong> 的主頁儀表板。提供專案卡片網格、即時預覽縮圖、專案建立、複製、重命名、刪除與本機/雲端自動儲存機制。
+                        打造類似 <strong>Canva / Figma</strong> 的主頁儀表板。提供專案卡片網格、即時預覽縮圖、專案建立、複製、重命名、刪除與本機自動儲存機制。
                     </p>
 
                     <div class="grid md:grid-cols-3 gap-4 text-xs">
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-emerald-400 flex items-center"><i class="fas fa-database mr-2"></i>持久化儲存技術</div>
-                            <p class="text-slate-400">使用瀏覽器底層 <strong class="text-slate-200">IndexedDB</strong> (封裝成 <code class="text-emerald-300">ProjectStorageEngine</code>)，可無上限儲存上百個專案之 JSON、多頁快照與高解析縮圖，離線可用且隨開隨載。</p>
+                            <p class="text-slate-400">使用瀏覽器底層 <strong class="text-slate-200">IndexedDB</strong> (封裝成 <code class="text-emerald-300">ProjectStorageEngine</code>)，無上限儲存專案 JSON、多頁快照與縮圖。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-emerald-400 flex items-center"><i class="fas fa-th-large mr-2"></i>首頁儀表板功能</div>
@@ -271,7 +271,7 @@
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-emerald-400 flex items-center"><i class="fas fa-sync-alt mr-2"></i>自動存檔機制 (Auto-Save)</div>
-                            <p class="text-slate-400">編輯器每當畫布觸發 <code class="text-emerald-300">CANVAS:DIRTY</code> 事件時，進行防抖 (Debounce 800ms) 背景自動更新 IndexedDB，徹底避免瀏覽器誤關導致資料遺失。</p>
+                            <p class="text-slate-400">防抖 (Debounce 800ms) 背景自動更新 IndexedDB，徹底避免瀏覽器誤關導致資料遺失。</p>
                         </div>
                     </div>
                 </div>
@@ -280,16 +280,16 @@
                 <div class="glass-card rounded-2xl p-6 md:p-8 border-l-4 border-l-indigo-500 relative overflow-hidden">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                         <div class="flex items-center space-x-3">
-                            <span class="px-3 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 font-mono text-xs font-bold border border-indigo-500/30">FEATURE 02 · 視覺體驗</span>
+                            <span class="px-3 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 font-mono text-xs font-bold border border-indigo-500/30">FEATURE 02 · 已完成 ✅</span>
                             <h3 class="text-xl font-bold text-white">2. 顏色模板與多風格主題切換 (Multi-Theme System)</h3>
                         </div>
-                        <span class="text-xs bg-slate-800 text-indigo-400 px-3 py-1 rounded-full border border-slate-700 font-semibold">
-                            優先級：P1 (前期必備)
+                        <span class="text-xs bg-indigo-950 text-indigo-400 px-3 py-1 rounded-full border border-indigo-800 font-semibold">
+                            v1.3.0 · Sprint 2 (已交付)
                         </span>
                     </div>
 
                     <p class="text-slate-300 text-sm leading-relaxed mb-6">
-                        建構全域設計代幣 (Design Tokens) 系統，支援即時無縫切換深色、淺色手繪、復古羊皮紙、專業深灰 (Pro Slate) 等多種主題風格，契合不同使用情境。
+                        建構全域設計代幣 (Design Tokens) 系統，支援即時無縫切換深色、淺色手繪、復古文青、專業冷灰 (Pro Slate) 等多種主題風格。
                     </p>
 
                     <div class="grid md:grid-cols-4 gap-4 text-xs">
@@ -316,44 +316,67 @@
                 <div class="glass-card rounded-2xl p-6 md:p-8 border-l-4 border-l-purple-500 relative overflow-hidden">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                         <div class="flex items-center space-x-3">
-                            <span class="px-3 py-1 rounded-lg bg-purple-500/20 text-purple-300 font-mono text-xs font-bold border border-purple-500/30">FEATURE 05 · 權限架構</span>
+                            <span class="px-3 py-1 rounded-lg bg-purple-500/20 text-purple-300 font-mono text-xs font-bold border border-purple-500/30">FEATURE 05 · 已完成 ✅</span>
                             <h3 class="text-xl font-bold text-white">5. 角色帳號、登入/註冊介面與公用權限控管 (Role & Account Guard)</h3>
                         </div>
-                        <span class="text-xs bg-slate-800 text-purple-400 px-3 py-1 rounded-full border border-slate-700 font-semibold">
-                            優先級：P2 (中期建置)
+                        <span class="text-xs bg-purple-950 text-purple-400 px-3 py-1 rounded-full border border-purple-800 font-semibold">
+                            v1.4.0 · Sprint 3 (已交付)
                         </span>
                     </div>
 
                     <p class="text-slate-300 text-sm leading-relaxed mb-6">
-                        提供完整的<strong>「登入 / 註冊」手繪風彈窗介面</strong>與狀態管理。現階段配發一組<strong>「公用最高管理者帳密」</strong>作為目前唯一能登入並控管/使用系統的憑證，同時於底層預留標準 <strong>RBAC (Role-Based Access Control)</strong> 擴充彈性，以利未來多帳號權限擴展。
+                        提供完整的<strong>「登入 / 註冊」手繪風彈窗介面</strong>與狀態管理，配發<strong>「公用最高管理者帳密」</strong>並預留標準 RBAC 擴充性與「系統金鑰保險箱 (API Vault)」。
                     </p>
 
                     <div class="grid md:grid-cols-3 gap-4 text-xs mb-4">
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-purple-400"><i class="fas fa-sign-in-alt mr-2"></i>登入 / 註冊介面</div>
-                            <p class="text-slate-400">右上角提供登入入口，支援帳密驗證、記住登入狀態 (Session/Token) 以及手繪風登入/註冊切換彈窗。</p>
+                            <p class="text-slate-400">右上角提供登入入口，支援帳密驗證、記住登入狀態 (Session/Token) 以及手繪風切換彈窗。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-purple-400"><i class="fas fa-key mr-2"></i>公用管理者帳密</div>
-                            <p class="text-slate-400">目前設定一組公用主帳密（可於設定檔配置），供團隊所有人登入以獲得系統完整操作與管理權限。</p>
+                            <p class="text-slate-400">配置公用主帳密，供團隊所有人登入以獲得系統完整操作與管理權限。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
-                            <div class="font-bold text-purple-400"><i class="fas fa-shield-alt mr-2"></i>預留 RBAC 角色矩陣</div>
-                            <p class="text-slate-400">預留 Admin (擁有者)、Editor (協作者) 與 Viewer (僅檢視) 權限檢查機制，未來開放個別註冊時可直接對接。</p>
-                        </div>
-                    </div>
-
-                    <!-- 使用者備註提醒區塊 -->
-                    <div class="bg-purple-950/40 border border-purple-500/30 p-3.5 rounded-xl text-xs text-purple-200 flex items-start space-x-3">
-                        <i class="fas fa-clipboard-check text-purple-400 text-sm mt-0.5"></i>
-                        <div>
-                            <strong class="text-white">【需求備註】</strong>
-                            公用帳號定位為「目前唯一可以控管系統與使用系統的帳密」，登入與註冊介面仍會如實建立，以便後續無縫過渡至完整多帳號權限體系。
+                            <div class="font-bold text-purple-400"><i class="fas fa-shield-alt mr-2"></i>系統金鑰保險箱 (API Vault)</div>
+                            <p class="text-slate-400">提供集中加密金鑰保管，管理 Clipdrop、Spark 或其他 AI 權杖。</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 項目 3：測試用其他模型 (P3) -->
+                <!-- 項目 6：專案網址路由化與共編前置 (P3) -->
+                <div class="glass-card rounded-2xl p-6 md:p-8 border-l-4 border-l-sky-500 relative overflow-hidden">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="px-3 py-1 rounded-lg bg-sky-500/20 text-sky-300 font-mono text-xs font-bold border border-sky-500/30">FEATURE 06 · 即將進行 🚀</span>
+                            <h3 class="text-xl font-bold text-white">6. 專案網址路由化與共編前置作業 (Project Routing & Collab Prep)</h3>
+                        </div>
+                        <span class="text-xs bg-sky-950 text-sky-400 px-3 py-1 rounded-full border border-sky-800 font-semibold">
+                            預定版本：v1.5.0 · Sprint 4 (目前目標)
+                        </span>
+                    </div>
+
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        為每個專案建立唯一的 URL 路由 (Deep Linking)，並在右上角使用者選單中新增「專案協作與分享」彈窗、Presence 身分標識與單機 BroadcastChannel 測試通道。
+                    </p>
+
+                    <div class="grid md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="font-bold text-sky-400"><i class="fas fa-route mr-2"></i>SPA 前端專案路由</div>
+                            <p class="text-slate-400">使用 <code class="text-sky-300">ProjectRouter.js</code> 實現 <code>?project=[ID]</code> 專案網址與瀏覽器返回鍵 (Popstate) 支援。</p>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="font-bold text-sky-400"><i class="fas fa-share-alt mr-2"></i>分享與協作彈窗 (ShareModal)</div>
+                            <p class="text-slate-400">收納於右上角使用者選單，一鍵複製共編連結、6 位數房間邀請碼與權限設定。</p>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="font-bold text-sky-400"><i class="fas fa-broadcast-tower mr-2"></i>Presence & 本機廣播</div>
+                            <p class="text-slate-400">協作者隨機配色標識，並透過 BroadcastChannel 支援單機跨分頁即時測試。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 項目 3：測試用其他模型 (P4) -->
                 <div class="glass-card rounded-2xl p-6 md:p-8 border-l-4 border-l-amber-500 relative overflow-hidden">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                         <div class="flex items-center space-x-3">
@@ -361,39 +384,39 @@
                             <h3 class="text-xl font-bold text-white">3. 多模型整合閘道與 Spark 預備架構 (AI Model Gateway)</h3>
                         </div>
                         <span class="text-xs bg-slate-800 text-amber-400 px-3 py-1 rounded-full border border-slate-700 font-semibold">
-                            優先級：P3 (架構預留，待 Spark 伺服器就緒)
+                            預定版本：v1.6.0 · Sprint 5
                         </span>
                     </div>
 
                     <p class="text-slate-300 text-sm leading-relaxed mb-6">
-                        現階段不急於直接綁定特定模型，而是先重構系統 AI 工具的底層通訊層，建立統一的 <strong>Adapter 適配器介面</strong>。一旦公司內部 Spark 環境架設完成，即可直接無縫接入。
+                        重構系統 AI 工具的底層通訊層，建立統一的 <strong>Adapter 適配器介面</strong>。一旦公司內部 Spark 環境架設完成，即可直接無縫接入。
                     </p>
 
                     <div class="grid md:grid-cols-3 gap-4 text-xs">
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-amber-400"><i class="fas fa-plug mr-2"></i>統一 Model Adapter</div>
-                            <p class="text-slate-400">將「影像去背/修補」與「文字生成/潤飾」標準化，上層 UI 工具不綁定特定 API，透過注入不同的 Provider 進行呼叫。</p>
+                            <p class="text-slate-400">將「影像去背/修補」與「文字生成/潤飾」標準化，上層 UI 工具不綁定特定 API，透過 Provider 注入呼叫。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-amber-400"><i class="fas fa-bolt mr-2"></i>Spark 專屬串接通道</div>
-                            <p class="text-slate-400">預留 Spark WebSocket/REST API 規格介面，具備 Token 流式傳輸 (Stream) 與 Prompt 範本微調能力。</p>
+                            <p class="text-slate-400">預留 Spark WebSocket/REST API 規格介面，具備 Token 流式傳輸與 Prompt 範本微調能力。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-amber-400"><i class="fas fa-sliders-h mr-2"></i>多模型測試切換面板</div>
-                            <p class="text-slate-400">在「系統設定」中提供模型切換開關（預設 Clipdrop / 本地 vLLM / 企業 Spark），方便開發團隊隨時進行 A/B 測試。</p>
+                            <p class="text-slate-400">在「系統設定」中提供模型切換開關（預設 Clipdrop / 本地 Mock / 企業 Spark），方便進行 A/B 測試。</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 項目 1：多人共編功能 (P4 旗艦) -->
+                <!-- 項目 1：多人共編功能 (P5 旗艦) -->
                 <div class="glass-card rounded-2xl p-6 md:p-8 border-l-4 border-l-sky-500 relative overflow-hidden">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                         <div class="flex items-center space-x-3">
                             <span class="px-3 py-1 rounded-lg bg-sky-500/20 text-sky-300 font-mono text-xs font-bold border border-sky-500/30">FEATURE 01 · 旗艦技術</span>
-                            <h3 class="text-xl font-bold text-white">1. 即時多人多人協作共編引擎 (Real-time Collaboration)</h3>
+                            <h3 class="text-xl font-bold text-white">1. 即時多人協作共編引擎 (Real-time Collaboration)</h3>
                         </div>
                         <span class="text-xs bg-slate-800 text-sky-400 px-3 py-1 rounded-full border border-slate-700 font-semibold">
-                            優先級：P4 (旗艦攻堅，依賴專案系統)
+                            預定版本：v2.0.0 · Sprint 6~7 (旗艦攻堅)
                         </span>
                     </div>
 
@@ -404,15 +427,15 @@
                     <div class="grid md:grid-cols-3 gap-4 text-xs">
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-sky-400"><i class="fas fa-network-wired mr-2"></i>同步通訊架構 (Yjs / WebSocket)</div>
-                            <p class="text-slate-400">採用業界標準 <strong class="text-slate-200">Yjs (CRDT)</strong> 或輕量級 <strong class="text-slate-200">WebSocket Relay Server</strong>，以 Delta 增量方式即時廣播物件座標、文字變更與新增圖層。</p>
+                            <p class="text-slate-400">採用業界標準 <strong class="text-slate-200">Yjs (CRDT)</strong> 或輕量級 <strong class="text-slate-200">WebSocket Relay Server</strong>，以 Delta 增量方式即時廣播物件座標與圖層變更。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-sky-400"><i class="fas fa-mouse-pointer mr-2"></i>多人在線游標與頭像</div>
-                            <p class="text-slate-400">在畫布上渲染不同顏色的協作者游標與名字標籤；右上角顯示當前專案在線成員清單與連線狀態指示燈。</p>
+                            <p class="text-slate-400">在畫布上渲染不同顏色的協作者游標與名字標籤；右上角顯示當前專案在線成員清單。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-sky-400"><i class="fas fa-lock mr-2"></i>防衝突鎖定 (Object Lease)</div>
-                            <p class="text-slate-400">當 A 使用者正在選取並拖曳某個物件時，B 使用者畫面上該物件會顯示 A 的代表色外框並暫時鎖定，防止畫面互相覆蓋抽動。</p>
+                            <p class="text-slate-400">當 A 選取並拖曳某個物件時，B 畫面上該物件會顯示鎖定框，防止畫面互相覆蓋抽動。</p>
                         </div>
                     </div>
                 </div>
@@ -429,7 +452,7 @@
                     </span>
                     項目升級順序與優先級評估矩陣
                 </h2>
-                <p class="text-sm text-slate-400 mt-1">依據功能依賴性 (Dependency)、開發成本與使用者價值制定最佳實作先後順序</p>
+                <p class="text-sm text-slate-400 mt-1">依據功能依賴性、開發成本與使用者價值制定最佳實作先後順序</p>
             </div>
 
             <div class="overflow-x-auto">
@@ -439,9 +462,9 @@
                             <th class="py-3.5 px-4">實作順序</th>
                             <th class="py-3.5 px-4">項目名稱</th>
                             <th class="py-3.5 px-4">優先級</th>
+                            <th class="py-3.5 px-4">當前進度</th>
                             <th class="py-3.5 px-4">技術依賴關係 (Rationale)</th>
-                            <th class="py-3.5 px-4">預估複雜度</th>
-                            <th class="py-3.5 px-4">預定版本</th>
+                            <th class="py-3.5 px-4">版本號</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800 text-xs">
@@ -450,50 +473,60 @@
                             <td class="py-4 px-4 font-bold text-white flex items-center">
                                 <i class="fas fa-folder-open text-emerald-400 mr-2"></i> 4. 檔案管理 (儀表板與儲存)
                             </td>
-                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">P0 (最先)</span></td>
-                            <td class="py-4 px-4 text-slate-400"><strong>所有升級的基石！</strong>必須先有「專案 ID」與 IndexedDB 存檔機制，後續的多人共編與權限才有標的物可以綁定。</td>
-                            <td class="py-4 px-4 text-amber-400">中等 (Medium)</td>
-                            <td class="py-4 px-4 font-mono font-bold text-indigo-300">v1.2.0</td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">P0</span></td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-bold">已完成 ✅</span></td>
+                            <td class="py-4 px-4 text-slate-400">所有升級的基石，建立專案 ID 與 IndexedDB 存檔機制。</td>
+                            <td class="py-4 px-4 font-mono font-bold text-emerald-300">v1.2.0</td>
                         </tr>
                         <tr class="hover:bg-slate-800/40 transition">
                             <td class="py-4 px-4 font-bold text-indigo-400">Step 2</td>
                             <td class="py-4 px-4 font-bold text-white flex items-center">
                                 <i class="fas fa-palette text-indigo-400 mr-2"></i> 2. 顏色模板與主題系統
                             </td>
-                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">P1 (前期)</span></td>
-                            <td class="py-4 px-4 text-slate-400">純前端 CSS/Tokens 改造。提早完成可確保後續新增的所有儀表板、帳號彈窗與協作介面自動套用多主題，避免後期二次重構。</td>
-                            <td class="py-4 px-4 text-emerald-400">較低 (Low)</td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">P1</span></td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-bold">已完成 ✅</span></td>
+                            <td class="py-4 px-4 text-slate-400">全域 Design Tokens 改造，支援 4 套主題風格。</td>
                             <td class="py-4 px-4 font-mono font-bold text-indigo-300">v1.3.0</td>
                         </tr>
                         <tr class="hover:bg-slate-800/40 transition">
                             <td class="py-4 px-4 font-bold text-purple-400">Step 3</td>
                             <td class="py-4 px-4 font-bold text-white flex items-center">
-                                <i class="fas fa-user-shield text-purple-400 mr-2"></i> 5. 角色帳號管理 (預設帳號)
+                                <i class="fas fa-user-shield text-purple-400 mr-2"></i> 5. 角色帳號管理 (登入/金鑰)
                             </td>
-                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">P2 (中期)</span></td>
-                            <td class="py-4 px-4 text-slate-400">建立預設 Default Admin，在專案管理內注入「擁有者/建立者」標記，為多人共編的權限檢驗奠定基礎。</td>
-                            <td class="py-4 px-4 text-emerald-400">較低 (Low)</td>
-                            <td class="py-4 px-4 font-mono font-bold text-indigo-300">v1.4.0</td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">P2</span></td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-bold">已完成 ✅</span></td>
+                            <td class="py-4 px-4 text-slate-400">建立登入註冊 UI、公用管理者驗證與金鑰中心 (API Vault)。</td>
+                            <td class="py-4 px-4 font-mono font-bold text-purple-300">v1.4.0</td>
                         </tr>
                         <tr class="hover:bg-slate-800/40 transition">
-                            <td class="py-4 px-4 font-bold text-amber-400">Step 4</td>
+                            <td class="py-4 px-4 font-bold text-sky-400">Step 4</td>
+                            <td class="py-4 px-4 font-bold text-white flex items-center">
+                                <i class="fas fa-route text-sky-400 mr-2"></i> 6. 專案路由與共編前置
+                            </td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">P3</span></td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-sky-950 text-sky-300 font-bold animate-pulse">即將進行 🚀</span></td>
+                            <td class="py-4 px-4 text-slate-400">為每個專案賦予獨立 URL，建立分享彈窗與單機測試通道。</td>
+                            <td class="py-4 px-4 font-mono font-bold text-sky-300">v1.5.0</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="py-4 px-4 font-bold text-amber-400">Step 5</td>
                             <td class="py-4 px-4 font-bold text-white flex items-center">
                                 <i class="fas fa-brain text-amber-400 mr-2"></i> 3. 測試用其他模型 (Spark 預備)
                             </td>
-                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">P3 (中期)</span></td>
-                            <td class="py-4 px-4 text-slate-400">重構 AI 通訊 Adapter 介面，預留 Spark 設定欄位。等待公司 Spark 架設完成後即可接上。</td>
-                            <td class="py-4 px-4 text-amber-400">中等 (Medium)</td>
-                            <td class="py-4 px-4 font-mono font-bold text-indigo-300">v1.5.0</td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">P4</span></td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400">規劃中 ⏳</span></td>
+                            <td class="py-4 px-4 text-slate-400">重構 AI 通訊 Adapter 介面，預留 Spark 設定欄位與 A/B 測試。</td>
+                            <td class="py-4 px-4 font-mono font-bold text-amber-300">v1.6.0</td>
                         </tr>
                         <tr class="hover:bg-slate-800/40 transition">
-                            <td class="py-4 px-4 font-bold text-sky-400">Step 5</td>
+                            <td class="py-4 px-4 font-bold text-rose-400">Step 6</td>
                             <td class="py-4 px-4 font-bold text-white flex items-center">
-                                <i class="fas fa-users text-sky-400 mr-2"></i> 1. 多人即時共編功能
+                                <i class="fas fa-users text-rose-400 mr-2"></i> 1. 多人即時共編功能
                             </td>
-                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">P4 (旗艦)</span></td>
-                            <td class="py-4 px-4 text-slate-400"><strong>最關鍵的重大突破！</strong>依賴專案系統與帳號狀態，導入 WebSocket/Yjs 與游標同步，作為 V2.0 正式發布的旗仗亮點。</td>
-                            <td class="py-4 px-4 text-rose-400">最高 (High)</td>
-                            <td class="py-4 px-4 font-mono font-bold text-indigo-300">v2.0.0</td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">P5</span></td>
+                            <td class="py-4 px-4"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400">旗艦目標 🏆</span></td>
+                            <td class="py-4 px-4 text-slate-400"><strong>最關鍵的重大突破！</strong>導入 WebSocket/Yjs 與游標同步。</td>
+                            <td class="py-4 px-4 font-mono font-bold text-rose-300">v2.0.0</td>
                         </tr>
                     </tbody>
                 </table>
@@ -509,7 +542,7 @@
                     </span>
                     詳細工作排程與 Sprint 里程碑 (Roadmap)
                 </h2>
-                <p class="text-sm text-slate-400 mt-1">以 6 個 Sprint (約 6~8 週) 為週期的敏捷式漸進交付計畫</p>
+                <p class="text-sm text-slate-400 mt-1">漸進敏捷交付計畫</p>
             </div>
 
             <!-- 時間軸呈現 -->
@@ -522,8 +555,8 @@
                     </div>
                     <div class="glass-card rounded-2xl p-6 border-l-2 border-emerald-500 space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="font-bold text-emerald-400 text-sm">Sprint 1 (第 1~2 週) · 專案檔案管理系統構建</span>
-                            <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-slate-800 text-slate-300">預定版號: v1.2.0</span>
+                            <span class="font-bold text-emerald-400 text-sm">Sprint 1 · 專案檔案管理系統構建【已完成 ✅】</span>
+                            <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-emerald-950 text-emerald-300">交付版號: v1.2.0</span>
                         </div>
                         <h4 class="text-base font-bold text-white">建立 Project Dashboard 首頁與 IndexedDB 本機持久化</h4>
                         <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
@@ -536,13 +569,13 @@
 
                 <!-- Sprint 2 -->
                 <div class="relative group">
-                    <div class="absolute -left-[39px] top-1.5 w-6 h-6 rounded-full bg-indigo-500 border-4 border-slate-900 flex items-center justify-center text-white text-[10px]">
-                        <i class="fas fa-circle"></i>
+                    <div class="absolute -left-[39px] top-1.5 w-6 h-6 rounded-full bg-emerald-500 border-4 border-slate-900 flex items-center justify-center text-white text-[10px]">
+                        <i class="fas fa-check"></i>
                     </div>
                     <div class="glass-card rounded-2xl p-6 border-l-2 border-indigo-500 space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="font-bold text-indigo-400 text-sm">Sprint 2 (第 3 週) · 主題模板與顏色變換系統</span>
-                            <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-slate-800 text-slate-300">預定版號: v1.3.0</span>
+                            <span class="font-bold text-indigo-400 text-sm">Sprint 2 · 主題模板與顏色變換系統【已完成 ✅】</span>
+                            <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-emerald-950 text-emerald-300">交付版號: v1.3.0</span>
                         </div>
                         <h4 class="text-base font-bold text-white">實作全域 Design Tokens 與 4 款主題風格切換器</h4>
                         <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
@@ -555,33 +588,52 @@
 
                 <!-- Sprint 3 -->
                 <div class="relative group">
-                    <div class="absolute -left-[39px] top-1.5 w-6 h-6 rounded-full bg-purple-500 border-4 border-slate-900 flex items-center justify-center text-white text-[10px]">
-                        <i class="fas fa-circle"></i>
+                    <div class="absolute -left-[39px] top-1.5 w-6 h-6 rounded-full bg-emerald-500 border-4 border-slate-900 flex items-center justify-center text-white text-[10px]">
+                        <i class="fas fa-check"></i>
                     </div>
                     <div class="glass-card rounded-2xl p-6 border-l-2 border-purple-500 space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="font-bold text-purple-400 text-sm">Sprint 3 (第 4 週) · 角色帳號、登入/註冊介面與系統金鑰中心</span>
-                            <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-slate-800 text-slate-300">預定版號: v1.4.0</span>
+                            <span class="font-bold text-purple-400 text-sm">Sprint 3 · 角色帳號、登入/註冊介面與系統金鑰中心【已完成 ✅】</span>
+                            <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-emerald-950 text-emerald-300">交付版號: v1.4.0 (現 v1.4.1)</span>
                         </div>
                         <h4 class="text-base font-bold text-white">建立登入/註冊彈窗介面、公用管理者驗證與 RBAC 介面架構</h4>
                         <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
                             <li>實作手繪風「登入 / 註冊」切換彈窗與 Session 狀態管理。</li>
                             <li>建立 <code class="text-purple-300">src/features/auth/AuthManager.js</code>，配置公用管理者帳密驗證。</li>
-                            <li>專案新增「建立者/擁有者」元資料，右上角顯示使用者頭像與角色徽章。</li>
                             <li>建立「系統金鑰中心 (API Vault)」彈窗，整合儲存各項服務 API Key。</li>
+                            <li>加碼完成 Canva 風格 1px 極細智慧參考線與 0ms 磁吸對齊 (`v1.4.1`)。</li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- Sprint 4 -->
                 <div class="relative group">
+                    <div class="absolute -left-[39px] top-1.5 w-6 h-6 rounded-full bg-sky-500 border-4 border-slate-900 flex items-center justify-center text-white text-[10px]">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6 border-l-2 border-sky-500 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="font-bold text-sky-400 text-sm">Sprint 4 · 專案網址路由化與共編前置作業【即將進行 🚀】</span>
+                            <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-sky-950 text-sky-300 font-bold border border-sky-800">目標版號: v1.5.0</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white">建立 SPA 專案獨立 URL、右上角分享彈窗與單機測試通道</h4>
+                        <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                            <li>建立 <code class="text-sky-300">src/core/ProjectRouter.js</code> 實現 <code>?project=[ID]</code> 專案網址與瀏覽器 Popstate 支援。</li>
+                            <li>建立 <code class="text-sky-300">src/features/collaboration/ShareModal.js</code> 手繪風分享與協作彈窗。</li>
+                            <li>建立 <code class="text-sky-300">PresenceManager.js</code> 與 <code class="text-sky-300">CollabChannel.js</code> 本機雙分頁測試通道。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Sprint 5 -->
+                <div class="relative group">
                     <div class="absolute -left-[39px] top-1.5 w-6 h-6 rounded-full bg-amber-500 border-4 border-slate-900 flex items-center justify-center text-white text-[10px]">
                         <i class="fas fa-circle"></i>
                     </div>
                     <div class="glass-card rounded-2xl p-6 border-l-2 border-amber-500 space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="font-bold text-amber-400 text-sm">Sprint 4 (第 5 週) · AI 多模型適配器與 Spark 預備層</span>
-                            <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-slate-800 text-slate-300">預定版號: v1.5.0</span>
+                            <span class="font-bold text-amber-400 text-sm">Sprint 5 · AI 多模型適配器與 Spark 預備層【規劃中 ⏳】</span>
+                            <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-slate-800 text-slate-300">預定版號: v1.6.0</span>
                         </div>
                         <h4 class="text-base font-bold text-white">抽象化 AI 工具通訊層，預備對接企業 Spark 伺服器</h4>
                         <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
@@ -592,20 +644,20 @@
                     </div>
                 </div>
 
-                <!-- Sprint 5-6 -->
+                <!-- Sprint 6-7 -->
                 <div class="relative group">
-                    <div class="absolute -left-[39px] top-1.5 w-6 h-6 rounded-full bg-sky-500 border-4 border-slate-900 flex items-center justify-center text-white text-[10px]">
+                    <div class="absolute -left-[39px] top-1.5 w-6 h-6 rounded-full bg-rose-500 border-4 border-slate-900 flex items-center justify-center text-white text-[10px]">
                         <i class="fas fa-star"></i>
                     </div>
-                    <div class="glass-card rounded-2xl p-6 border-l-2 border-sky-500 space-y-3">
+                    <div class="glass-card rounded-2xl p-6 border-l-2 border-rose-500 space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="font-bold text-sky-400 text-sm">Sprint 5~6 (第 6~8 週) · 即時多人共編旗艦引擎</span>
+                            <span class="font-bold text-rose-400 text-sm">Sprint 6~7 · 即時多人共編旗艦引擎【旗艦目標 🏆】</span>
                             <span class="font-mono text-xs px-2.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold">正式版號: v2.0.0 (MAJOR RELEASE)</span>
                         </div>
                         <h4 class="text-base font-bold text-white">完成 Yjs / WebSocket 協作引擎、在線游標與防衝突鎖定</h4>
                         <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-                            <li>建立 <code class="text-sky-300">src/features/collaboration/CollabEngine.js</code> 廣播 Fabric 物件變更。</li>
-                            <li>實作畫布多色動態游標 (<code class="text-sky-300">MultiplayerCursorOverlay</code>) 與在線成員列表。</li>
+                            <li>建立 <code class="text-rose-300">src/features/collaboration/CollabEngine.js</code> 廣播 Fabric 物件變更。</li>
+                            <li>實作畫布多色動態游標 (<code class="text-rose-300">MultiplayerCursorOverlay</code>) 與在線成員列表。</li>
                             <li>實作物件租約鎖定機制 (Object Lease)，防止同時間選取衝突。</li>
                             <li>進行高並發與網路延遲測試，驗收 V2.0 正式旗艦版本。</li>
                         </ul>
@@ -631,46 +683,46 @@
                 <!-- 現行版本 -->
                 <div class="glass-card rounded-2xl p-5 border-t-2 border-t-emerald-500 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">當前基線</span>
-                        <span class="text-xs text-slate-500">已上線</span>
+                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">當前穩定版</span>
+                        <span class="text-xs text-emerald-400 font-bold">已上線 ✅</span>
                     </div>
-                    <div class="text-2xl font-black text-white font-mono">v1.1.3</div>
+                    <div class="text-2xl font-black text-white font-mono">v1.4.1</div>
                     <p class="text-xs text-slate-400 leading-relaxed">
-                        單機純前端穩定版。具備雙工作區、智慧工具、手繪風 UI、表格旋轉修復與版號自動化。
+                        已完成專案儀表板 (v1.2)、主題切換 (v1.3)、帳號金鑰 (v1.4) 與 Canva 1px 極細智慧參考線。
                     </p>
                 </div>
 
-                <!-- V1.2 - V1.3 -->
-                <div class="glass-card rounded-2xl p-5 border-t-2 border-t-indigo-500 space-y-3">
+                <!-- V1.5 目標 -->
+                <div class="glass-card rounded-2xl p-5 border-t-2 border-t-sky-500 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">檔案與主題</span>
-                        <span class="text-xs text-indigo-400 font-semibold">Sprint 1-2</span>
+                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">路由與前置</span>
+                        <span class="text-xs text-sky-400 font-bold">Sprint 4 🚀</span>
                     </div>
-                    <div class="text-2xl font-black text-white font-mono">v1.2 ~ v1.3</div>
+                    <div class="text-2xl font-black text-white font-mono">v1.5.0</div>
                     <p class="text-xs text-slate-400 leading-relaxed">
-                        加入專案儀表板 (Dashboard) + IndexedDB 本機存檔 + 4 款顏色主題模板切換。
+                        加入專案獨立 URL 路由 + 右上角分享與協作彈窗 + Presence 標識與單機雙分頁測試。
                     </p>
                 </div>
 
-                <!-- V1.4 - V1.5 -->
-                <div class="glass-card rounded-2xl p-5 border-t-2 border-t-purple-500 space-y-3">
+                <!-- V1.6 AI 模型 -->
+                <div class="glass-card rounded-2xl p-5 border-t-2 border-t-amber-500 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">權限與模型</span>
-                        <span class="text-xs text-purple-400 font-semibold">Sprint 3-4</span>
+                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">AI 多模型</span>
+                        <span class="text-xs text-amber-400 font-semibold">Sprint 5 ⏳</span>
                     </div>
-                    <div class="text-2xl font-black text-white font-mono">v1.4 ~ v1.5</div>
+                    <div class="text-2xl font-black text-white font-mono">v1.6.0</div>
                     <p class="text-xs text-slate-400 leading-relaxed">
-                        加入預設帳號與 RBAC 權限層 + AI 多模型適配閘道 (Spark 預備接口)。
+                        加入 AI 統一適配閘道 (AIProviderAdapter) + Spark 專屬連接器與 A/B 測試面板。
                     </p>
                 </div>
 
                 <!-- V2.0 旗艦 -->
-                <div class="glass-card rounded-2xl p-5 border-t-2 border-t-sky-500 space-y-3 bg-gradient-to-b from-slate-900 to-sky-950/30">
+                <div class="glass-card rounded-2xl p-5 border-t-2 border-t-rose-500 space-y-3 bg-gradient-to-b from-slate-900 to-rose-950/20">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold">重大旗艦發布</span>
-                        <span class="text-xs text-sky-400 font-bold">Sprint 5-6</span>
+                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">重大旗艦發布</span>
+                        <span class="text-xs text-rose-400 font-bold">Sprint 6~7 🏆</span>
                     </div>
-                    <div class="text-2xl font-black text-sky-300 font-mono">v2.0.0</div>
+                    <div class="text-2xl font-black text-rose-300 font-mono">v2.0.0</div>
                     <p class="text-xs text-slate-300 leading-relaxed">
                         <strong>全面升級 V2.0！</strong>正式啟用多人即時協作共編、在線游標、防衝突鎖定與完整雲端檔案庫。
                     </p>
@@ -683,13 +735,13 @@
             <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl mx-auto border border-indigo-500/30">
                 <i class="fas fa-rocket"></i>
             </div>
-            <h3 class="text-2xl font-bold text-white">升級計畫已全面就緒，可立即啟動 第一階段 (Sprint 1)</h3>
+            <h3 class="text-2xl font-bold text-white">升級計畫已全面就緒，可立即啟動 Sprint 4 (v1.5.0)</h3>
             <p class="text-slate-300 text-sm max-w-2xl mx-auto">
-                建議第一步先從 <strong>【4. 檔案管理與專案儀表板 (v1.2.0)】</strong> 開始著手，為系統建立穩固的專案存檔與 IndexedDB 資料庫基礎。
+                下一步將從 <strong>【6. 專案網址路由化與共編前置作業 (v1.5.0)】</strong> 開始著手，為系統建立 SPA 專案獨立 URL 與右上角協作分享中心。
             </p>
             <div class="pt-2">
                 <span class="inline-flex items-center text-xs font-mono text-indigo-300 bg-indigo-500/10 px-4 py-2 rounded-xl border border-indigo-500/20">
-                    <i class="fas fa-file-code mr-2"></i> 計畫書檔案位置：系統升級計畫書.html (可直接於瀏覽器開啟檢視)
+                    <i class="fas fa-file-code mr-2"></i> 前置計畫書位置：系統升級計畫書_共編前置作業.html
                 </span>
             </div>
         </section>
