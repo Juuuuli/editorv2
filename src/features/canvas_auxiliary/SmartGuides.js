@@ -1,7 +1,10 @@
 /**
  * SmartGuides.js
  * 畫布智慧參考線與磁吸對齊引擎 (Canva-style Precision Smart Guides & Alignment Engine)
- * 仿 Canva / Figma 專業排版體驗：極細 1px 向量準線、放開滑鼠即時 0ms 清除無殘留、零遮蔽干擾。
+ * 仿 Canva / Figma 專業排版體驗：
+ * 1. 接近中心/邊界時自動吸附並繪製極細 1px 向量準線。
+ * 2. 拖曳遠離中心/邊界時，參考線即刻 0ms 自動消失。
+ * 3. 放開滑鼠時即刻 0ms 自動消失。
  */
 import { fabric } from 'fabric';
 
@@ -87,7 +90,7 @@ export default class SmartGuides {
             ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
 
-        // 重新繪製控制控制框 (此時不再繪製參考線)
+        // 重新繪製控制框 (此時不再繪製參考線)
         if (typeof this.canvas.renderTop === 'function') {
             this.canvas.renderTop();
         } else {
@@ -158,7 +161,7 @@ export default class SmartGuides {
     }
 
     /**
-     * 拖曳運算：精準判定對齊並更新參考線
+     * 拖曳運算：精準判定對齊並更新參考線，遠離時自動清除參考線
      */
     handleObjectMoving(target) {
         const artboard = this.engine.artboard;
@@ -258,31 +261,29 @@ export default class SmartGuides {
         }
 
         // 更新活動參考線狀態 (若無對齊則為 null)
-        if (matchedX) {
-            const screenX = fabric.util.transformPoint(new fabric.Point(matchedX.guide, 0), vpt).x;
-            const pYCenter = fabric.util.transformPoint(new fabric.Point(matchedX.guide, artboardHeight / 2), vpt).y;
-            this.activeGuides.vertical = {
-                screenX: Math.round(screenX) + 0.5, // 0.5px subpixel offset 確保 1px 線條純淨銳利
-                isArtboard: matchedX.isArtboard,
-                pYCenter: Math.round(pYCenter)
-            };
-        } else {
-            this.activeGuides.vertical = null;
+        this.activeGuides.vertical = matchedX ? {
+            screenX: Math.round(fabric.util.transformPoint(new fabric.Point(matchedX.guide, 0), vpt).x) + 0.5,
+            isArtboard: matchedX.isArtboard,
+            pYCenter: Math.round(fabric.util.transformPoint(new fabric.Point(matchedX.guide, artboardHeight / 2), vpt).y)
+        } : null;
+
+        this.activeGuides.horizontal = matchedY ? {
+            screenY: Math.round(fabric.util.transformPoint(new fabric.Point(0, matchedY.guide), vpt).y) + 0.5,
+            isArtboard: matchedY.isArtboard,
+            pXCenter: Math.round(fabric.util.transformPoint(new fabric.Point(artboardWidth / 2, matchedY.guide), vpt).x)
+        } : null;
+
+        // 清除上一幀的 contextTop 並觸發重繪 (若已遠離對齊線，則線條立即抹除)
+        const ctx = this.canvas.getSelectionContext ? this.canvas.getSelectionContext() : this.canvas.contextTop;
+        if (ctx && this.canvas.width && this.canvas.height) {
+            ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
 
-        if (matchedY) {
-            const screenY = fabric.util.transformPoint(new fabric.Point(0, matchedY.guide), vpt).y;
-            const pXCenter = fabric.util.transformPoint(new fabric.Point(artboardWidth / 2, matchedY.guide), vpt).x;
-            this.activeGuides.horizontal = {
-                screenY: Math.round(screenY) + 0.5,
-                isArtboard: matchedY.isArtboard,
-                pXCenter: Math.round(pXCenter)
-            };
+        if (typeof this.canvas.renderTop === 'function') {
+            this.canvas.renderTop();
         } else {
-            this.activeGuides.horizontal = null;
+            this.canvas.requestRenderAll();
         }
-
-        this.canvas.requestRenderAll();
     }
 
     /**
@@ -295,6 +296,7 @@ export default class SmartGuides {
         const v = this.activeGuides.vertical;
         const h = this.activeGuides.horizontal;
 
+        // 若無活動輔助線，不繪製任何線條
         if (!v && !h) return;
 
         const canvasWidth = this.canvas.width;
