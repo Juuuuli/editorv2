@@ -724,8 +724,9 @@ export default class AuthManager {
         if (btnSettings) {
             btnSettings.addEventListener('click', () => {
                 dropdown.classList.add('hidden');
-                const themeSettingsBtn = document.getElementById('btn-editor-settings') || document.getElementById('btn-dashboard-settings');
-                if (themeSettingsBtn) themeSettingsBtn.click();
+                if (this.eventBus) {
+                    this.eventBus.emit('SETTINGS:OPEN', { tab: 'theme' });
+                }
             });
         }
 

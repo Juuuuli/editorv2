@@ -85,11 +85,6 @@ export default class DashboardManager {
                     <button id="btn-open-create-modal" class="sketch-btn px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center shadow-[3px_3px_0px_#334155]">
                         <i class="fas fa-plus mr-2"></i> 新建專案
                     </button>
-
-                    <!-- 設定齒輪按鈕 (Sprint 2) -->
-                    <button id="btn-dashboard-settings" class="sketch-btn px-3.5 py-2 text-sm font-bold text-slate-700 hover:text-indigo-600 bg-white hover:bg-slate-50 flex items-center justify-center shadow-[2px_2px_0px_#334155]" title="系統設定與主題切換">
-                        <i class="fas fa-cog text-base"></i>
-                    </button>
                 </div>
             </header>
 
