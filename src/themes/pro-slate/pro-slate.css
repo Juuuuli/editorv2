@@ -577,7 +577,9 @@
 }
 
 [data-theme="pro-slate"] #export-options,
-[data-theme="pro-slate"] #context-menu {
+[data-theme="pro-slate"] #context-menu,
+[data-theme="pro-slate"] #editor-user-dropdown,
+[data-theme="pro-slate"] #dash-user-dropdown {
   background-color: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 8px !important;
@@ -585,7 +587,9 @@
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15) !important;
 }
 
-[data-theme="pro-slate"] #export-options button:hover {
+[data-theme="pro-slate"] #export-options button:hover,
+[data-theme="pro-slate"] #editor-user-dropdown button:hover,
+[data-theme="pro-slate"] #dash-user-dropdown button:hover {
   background-color: #f1f5f9 !important;
   color: #0284c7 !important;
 }

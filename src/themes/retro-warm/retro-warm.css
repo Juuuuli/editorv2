@@ -596,7 +596,9 @@
 }
 
 [data-theme="retro-warm"] #export-options,
-[data-theme="retro-warm"] #context-menu {
+[data-theme="retro-warm"] #context-menu,
+[data-theme="retro-warm"] #editor-user-dropdown,
+[data-theme="retro-warm"] #dash-user-dropdown {
   background-color: #fdfbf7 !important;
   border: 1.5px solid #85634b !important;
   border-radius: 8px !important;
@@ -604,7 +606,15 @@
   box-shadow: 0 10px 30px rgba(54, 38, 28, 0.2) !important;
 }
 
-[data-theme="retro-warm"] #export-options button:hover {
+[data-theme="retro-warm"] #editor-user-dropdown .bg-slate-50,
+[data-theme="retro-warm"] #dash-user-dropdown .bg-slate-50 {
+  background-color: #f7efe1 !important;
+  border-bottom-color: #e6d7c3 !important;
+}
+
+[data-theme="retro-warm"] #export-options button:hover,
+[data-theme="retro-warm"] #editor-user-dropdown button:hover,
+[data-theme="retro-warm"] #dash-user-dropdown button:hover {
   background-color: #f7efe1 !important;
   color: #b45309 !important;
 }

@@ -54,7 +54,7 @@ export default class DashboardManager {
         
         this.dashboardContainer.innerHTML = `
             <!-- Dashboard Header -->
-            <header class="h-20 bg-white border-b-2 border-slate-700 px-8 flex items-center justify-between shrink-0 shadow-sm">
+            <header class="relative z-40 h-20 bg-white border-b-2 border-slate-700 px-8 flex items-center justify-between shrink-0 shadow-sm">
                 <div class="flex items-center space-x-4">
                     <div class="sketch flex items-center justify-center w-12 h-12 text-slate-800 text-2xl font-black shadow-[3px_3px_0px_#334155] bg-amber-100">
                         <i class="fas fa-cubes"></i>
