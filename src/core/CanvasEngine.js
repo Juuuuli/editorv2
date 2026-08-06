@@ -1,4 +1,5 @@
 import { fabric } from 'fabric';
+import SmartGuides from '../features/canvas_auxiliary/SmartGuides.js';
 
 // 修正 Fabric.js 無法針對無空白字元的中文字進行「分散對齊 (justify)」的問題，並支援單行強制平均分配
 if (fabric.Textbox) {
@@ -161,6 +162,9 @@ export default class CanvasEngine {
         // 綁定所有核心事件
         this.bindEvents();
         this.applyCustomStyles();
+
+        // 智慧參考線與吸附引擎
+        this.smartGuides = new SmartGuides(this);
 
         // 監聽容器大小改變 (解決側邊欄開關導致畫布被裁切的問題)
         const resizeObserver = new ResizeObserver(() => {
@@ -340,7 +344,7 @@ export default class CanvasEngine {
                 this.canvas.discardActiveObject();
                 const objects = this.canvas.getObjects();
                 objects.forEach(obj => {
-                    if (obj !== this.artboard) {
+                    if (obj !== this.artboard && !obj.isSmartGuide) {
                         this.canvas.remove(obj);
                     }
                 });
@@ -384,11 +388,11 @@ export default class CanvasEngine {
 
     loadPageState(pageId) {
         this.currentPageId = pageId;
-        // 清空畫布(除了底板)
+        // 清空畫布(除了底板與智慧輔助線)
         this.canvas.discardActiveObject();
         const objects = this.canvas.getObjects();
         objects.forEach(obj => {
-            if (obj !== this.artboard) {
+            if (obj !== this.artboard && !obj.isSmartGuide) {
                 this.canvas.remove(obj);
             }
         });

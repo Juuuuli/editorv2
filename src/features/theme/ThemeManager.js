@@ -174,16 +174,16 @@ export default class ThemeManager {
                                 <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 cursor-pointer transition setting-card-item">
                                     <div>
                                         <div class="text-xs font-bold text-slate-200 setting-item-title">自動吸附與智慧參考線</div>
-                                        <div class="text-[11px] text-slate-400 mt-0.5 setting-item-desc">物件移動時自動對齊畫布邊緣與其他圖元中心</div>
+                                        <div class="text-[11px] text-slate-400 mt-0.5 setting-item-desc">物件移動時自動對齊畫布邊緣、中心與其他圖元</div>
                                     </div>
-                                    <input type="checkbox" id="setting-smart-guides" checked class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 bg-slate-900 border-slate-600">
+                                    <input type="checkbox" id="setting-smart-guides" class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 bg-slate-900 border-slate-600 cursor-pointer">
                                 </label>
                                 <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 cursor-pointer transition setting-card-item">
                                     <div>
                                         <div class="text-xs font-bold text-slate-200 setting-item-title">高解析背景預渲染</div>
                                         <div class="text-[11px] text-slate-400 mt-0.5 setting-item-desc">PDF/PPT 匯入時自動產生 Retina 2x 高解析背景</div>
                                     </div>
-                                    <input type="checkbox" id="setting-retina-render" checked class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 bg-slate-900 border-slate-600">
+                                    <input type="checkbox" id="setting-retina-render" class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 bg-slate-900 border-slate-600 cursor-pointer">
                                 </label>
                             </div>
                         </div>
@@ -195,12 +195,12 @@ export default class ThemeManager {
                                     <i class="fas fa-cubes"></i>
                                 </div>
                                 <h3 class="text-sm font-black text-slate-100 modal-about-title">多媒體畫布編輯器 V2</h3>
-                                <p class="text-xs text-slate-400 mt-0.5 font-mono modal-about-version">系統版本: v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.3.0'}</p>
+                                <p class="text-xs text-slate-400 mt-0.5 font-mono modal-about-version">系統版本: v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.0'}</p>
                             </div>
                             <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700 text-xs space-y-2 text-slate-300 modal-about-box">
                                 <div class="flex justify-between">
                                     <span class="font-bold text-slate-400">目前架構：</span>
-                                    <span>Sprint 2 (顏色模板與主題切換)</span>
+                                    <span>Sprint 3 (安全金鑰預覽與畫布輔助)</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="font-bold text-slate-400">資料儲存庫：</span>
@@ -218,7 +218,7 @@ export default class ThemeManager {
                 <!-- Modal Footer (固定高度 56px) -->
                 <div class="settings-modal-footer h-14 px-6 border-t border-slate-700 bg-slate-900 flex items-center justify-between shrink-0">
                     <div class="text-[11px] text-slate-400 font-medium modal-footer-tip">
-                        <i class="fas fa-info-circle mr-1 text-slate-400"></i> 主題切換已自動記憶於您的瀏覽器
+                        <i class="fas fa-info-circle mr-1 text-slate-400"></i> 設定變更已即時自動儲存於瀏覽器
                     </div>
                     <button id="btn-save-settings-modal" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-md transition">
                         完成設定
@@ -248,6 +248,31 @@ export default class ThemeManager {
                 this.switchTab(target);
             });
         });
+
+        // 智慧吸附與高解析預渲染 Checkbox 事件綁定與初始值同步
+        const smartGuidesCheckbox = modal.querySelector('#setting-smart-guides');
+        if (smartGuidesCheckbox) {
+            smartGuidesCheckbox.checked = localStorage.getItem('editor_smart_guides') !== 'false';
+            smartGuidesCheckbox.addEventListener('change', (e) => {
+                const enabled = e.target.checked;
+                localStorage.setItem('editor_smart_guides', enabled);
+                if (this.eventBus) {
+                    this.eventBus.emit('SETTINGS:SMART_GUIDES_CHANGED', { enabled });
+                }
+            });
+        }
+
+        const retinaRenderCheckbox = modal.querySelector('#setting-retina-render');
+        if (retinaRenderCheckbox) {
+            retinaRenderCheckbox.checked = localStorage.getItem('editor_retina_render') !== 'false';
+            retinaRenderCheckbox.addEventListener('change', (e) => {
+                const enabled = e.target.checked;
+                localStorage.setItem('editor_retina_render', enabled);
+                if (this.eventBus) {
+                    this.eventBus.emit('SETTINGS:RETINA_RENDER_CHANGED', { enabled });
+                }
+            });
+        }
 
         // 主題卡片點擊切換
         this.bindThemeCardEvents();
@@ -356,6 +381,16 @@ export default class ThemeManager {
 
         this.switchTab(tab);
         this.updateModalSelection();
+
+        // 重新同步 Checkbox 狀態
+        const smartGuidesCheckbox = modal.querySelector('#setting-smart-guides');
+        if (smartGuidesCheckbox) {
+            smartGuidesCheckbox.checked = localStorage.getItem('editor_smart_guides') !== 'false';
+        }
+        const retinaRenderCheckbox = modal.querySelector('#setting-retina-render');
+        if (retinaRenderCheckbox) {
+            retinaRenderCheckbox.checked = localStorage.getItem('editor_retina_render') !== 'false';
+        }
 
         modal.classList.remove('hidden');
         setTimeout(() => {

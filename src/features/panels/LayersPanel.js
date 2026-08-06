@@ -153,7 +153,7 @@ export default class LayersPanel {
         // 反向遍歷，越上層 (index 越大) 顯示在清單越上方
         for (let i = objects.length - 1; i >= 0; i--) {
             const obj = objects[i];
-            if (obj === this.canvasEngine.artboard) continue; // 不顯示底板圖層
+            if (obj === this.canvasEngine.artboard || obj.isSmartGuide || obj.excludeFromExport || obj.isSmartToolOverlay || obj.isRegionBox) continue; // 不顯示底板與系統輔助圖層
 
             // 如果該物件還沒有固定名稱，幫它產一個
             if (!obj.layerName) {

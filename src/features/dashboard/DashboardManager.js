@@ -1,4 +1,5 @@
 import * as pdfjsLib from 'pdfjs-dist';
+import RetinaRenderer from '../canvas_auxiliary/RetinaRenderer.js';
 
 // 初始化 PDF.js worker
 if (typeof window !== 'undefined' && pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
@@ -809,38 +810,29 @@ export default class DashboardManager {
         for (let i = 1; i <= numPages; i++) {
             const page = await pdfDocument.getPage(i);
             
-            // 1. 產生高解析度畫布用背景 (scale: 2.0)
-            const viewport = page.getViewport({ scale: 2.0 });
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            await page.render({ canvasContext: context, viewport }).promise;
-            const highResDataUrl = canvas.toDataURL('image/png');
+            // 1. 產生畫布用高解析背景 (委派給 RetinaRenderer 模組)
+            const bgResult = await RetinaRenderer.renderPageBackground(page);
+            const highResDataUrl = bgResult.dataUrl;
+            const bgWidth = bgResult.width;
+            const bgHeight = bgResult.height;
 
-            // 2. 產生縮圖 (scale: 0.5)
-            const thumbViewport = page.getViewport({ scale: 0.5 });
-            const thumbCanvas = document.createElement('canvas');
-            const thumbContext = thumbCanvas.getContext('2d');
-            thumbCanvas.width = thumbViewport.width;
-            thumbCanvas.height = thumbViewport.height;
-            await page.render({ canvasContext: thumbContext, viewport: thumbViewport }).promise;
-            const thumbDataUrl = thumbCanvas.toDataURL('image/png');
+            // 2. 產生縮圖 (委派給 RetinaRenderer 模組)
+            const thumbDataUrl = await RetinaRenderer.renderPageThumbnail(page, 0.5, 0.8);
 
             const pageId = `page-${Date.now()}-${i}`;
             pageIds.push(pageId);
             thumbnails[pageId] = thumbDataUrl;
-            pageSizes[pageId] = { width: viewport.width, height: viewport.height };
+            pageSizes[pageId] = { width: bgWidth, height: bgHeight };
 
             pageStates[pageId] = [{
                 type: 'image',
                 version: '5.3.0',
                 originX: 'center',
                 originY: 'center',
-                left: viewport.width / 2,
-                top: viewport.height / 2,
-                width: viewport.width,
-                height: viewport.height,
+                left: bgWidth / 2,
+                top: bgHeight / 2,
+                width: bgWidth,
+                height: bgHeight,
                 scaleX: 1,
                 scaleY: 1,
                 src: highResDataUrl,
