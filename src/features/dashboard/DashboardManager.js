@@ -44,57 +44,75 @@ export default class DashboardManager {
         // 監聽畫布異動，進行防抖 Auto-Save
         this.setupAutoSave();
 
-        // 檢查 URL 路由 (Deep Linking 直通專案與握手同步支援)
+        // 監聽登入成功事件，若之前有未處理的 Deep Link 則在此執行
+        if (this.eventBus) {
+            this.eventBus.on('AUTH:LOGIN_SUCCESS', () => {
+                this.handleInitialRouting();
+            });
+        }
+
+        // 若當前已處於登入狀態，立即處理 Deep Link
+        const isAuthed = Boolean(localStorage.getItem('editorv2_current_user') || sessionStorage.getItem('editorv2_current_user'));
+        if (isAuthed) {
+            this.handleInitialRouting();
+        }
+    }
+
+    /**
+     * 處理初始 URL 路由與跨瀏覽器專案快照握手同步
+     */
+    async handleInitialRouting() {
         const urlParams = new URLSearchParams(window.location.search);
         const urlProjectId = urlParams.get('project') || urlParams.get('projectId');
         const urlRoomId = urlParams.get('room') || urlParams.get('roomId');
-        if (urlProjectId) {
-            const targetProject = await this.storageEngine.getProject(urlProjectId);
-            if (targetProject) {
-                console.log(`[DashboardManager] Deep Linking 直通專案: ${targetProject.name} (${targetProject.id})`);
-                await this.openProject(targetProject.id, false);
-                if (this.eventBus) {
-                    this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: targetProject.id, roomId: urlRoomId || 'main', isGuest: false });
-                }
-            } else {
-                console.log(`[DashboardManager] 本地資料庫查無專案 ${urlProjectId}，啟動房間握手同步...`);
-                this.eventBus.emit('LOADING:START', { message: '正在連線協作房間，向房主同步專案資料中...' });
+        if (!urlProjectId) return;
 
-                // 連線協作房間並請求快照 (isGuest: true)
-                this.eventBus.emit('COLLAB:CONNECT_ROOM', {
-                    projectId: urlProjectId,
-                    roomId: urlRoomId || 'main',
-                    isGuest: true
-                });
-
-                let syncCompleted = false;
-                const syncTimeout = setTimeout(() => {
-                    if (!syncCompleted) {
-                        this.eventBus.emit('LOADING:END');
-                        alert('無法從房主取得專案資料（請確認房主視窗是否開啟且在同一個協作房間），已為您返回專案儀表板。');
-                        if (this.eventBus) {
-                            this.eventBus.emit('ROUTER:NAVIGATE_DASHBOARD', { replace: true });
-                        }
-                    }
-                }, 8000);
-
-                this.eventBus.on('COLLAB:SNAPSHOT_RECEIVED', async (data) => {
-                    if (data && data.projectData && (data.projectId === urlProjectId || data.projectData.id === urlProjectId)) {
-                        syncCompleted = true;
-                        clearTimeout(syncTimeout);
-                        console.log(`[DashboardManager] 專案快照同步接收成功: ${data.projectData.name}`);
-
-                        // 寫入本地 IndexedDB 並開啟
-                        await this.storageEngine.saveProject(data.projectData);
-                        await this.loadProjects();
-                        await this.openProject(data.projectData.id, false);
-
-                        this.eventBus.emit('LOADING:END');
-                        this.showAutoSaveFeedback('專案資料同步完成，已加入協作！');
-                    }
-                });
+        const targetProject = await this.storageEngine.getProject(urlProjectId);
+        if (targetProject) {
+            console.log(`[DashboardManager] Deep Linking 直通專案: ${targetProject.name} (${targetProject.id})`);
+            await this.openProject(targetProject.id, false);
+            if (this.eventBus) {
+                this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: targetProject.id, roomId: urlRoomId || 'main', isGuest: false });
             }
+            return;
         }
+
+        console.log(`[DashboardManager] 本地資料庫查無專案 ${urlProjectId}，啟動房間握手同步...`);
+        this.eventBus.emit('LOADING:START', { message: '正在連線協作房間，向房主同步專案資料中...\n(請保持房主視窗開啟，單螢幕切換請稍候 2~3 秒)' });
+
+        // 連線協作房間並請求快照 (isGuest: true)
+        this.eventBus.emit('COLLAB:CONNECT_ROOM', {
+            projectId: urlProjectId,
+            roomId: urlRoomId || 'main',
+            isGuest: true
+        });
+
+        let syncCompleted = false;
+        const syncTimeout = setTimeout(() => {
+            if (!syncCompleted) {
+                this.eventBus.emit('LOADING:END');
+                alert('無法從房主取得專案資料（可能因切換分頁暫停連線或房主分頁未開啟），已為您返回專案儀表板。');
+                if (this.eventBus) {
+                    this.eventBus.emit('ROUTER:NAVIGATE_DASHBOARD', { replace: true });
+                }
+            }
+        }, 25000);
+
+        this.eventBus.on('COLLAB:SNAPSHOT_RECEIVED', async (data) => {
+            if (data && data.projectData && (data.projectId === urlProjectId || data.projectData.id === urlProjectId)) {
+                syncCompleted = true;
+                clearTimeout(syncTimeout);
+                console.log(`[DashboardManager] 專案快照同步接收成功: ${data.projectData.name}`);
+
+                // 寫入本地 IndexedDB 並開啟
+                await this.storageEngine.saveProject(data.projectData);
+                await this.loadProjects();
+                await this.openProject(data.projectData.id, false);
+
+                this.eventBus.emit('LOADING:END');
+                this.showAutoSaveFeedback('專案資料同步完成，已加入協作！');
+            }
+        });
     }
 
     createDashboardDOM() {

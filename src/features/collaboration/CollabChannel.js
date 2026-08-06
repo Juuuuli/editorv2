@@ -19,6 +19,8 @@ export default class CollabChannel {
         this.peer = null;
         this.peerConnections = new Map(); // peerId -> DataConnection
         this.heartbeatTimer = null;
+        this.guestRetryTimer = null;
+        this.guestRetryCount = 0;
 
         this.projectId = null;
         this.roomId = null;
@@ -47,10 +49,31 @@ export default class CollabChannel {
                 if (!data || !data.projectData) return;
                 this.send('PROJECT_SNAPSHOT', { projectData: data.projectData, projectId: this.projectId });
             });
+
+            this.eventBus.on('COLLAB:SNAPSHOT_RECEIVED', () => {
+                this.stopGuestRetry();
+            });
         }
 
-        // 頁面關閉時主動通知離線
+        // 監聽分頁可見度切換與焦點變更 (防止單螢幕切換視窗時瀏覽器背景休眠延遲)
         if (typeof window !== 'undefined') {
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && this.projectId) {
+                    console.log('[CollabChannel] 偵測到分頁切換回前台，自動喚醒協作連線與心跳...');
+                    this.send('PRESENCE_HEARTBEAT', { user: this.presenceManager.getLocalUser() });
+                    if (!this.isHost) {
+                        this.requestProjectSnapshot();
+                    }
+                }
+            });
+
+            window.addEventListener('focus', () => {
+                if (this.projectId) {
+                    this.send('PRESENCE_HEARTBEAT', { user: this.presenceManager.getLocalUser() });
+                }
+            });
+
+            // 頁面關閉時主動通知離線
             window.addEventListener('beforeunload', () => {
                 this.send('PRESENCE_LEAVE', { userId: this.presenceManager.getLocalUser().id });
                 this.disconnect();
@@ -110,11 +133,9 @@ export default class CollabChannel {
         // 廣播加入訊號
         this.send('PRESENCE_JOIN', { user: this.presenceManager.getLocalUser() });
 
-        // 若為訪客 (Guest)，主動發送專案快照請求
+        // 若為訪客 (Guest)，啟動定時重試請求專案快照 (直到收到快照為止，最多重試 8 次)
         if (isGuest) {
-            setTimeout(() => {
-                this.requestProjectSnapshot();
-            }, 300);
+            this.startGuestRetry(hostPeerId);
         }
 
         if (this.eventBus) {
@@ -221,6 +242,82 @@ export default class CollabChannel {
             console.warn(`[CollabChannel-P2P] 連線錯誤 (${conn.peer}):`, err);
             this.peerConnections.delete(conn.peer);
         });
+    }
+
+    /**
+     * 訪客定時重試連線與快照請求機制
+     */
+    startGuestRetry(hostPeerId) {
+        this.stopGuestRetry();
+        this.guestRetryCount = 0;
+
+        // 立即請求一次
+        setTimeout(() => {
+            this.requestProjectSnapshot();
+            if (this.peer && !this.peerConnections.has(hostPeerId)) {
+                this.connectToPeer(hostPeerId);
+            }
+        }, 500);
+
+        // 每 2.5 秒重試一次，最多 8 次 (共 20 秒)
+        this.guestRetryTimer = setInterval(() => {
+            this.guestRetryCount++;
+            if (this.guestRetryCount > 8) {
+                this.stopGuestRetry();
+                return;
+            }
+
+            console.log(`[CollabChannel-P2P] 訪客正在重新請求專案資料 (第 ${this.guestRetryCount}/8 次)...`);
+            this.requestProjectSnapshot();
+
+            if (this.peer && (!this.peerConnections.has(hostPeerId) || !this.peerConnections.get(hostPeerId).open)) {
+                this.connectToPeer(hostPeerId);
+            }
+        }, 2500);
+    }
+
+    /**
+     * 停止訪客重試計時器
+     */
+    stopGuestRetry() {
+        if (this.guestRetryTimer) {
+            clearInterval(this.guestRetryTimer);
+            this.guestRetryTimer = null;
+        }
+    }
+
+    /**
+     * 斷開房間連線
+     */
+    disconnect() {
+        this.stopHeartbeat();
+        this.stopGuestRetry();
+
+        if (this.broadcastChannel) {
+            try {
+                this.broadcastChannel.close();
+            } catch (e) {}
+            this.broadcastChannel = null;
+        }
+
+        for (const conn of this.peerConnections.values()) {
+            try {
+                conn.close();
+            } catch (e) {}
+        }
+        this.peerConnections.clear();
+
+        if (this.peer) {
+            try {
+                this.peer.destroy();
+            } catch (e) {}
+            this.peer = null;
+        }
+
+        this.projectId = null;
+        this.roomId = null;
+        this.isHost = false;
+        this.isConnecting = false;
     }
 
     /**
