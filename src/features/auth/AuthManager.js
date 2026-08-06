@@ -654,7 +654,7 @@ export default class AuthManager {
                 </button>
 
                 <!-- User Dropdown Menu (含縮小頁面時收納之功能) -->
-                <div id="editor-user-dropdown" class="hidden absolute top-full right-0 mt-1.5 w-60 bg-white border-2 border-slate-700 rounded-xl shadow-2xl z-[100] overflow-hidden py-1">
+                <div id="editor-user-dropdown" class="hidden fixed w-60 bg-white border-2 border-slate-700 rounded-xl shadow-2xl z-[9999] overflow-y-auto py-1" style="max-height: 85vh;">
                     <div class="px-4 py-3 bg-slate-50 border-b border-slate-200">
                         <div class="text-xs font-black text-slate-800 truncate">${user.name || user.username}</div>
                         <div class="text-[11px] text-slate-500 truncate mb-1.5 font-mono">@${user.username}</div>
@@ -728,7 +728,7 @@ export default class AuthManager {
                 </button>
 
                 <!-- Dashboard User Dropdown Menu -->
-                <div id="dash-user-dropdown" class="hidden absolute top-full right-0 mt-1.5 w-60 bg-white border-2 border-slate-700 rounded-xl shadow-2xl z-[100] overflow-hidden py-1">
+                <div id="dash-user-dropdown" class="hidden fixed w-60 bg-white border-2 border-slate-700 rounded-xl shadow-2xl z-[9999] overflow-y-auto py-1" style="max-height: 85vh;">
                     <div class="px-4 py-3 bg-slate-50 border-b border-slate-200">
                         <div class="text-sm font-black text-slate-800 truncate">${user.name || user.username}</div>
                         <div class="text-xs text-slate-500 truncate mb-2 font-mono">@${user.username}</div>
@@ -758,6 +758,19 @@ export default class AuthManager {
         const dropdown = document.getElementById(dropdownId);
         if (!btn || !dropdown) return;
 
+        const positionDropdown = () => {
+            const rect = btn.getBoundingClientRect();
+            const dropW = 240; // w-60 = 15rem = 240px
+            let left = rect.right - dropW;
+            let top = rect.bottom + 6;
+            // 避免超出左邊螢幕邊界
+            if (left < 8) left = 8;
+            // 避免超出右邊螢幕邊界
+            if (left + dropW > window.innerWidth - 8) left = window.innerWidth - dropW - 8;
+            dropdown.style.top = top + 'px';
+            dropdown.style.left = left + 'px';
+        };
+
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const isHidden = dropdown.classList.contains('hidden');
@@ -765,6 +778,7 @@ export default class AuthManager {
             document.querySelectorAll('#editor-user-dropdown, #dash-user-dropdown, #export-options').forEach(d => d.classList.add('hidden'));
             if (isHidden) {
                 dropdown.classList.remove('hidden');
+                positionDropdown();
             }
         });
 
