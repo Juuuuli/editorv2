@@ -68,7 +68,7 @@ export default class DashboardManager {
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-3">
+                <div id="dashboard-header-right" class="flex items-center space-x-3">
                     <!-- 搜尋列 -->
                     <div class="relative flex items-center w-64 md:w-72">
                         <i class="fas fa-search absolute left-3.5 text-slate-400 text-sm pointer-events-none"></i>
@@ -85,6 +85,9 @@ export default class DashboardManager {
                     <button id="btn-open-create-modal" class="sketch-btn px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center shadow-[3px_3px_0px_#334155]">
                         <i class="fas fa-plus mr-2"></i> 新建專案
                     </button>
+
+                    <!-- 使用者頭像與選單 (最右側) -->
+                    <div id="dashboard-user-profile-widget" class="relative ml-2"></div>
                 </div>
             </header>
 

@@ -602,10 +602,10 @@ export default class AuthManager {
 
         const avatarInitial = (user.name || user.username || 'A').charAt(0).toUpperCase();
 
-        // 渲染或更新 Editor Header 右側的使用者 Profile 區塊
+        // 渲染或更新 Editor Header 右側的使用者 Profile 區塊 (最右側位置)
         let editorUserContainer = document.getElementById('editor-user-profile-widget');
         if (!editorUserContainer) {
-            const headerRight = document.querySelector('header .flex.items-center.gap-2.shrink-0');
+            const headerRight = document.getElementById('editor-header-right') || document.querySelector('header > div:last-child');
             if (headerRight) {
                 editorUserContainer = document.createElement('div');
                 editorUserContainer.id = 'editor-user-profile-widget';

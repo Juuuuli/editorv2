@@ -123,8 +123,8 @@
             </div>
         </div>
 
-        <!-- Right: Undo/Redo, Manual, Import, Export, Version -->
-        <div class="flex items-center gap-2 shrink-0">
+        <!-- Right: Undo/Redo, Manual, Import, Export, Version, User Profile -->
+        <div id="editor-header-right" class="flex items-center gap-2 shrink-0">
             <div class="flex items-center gap-1 text-slate-500 mr-1">
                 <button id="btn-undo" class="w-7 h-7 rounded hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition text-xs" title="復原 (Ctrl+Z)"><i class="fas fa-undo"></i></button>
                 <button id="btn-redo" class="w-7 h-7 rounded hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition text-xs" title="重做 (Ctrl+Y)"><i class="fas fa-redo"></i></button>
@@ -160,6 +160,9 @@
             </div>
 
             <span id="app-version-badge" class="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-mono hidden"></span>
+
+            <!-- 使用者頭像與選單 (最右側) -->
+            <div id="editor-user-profile-widget" class="relative ml-1"></div>
         </div>
     </header>
 
