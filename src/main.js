@@ -137,4 +137,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // ★ 實例化專案儲存引擎與專案檔案儀表板 (Sprint 1)
     const storageEngine = new ProjectStorageEngine();
     const dashboardManager = new DashboardManager(storageEngine, eventBus, canvasEngine, workspaceManager);
+
+    // ★ 側邊欄展開 / 收合邏輯與畫布自適應更新
+    const setupSidebarToggles = () => {
+        const leftSidebar = document.getElementById('left-sidebar-container');
+        const btnToggleLeft = document.getElementById('btn-toggle-left-sidebar');
+        const iconToggleLeft = document.getElementById('icon-toggle-left-sidebar');
+
+        const rightSidebar = document.getElementById('thumbnails-container');
+        const btnToggleRight = document.getElementById('btn-toggle-right-sidebar');
+        const iconToggleRight = document.getElementById('icon-toggle-right-sidebar');
+
+        const triggerCanvasFit = () => {
+            setTimeout(() => canvasEngine.fitToScreen(), 50);
+            setTimeout(() => canvasEngine.fitToScreen(), 180);
+            setTimeout(() => canvasEngine.fitToScreen(), 330);
+        };
+
+        if (btnToggleLeft && leftSidebar) {
+            btnToggleLeft.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isCollapsed = leftSidebar.classList.toggle('is-collapsed');
+                if (iconToggleLeft) {
+                    iconToggleLeft.className = isCollapsed 
+                        ? 'fas fa-chevron-right text-[11px] pointer-events-none transition-transform duration-200' 
+                        : 'fas fa-chevron-left text-[11px] pointer-events-none transition-transform duration-200';
+                }
+                btnToggleLeft.title = isCollapsed ? '展開左側面板' : '收合左側面板';
+                triggerCanvasFit();
+            });
+        }
+
+        if (btnToggleRight && rightSidebar) {
+            btnToggleRight.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isCollapsed = rightSidebar.classList.toggle('is-collapsed');
+                if (iconToggleRight) {
+                    iconToggleRight.className = isCollapsed 
+                        ? 'fas fa-chevron-left text-[11px] pointer-events-none transition-transform duration-200' 
+                        : 'fas fa-chevron-right text-[11px] pointer-events-none transition-transform duration-200';
+                }
+                btnToggleRight.title = isCollapsed ? '展開頁面清單' : '收合頁面清單';
+                triggerCanvasFit();
+            });
+        }
+    };
+
+    setupSidebarToggles();
 });

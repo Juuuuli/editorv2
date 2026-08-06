@@ -166,19 +166,30 @@ export default class CanvasEngine {
         // 智慧參考線與吸附引擎
         this.smartGuides = new SmartGuides(this);
 
-        // 監聽容器大小改變 (解決側邊欄開關導致畫布被裁切的問題)
-        const resizeObserver = new ResizeObserver(() => {
-            if (this.canvas && this.container) {
-                this.canvas.setWidth(this.container.clientWidth);
-                this.canvas.setHeight(this.container.clientHeight);
-                this.canvas.requestRenderAll();
+        // 監聽容器大小改變 (解決側邊欄開關或分割視窗導致畫布被裁切的問題)
+        let resizeDebounceTimer = null;
+        const handleViewportResize = () => {
+            if (this.canvas && this.container && this.artboard) {
+                const w = this.container.clientWidth || window.innerWidth;
+                const h = this.container.clientHeight || window.innerHeight;
+                if (w > 0 && h > 0) {
+                    this.canvas.setWidth(w);
+                    this.canvas.setHeight(h);
+                    this.fitToScreen();
+                }
             }
+        };
+
+        const resizeObserver = new ResizeObserver(() => {
+            clearTimeout(resizeDebounceTimer);
+            resizeDebounceTimer = setTimeout(handleViewportResize, 60);
         });
         resizeObserver.observe(this.container);
 
-        // 視窗縮放時自動調整畫布大小並置中底板
+        // 視窗縮放時自動調整畫布大小並自適應縮放
         window.addEventListener('resize', () => {
-            this.centerArtboard();
+            clearTimeout(resizeDebounceTimer);
+            resizeDebounceTimer = setTimeout(handleViewportResize, 60);
         });
     }
 
@@ -240,40 +251,50 @@ export default class CanvasEngine {
     }
 
     fitToScreen() {
-        if (!this.artboard) return;
+        if (!this.artboard || !this.canvas) return;
         
-        // 畫布容器大小
-        const containerWidth = this.canvas.width;
-        const containerHeight = this.canvas.height;
+        // 畫布容器大小 (若 canvas 尚未更新尺寸，優先取 container 寬高)
+        const containerWidth = (this.container && this.container.clientWidth > 0) 
+            ? this.container.clientWidth 
+            : (this.canvas.width || window.innerWidth);
+        const containerHeight = (this.container && this.container.clientHeight > 0) 
+            ? this.container.clientHeight 
+            : (this.canvas.height || window.innerHeight);
         
         // 底板大小
-        const artboardWidth = this.artboard.width;
-        const artboardHeight = this.artboard.height;
+        const artboardWidth = this.artboard.width || 1280;
+        const artboardHeight = this.artboard.height || 720;
         
-        // 預留邊距 (padding) 讓底板不會緊貼邊緣，例如 40px
-        const padding = 40;
-        const availableWidth = containerWidth - padding * 2;
-        const availableHeight = containerHeight - padding * 2;
+        // 彈性邊距：在小螢幕時縮小邊距以爭取最大可視範圍
+        const padding = containerWidth < 600 ? 12 : 32;
+        const availableWidth = Math.max(containerWidth - padding * 2, 50);
+        const availableHeight = Math.max(containerHeight - padding * 2, 50);
         
-        // 計算寬高縮放比，取最小值以確保完整顯示
+        // 計算寬高縮放比，取最小值以確保完整顯示且絕不為負數或0
         const scaleX = availableWidth / artboardWidth;
         const scaleY = availableHeight / artboardHeight;
         let scale = Math.min(scaleX, scaleY);
         
-        // 限制最大放大比例 (例如不超過 1) 或可以依需求調整
-        if (scale > 1) scale = 1;
+        // 限制安全縮放範圍 (0.05 ~ 1.0)
+        scale = Math.max(0.05, Math.min(scale, 1.0));
 
         // 設定畫布整體縮放
         this.canvas.setZoom(scale);
         
         // 重新置中
         const vpt = this.canvas.viewportTransform;
-        vpt[4] = (containerWidth - artboardWidth * scale) / 2;
-        vpt[5] = (containerHeight - artboardHeight * scale) / 2;
+        vpt[4] = Math.max(0, (containerWidth - artboardWidth * scale) / 2);
+        vpt[5] = Math.max(0, (containerHeight - artboardHeight * scale) / 2);
         this.canvas.setViewportTransform(vpt);
+        this.canvas.calcOffset();
         this.canvas.requestRenderAll();
         
-        // 觸發視圖更新事件 (可選)
+        // 同步背景網格
+        if (this.container) {
+            this.container.style.backgroundPosition = `${vpt[4]}px ${vpt[5]}px`;
+        }
+
+        // 觸發視圖更新事件
         if (this.eventBus) {
             this.eventBus.emit('CANVAS:VIEWPORT_CHANGED', { scale, vpt });
         }

@@ -73,75 +73,76 @@
     </div>
 
     <!-- Header -->
-    <header class="relative z-40 h-14 bg-white border-b-2 border-slate-700 flex items-center justify-between px-3 shrink-0 select-none">
+    <header class="relative z-40 h-14 bg-white border-b-2 border-slate-700 flex items-center justify-between px-2 sm:px-3 shrink-0 select-none gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
         <!-- Left: Home, Title & Status -->
-        <div class="flex items-center gap-2 min-w-0">
-            <button id="btn-back-to-dashboard" class="sketch-btn px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-[2px_2px_0px_#334155]" title="儲存並返回專案管理儀表板">
-                <i class="fas fa-home mr-1.5 text-indigo-600"></i> 首頁
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0 whitespace-nowrap">
+            <button id="btn-back-to-dashboard" class="sketch-btn px-2 sm:px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-[1.5px_1.5px_0px_#334155] shrink-0 whitespace-nowrap" title="儲存並返回專案管理儀表板">
+                <i class="fas fa-home sm:mr-1.5 text-indigo-600"></i> <span class="hidden sm:inline">首頁</span>
             </button>
 
-            <div class="h-5 w-[1px] bg-slate-300 mx-0.5"></div>
+            <div class="h-4 sm:h-5 w-[1px] bg-slate-300 mx-0.5 shrink-0"></div>
 
-            <div class="flex items-center gap-1.5 min-w-0">
-                <div class="sketch flex items-center justify-center w-6 h-6 font-bold text-xs text-slate-700 shadow-[1.5px_1.5px_0px_#cbd5e1] shrink-0">
+            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 whitespace-nowrap">
+                <div class="sketch flex items-center justify-center w-6 h-6 font-bold text-xs text-slate-700 shadow-[1px_1px_0px_#cbd5e1] shrink-0">
                     <i class="fas fa-cubes"></i>
                 </div>
-                <div class="relative group flex items-center min-w-0">
-                    <span id="current-project-title-display" class="font-bold text-xs text-slate-800 hover:text-indigo-600 cursor-pointer truncate max-w-[160px] md:max-w-[220px] px-1 py-0.5 rounded border border-transparent hover:border-indigo-300 transition" title="點擊編輯專案名稱">
+                <div class="relative group flex items-center shrink-0">
+                    <span id="current-project-title-display" class="font-bold text-xs text-slate-800 hover:text-indigo-600 cursor-pointer truncate max-w-[90px] sm:max-w-[150px] md:max-w-[220px] px-1 py-0.5 rounded border border-transparent hover:border-indigo-300 transition whitespace-nowrap" title="點擊編輯專案名稱">
                         未命名專案
                     </span>
-                    <i class="fas fa-pencil-alt text-[10px] text-slate-400 ml-1 opacity-0 group-hover:opacity-100 transition shrink-0"></i>
-                    <input type="text" id="current-project-title-input" class="hidden bg-white border border-indigo-500 rounded px-1.5 py-0.5 text-xs font-bold text-slate-800 focus:outline-none w-36 shadow-sm">
+                    <i class="fas fa-pencil-alt text-[10px] text-slate-400 ml-1 opacity-0 group-hover:opacity-100 transition shrink-0 hidden sm:inline"></i>
+                    <input type="text" id="current-project-title-input" class="hidden bg-white border border-indigo-500 rounded px-1.5 py-0.5 text-xs font-bold text-slate-800 focus:outline-none w-28 sm:w-36 shadow-sm">
                 </div>
             </div>
 
-            <span id="auto-save-indicator" class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center shrink-0">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span> 已自動儲存
+            <span id="auto-save-indicator" class="text-[10px] text-emerald-600 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded-full border border-emerald-200 inline-flex items-center shrink-0 whitespace-nowrap" title="已自動儲存本機">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                <span class="hidden md:inline ml-1 font-medium whitespace-nowrap">已自動儲存</span>
             </span>
         </div>
 
         <!-- Center: Workspaces & Ratios -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-1 sm:gap-2 shrink-0 whitespace-nowrap">
             <!-- Workspace Mode Switcher -->
-            <div class="sketch-header-group flex">
-                <button id="tab-image-workspace" class="px-2.5 py-1 text-xs font-bold hover:bg-slate-100 text-slate-600 border-r-2 border-slate-700/20 flex items-center">
-                    <i class="fas fa-image mr-1 text-[11px]"></i> 圖片
+            <div class="sketch-header-group flex whitespace-nowrap">
+                <button id="tab-image-workspace" class="px-2 sm:px-2.5 py-1 text-xs font-bold hover:bg-slate-100 text-slate-600 border-r-2 border-slate-700/20 flex items-center whitespace-nowrap">
+                    <i class="fas fa-image sm:mr-1 text-[11px]"></i> <span class="hidden sm:inline">圖片</span>
                 </button>
-                <button id="tab-pdf-workspace" class="px-2.5 py-1 text-xs font-bold bg-indigo-50 text-indigo-700 flex items-center">
-                    <i class="fas fa-file-powerpoint mr-1 text-[11px]"></i> 簡報/PDF
+                <button id="tab-pdf-workspace" class="px-2 sm:px-2.5 py-1 text-xs font-bold bg-indigo-50 text-indigo-700 flex items-center whitespace-nowrap">
+                    <i class="fas fa-file-powerpoint sm:mr-1 text-[11px]"></i> <span class="hidden sm:inline">簡報/PDF</span><span class="sm:hidden">簡報</span>
                 </button>
             </div>
 
             <!-- Ratio Buttons -->
-            <div id="group-ratio-image" class="sketch-header-group bg-indigo-50">
-                <button id="btn-ratio-16-9" class="px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-indigo-700 border-r-2 border-slate-700/20 active-ratio">16:9</button>
-                <button id="btn-ratio-4-3" class="px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-slate-500">4:3</button>
+            <div id="group-ratio-image" class="sketch-header-group bg-indigo-50 whitespace-nowrap">
+                <button id="btn-ratio-16-9" class="px-1.5 sm:px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-indigo-700 border-r-2 border-slate-700/20 active-ratio">16:9</button>
+                <button id="btn-ratio-4-3" class="px-1.5 sm:px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-slate-500">4:3</button>
             </div>
-            <div id="group-ratio-pdf" class="sketch-header-group bg-slate-50" style="display: none;">
-                <button id="btn-ratio-landscape" class="px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-slate-500 border-r-2 border-slate-700/20">橫式</button>
-                <button id="btn-ratio-portrait" class="px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-indigo-700 active-ratio">直式</button>
+            <div id="group-ratio-pdf" class="sketch-header-group bg-slate-50 whitespace-nowrap" style="display: none;">
+                <button id="btn-ratio-landscape" class="px-1.5 sm:px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-slate-500 border-r-2 border-slate-700/20">橫式</button>
+                <button id="btn-ratio-portrait" class="px-1.5 sm:px-2 py-1 text-xs font-bold rounded hover:bg-slate-100 text-indigo-700 active-ratio">直式</button>
             </div>
         </div>
 
         <!-- Right: Undo/Redo, Manual, Import, Export, Version, User Profile -->
-        <div id="editor-header-right" class="flex items-center gap-2 shrink-0">
-            <div class="flex items-center gap-1 text-slate-500 mr-1">
-                <button id="btn-undo" class="w-7 h-7 rounded hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition text-xs" title="復原 (Ctrl+Z)"><i class="fas fa-undo"></i></button>
-                <button id="btn-redo" class="w-7 h-7 rounded hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition text-xs" title="重做 (Ctrl+Y)"><i class="fas fa-redo"></i></button>
+        <div id="editor-header-right" class="flex items-center gap-1 sm:gap-1.5 shrink-0 whitespace-nowrap">
+            <div class="flex items-center gap-0.5 text-slate-500 mr-0.5 shrink-0">
+                <button id="btn-undo" class="w-6 h-6 sm:w-7 sm:h-7 rounded hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition text-xs" title="復原 (Ctrl+Z)"><i class="fas fa-undo"></i></button>
+                <button id="btn-redo" class="w-6 h-6 sm:w-7 sm:h-7 rounded hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition text-xs" title="重做 (Ctrl+Y)"><i class="fas fa-redo"></i></button>
             </div>
 
-            <button id="btn-manual" class="sketch-btn px-2.5 py-1 text-xs font-bold flex items-center gap-1.5 bg-blue-50 text-blue-700 border-blue-800 shadow-[1.5px_1.5px_0px_#334155]" title="系統說明書">
-                <i class="fas fa-book text-[11px]"></i> 說明書
+            <button id="btn-manual" class="sketch-btn px-2 sm:px-2.5 py-1 text-xs font-bold flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-800 shadow-[1px_1px_0px_#334155] shrink-0 whitespace-nowrap" title="系統說明書">
+                <i class="fas fa-book text-[11px]"></i> <span class="hidden md:inline">說明書</span>
             </button>
             
-            <button id="btn-import-project" class="sketch-btn px-2.5 py-1 text-xs font-bold flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-800 shadow-[1.5px_1.5px_0px_#334155]" title="匯入圖檔或專案">
-                <i class="fas fa-file-import text-[11px]"></i> 匯入
+            <button id="btn-import-project" class="sketch-btn px-2 sm:px-2.5 py-1 text-xs font-bold flex items-center gap-1 bg-emerald-50 text-emerald-700 border-emerald-800 shadow-[1px_1px_0px_#334155] shrink-0 whitespace-nowrap" title="匯入圖檔或專案">
+                <i class="fas fa-file-import text-[11px]"></i> <span class="hidden md:inline">匯入</span>
             </button>
             <input type="file" id="input-import-project" accept="image/*" class="hidden">
 
-            <div class="relative">
-                <button id="btn-export-dropdown" class="sketch-btn px-3 py-1 text-xs font-bold flex items-center gap-1.5 bg-purple-50 text-purple-700 border-purple-800 shadow-[1.5px_1.5px_0px_#334155]">
-                    <i class="fas fa-download text-[11px]"></i> 匯出 <i class="fas fa-chevron-down text-[9px] opacity-70"></i>
+            <div class="relative shrink-0">
+                <button id="btn-export-dropdown" class="sketch-btn px-2 sm:px-2.5 py-1 text-xs font-bold flex items-center gap-1 bg-purple-50 text-purple-700 border-purple-800 shadow-[1px_1px_0px_#334155] whitespace-nowrap">
+                    <i class="fas fa-download text-[11px]"></i> <span class="hidden md:inline">匯出</span><i class="fas fa-chevron-down text-[9px] opacity-70"></i>
                 </button>
                 <div id="export-options" class="hidden absolute top-full right-0 mt-1 w-44 bg-white border border-slate-200 rounded-lg shadow-xl z-50 overflow-hidden">
                     <button class="w-full px-3 py-1.5 text-xs text-left hover:bg-slate-50 font-bold text-slate-700 flex items-center gap-2" data-export-type="json">
@@ -159,18 +160,23 @@
                 </div>
             </div>
 
-            <span id="app-version-badge" class="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-mono hidden"></span>
+            <span id="app-version-badge" class="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-mono hidden shrink-0 whitespace-nowrap"></span>
 
             <!-- 使用者頭像與選單 (最右側) -->
-            <div id="editor-user-profile-widget" class="relative ml-1"></div>
+            <div id="editor-user-profile-widget" class="relative ml-0.5 shrink-0"></div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <div class="flex flex-1 overflow-hidden">
+    <div class="flex flex-1 overflow-hidden relative">
         
         <!-- Left Sidebar -->
-        <aside class="w-[320px] bg-white border-r-2 border-slate-700 flex flex-col z-10 shrink-0">
+        <aside id="left-sidebar-container" class="sidebar-collapsible relative w-[280px] sm:w-[300px] lg:w-[320px] bg-white border-r-2 border-slate-700 flex flex-col z-20 shrink-0 select-none">
+            <!-- Left Sidebar Floating Toggle Button -->
+            <button id="btn-toggle-left-sidebar" class="absolute -right-3.5 top-1/2 -translate-y-1/2 z-40 w-7 h-9 bg-white border-2 border-slate-700 rounded-r-md shadow-[2px_2px_0px_#334155] flex items-center justify-center text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition cursor-pointer" title="收合/展開左側面板">
+                <i id="icon-toggle-left-sidebar" class="fas fa-chevron-left text-[11px] pointer-events-none transition-transform duration-200"></i>
+            </button>
+            <div id="left-sidebar-inner" class="flex flex-col flex-1 w-full h-full min-w-[280px] overflow-hidden">
             <!-- Tabs -->
             <div class="grid grid-cols-4 border-b-2 border-slate-700 bg-slate-50" id="sidebar-tabs">
                 <button id="tab-tools" data-target="panel-tools" class="tab-btn flex flex-col items-center justify-center py-3 text-slate-800 border-b-4 border-indigo-500 bg-white font-bold transition">
@@ -288,6 +294,7 @@
             <div id="panel-layers" style="display:none;" class="sidebar-panel flex-1 overflow-y-auto p-4 flex flex-col gap-2">
                 <!-- Javascript 動態生成圖層清單 -->
             </div>
+            </div>
         </aside>
 
         <!-- Center Canvas Area -->
@@ -355,18 +362,24 @@
         </main>
 
         <!-- Right Sidebar (Thumbnails) -->
-        <aside id="thumbnails-container" class="w-64 bg-white border-l-2 border-slate-700 flex flex-col z-10 shrink-0">
-            <!-- Header -->
-            <div class="p-4 border-b-2 border-slate-700 flex justify-between items-center">
-                <h3 id="thumbnails-count" class="text-sm font-bold text-slate-800">頁面清單 (1)</h3>
-                <button id="btn-add-page" class="sketch-btn w-6 h-6 flex justify-center items-center bg-indigo-50 text-indigo-700 p-0 text-xs" title="新增頁面">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-            
-            <!-- List -->
-            <div id="thumbnails-list" class="flex-1 overflow-y-auto p-4 bg-slate-50/30">
-                <!-- Javascript 會動態生成內容於此 -->
+        <aside id="thumbnails-container" class="sidebar-collapsible relative w-48 sm:w-56 lg:w-64 bg-white border-l-2 border-slate-700 flex flex-col z-20 shrink-0 select-none">
+            <!-- Right Sidebar Floating Toggle Button -->
+            <button id="btn-toggle-right-sidebar" class="absolute -left-3.5 top-1/2 -translate-y-1/2 z-40 w-7 h-9 bg-white border-2 border-slate-700 rounded-l-md shadow-[-2px_2px_0px_#334155] flex items-center justify-center text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition cursor-pointer" title="收合/展開頁面清單">
+                <i id="icon-toggle-right-sidebar" class="fas fa-chevron-right text-[11px] pointer-events-none transition-transform duration-200"></i>
+            </button>
+            <div id="right-sidebar-inner" class="flex flex-col flex-1 w-full h-full min-w-[190px] overflow-hidden">
+                <!-- Header -->
+                <div class="p-4 border-b-2 border-slate-700 flex justify-between items-center shrink-0">
+                    <h3 id="thumbnails-count" class="text-sm font-bold text-slate-800 whitespace-nowrap">頁面清單 (1)</h3>
+                    <button id="btn-add-page" class="sketch-btn w-6 h-6 flex justify-center items-center bg-indigo-50 text-indigo-700 p-0 text-xs" title="新增頁面">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                
+                <!-- List -->
+                <div id="thumbnails-list" class="flex-1 overflow-y-auto p-4 bg-slate-50/30">
+                    <!-- Javascript 會動態生成內容於此 -->
+                </div>
             </div>
         </aside>
 

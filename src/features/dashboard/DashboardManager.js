@@ -125,66 +125,66 @@ export default class DashboardManager {
         
         this.dashboardContainer.innerHTML = `
             <!-- Dashboard Header -->
-            <header class="relative z-40 h-20 bg-white border-b-2 border-slate-700 px-8 flex items-center justify-between shrink-0 shadow-sm">
-                <div class="flex items-center space-x-4">
-                    <div class="sketch flex items-center justify-center w-12 h-12 text-slate-800 text-2xl font-black shadow-[3px_3px_0px_#334155] bg-amber-100">
+            <header class="relative z-40 min-h-[64px] h-auto py-3 px-4 sm:px-8 bg-white border-b-2 border-slate-700 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 shrink-0 shadow-sm">
+                <div class="flex items-center space-x-3 shrink-0">
+                    <div class="sketch flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 text-slate-800 text-xl sm:text-2xl font-black shadow-[2px_2px_0px_#334155] sm:shadow-[3px_3px_0px_#334155] bg-amber-100 shrink-0">
                         <i class="fas fa-cubes"></i>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <div class="flex items-center space-x-2">
-                            <h1 class="text-2xl font-black text-slate-800 tracking-wide">專案儀表板</h1>
-                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200">檔案管理 v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.4.1'}</span>
+                            <h1 class="text-xl sm:text-2xl font-black text-slate-800 tracking-wide whitespace-nowrap">專案儀表板</h1>
+                            <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 whitespace-nowrap">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.5.0'}</span>
                         </div>
-                        <p class="text-xs text-slate-500 font-medium">隨時管理、複製、刪除或開啟您的多媒體專案</p>
+                        <p class="hidden md:block text-xs text-slate-500 font-medium">隨時管理、複製、刪除或開啟您的多媒體專案</p>
                     </div>
                 </div>
 
-                <div id="dashboard-header-right" class="flex items-center space-x-3">
+                <div id="dashboard-header-right" class="flex items-center space-x-2 sm:space-x-3 shrink-0 flex-wrap sm:flex-nowrap justify-end">
                     <!-- 搜尋列 -->
-                    <div class="relative flex items-center w-64 md:w-72">
-                        <i class="fas fa-search absolute left-3.5 text-slate-400 text-sm pointer-events-none"></i>
-                        <input type="text" id="dashboard-search-input" class="w-full bg-slate-100 border border-slate-300 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="搜尋專案名稱...">
+                    <div class="relative flex items-center w-32 sm:w-44 md:w-60">
+                        <i class="fas fa-search absolute left-3 text-slate-400 text-xs sm:text-sm pointer-events-none"></i>
+                        <input type="text" id="dashboard-search-input" class="w-full bg-slate-100 border border-slate-300 rounded-xl pl-8 sm:pl-9 pr-3 sm:pr-4 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="搜尋專案...">
                     </div>
 
                     <!-- 匯入專案按鈕 -->
-                    <button id="btn-import-project-file" class="sketch-btn px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-[2px_2px_0px_#334155]" title="匯入 .editorproj 專案檔、JSON、PDF、簡報或圖片">
-                        <i class="fas fa-file-import mr-2 text-teal-600"></i> 匯入檔案
+                    <button id="btn-import-project-file" class="sketch-btn px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-[1.5px_1.5px_0px_#334155]" title="匯入 .editorproj 專案檔、JSON、PDF、簡報或圖片">
+                        <i class="fas fa-file-import mr-1.5 text-teal-600"></i> <span class="hidden sm:inline">匯入檔案</span><span class="sm:hidden">匯入</span>
                     </button>
                     <input type="file" id="input-project-file" accept=".editorproj,.json,.pdf,.ppt,.pptx,image/*" class="hidden">
 
                     <!-- 新建專案按鈕 -->
-                    <button id="btn-open-create-modal" class="sketch-btn px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center shadow-[3px_3px_0px_#334155]">
-                        <i class="fas fa-plus mr-2"></i> 新建專案
+                    <button id="btn-open-create-modal" class="sketch-btn px-3.5 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center shadow-[2px_2px_0px_#334155] whitespace-nowrap">
+                        <i class="fas fa-plus mr-1.5"></i> 新建專案
                     </button>
 
                     <!-- 使用者頭像與選單 (最右側) -->
-                    <div id="dashboard-user-profile-widget" class="relative ml-2"></div>
+                    <div id="dashboard-user-profile-widget" class="relative ml-1"></div>
                 </div>
             </header>
 
             <!-- Dashboard Body -->
-            <main class="max-w-7xl w-full mx-auto p-8 flex-1 flex flex-col space-y-6">
+            <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex-1 flex flex-col space-y-4 sm:space-y-6">
                 <!-- 篩選標籤列 -->
-                <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-                    <div class="flex items-center space-x-2">
-                        <button data-filter="ALL" class="dashboard-filter-btn px-4 py-1.5 rounded-xl text-sm font-bold bg-indigo-600 text-white shadow-sm transition">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3 sm:pb-4">
+                    <div class="flex items-center flex-wrap gap-2">
+                        <button data-filter="ALL" class="dashboard-filter-btn px-3.5 sm:px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white shadow-sm transition">
                             全部專案 (<span id="count-all">0</span>)
                         </button>
-                        <button data-filter="PDF" class="dashboard-filter-btn px-4 py-1.5 rounded-xl text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition">
+                        <button data-filter="PDF" class="dashboard-filter-btn px-3.5 sm:px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition">
                             📊 PPT / PDF 簡報 (<span id="count-pdf">0</span>)
                         </button>
-                        <button data-filter="IMAGE" class="dashboard-filter-btn px-4 py-1.5 rounded-xl text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition">
+                        <button data-filter="IMAGE" class="dashboard-filter-btn px-3.5 sm:px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition">
                             🖼️ 圖片專案 (<span id="count-image">0</span>)
                         </button>
                     </div>
 
-                    <div class="text-xs text-slate-500">
-                        <i class="fas fa-info-circle mr-1 text-indigo-500"></i> 資料透過 IndexedDB 本機安全保存，重整不會遺失
+                    <div class="text-[11px] sm:text-xs text-slate-500 flex items-center">
+                        <i class="fas fa-database mr-1.5 text-indigo-500"></i> IndexedDB 本機安全保存
                     </div>
                 </div>
 
                 <!-- 專案卡片網格 -->
-                <div id="projects-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div id="projects-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                     <!-- Cards will be dynamically injected here -->
                 </div>
 
@@ -202,84 +202,109 @@ export default class DashboardManager {
             </main>
 
             <!-- 建立新專案彈窗 (Modal) -->
-            <div id="modal-create-project" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-                <div class="bg-white rounded-3xl p-8 max-w-xl w-full border-2 border-slate-700 shadow-[6px_6px_0px_#334155] space-y-6">
-                    <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+            <div id="modal-create-project" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+                <div class="bg-white rounded-3xl p-5 sm:p-7 max-w-2xl w-full border-2 border-slate-700 shadow-[6px_6px_0px_#334155] space-y-5 max-h-[90vh] overflow-y-auto">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg shrink-0">
                                 <i class="fas fa-magic"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-slate-800">新建專案</h3>
-                                <p class="text-xs text-slate-500">選擇最適合您創作情境的畫布尺寸與格式</p>
+                                <h3 class="text-lg sm:text-xl font-bold text-slate-800">新建專案與模板</h3>
+                                <p class="text-xs text-slate-500">選擇最適合您創作情境的畫布尺寸與精選排版模板</p>
                             </div>
                         </div>
-                        <button id="btn-close-create-modal" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition">
+                        <button id="btn-close-create-modal" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition shrink-0">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
 
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">專案名稱</label>
-                            <input type="text" id="input-new-project-name" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium" placeholder="例如：2026 產品行銷企劃案" value="未命名專案">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">專案名稱</label>
+                            <input type="text" id="input-new-project-name" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium" placeholder="例如：2026 商業企劃提案" value="未命名專案">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">選擇預設模板與比例</label>
-                            <div class="grid grid-cols-2 gap-3" id="template-options-container">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">精選排版與尺寸模板</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3" id="template-options-container">
                                 <!-- 模板 1: 簡報 16:9 -->
-                                <div data-template="pdf_16_9" class="template-card border-2 border-indigo-600 bg-indigo-50/50 rounded-2xl p-4 cursor-pointer hover:border-indigo-600 transition flex items-center space-x-3">
+                                <div data-template="pdf_16_9" class="template-card border-2 border-indigo-600 bg-indigo-50/50 rounded-2xl p-3.5 cursor-pointer hover:border-indigo-600 transition flex items-center space-x-3">
                                     <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl shrink-0">
                                         <i class="fas fa-desktop"></i>
                                     </div>
-                                    <div>
-                                        <div class="font-bold text-sm text-slate-800">簡報 (16:9)</div>
-                                        <div class="text-xs text-slate-500">1280 × 720 · 多頁模式</div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                                            <span>簡報提案 (16:9)</span>
+                                            <span class="text-[10px] bg-indigo-200 text-indigo-800 px-1.5 py-0.2 rounded font-bold">推薦</span>
+                                        </div>
+                                        <div class="text-xs text-slate-500">1280 × 720 · 商業企劃多頁</div>
                                     </div>
                                 </div>
 
-                                <!-- 模板 2: 圖片 16:9 -->
-                                <div data-template="image_16_9" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-4 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
+                                <!-- 模板 2: 經典簡報 4:3 -->
+                                <div data-template="pdf_4_3" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-sm text-slate-800">教學簡報 (4:3)</div>
+                                        <div class="text-xs text-slate-500">1024 × 768 · 學術投影多頁</div>
+                                    </div>
+                                </div>
+
+                                <!-- 模板 3: 社群貼文 1:1 -->
+                                <div data-template="image_1_1" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fas fa-square"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-sm text-slate-800">社群貼文 (1:1)</div>
+                                        <div class="text-xs text-slate-500">1080 × 1080 · IG/FB 方形圖文</div>
+                                    </div>
+                                </div>
+
+                                <!-- 模板 4: 社群橫幅 16:9 -->
+                                <div data-template="image_16_9" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
                                     <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl shrink-0">
                                         <i class="fas fa-image"></i>
                                     </div>
-                                    <div>
-                                        <div class="font-bold text-sm text-slate-800">圖片 (16:9)</div>
-                                        <div class="text-xs text-slate-500">1280 × 720 · 單頁去背</div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-sm text-slate-800">社群封面 (16:9)</div>
+                                        <div class="text-xs text-slate-500">1280 × 720 · 橫幅去背圖層</div>
                                     </div>
                                 </div>
 
-                                <!-- 模板 3: 圖片 4:3 -->
-                                <div data-template="image_4_3" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-4 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shrink-0">
-                                        <i class="fas fa-square"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-sm text-slate-800">圖片 (4:3)</div>
-                                        <div class="text-xs text-slate-500">1024 × 768 · 標準圖片</div>
-                                    </div>
-                                </div>
-
-                                <!-- 模板 4: A4 直式 -->
-                                <div data-template="pdf_a4" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-4 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
+                                <!-- 模板 5: 肖像海報 4:5 -->
+                                <div data-template="image_4_5" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
                                     <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fas fa-portrait"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-sm text-slate-800">肖像海報 (4:5)</div>
+                                        <div class="text-xs text-slate-500">1080 × 1350 · 活動宣傳廣告</div>
+                                    </div>
+                                </div>
+
+                                <!-- 模板 6: A4 直式文件 -->
+                                <div data-template="pdf_a4" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shrink-0">
                                         <i class="fas fa-file-alt"></i>
                                     </div>
-                                    <div>
-                                        <div class="font-bold text-sm text-slate-800">A4 文件 (直式)</div>
-                                        <div class="text-xs text-slate-500">794 × 1123 · 多頁文件</div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-sm text-slate-800">A4 報告書 (直式)</div>
+                                        <div class="text-xs text-slate-500">794 × 1123 · 企劃多頁文件</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end space-x-3 pt-2">
-                        <button id="btn-cancel-create-modal" class="px-5 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition">
+                    <div class="flex items-center justify-end space-x-3 pt-2 border-t border-slate-100">
+                        <button id="btn-cancel-create-modal" class="px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition">
                             取消
                         </button>
-                        <button id="btn-confirm-create-project" class="sketch-btn px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-[2px_2px_0px_#334155]">
+                        <button id="btn-confirm-create-project" class="sketch-btn px-5 sm:px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-[2px_2px_0px_#334155]">
                             建立並進入編輯
                         </button>
                     </div>
@@ -439,14 +464,20 @@ export default class DashboardManager {
                 const nameInput = document.getElementById('input-new-project-name');
                 const name = nameInput ? nameInput.value.trim() || '未命名專案' : '未命名專案';
 
-                let options = { name, type: 'PDF', width: 1280, height: 720, ratio: '16:9' };
+                let options = { name, type: 'PDF', width: 1280, height: 720, ratio: '16:9', template: 'pdf_16_9' };
 
-                if (selectedTemplate === 'image_16_9') {
-                    options = { name, type: 'IMAGE', width: 1280, height: 720, ratio: '16:9' };
-                } else if (selectedTemplate === 'image_4_3') {
-                    options = { name, type: 'IMAGE', width: 1024, height: 768, ratio: '4:3' };
+                if (selectedTemplate === 'pdf_16_9') {
+                    options = { name, type: 'PDF', width: 1280, height: 720, ratio: '16:9', template: 'pdf_16_9' };
+                } else if (selectedTemplate === 'pdf_4_3') {
+                    options = { name, type: 'PDF', width: 1024, height: 768, ratio: '4:3', template: 'pdf_4_3' };
+                } else if (selectedTemplate === 'image_1_1') {
+                    options = { name, type: 'IMAGE', width: 1080, height: 1080, ratio: '1:1', template: 'image_1_1' };
+                } else if (selectedTemplate === 'image_16_9') {
+                    options = { name, type: 'IMAGE', width: 1280, height: 720, ratio: '16:9', template: 'image_16_9' };
+                } else if (selectedTemplate === 'image_4_5') {
+                    options = { name, type: 'IMAGE', width: 1080, height: 1350, ratio: '4:5', template: 'image_4_5' };
                 } else if (selectedTemplate === 'pdf_a4') {
-                    options = { name, type: 'PDF', width: 794, height: 1123, ratio: 'A4' };
+                    options = { name, type: 'PDF', width: 794, height: 1123, ratio: 'A4', template: 'pdf_a4' };
                 }
 
                 closeModal();
