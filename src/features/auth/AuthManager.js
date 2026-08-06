@@ -400,7 +400,7 @@ export default class AuthManager {
     }
 
     /**
-     * 建立系統金鑰保險箱 (API Vault Modal) DOM
+     * 建立系統金鑰保險箱 (API Vault Modal) DOM - 唯讀安全預覽模式
      */
     createApiVaultModalDOM() {
         const existing = document.getElementById('api-vault-modal');
@@ -409,8 +409,6 @@ export default class AuthManager {
         this.apiVaultModal = document.createElement('div');
         this.apiVaultModal.id = 'api-vault-modal';
         this.apiVaultModal.className = 'fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none select-none';
-
-        const vaultData = this.getApiVaultData();
 
         this.apiVaultModal.innerHTML = `
             <!-- 固定長寬卡片：寬 580px、高 560px，內容滾動，尺寸絕不隨內容跳動 -->
@@ -422,8 +420,11 @@ export default class AuthManager {
                             <i class="fas fa-shield-alt"></i>
                         </div>
                         <div>
-                            <h3 id="api-vault-title" class="text-base font-black tracking-wide">系統金鑰保險箱 (API Vault)</h3>
-                            <p id="api-vault-subtitle" class="text-xs">本機安全儲存 AI 模型連接金鑰與伺服器端點</p>
+                            <div class="flex items-center gap-2">
+                                <h3 id="api-vault-title" class="text-base font-black tracking-wide">系統金鑰保險箱 (API Vault)</h3>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-amber-500/15 text-amber-600 border border-amber-500/30">唯讀預覽</span>
+                            </div>
+                            <p id="api-vault-subtitle" class="text-xs">後端環境隔離保護中 · 前端僅供架構檢視</p>
                         </div>
                     </div>
                     <button id="btn-close-api-vault" class="w-8 h-8 rounded-lg flex items-center justify-center transition">
@@ -433,52 +434,87 @@ export default class AuthManager {
 
                 <!-- Vault Content (固定填滿中間高度，支援獨立滾動) -->
                 <div id="api-vault-body" class="p-6 space-y-4 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
+                    <!-- 資安防護提示 Notice -->
+                    <div class="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-start gap-3 text-xs">
+                        <div class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <i class="fas fa-lock text-xs"></i>
+                        </div>
+                        <div class="space-y-0.5">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-amber-700 dark:text-amber-300">金鑰資安防護已啟用</span>
+                            </div>
+                            <p class="text-[11px] opacity-85 leading-relaxed text-slate-600 dark:text-slate-300">
+                                為避免企業與商業 API 金鑰於前端瀏覽器外洩，金鑰一律由後端伺服器安全託管。此介面處於唯讀預覽狀態，無法於前端直接修改。
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- 1. OpenAI GPT-4o-mini (OCR 辨識) -->
                     <div class="vault-section-card p-4 rounded-xl space-y-2">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> OpenAI API Key (GPT-4o-mini / 智慧辨識)
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> OpenAI API (GPT-4o-mini / 智慧辨識)
                             </label>
-                            <span class="text-[10px] px-2 py-0.5 rounded font-bold vault-badge-active">現行運作中</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-500/15 text-emerald-600 border border-emerald-500/30 flex items-center gap-1">
+                                <i class="fas fa-shield-alt text-[9px]"></i> 運作中 · 已加密受保
+                            </span>
                         </div>
                         <p class="text-[11px] vault-card-desc">用於框選畫布文字之智慧辨識 (OCR)、排版擷取與多國語言分析。</p>
-                        <input type="password" id="vault-openai-key" value="${vaultData.openaiApiKey || ''}" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono transition" placeholder="輸入 OpenAI API 金鑰 (sk-...)">
+                        <div class="relative flex items-center">
+                            <input type="text" readonly disabled value="sk-••••••••••••••••••••••••••••••••••••••••••••" class="vault-input-field w-full rounded-lg px-3 py-2 pr-20 text-xs font-mono transition cursor-not-allowed opacity-80 select-none">
+                            <span class="absolute right-3 text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                                <i class="fas fa-lock text-[9px]"></i> 鎖定保護
+                            </span>
+                        </div>
                     </div>
 
                     <!-- 2. Clipdrop Key (去背與修補) -->
                     <div class="vault-section-card p-4 rounded-xl space-y-2">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Clipdrop API Key (智慧生圖/去背/修補)
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Clipdrop API (智慧生圖/去背/修補)
                             </label>
-                            <span class="text-[10px] px-2 py-0.5 rounded font-bold vault-badge-active">現行運作中</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-500/15 text-emerald-600 border border-emerald-500/30 flex items-center gap-1">
+                                <i class="fas fa-shield-alt text-[9px]"></i> 運作中 · 已加密受保
+                            </span>
                         </div>
                         <p class="text-[11px] vault-card-desc">用於高畫質智慧去背、AI 抹除修補、物件消除與影像邊界擴展等功能。</p>
-                        <input type="password" id="vault-clipdrop-key" value="${vaultData.clipdropKey || ''}" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono transition" placeholder="輸入 Clipdrop API 金鑰...">
+                        <div class="relative flex items-center">
+                            <input type="text" readonly disabled value="c577••••••••••••••••••••••••••••••••••••••••••••" class="vault-input-field w-full rounded-lg px-3 py-2 pr-20 text-xs font-mono transition cursor-not-allowed opacity-80 select-none">
+                            <span class="absolute right-3 text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                                <i class="fas fa-lock text-[9px]"></i> 鎖定保護
+                            </span>
+                        </div>
                     </div>
 
                     <!-- 3. ConvertAPI Key (PPT / PPTX 簡報轉檔) -->
                     <div class="vault-section-card p-4 rounded-xl space-y-2">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> ConvertAPI Secret (PPT/PPTX 簡報解析轉檔)
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> ConvertAPI (PPT/PPTX 簡報解析轉檔)
                             </label>
-                            <span class="text-[10px] px-2 py-0.5 rounded font-bold vault-badge-active">現行運作中</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-500/15 text-emerald-600 border border-emerald-500/30 flex items-center gap-1">
+                                <i class="fas fa-shield-alt text-[9px]"></i> 運作中 · 已加密受保
+                            </span>
                         </div>
                         <p class="text-[11px] vault-card-desc">用於將企業 .ppt、.pptx 簡報在線解析並無失真轉換為多頁面 PDF 匯入畫布。</p>
-                        <input type="password" id="vault-convertapi-key" value="${vaultData.convertApiKey || ''}" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono transition" placeholder="輸入 ConvertAPI Secret 金鑰...">
+                        <div class="relative flex items-center">
+                            <input type="text" readonly disabled value="jCHj••••••••••••••••••••••••••••••••" class="vault-input-field w-full rounded-lg px-3 py-2 pr-20 text-xs font-mono transition cursor-not-allowed opacity-80 select-none">
+                            <span class="absolute right-3 text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                                <i class="fas fa-lock text-[9px]"></i> 鎖定保護
+                            </span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Vault Footer (固定高度 56px) -->
                 <div id="api-vault-footer" class="h-14 px-6 shrink-0 flex items-center justify-between">
-                    <span id="vault-save-feedback" class="text-xs font-bold hidden">
-                        <i class="fas fa-check-circle mr-1"></i> 金鑰已安全保存至本機！
+                    <span class="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+                        <i class="fas fa-lock text-amber-500"></i> 前端禁止竄改 · 僅供架構檢視
                     </span>
                     <div class="flex items-center gap-2 ml-auto">
-                        <button id="btn-cancel-api-vault" class="px-4 py-2 text-xs font-bold rounded-xl transition">取消</button>
                         <button id="btn-save-api-vault" class="px-5 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition">
-                            <i class="fas fa-save"></i> 儲存設定
+                            <i class="fas fa-check"></i> 關閉預覽
                         </button>
                     </div>
                 </div>
@@ -543,16 +579,6 @@ export default class AuthManager {
 
     openApiVault() {
         if (this.apiVaultModal) {
-            // 重新填入最新數據
-            const data = this.getApiVaultData();
-            const openaiKeyEl = document.getElementById('vault-openai-key');
-            const clipKeyEl = document.getElementById('vault-clipdrop-key');
-            const convertKeyEl = document.getElementById('vault-convertapi-key');
-            
-            if (openaiKeyEl) openaiKeyEl.value = data.openaiApiKey || '';
-            if (clipKeyEl) clipKeyEl.value = data.clipdropKey || '';
-            if (convertKeyEl) convertKeyEl.value = data.convertApiKey || '';
-
             this.apiVaultModal.classList.remove('opacity-0', 'pointer-events-none');
         }
     }
@@ -817,38 +843,14 @@ export default class AuthManager {
             });
         }
 
-        // API Vault 儲存與關閉
+        // API Vault 關閉事件綁定
         const btnCloseVault = document.getElementById('btn-close-api-vault');
         const btnCancelVault = document.getElementById('btn-cancel-api-vault');
         const btnSaveVault = document.getElementById('btn-save-api-vault');
-        const feedbackEl = document.getElementById('vault-save-feedback');
 
         if (btnCloseVault) btnCloseVault.addEventListener('click', () => this.closeApiVault());
         if (btnCancelVault) btnCancelVault.addEventListener('click', () => this.closeApiVault());
-
-        if (btnSaveVault) {
-            btnSaveVault.addEventListener('click', () => {
-                const openaiApiKey = document.getElementById('vault-openai-key')?.value.trim();
-                const clipdropKey = document.getElementById('vault-clipdrop-key')?.value.trim();
-                const convertApiKey = document.getElementById('vault-convertapi-key')?.value.trim();
-
-                this.saveApiVaultData({
-                    openaiApiKey,
-                    clipdropKey,
-                    convertApiKey
-                });
-
-                if (feedbackEl) {
-                    feedbackEl.classList.remove('hidden');
-                    setTimeout(() => {
-                        feedbackEl.classList.add('hidden');
-                        this.closeApiVault();
-                    }, 800);
-                } else {
-                    this.closeApiVault();
-                }
-            });
-        }
+        if (btnSaveVault) btnSaveVault.addEventListener('click', () => this.closeApiVault());
     }
 
     /**
