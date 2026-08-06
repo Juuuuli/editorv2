@@ -98,9 +98,13 @@ export default class AuthManager {
     initApiVaultStorage() {
         try {
             const raw = localStorage.getItem(this.storageKeyApiVault);
+            const envClipdrop = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_CLIPDROP_API_KEY : '';
+            const envConvert = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_CONVERTAPI_SECRET : '';
+
             if (!raw) {
                 const initialVault = {
-                    clipdropKey: localStorage.getItem('clipdrop_api_key') || '',
+                    clipdropKey: localStorage.getItem('clipdrop_api_key') || envClipdrop || '',
+                    convertApiKey: localStorage.getItem('convertapi_secret') || envConvert || '',
                     sparkEndpoint: 'https://spark-api.xf-yun.com/v1.1/chat',
                     sparkAppId: '',
                     sparkApiKey: '',
@@ -108,6 +112,20 @@ export default class AuthManager {
                     updatedAt: Date.now()
                 };
                 localStorage.setItem(this.storageKeyApiVault, JSON.stringify(initialVault));
+            } else {
+                const parsed = JSON.parse(raw);
+                let changed = false;
+                if (parsed.convertApiKey === undefined) {
+                    parsed.convertApiKey = localStorage.getItem('convertapi_secret') || envConvert || '';
+                    changed = true;
+                }
+                if (!parsed.clipdropKey && (localStorage.getItem('clipdrop_api_key') || envClipdrop)) {
+                    parsed.clipdropKey = localStorage.getItem('clipdrop_api_key') || envClipdrop || '';
+                    changed = true;
+                }
+                if (changed) {
+                    localStorage.setItem(this.storageKeyApiVault, JSON.stringify(parsed));
+                }
             }
         } catch (e) {
             console.error('[AuthManager] 初始化 API Vault 失敗:', e);
@@ -417,6 +435,18 @@ export default class AuthManager {
                         <input type="password" id="vault-clipdrop-key" value="${vaultData.clipdropKey || ''}" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono transition" placeholder="輸入 Clipdrop API 金鑰...">
                     </div>
 
+                    <!-- ConvertAPI Key (PPT / PPTX 簡報轉檔) -->
+                    <div class="vault-section-card p-4 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> ConvertAPI Secret (PPT/PPTX 簡報解析轉檔)
+                            </label>
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold vault-badge-active">現行運作中</span>
+                        </div>
+                        <p class="text-[11px] vault-card-desc">用於將企業 .ppt、.pptx 簡報在線解析並無失真轉換為多頁面 PDF 匯入畫布。</p>
+                        <input type="password" id="vault-convertapi-key" value="${vaultData.convertApiKey || ''}" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono transition" placeholder="輸入 ConvertAPI Secret 金鑰...">
+                    </div>
+
                     <!-- Spark (星火/企業私有模型) 預備通道 (Sprint 4 Preview) -->
                     <div class="vault-section-card p-4 rounded-xl space-y-3">
                         <div class="flex items-center justify-between">
@@ -486,9 +516,12 @@ export default class AuthManager {
         };
         localStorage.setItem(this.storageKeyApiVault, JSON.stringify(updated));
         
-        // 同步相容舊版 clipdrop_api_key
+        // 同步相容舊版 clipdrop_api_key 與 convertapi_secret
         if (data.clipdropKey !== undefined) {
             localStorage.setItem('clipdrop_api_key', data.clipdropKey);
+        }
+        if (data.convertApiKey !== undefined) {
+            localStorage.setItem('convertapi_secret', data.convertApiKey);
         }
 
         if (this.eventBus) {
@@ -516,11 +549,13 @@ export default class AuthManager {
             // 重新填入最新數據
             const data = this.getApiVaultData();
             const clipKeyEl = document.getElementById('vault-clipdrop-key');
+            const convertKeyEl = document.getElementById('vault-convertapi-key');
             const sparkEndEl = document.getElementById('vault-spark-endpoint');
             const sparkAppEl = document.getElementById('vault-spark-appid');
             const sparkSecEl = document.getElementById('vault-spark-secret');
             
             if (clipKeyEl) clipKeyEl.value = data.clipdropKey || '';
+            if (convertKeyEl) convertKeyEl.value = data.convertApiKey || '';
             if (sparkEndEl) sparkEndEl.value = data.sparkEndpoint || '';
             if (sparkAppEl) sparkAppEl.value = data.sparkAppId || '';
             if (sparkSecEl) sparkSecEl.value = data.sparkApiSecret || '';
@@ -801,12 +836,14 @@ export default class AuthManager {
         if (btnSaveVault) {
             btnSaveVault.addEventListener('click', () => {
                 const clipdropKey = document.getElementById('vault-clipdrop-key')?.value.trim();
+                const convertApiKey = document.getElementById('vault-convertapi-key')?.value.trim();
                 const sparkEndpoint = document.getElementById('vault-spark-endpoint')?.value.trim();
                 const sparkAppId = document.getElementById('vault-spark-appid')?.value.trim();
                 const sparkApiSecret = document.getElementById('vault-spark-secret')?.value.trim();
 
                 this.saveApiVaultData({
                     clipdropKey,
+                    convertApiKey,
                     sparkEndpoint,
                     sparkAppId,
                     sparkApiSecret

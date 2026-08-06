@@ -1,9 +1,15 @@
 export default class ClipdropAPI {
     static getApiKey() {
-        // 使用 Vite 的環境變數
-        const key = import.meta.env.VITE_CLIPDROP_API_KEY;
+        let key = '';
+        try {
+            const vault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+            key = vault.clipdropKey || localStorage.getItem('clipdrop_api_key') || (import.meta.env && import.meta.env.VITE_CLIPDROP_API_KEY) || '';
+        } catch (e) {
+            key = (import.meta.env && import.meta.env.VITE_CLIPDROP_API_KEY) || '';
+        }
+
         if (!key) {
-            throw new Error('未設定 Clipdrop API Key (VITE_CLIPDROP_API_KEY)');
+            throw new Error('未設定 Clipdrop API Key（請至右上角系統金鑰保險箱設定或配置環境變數）');
         }
         return key;
     }

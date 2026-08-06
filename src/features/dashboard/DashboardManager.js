@@ -973,9 +973,16 @@ export default class DashboardManager {
         const ext = file.name.split('.').pop().toLowerCase();
         const format = (ext === 'pptx') ? 'pptx' : 'ppt';
 
-        const secret = import.meta.env.VITE_CONVERTAPI_SECRET;
+        let secret = '';
+        try {
+            const vault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+            secret = vault.convertApiKey || localStorage.getItem('convertapi_secret') || (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
+        } catch (e) {
+            secret = (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
+        }
+
         if (!secret) {
-            throw new Error("未設定 ConvertAPI 金鑰，無法在線轉換 PPT");
+            throw new Error("未設定 ConvertAPI 金鑰（請至右上角系統金鑰保險箱設定或配置環境變數）");
         }
         
         const response = await fetch(`https://v2.convertapi.com/convert/${format}/to/pdf?Secret=${secret}&StoreFile=false`, {

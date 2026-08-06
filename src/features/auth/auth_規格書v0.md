@@ -39,6 +39,7 @@ interface UserAccount {
 ```typescript
 interface ApiVaultConfig {
   clipdropKey: string;      // Clipdrop 影像 AI 金鑰
+  convertApiKey: string;    // ConvertAPI PPT/PPTX 轉檔 Secret
   sparkEndpoint: string;    // Spark 模型伺服器端點
   sparkAppId: string;       // Spark APP ID
   sparkApiKey?: string;     // Spark API Key
