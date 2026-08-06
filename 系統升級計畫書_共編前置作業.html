@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多媒體畫布編輯器 - 系統升級計畫書：多人共編前置作業 (Project Routing & Collaboration Gateway)</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        },
+                        accent: {
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        emerald: {
+                            400: '#34d399',
+                            500: '#10b981',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"Fira Code"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Noto+Sans+TC:wght@300;400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px -10px rgba(99, 102, 241, 0.25);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-border {
+            position: relative;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(129, 140, 248, 0.3), rgba(192, 132, 252, 0.3));
+            padding: 1px;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 20px;
+            width: 2px;
+            background: linear-gradient(to bottom, #6366f1, #38bdf8, #10b981);
+        }
+    </style>
+</head>
+<body class="min-h-screen selection:bg-indigo-500 selection:text-white custom-scrollbar">
+
+    <!-- 頂部導覽列 -->
+    <nav class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-sky-400 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-indigo-500/20">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-extrabold text-lg text-white tracking-wide">EditorV2</span>
+                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">Collab Prerequisites Plan</span>
+                    </div>
+                    <p class="text-xs text-slate-400">專案獨立網址路由與協作前置作業計畫書</p>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="#overview" class="hover:text-indigo-400 transition">升級背景</a>
+                <a href="#core-features" class="hover:text-indigo-400 transition">四大前置核心</a>
+                <a href="#architecture" class="hover:text-indigo-400 transition">模組與架構</a>
+                <a href="#flow" class="hover:text-indigo-400 transition">開發流程</a>
+                <a href="#rules" class="hover:text-indigo-400 transition">規範與驗收</a>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="text-xs px-3 py-1.5 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/30 flex items-center">
+                    <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse mr-2"></span>
+                    目標版本: v1.4.2 (Collab Prep)
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主頁面容器 -->
+    <main class="max-w-7xl mx-auto px-6 py-10 space-y-16">
+
+        <!-- 英雄橫幅 (Hero Banner) -->
+        <section class="relative rounded-3xl overflow-hidden p-8 md:p-12 border border-slate-800 bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900">
+            <div class="absolute -right-20 -top-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-20 -bottom-20 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 max-w-3xl space-y-4">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold">
+                    <i class="fas fa-route"></i>
+                    <span>邁向 V2.0 多人即時共編之關鍵基石工程</span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black text-white leading-tight">
+                    專案網址路由化 &<br><span class="gradient-text">多人共編前置作業計畫書</span>
+                </h1>
+                <p class="text-slate-300 text-base md:text-lg leading-relaxed">
+                    本計畫旨在徹底解決「所有專案共享單一 URL」之痛點，為每個專案賦予唯一的深層網址 (Deep Link)，並在右上角使用者中心整合「專案協作與分享」入口與零伺服器廣播前置通訊層，為後續正式導入 Yjs CRDT 與多人即時同步鋪平道路。
+                </p>
+            </div>
+        </section>
+
+        <!-- 1. 現狀痛點與升級目標 (Overview) -->
+        <section id="overview" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">
+                    01
+                </div>
+                <h2 class="text-2xl font-black text-white">升級背景與現狀痛點分析</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 現行痛點 -->
+                <div class="glass-card rounded-2xl p-6 border-l-4 border-amber-500 space-y-4">
+                    <div class="flex items-center space-x-2 text-amber-400 font-bold">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>現行架構痛點 (`v1.4.1`)</span>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-300">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-times-circle text-rose-400 mt-1"></i>
+                            <span><strong>單一 URL 混淆</strong>：無論在儀表板或開啟任何專案，瀏覽器網址固定為 <code>https://.../editorv2/</code>，無法直通特定專案。</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-times-circle text-rose-400 mt-1"></i>
+                            <span><strong>無法加入書籤或傳遞</strong>：使用者無法把工作中的專案加入瀏覽器書籤或直接將網址丟給同仁。</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-times-circle text-rose-400 mt-1"></i>
+                            <span><strong>瀏覽器歷史失效</strong>：按瀏覽器「上一頁/下一頁」無法在專案與儀表板間自然切換。</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-times-circle text-rose-400 mt-1"></i>
+                            <span><strong>缺乏共編入口與身分識別</strong>：尚未具備生成邀請連結、房號與協作者身分標識機制。</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 升級目標 -->
+                <div class="glass-card rounded-2xl p-6 border-l-4 border-emerald-500 space-y-4">
+                    <div class="flex items-center space-x-2 text-emerald-400 font-bold">
+                        <i class="fas fa-check-circle"></i>
+                        <span>前置作業升級目標 (`v1.4.2`)</span>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-300">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-check text-emerald-400 mt-1"></i>
+                            <span><strong>SPA 專案路由 (History API)</strong>：實現 <code>?project=proj_xxx</code> 網址規格，完美相容 GitHub Pages。</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-check text-emerald-400 mt-1"></i>
+                            <span><strong>原生支援 Deep Linking & Popstate</strong>：網址貼上即開專案，按返回鍵流暢退回儀表板。</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-check text-emerald-400 mt-1"></i>
+                            <span><strong>右上角「專案協作與分享」彈窗</strong>：收納於使用者下拉選單，提供一鍵複製共編網址與房間碼。</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-check text-emerald-400 mt-1"></i>
+                            <span><strong>協作者 Presence 標識與單機測試通道</strong>：提供隨機個人色彩與 BroadcastChannel 雙分頁測試能力。</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 四大前置升級核心 (Core Features) -->
+        <section id="core-features" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">
+                    02
+                </div>
+                <h2 class="text-2xl font-black text-white">四大前置升級核心 (Feature Specifications)</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- 核心 1：前端專案路由引擎 -->
+                <div class="glass-card rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 font-mono">Core 1 · Routing</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">1. 前端專案路由引擎 (ProjectRouter)</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        基於 <code>window.history.pushState</code> 與 URLSearchParams，在靜態託管環境下提供全功能 SPA 路由。
+                    </p>
+                    <div class="bg-slate-900/80 rounded-xl p-3 border border-slate-800 text-xs font-mono text-slate-300 space-y-1">
+                        <div class="text-slate-500">// 網址規格 (URL Patterns)</div>
+                        <div>首頁儀表板: <span class="text-emerald-400">/editorv2/</span></div>
+                        <div>編輯專案: <span class="text-sky-400">/editorv2/?project=proj_172290183</span></div>
+                        <div>加入共編: <span class="text-indigo-400">/editorv2/?project=proj_172290183&room=893214</span></div>
+                    </div>
+                    <ul class="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
+                        <li>開機自動解析 URL 參數，若帶有 <code>project</code> 則自動跳過首頁直通該專案。</li>
+                        <li>監聽 <code>window.onpopstate</code>，點擊瀏覽器返回鍵無縫返回儀表板。</li>
+                    </ul>
+                </div>
+
+                <!-- 核心 2：使用者選單「分享與協作」中心 -->
+                <div class="glass-card rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-xl">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-300 font-mono">Core 2 · Share UI</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">2. 右上角「分享與協作」選單與彈窗</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        收納於右上角使用者下拉選單（AuthManager / UserMenu），點擊開啟手繪風格「專案協作與分享中心」Modal。
+                    </p>
+                    <div class="space-y-2 text-xs text-slate-300">
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
+                            <span><i class="fas fa-copy text-indigo-400 mr-1.5"></i> 一鍵複製專案共編網址</span>
+                            <span class="text-indigo-300 font-mono">含 room 與 project 參數</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
+                            <span><i class="fas fa-key text-amber-400 mr-1.5"></i> 6 位數房間邀請碼</span>
+                            <span class="text-amber-300 font-mono font-bold tracking-widest">892-140</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
+                            <span><i class="fas fa-user-shield text-emerald-400 mr-1.5"></i> 權限切換</span>
+                            <span class="text-emerald-300">可編輯 (Editor) / 僅檢視 (Viewer)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 核心 3：協作者身分標識與 Presence -->
+                <div class="glass-card rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl">
+                            <i class="fas fa-user-tag"></i>
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-300 font-mono">Core 3 · Presence</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">3. 協作者 Presence 身分與專屬配色</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        從 <code>AuthManager</code> 自動提取當前登入者名稱（如公用管理員或訪客），並指派專屬識別色。
+                    </p>
+                    <ul class="text-xs text-slate-300 space-y-2">
+                        <li class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-pink-500"></span>
+                            <span>自動隨機分配協作者專屬色（Pink, Cyan, Violet, Amber, Emerald）。</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+                            <span>產生協作者 Token 結構：<code>{ userId, name, color, role, joinedAt }</code>。</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-violet-400"></span>
+                            <span>在頂部導覽列預留在線成員頭像堆疊容器 (Avatar Stack)。</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 核心 4：單機雙分頁測試 Provider -->
+                <div class="glass-card rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-xl">
+                            <i class="fas fa-broadcast-tower"></i>
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-teal-500/10 text-teal-300 font-mono">Core 4 · Local Collab</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">4. 單機雙分頁測試通道 (BroadcastChannel)</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        利用原生 <code>BroadcastChannel API</code>，在開發階段無需架設後端 Server 即可實現跨分頁即時測試。
+                    </p>
+                    <div class="bg-slate-900/80 rounded-xl p-3 border border-slate-800 text-xs font-mono text-slate-300 space-y-1">
+                        <div class="text-teal-400">new BroadcastChannel(`editor_room_${roomId}`)</div>
+                        <div class="text-slate-400">同台電腦開啟一般分頁 + 無痕分頁，一邊拖曳文字/圖形，另一邊即時同步並顯示對方游標！</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. 模組架構與檔案路徑 (Architecture & File Tree) -->
+        <section id="architecture" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">
+                    03
+                </div>
+                <h2 class="text-2xl font-black text-white">模組架構與檔案目錄規劃</h2>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 space-y-6">
+                <p class="text-sm text-slate-300">
+                    嚴格遵守 <strong>SDLC 模組化隔離原則</strong>，所有共編前置邏輯收納於 <code>src/features/collaboration/</code> 專屬目錄，路由收納於 <code>src/core/</code>：
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono text-xs">
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 text-slate-300 space-y-1.5">
+                        <div class="text-indigo-400 font-bold mb-2">// 檔案目錄結構</div>
+                        <div>src/</div>
+                        <div>├── core/</div>
+                        <div>│   └── <span class="text-emerald-400 font-bold">ProjectRouter.js</span>    <span class="text-slate-500"># [NEW] SPA URL 路由管理器</span></div>
+                        <div>├── features/</div>
+                        <div>│   ├── <span class="text-sky-400 font-bold">collaboration/</span>          <span class="text-slate-500"># [NEW] 多人共編功能模組</span></div>
+                        <div>│   │   ├── <span class="text-yellow-300">ShareModal.js</span>      <span class="text-slate-500"># [NEW] 手繪風分享與協作彈窗</span></div>
+                        <div>│   │   ├── <span class="text-yellow-300">PresenceManager.js</span> <span class="text-slate-500"># [NEW] 協作者色彩與身分狀態</span></div>
+                        <div>│   │   ├── <span class="text-yellow-300">CollabChannel.js</span>   <span class="text-slate-500"># [NEW] 本機廣播通道 (BroadcastChannel)</span></div>
+                        <div>│   │   └── <span class="text-yellow-300">index.js</span>           <span class="text-slate-500"># [NEW] 模組統一出口</span></div>
+                        <div>│   ├── auth/</div>
+                        <div>│   │   └── <span class="text-slate-300">AuthManager.js</span>      <span class="text-slate-500"># 整合使用者選單協作入口</span></div>
+                        <div>│   └── dashboard/</div>
+                        <div>│       └── <span class="text-slate-300">DashboardManager.js</span> <span class="text-slate-500"># 整合路由切換與網址同步</span></div>
+                        <div>└── docs/</div>
+                        <div>    ├── <span class="text-emerald-300">系統升級計畫書_共編前置作業.html</span></div>
+                        <div>    └── <span class="text-emerald-300">功能規格_專案路由與協作前置.md</span></div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300 space-y-2">
+                            <span class="font-bold text-indigo-400 flex items-center">
+                                <i class="fas fa-exchange-alt mr-2"></i> EventBus 全域事件註冊
+                            </span>
+                            <div class="space-y-1 text-slate-400 font-mono">
+                                <div>• <code>ROUTER:PROJECT_CHANGED</code>: 網址專案切換事件</div>
+                                <div>• <code>ROUTER:NAVIGATE_DASHBOARD</code>: 返回儀表板事件</div>
+                                <div>• <code>COLLAB:OPEN_SHARE_MODAL</code>: 開啟分享協作彈窗</div>
+                                <div>• <code>COLLAB:ROOM_JOINED</code>: 成功加入房間廣播通道</div>
+                                <div>• <code>COLLAB:PRESENCE_UPDATE</code>: 在線協作者名冊變更</div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300 space-y-2">
+                            <span class="font-bold text-sky-400 flex items-center">
+                                <i class="fas fa-palette mr-2"></i> UI 風格規範相容
+                            </span>
+                            <p class="text-slate-400">
+                                分享彈窗完全遵循 <code>.sketch</code> 手繪雙線邊框、<code>shadow-[3px_3px_0px_#334155]</code> 與四套主題變數（Light Sketch / Dark / Pro / Retro）動態適配。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 開發實作流程 (Step-by-Step Implementation Flow) -->
+        <section id="flow" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">
+                    04
+                </div>
+                <h2 class="text-2xl font-black text-white">五階段標準開發排程</h2>
+            </div>
+
+            <div class="relative timeline-line space-y-8 pl-10">
+
+                <!-- Step 1 -->
+                <div class="relative glass-card rounded-2xl p-6 space-y-2">
+                    <div class="absolute -left-[50px] top-6 w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-xs shadow-lg shadow-indigo-500/30">
+                        1
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-white">建立 ProjectRouter.js 專案路由引擎</h4>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono">Stage 1</span>
+                    </div>
+                    <p class="text-xs text-slate-300">
+                        封裝 <code>history.pushState</code>、<code>replaceState</code> 與 <code>popstate</code> 監聽，建立 <code>getProjectIdFromUrl()</code> 與 <code>navigateToProject(id)</code>。
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative glass-card rounded-2xl p-6 space-y-2">
+                    <div class="absolute -left-[50px] top-6 w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold text-xs shadow-lg shadow-sky-500/30">
+                        2
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-white">整合 DashboardManager 與開機 Deep Linking</h4>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-mono">Stage 2</span>
+                    </div>
+                    <p class="text-xs text-slate-300">
+                        點擊專案卡片時自動更新 URL；若使用者直接開啟帶有 <code>?project=...</code> 的網址，自動跳過儀表板並從 IndexedDB 載入專案。
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative glass-card rounded-2xl p-6 space-y-2">
+                    <div class="absolute -left-[50px] top-6 w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center font-bold text-xs shadow-lg shadow-purple-500/30">
+                        3
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-white">打造 ShareModal.js 手繪風分享彈窗</h4>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono">Stage 3</span>
+                    </div>
+                    <p class="text-xs text-slate-300">
+                        在右上角 AuthManager 使用者選單中注入「🔗 分享與協作」按鈕，點擊彈出包含一鍵複製連結、房間碼與權限開關的精緻 Modal。
+                    </p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="relative glass-card rounded-2xl p-6 space-y-2">
+                    <div class="absolute -left-[50px] top-6 w-8 h-8 rounded-full bg-teal-500 text-white flex items-center justify-center font-bold text-xs shadow-lg shadow-teal-500/30">
+                        4
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-white">建立 PresenceManager 與 CollabChannel 本機廣播</h4>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 font-mono">Stage 4</span>
+                    </div>
+                    <p class="text-xs text-slate-300">
+                        指派協作者顏色與名稱，透過 <code>BroadcastChannel</code> 建立房間廣播通道，提供跨分頁在線成員感知。
+                    </p>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="relative glass-card rounded-2xl p-6 space-y-2">
+                    <div class="absolute -left-[50px] top-6 w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-lg shadow-emerald-500/30">
+                        5
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-bold text-white">全系統整合、規格書補充與自動升級 v1.4.2</h4>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">Stage 5</span>
+                    </div>
+                    <p class="text-xs text-slate-300">
+                        撰寫 <code>docs/功能規格_專案路由與協作前置.md</code>，執行完整雙視窗驗收測試，自動推進版號並推送到 GitHub。
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 5. 驗收標準與規範 (Acceptance Criteria) -->
+        <section id="rules" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">
+                    05
+                </div>
+                <h2 class="text-2xl font-black text-white">驗收標準與開發規範 (Acceptance Criteria)</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-card rounded-2xl p-6 space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center text-emerald-400">
+                        <i class="fas fa-clipboard-check mr-2"></i> 功能驗收標準
+                    </h3>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                        <li><strong>網址專屬性</strong>：進入任一專案，瀏覽器網址即時變為 <code>?project=[ID]</code>。</li>
+                        <li><strong>Deep Link 直通</strong>：複製網址在另一個分頁打開，能正確直接載入該專案。</li>
+                        <li><strong>瀏覽器上一頁</strong>：在編輯器中點擊瀏覽器返回鍵，順暢退回專案儀表板。</li>
+                        <li><strong>分享彈窗功能</strong>：點擊使用者選單「分享與協作」，能順利複製帶有房間參數之 URL，並提示成功複製。</li>
+                        <li><strong>單機跨分頁測試</strong>：開啟兩個分頁進入同專案，能偵測到對方在線。</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center text-indigo-400">
+                        <i class="fas fa-shield-alt mr-2"></i> 程式碼品質與規範要求
+                    </h3>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                        <li><strong>零跨模組污染</strong>：不可在 CanvasEngine 內直接寫死分享 DOM，必須透過 EventBus 與獨立模組解耦。</li>
+                        <li><strong>相容現有主題</strong>：分享彈窗必須完整支援手繪、深色、冷灰與復古主題。</li>
+                        <li><strong>代碼註解與規格齊全</strong>：包含完整 JSDoc 與繁體中文說明文件。</li>
+                        <li><strong>版號自動推進</strong>：完成後全域升級至 <code>v1.4.2</code> 並同步 GitHub。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="border-t border-slate-800/80 glass-panel py-8 px-6 text-center text-xs text-slate-500 space-y-2">
+        <p>EditorV2 多媒體畫布編輯器 · 系統升級與多人共編前置作業計畫書</p>
+        <p class="font-mono text-slate-600">Generated on 2026-08-06 · Document Target Version: v1.4.2</p>
+    </footer>
+
+</body>
+</html>
