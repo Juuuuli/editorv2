@@ -639,64 +639,92 @@ export default class AuthManager {
             if (headerRight) {
                 editorUserContainer = document.createElement('div');
                 editorUserContainer.id = 'editor-user-profile-widget';
-                editorUserContainer.className = 'relative ml-1';
+                editorUserContainer.className = 'relative ml-1 shrink-0';
                 headerRight.appendChild(editorUserContainer);
             }
         }
 
         if (editorUserContainer) {
             editorUserContainer.innerHTML = `
-                <button id="btn-editor-user-menu" class="sketch-btn px-2 py-1 flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs shadow-[1.5px_1.5px_0px_#334155]" title="帳號與權限選單">
-                    <div class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px] font-black" style="background-color: ${user.avatarColor || '#4f46e5'};">
+                <!-- 專案內使用者頭像 (圓形按鈕) -->
+                <button id="btn-editor-user-menu" class="w-8 h-8 rounded-full border-2 border-slate-700 bg-slate-100 hover:bg-slate-200 flex items-center justify-center shadow-[1.5px_1.5px_0px_#334155] transition shrink-0 cursor-pointer overflow-hidden" title="${user.name || user.username} (@${user.username}) - 帳號與快捷操作">
+                    <div class="w-full h-full text-white flex items-center justify-center text-xs font-black" style="background-color: ${user.avatarColor || '#4f46e5'};">
                         ${avatarInitial}
                     </div>
-                    <span class="max-w-[80px] truncate hidden md:inline">${user.name || user.username}</span>
-                    <i class="fas fa-chevron-down text-[9px] opacity-60"></i>
                 </button>
 
-                <!-- User Dropdown Menu -->
-                <div id="editor-user-dropdown" class="hidden absolute top-full right-0 mt-1 w-56 bg-white border-2 border-slate-700 rounded-xl shadow-2xl z-[100] overflow-hidden py-1">
+                <!-- User Dropdown Menu (含縮小頁面時收納之功能) -->
+                <div id="editor-user-dropdown" class="hidden absolute top-full right-0 mt-1.5 w-60 bg-white border-2 border-slate-700 rounded-xl shadow-2xl z-[100] overflow-hidden py-1">
                     <div class="px-4 py-3 bg-slate-50 border-b border-slate-200">
                         <div class="text-xs font-black text-slate-800 truncate">${user.name || user.username}</div>
                         <div class="text-[11px] text-slate-500 truncate mb-1.5 font-mono">@${user.username}</div>
                         ${roleBadges[user.role] || roleBadges.admin}
                     </div>
+
+                    <!-- 快捷操作區塊 (說明書、匯入、匯出) -->
+                    <div class="py-1 border-b border-slate-100 bg-slate-50/50">
+                        <button id="menu-btn-manual" class="w-full px-4 py-2 text-xs text-left hover:bg-blue-50 font-bold text-blue-700 flex items-center gap-2.5">
+                            <i class="fas fa-book text-blue-600 w-4 text-center"></i> 系統說明書
+                        </button>
+                        <button id="menu-btn-import" class="w-full px-4 py-2 text-xs text-left hover:bg-emerald-50 font-bold text-emerald-700 flex items-center gap-2.5">
+                            <i class="fas fa-file-import text-emerald-600 w-4 text-center"></i> 匯入圖檔 / 專案
+                        </button>
+                        <div class="px-4 pt-1.5 pb-1 text-[11px] font-bold text-purple-700 flex items-center gap-2">
+                            <i class="fas fa-download text-purple-600 w-4 text-center"></i> 匯出檔案：
+                        </div>
+                        <div class="grid grid-cols-2 gap-1 px-3 pb-1">
+                            <button class="px-2 py-1 text-[11px] bg-purple-50 hover:bg-purple-100 font-bold text-purple-800 rounded flex items-center justify-center gap-1 border border-purple-200" data-export-type="json">
+                                <i class="fas fa-file-code text-[10px]"></i> JSON
+                            </button>
+                            <button class="px-2 py-1 text-[11px] bg-emerald-50 hover:bg-emerald-100 font-bold text-emerald-800 rounded flex items-center justify-center gap-1 border border-emerald-200" data-export-type="image">
+                                <i class="fas fa-image text-[10px]"></i> PNG
+                            </button>
+                            <button class="px-2 py-1 text-[11px] bg-rose-50 hover:bg-rose-100 font-bold text-rose-800 rounded flex items-center justify-center gap-1 border border-rose-200" data-export-type="pdf">
+                                <i class="fas fa-file-pdf text-[10px]"></i> PDF
+                            </button>
+                            <button class="px-2 py-1 text-[11px] bg-amber-50 hover:bg-amber-100 font-bold text-amber-800 rounded flex items-center justify-center gap-1 border border-amber-200" data-export-type="ppt">
+                                <i class="fas fa-file-powerpoint text-[10px]"></i> PPTX
+                            </button>
+                        </div>
+                    </div>
+
                     <button id="menu-btn-collab-share" class="w-full px-4 py-2 text-xs text-left hover:bg-slate-100 font-bold text-slate-700 flex items-center gap-2.5">
-                        <i class="fas fa-share-alt text-teal-600 w-4"></i> 專案協作與分享
+                        <i class="fas fa-share-alt text-teal-600 w-4 text-center"></i> 專案協作與分享
                     </button>
                     <button id="menu-btn-api-vault" class="w-full px-4 py-2 text-xs text-left hover:bg-slate-100 font-bold text-slate-700 flex items-center gap-2.5">
-                        <i class="fas fa-key text-amber-500 w-4"></i> 系統金鑰保險箱 (API)
+                        <i class="fas fa-key text-amber-500 w-4 text-center"></i> 系統金鑰保險箱 (API)
                     </button>
                     <button id="menu-btn-settings" class="w-full px-4 py-2 text-xs text-left hover:bg-slate-100 font-bold text-slate-700 flex items-center gap-2.5">
-                        <i class="fas fa-palette text-indigo-500 w-4"></i> 外觀與風格設定
+                        <i class="fas fa-palette text-indigo-500 w-4 text-center"></i> 外觀與風格設定
                     </button>
                     <div class="border-t border-slate-100 my-1"></div>
                     <button id="menu-btn-logout" class="w-full px-4 py-2 text-xs text-left hover:bg-rose-50 font-bold text-rose-600 flex items-center gap-2.5">
-                        <i class="fas fa-sign-out-alt w-4"></i> 切換帳號 / 登出
+                        <i class="fas fa-sign-out-alt w-4 text-center"></i> 切換帳號 / 登出
                     </button>
                 </div>
             `;
             this.bindDropdownEvents('btn-editor-user-menu', 'editor-user-dropdown');
         }
 
-        // 渲染或更新 Dashboard Header 右側的使用者 Profile 區塊
-        const dashboardHeaderRight = document.querySelector('#dashboard-view header .flex.items-center.space-x-3');
+        // 渲染或更新 Dashboard Header 右側的使用者 Profile 區塊 (縮小時為圓形頭像)
+        const dashboardHeaderRight = document.querySelector('#dashboard-view header .flex.items-center.space-x-3') || document.getElementById('dashboard-header-right');
         if (dashboardHeaderRight) {
             let dashUserContainer = document.getElementById('dashboard-user-profile-widget');
             if (!dashUserContainer) {
                 dashUserContainer = document.createElement('div');
                 dashUserContainer.id = 'dashboard-user-profile-widget';
-                dashUserContainer.className = 'relative ml-2';
+                dashUserContainer.className = 'relative ml-2 shrink-0';
                 dashboardHeaderRight.appendChild(dashUserContainer);
             }
 
             dashUserContainer.innerHTML = `
-                <button id="btn-dash-user-menu" class="sketch-btn px-3 py-1.5 flex items-center gap-2.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm shadow-[2px_2px_0px_#334155]">
-                    <div class="w-6 h-6 rounded-full text-white flex items-center justify-center text-xs font-black" style="background-color: ${user.avatarColor || '#4f46e5'};">
+                <!-- 儀表板使用者按鈕：縮小時為圓形頭像，較大時顯示名稱 -->
+                <button id="btn-dash-user-menu" class="w-8 h-8 sm:w-auto sm:h-auto rounded-full sm:rounded-[255px_15px_225px_15px/15px_225px_15px_255px] p-0 sm:px-3 sm:py-1.5 flex items-center justify-center sm:gap-2.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm border-2 border-slate-700 shadow-[2px_2px_0px_#334155] transition shrink-0 cursor-pointer overflow-hidden" title="${user.name || user.username} (@${user.username})">
+                    <div class="w-7 h-7 sm:w-6 sm:h-6 rounded-full text-white flex items-center justify-center text-xs font-black shrink-0" style="background-color: ${user.avatarColor || '#4f46e5'};">
                         ${avatarInitial}
                     </div>
-                    <span class="max-w-[100px] truncate">${user.name || user.username}</span>
-                    <i class="fas fa-chevron-down text-xs opacity-60"></i>
+                    <span class="max-w-[100px] truncate hidden sm:inline">${user.name || user.username}</span>
+                    <i class="fas fa-chevron-down text-xs opacity-60 hidden sm:inline ml-1"></i>
                 </button>
 
                 <!-- Dashboard User Dropdown Menu -->
@@ -707,14 +735,14 @@ export default class AuthManager {
                         ${roleBadges[user.role] || roleBadges.admin}
                     </div>
                     <button id="dash-menu-btn-api-vault" class="w-full px-4 py-2.5 text-xs text-left hover:bg-slate-100 font-bold text-slate-700 flex items-center gap-2.5">
-                        <i class="fas fa-key text-amber-500 w-4"></i> 系統金鑰保險箱 (API)
+                        <i class="fas fa-key text-amber-500 w-4 text-center"></i> 系統金鑰保險箱 (API)
                     </button>
                     <button id="dash-menu-btn-settings" class="w-full px-4 py-2.5 text-xs text-left hover:bg-slate-100 font-bold text-slate-700 flex items-center gap-2.5">
-                        <i class="fas fa-palette text-indigo-500 w-4"></i> 外觀與風格設定
+                        <i class="fas fa-palette text-indigo-500 w-4 text-center"></i> 外觀與風格設定
                     </button>
                     <div class="border-t border-slate-100 my-1"></div>
                     <button id="dash-menu-btn-logout" class="w-full px-4 py-2.5 text-xs text-left hover:bg-rose-50 font-bold text-rose-600 flex items-center gap-2.5">
-                        <i class="fas fa-sign-out-alt w-4"></i> 切換帳號 / 登出
+                        <i class="fas fa-sign-out-alt w-4 text-center"></i> 切換帳號 / 登出
                     </button>
                 </div>
             `;
@@ -734,7 +762,7 @@ export default class AuthManager {
             e.stopPropagation();
             const isHidden = dropdown.classList.contains('hidden');
             // 關閉其他可能開啟的選單
-            document.querySelectorAll('#editor-user-dropdown, #dash-user-dropdown').forEach(d => d.classList.add('hidden'));
+            document.querySelectorAll('#editor-user-dropdown, #dash-user-dropdown, #export-options').forEach(d => d.classList.add('hidden'));
             if (isHidden) {
                 dropdown.classList.remove('hidden');
             }
@@ -743,6 +771,26 @@ export default class AuthManager {
         document.addEventListener('click', () => {
             dropdown.classList.add('hidden');
         });
+
+        // 綁定說明書
+        const btnManual = dropdown.querySelector('#menu-btn-manual');
+        if (btnManual) {
+            btnManual.addEventListener('click', () => {
+                dropdown.classList.add('hidden');
+                const mainBtn = document.getElementById('btn-manual');
+                if (mainBtn) mainBtn.click();
+            });
+        }
+
+        // 綁定匯入
+        const btnImport = dropdown.querySelector('#menu-btn-import');
+        if (btnImport) {
+            btnImport.addEventListener('click', () => {
+                dropdown.classList.add('hidden');
+                const fileInput = document.getElementById('input-import-project');
+                if (fileInput) fileInput.click();
+            });
+        }
 
         // 綁定選單內的按鈕
         const btnShare = dropdown.querySelector('[id*="menu-btn-collab-share"]');

@@ -144,14 +144,35 @@
 
 /* Sidebar Collapse Transitions */
 .sidebar-collapsible {
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 .sidebar-collapsible.is-collapsed {
   width: 0px !important;
   min-width: 0px !important;
-  border-width: 0px !important;
+  border-left-width: 0px !important;
+  border-right-width: 0px !important;
   padding: 0px !important;
+}
+.sidebar-collapsible.is-collapsed > div {
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
+  width: 0 !important;
+  min-width: 0 !important;
+}
+.sidebar-toggle-handle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  pointer-events: auto !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar-toggle-handle:hover {
+  transform: translateY(-50%) scale(1.08);
 }

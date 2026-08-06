@@ -26,16 +26,19 @@ export default class ExportManager {
                     optionsMenu.classList.add('hidden');
                 }
             });
-            
-            const exportBtns = optionsMenu.querySelectorAll('[data-export-type]');
-            exportBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    optionsMenu.classList.add('hidden');
-                    const type = e.currentTarget.dataset.exportType;
-                    this.handleExport(type);
-                });
-            });
         }
+
+        // 全域委派處理所有 [data-export-type] 按鈕點擊 (包含頂部選單與使用者頭像選單)
+        document.addEventListener('click', (e) => {
+            const exportBtn = e.target.closest('[data-export-type]');
+            if (exportBtn) {
+                document.querySelectorAll('#export-options, #editor-user-dropdown').forEach(el => el.classList.add('hidden'));
+                const type = exportBtn.dataset.exportType;
+                if (type) {
+                    this.handleExport(type);
+                }
+            }
+        });
         
         // Modal events
         const btnWarnClose = document.getElementById('btn-export-warn-close');

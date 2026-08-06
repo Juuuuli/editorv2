@@ -131,16 +131,16 @@
                 <button id="btn-redo" class="w-6 h-6 sm:w-7 sm:h-7 rounded hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition text-xs" title="重做 (Ctrl+Y)"><i class="fas fa-redo"></i></button>
             </div>
 
-            <button id="btn-manual" class="sketch-btn px-2 sm:px-2.5 py-1 text-xs font-bold flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-800 shadow-[1px_1px_0px_#334155] shrink-0 whitespace-nowrap" title="系統說明書">
+            <button id="btn-manual" class="sketch-btn px-2 sm:px-2.5 py-1 text-xs font-bold items-center gap-1 bg-blue-50 text-blue-700 border-blue-800 shadow-[1px_1px_0px_#334155] shrink-0 whitespace-nowrap hidden lg:flex" title="系統說明書">
                 <i class="fas fa-book text-[11px]"></i> <span class="hidden md:inline">說明書</span>
             </button>
             
-            <button id="btn-import-project" class="sketch-btn px-2 sm:px-2.5 py-1 text-xs font-bold flex items-center gap-1 bg-emerald-50 text-emerald-700 border-emerald-800 shadow-[1px_1px_0px_#334155] shrink-0 whitespace-nowrap" title="匯入圖檔或專案">
+            <button id="btn-import-project" class="sketch-btn px-2 sm:px-2.5 py-1 text-xs font-bold items-center gap-1 bg-emerald-50 text-emerald-700 border-emerald-800 shadow-[1px_1px_0px_#334155] shrink-0 whitespace-nowrap hidden lg:flex" title="匯入圖檔或專案">
                 <i class="fas fa-file-import text-[11px]"></i> <span class="hidden md:inline">匯入</span>
             </button>
             <input type="file" id="input-import-project" accept="image/*" class="hidden">
 
-            <div class="relative shrink-0">
+            <div class="relative shrink-0 hidden lg:block" id="container-export-dropdown">
                 <button id="btn-export-dropdown" class="sketch-btn px-2 sm:px-2.5 py-1 text-xs font-bold flex items-center gap-1 bg-purple-50 text-purple-700 border-purple-800 shadow-[1px_1px_0px_#334155] whitespace-nowrap">
                     <i class="fas fa-download text-[11px]"></i> <span class="hidden md:inline">匯出</span><i class="fas fa-chevron-down text-[9px] opacity-70"></i>
                 </button>
@@ -173,7 +173,7 @@
         <!-- Left Sidebar -->
         <aside id="left-sidebar-container" class="sidebar-collapsible relative w-[280px] sm:w-[300px] lg:w-[320px] bg-white border-r-2 border-slate-700 flex flex-col z-20 shrink-0 select-none">
             <!-- Left Sidebar Floating Toggle Button -->
-            <button id="btn-toggle-left-sidebar" class="absolute -right-3.5 top-1/2 -translate-y-1/2 z-40 w-7 h-9 bg-white border-2 border-slate-700 rounded-r-md shadow-[2px_2px_0px_#334155] flex items-center justify-center text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition cursor-pointer" title="收合/展開左側面板">
+            <button id="btn-toggle-left-sidebar" class="sidebar-toggle-handle -right-3.5 w-7 h-10 bg-white border-2 border-slate-700 rounded-r-md shadow-[2px_2px_0px_#334155] text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition" title="收合/展開左側面板">
                 <i id="icon-toggle-left-sidebar" class="fas fa-chevron-left text-[11px] pointer-events-none transition-transform duration-200"></i>
             </button>
             <div id="left-sidebar-inner" class="flex flex-col flex-1 w-full h-full min-w-[280px] overflow-hidden">
@@ -364,7 +364,7 @@
         <!-- Right Sidebar (Thumbnails) -->
         <aside id="thumbnails-container" class="sidebar-collapsible relative w-48 sm:w-56 lg:w-64 bg-white border-l-2 border-slate-700 flex flex-col z-20 shrink-0 select-none">
             <!-- Right Sidebar Floating Toggle Button -->
-            <button id="btn-toggle-right-sidebar" class="absolute -left-3.5 top-1/2 -translate-y-1/2 z-40 w-7 h-9 bg-white border-2 border-slate-700 rounded-l-md shadow-[-2px_2px_0px_#334155] flex items-center justify-center text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition cursor-pointer" title="收合/展開頁面清單">
+            <button id="btn-toggle-right-sidebar" class="sidebar-toggle-handle -left-3.5 w-7 h-10 bg-white border-2 border-slate-700 rounded-l-md shadow-[-2px_2px_0px_#334155] text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition" title="收合/展開頁面清單">
                 <i id="icon-toggle-right-sidebar" class="fas fa-chevron-right text-[11px] pointer-events-none transition-transform duration-200"></i>
             </button>
             <div id="right-sidebar-inner" class="flex flex-col flex-1 w-full h-full min-w-[190px] overflow-hidden">
