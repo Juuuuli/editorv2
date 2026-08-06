@@ -38,12 +38,9 @@ interface UserAccount {
 ### 2.2 API Vault Entity (`editorv2_api_vault`)
 ```typescript
 interface ApiVaultConfig {
+  openaiApiKey: string;     // OpenAI GPT-4o-mini / Vision OCR 金鑰
   clipdropKey: string;      // Clipdrop 影像 AI 金鑰
   convertApiKey: string;    // ConvertAPI PPT/PPTX 轉檔 Secret
-  sparkEndpoint: string;    // Spark 模型伺服器端點
-  sparkAppId: string;       // Spark APP ID
-  sparkApiKey?: string;     // Spark API Key
-  sparkApiSecret?: string;  // Spark API Secret
   updatedAt: number;        // 最後更新時間戳記
 }
 ```

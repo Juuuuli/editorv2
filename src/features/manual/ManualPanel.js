@@ -315,14 +315,14 @@ export default class ManualPanel {
 
                         <div class="p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded-r shadow-sm">
                             <h4 class="font-bold text-indigo-800 text-lg mb-1">智慧辨識 (OCR)</h4>
-                            <p class="text-slate-600 text-sm">目前串接系統：<span class="font-mono bg-white px-1 rounded text-indigo-600">OpenAI Vision API (GPT-4o)</span></p>
-                            <p class="text-slate-500 text-sm mt-1">用途：辨識複雜版面、手寫字體與多國語言。</p>
+                            <p class="text-slate-600 text-sm">目前串接系統：<span class="font-mono bg-white px-1 rounded text-indigo-600">OpenAI Vision API (GPT-4o-mini)</span></p>
+                            <p class="text-slate-500 text-sm mt-1">用途：框選畫布文字區域，辨識複雜版面、文字擷取與多國語言。</p>
                         </div>
                         
                         <div class="p-4 bg-teal-50 border-l-4 border-teal-400 rounded-r shadow-sm">
-                            <h4 class="font-bold text-teal-800 text-lg mb-1">塗抹修補 / 智慧修補</h4>
-                            <p class="text-slate-600 text-sm">目前串接系統：<span class="font-mono bg-white px-1 rounded text-teal-600">Photoroom API (Inpainting)</span></p>
-                            <p class="text-slate-500 text-sm mt-1">用途：透過生成式 AI 無縫填補移除物件後的背景。</p>
+                            <h4 class="font-bold text-teal-800 text-lg mb-1">去背與塗抹修補</h4>
+                            <p class="text-slate-600 text-sm">目前串接系統：<span class="font-mono bg-white px-1 rounded text-teal-600">Clipdrop API (Inpainting & Remove-BG)</span></p>
+                            <p class="text-slate-500 text-sm mt-1">用途：透過生成式 AI 無縫去背與填補抹除物件後的背景。</p>
                         </div>
                     </div>
                 `,

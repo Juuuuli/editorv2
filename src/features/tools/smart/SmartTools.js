@@ -384,12 +384,31 @@ export default class SmartTools {
             this.canvasEngine.canvas.setActiveObject(activeObject);
             this.canvasEngine.canvas.renderAll();
 
-            // 3. 呼叫 vLLM API (Nemotron-Omni)
-            // 如果是在 HTTPS 環境下，必須要打 HTTPS 的 API，否則會被瀏覽器擋下 (Mixed Content)
-            const vllmApiUrl = import.meta.env.VITE_VLLM_API_URL || 'http://10.1.1.103:11435/v1/chat/completions';
+            // 3. 呼叫 GPT-4o-mini / Vision OCR API
+            let openaiKey = '';
+            let apiUrl = 'https://api.openai.com/v1/chat/completions';
+            let model = 'gpt-4o-mini';
+
+            try {
+                const vault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+                openaiKey = vault.openaiApiKey || localStorage.getItem('openai_api_key') || (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';
+            } catch (e) {
+                openaiKey = (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';
+            }
+
+            // 若環境設定了自訂 vLLM 端點且無填寫 OpenAI Key，則向後相容
+            if (!openaiKey && import.meta.env && import.meta.env.VITE_VLLM_API_URL) {
+                apiUrl = import.meta.env.VITE_VLLM_API_URL;
+                model = 'nemotron-omni';
+                openaiKey = 'token-123qwe';
+            }
+
+            if (!openaiKey) {
+                throw new Error('未設定 OpenAI API Key（請至右上角系統金鑰保險箱填入 GPT-4o-mini 金鑰）');
+            }
             
             const requestBody = {
-                model: "nemotron-omni",
+                model: model,
                 messages: [{
                     role: "user",
                     content: [
@@ -401,11 +420,11 @@ export default class SmartTools {
                 temperature: 0.1
             };
 
-            const res = await fetch(vllmApiUrl, {
+            const res = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer token-123qwe'
+                    'Authorization': `Bearer ${openaiKey}`
                 },
                 body: JSON.stringify(requestBody)
             });

@@ -98,29 +98,39 @@ export default class AuthManager {
     initApiVaultStorage() {
         try {
             const raw = localStorage.getItem(this.storageKeyApiVault);
+            const envOpenai = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_OPENAI_API_KEY : '';
             const envClipdrop = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_CLIPDROP_API_KEY : '';
             const envConvert = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_CONVERTAPI_SECRET : '';
 
             if (!raw) {
                 const initialVault = {
+                    openaiApiKey: localStorage.getItem('openai_api_key') || envOpenai || '',
                     clipdropKey: localStorage.getItem('clipdrop_api_key') || envClipdrop || '',
                     convertApiKey: localStorage.getItem('convertapi_secret') || envConvert || '',
-                    sparkEndpoint: 'https://spark-api.xf-yun.com/v1.1/chat',
-                    sparkAppId: '',
-                    sparkApiKey: '',
-                    sparkApiSecret: '',
                     updatedAt: Date.now()
                 };
                 localStorage.setItem(this.storageKeyApiVault, JSON.stringify(initialVault));
             } else {
                 const parsed = JSON.parse(raw);
                 let changed = false;
+                if (parsed.openaiApiKey === undefined) {
+                    parsed.openaiApiKey = localStorage.getItem('openai_api_key') || envOpenai || '';
+                    changed = true;
+                }
                 if (parsed.convertApiKey === undefined) {
                     parsed.convertApiKey = localStorage.getItem('convertapi_secret') || envConvert || '';
                     changed = true;
                 }
                 if (!parsed.clipdropKey && (localStorage.getItem('clipdrop_api_key') || envClipdrop)) {
                     parsed.clipdropKey = localStorage.getItem('clipdrop_api_key') || envClipdrop || '';
+                    changed = true;
+                }
+                // 清理舊版 spark 預留欄位
+                if (parsed.sparkEndpoint !== undefined || parsed.sparkAppId !== undefined || parsed.sparkApiSecret !== undefined) {
+                    delete parsed.sparkEndpoint;
+                    delete parsed.sparkAppId;
+                    delete parsed.sparkApiKey;
+                    delete parsed.sparkApiSecret;
                     changed = true;
                 }
                 if (changed) {
@@ -423,19 +433,31 @@ export default class AuthManager {
 
                 <!-- Vault Content (固定填滿中間高度，支援獨立滾動) -->
                 <div id="api-vault-body" class="p-6 space-y-4 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
-                    <!-- Clipdrop Key -->
+                    <!-- 1. OpenAI GPT-4o-mini (OCR 辨識) -->
                     <div class="vault-section-card p-4 rounded-xl space-y-2">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Clipdrop API Key (智慧生圖/去背)
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> OpenAI API Key (GPT-4o-mini / 智慧辨識)
                             </label>
                             <span class="text-[10px] px-2 py-0.5 rounded font-bold vault-badge-active">現行運作中</span>
                         </div>
-                        <p class="text-[11px] vault-card-desc">用於高畫質智慧去背、AI 物件消除、影像邊界擴展等功能。</p>
+                        <p class="text-[11px] vault-card-desc">用於框選畫布文字之智慧辨識 (OCR)、排版擷取與多國語言分析。</p>
+                        <input type="password" id="vault-openai-key" value="${vaultData.openaiApiKey || ''}" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono transition" placeholder="輸入 OpenAI API 金鑰 (sk-...)">
+                    </div>
+
+                    <!-- 2. Clipdrop Key (去背與修補) -->
+                    <div class="vault-section-card p-4 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Clipdrop API Key (智慧生圖/去背/修補)
+                            </label>
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold vault-badge-active">現行運作中</span>
+                        </div>
+                        <p class="text-[11px] vault-card-desc">用於高畫質智慧去背、AI 抹除修補、物件消除與影像邊界擴展等功能。</p>
                         <input type="password" id="vault-clipdrop-key" value="${vaultData.clipdropKey || ''}" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono transition" placeholder="輸入 Clipdrop API 金鑰...">
                     </div>
 
-                    <!-- ConvertAPI Key (PPT / PPTX 簡報轉檔) -->
+                    <!-- 3. ConvertAPI Key (PPT / PPTX 簡報轉檔) -->
                     <div class="vault-section-card p-4 rounded-xl space-y-2">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
@@ -445,34 +467,6 @@ export default class AuthManager {
                         </div>
                         <p class="text-[11px] vault-card-desc">用於將企業 .ppt、.pptx 簡報在線解析並無失真轉換為多頁面 PDF 匯入畫布。</p>
                         <input type="password" id="vault-convertapi-key" value="${vaultData.convertApiKey || ''}" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono transition" placeholder="輸入 ConvertAPI Secret 金鑰...">
-                    </div>
-
-                    <!-- Spark (星火/企業私有模型) 預備通道 (Sprint 4 Preview) -->
-                    <div class="vault-section-card p-4 rounded-xl space-y-3">
-                        <div class="flex items-center justify-between">
-                            <label class="text-xs font-bold flex items-center gap-2 vault-card-label">
-                                <span class="w-2 h-2 rounded-full bg-purple-500"></span> Spark (星火/私有模型) 連接器
-                            </label>
-                            <span class="text-[10px] px-2 py-0.5 rounded font-bold vault-badge-preview">Sprint 4 預備</span>
-                        </div>
-                        <p class="text-[11px] vault-card-desc">供公司內網 Spark 伺服器或企業專屬大模型介接使用。</p>
-                        
-                        <div class="space-y-2">
-                            <div>
-                                <label class="text-[11px] font-bold block mb-0.5 vault-sub-label">API Endpoint (伺服器端點)</label>
-                                <input type="text" id="vault-spark-endpoint" value="${vaultData.sparkEndpoint || ''}" class="vault-input-field w-full rounded-lg px-3 py-1.5 text-xs font-mono transition">
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="text-[11px] font-bold block mb-0.5 vault-sub-label">APP ID</label>
-                                    <input type="text" id="vault-spark-appid" value="${vaultData.sparkAppId || ''}" class="vault-input-field w-full rounded-lg px-3 py-1.5 text-xs font-mono transition" placeholder="例如: 8a7b6c5d">
-                                </div>
-                                <div>
-                                    <label class="text-[11px] font-bold block mb-0.5 vault-sub-label">API Secret</label>
-                                    <input type="password" id="vault-spark-secret" value="${vaultData.sparkApiSecret || ''}" class="vault-input-field w-full rounded-lg px-3 py-1.5 text-xs font-mono transition" placeholder="••••••••">
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -516,7 +510,10 @@ export default class AuthManager {
         };
         localStorage.setItem(this.storageKeyApiVault, JSON.stringify(updated));
         
-        // 同步相容舊版 clipdrop_api_key 與 convertapi_secret
+        // 同步相容舊版本地存儲
+        if (data.openaiApiKey !== undefined) {
+            localStorage.setItem('openai_api_key', data.openaiApiKey);
+        }
         if (data.clipdropKey !== undefined) {
             localStorage.setItem('clipdrop_api_key', data.clipdropKey);
         }
@@ -548,17 +545,13 @@ export default class AuthManager {
         if (this.apiVaultModal) {
             // 重新填入最新數據
             const data = this.getApiVaultData();
+            const openaiKeyEl = document.getElementById('vault-openai-key');
             const clipKeyEl = document.getElementById('vault-clipdrop-key');
             const convertKeyEl = document.getElementById('vault-convertapi-key');
-            const sparkEndEl = document.getElementById('vault-spark-endpoint');
-            const sparkAppEl = document.getElementById('vault-spark-appid');
-            const sparkSecEl = document.getElementById('vault-spark-secret');
             
+            if (openaiKeyEl) openaiKeyEl.value = data.openaiApiKey || '';
             if (clipKeyEl) clipKeyEl.value = data.clipdropKey || '';
             if (convertKeyEl) convertKeyEl.value = data.convertApiKey || '';
-            if (sparkEndEl) sparkEndEl.value = data.sparkEndpoint || '';
-            if (sparkAppEl) sparkAppEl.value = data.sparkAppId || '';
-            if (sparkSecEl) sparkSecEl.value = data.sparkApiSecret || '';
 
             this.apiVaultModal.classList.remove('opacity-0', 'pointer-events-none');
         }
@@ -835,18 +828,14 @@ export default class AuthManager {
 
         if (btnSaveVault) {
             btnSaveVault.addEventListener('click', () => {
+                const openaiApiKey = document.getElementById('vault-openai-key')?.value.trim();
                 const clipdropKey = document.getElementById('vault-clipdrop-key')?.value.trim();
                 const convertApiKey = document.getElementById('vault-convertapi-key')?.value.trim();
-                const sparkEndpoint = document.getElementById('vault-spark-endpoint')?.value.trim();
-                const sparkAppId = document.getElementById('vault-spark-appid')?.value.trim();
-                const sparkApiSecret = document.getElementById('vault-spark-secret')?.value.trim();
 
                 this.saveApiVaultData({
+                    openaiApiKey,
                     clipdropKey,
-                    convertApiKey,
-                    sparkEndpoint,
-                    sparkAppId,
-                    sparkApiSecret
+                    convertApiKey
                 });
 
                 if (feedbackEl) {
