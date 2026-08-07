@@ -21,6 +21,7 @@ import ProjectStorageEngine from './features/storage/ProjectStorageEngine.js';
 import DashboardManager from './features/dashboard/DashboardManager.js';
 import ThemeManager from './features/theme/ThemeManager.js';
 import AuthManager from './features/auth/AuthManager.js';
+import ApiVaultManager from './features/vault/ApiVaultManager.js';
 import ProjectRouter from './core/ProjectRouter.js';
 import CollaborationModule from './features/collaboration/index.js';
 
@@ -35,10 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // 實例化全域 EventBus
     const eventBus = new EventBus();
 
+    // ★ 實例化系統模型與金鑰保險箱 (Sprint 3 / API Vault)
+    const apiVaultManager = new ApiVaultManager(eventBus);
+
     // ★ 實例化 SPA 專案路由管理器 (v1.5.0)
     const projectRouter = new ProjectRouter(eventBus);
 
-    // ★ 實例化角色帳號、身分認證與金鑰保險箱 (Sprint 3)
+    // ★ 實例化角色帳號與身分認證 (Sprint 3)
     const authManager = new AuthManager(eventBus);
 
     // ★ 實例化多人共編與專案分享前置模組 (v1.5.0)

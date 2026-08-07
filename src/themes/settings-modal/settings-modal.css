@@ -19,7 +19,7 @@
 }
 
 #api-vault-card {
-    width: 580px !important;
+    width: 780px !important;
     height: 560px !important;
     max-width: 95vw !important;
     max-height: 90vh !important;
@@ -110,24 +110,32 @@ body:not([data-theme]) #btn-close-api-vault:hover {
 }
 
 [data-theme="light"] .settings-modal-sidebar,
-body:not([data-theme]) .settings-modal-sidebar {
+[data-theme="light"] #vault-sidebar,
+body:not([data-theme]) .settings-modal-sidebar,
+body:not([data-theme]) #vault-sidebar {
     background-color: #f8fafc !important;
     border-right: 2.5px solid #1e293b !important;
 }
 
 [data-theme="light"] .settings-tab-btn,
-body:not([data-theme]) .settings-tab-btn {
+[data-theme="light"] .vault-sidebar-btn,
+body:not([data-theme]) .settings-tab-btn,
+body:not([data-theme]) .vault-sidebar-btn {
     color: #475569 !important;
     border: 1.5px solid transparent !important;
     border-radius: 10px !important;
 }
 [data-theme="light"] .settings-tab-btn:hover,
-body:not([data-theme]) .settings-tab-btn:hover {
+[data-theme="light"] .vault-sidebar-btn:hover,
+body:not([data-theme]) .settings-tab-btn:hover,
+body:not([data-theme]) .vault-sidebar-btn:hover {
     background-color: #e2e8f0 !important;
     color: #0f172a !important;
 }
 [data-theme="light"] .settings-tab-btn.active,
-body:not([data-theme]) .settings-tab-btn.active {
+[data-theme="light"] .vault-sidebar-btn.is-active,
+body:not([data-theme]) .settings-tab-btn.active,
+body:not([data-theme]) .vault-sidebar-btn.is-active {
     background-color: #fde047 !important;
     color: #0f172a !important;
     border: 2px solid #1e293b !important;
@@ -135,10 +143,28 @@ body:not([data-theme]) .settings-tab-btn.active {
     font-weight: 900 !important;
 }
 
+[data-theme="light"] .vault-subtab-btn,
+body:not([data-theme]) .vault-subtab-btn {
+    color: #64748b !important;
+    border-bottom: 2px solid transparent !important;
+}
+[data-theme="light"] .vault-subtab-btn:hover,
+body:not([data-theme]) .vault-subtab-btn:hover {
+    color: #0f172a !important;
+}
+[data-theme="light"] .vault-subtab-btn.is-active,
+body:not([data-theme]) .vault-subtab-btn.is-active {
+    color: #0f172a !important;
+    border-bottom: 2.5px solid #1e293b !important;
+    font-weight: 900 !important;
+}
+
 [data-theme="light"] .settings-modal-content,
 [data-theme="light"] #api-vault-body,
+[data-theme="light"] #vault-content-area,
 body:not([data-theme]) .settings-modal-content,
-body:not([data-theme]) #api-vault-body {
+body:not([data-theme]) #api-vault-body,
+body:not([data-theme]) #vault-content-area {
     background-color: #ffffff !important;
     color: #0f172a !important;
 }
@@ -313,21 +339,25 @@ body:not([data-theme]) #btn-save-api-vault:hover {
     color: #f8fafc !important;
 }
 
-[data-theme="dark"] .settings-modal-sidebar {
+[data-theme="dark"] .settings-modal-sidebar,
+[data-theme="dark"] #vault-sidebar {
     background-color: #080d1a !important;
     border-right: 1px solid #1e293b !important;
 }
 
-[data-theme="dark"] .settings-tab-btn {
+[data-theme="dark"] .settings-tab-btn,
+[data-theme="dark"] .vault-sidebar-btn {
     color: #94a3b8 !important;
     border: 1px solid transparent !important;
     border-radius: 10px !important;
 }
-[data-theme="dark"] .settings-tab-btn:hover {
+[data-theme="dark"] .settings-tab-btn:hover,
+[data-theme="dark"] .vault-sidebar-btn:hover {
     background-color: #0f172a !important;
     color: #f8fafc !important;
 }
-[data-theme="dark"] .settings-tab-btn.active {
+[data-theme="dark"] .settings-tab-btn.active,
+[data-theme="dark"] .vault-sidebar-btn.is-active {
     background-color: #0f172a !important;
     color: #38bdf8 !important;
     border: 1px solid #38bdf8 !important;
@@ -335,8 +365,22 @@ body:not([data-theme]) #btn-save-api-vault:hover {
     font-weight: 700 !important;
 }
 
+[data-theme="dark"] .vault-subtab-btn {
+    color: #64748b !important;
+    border-bottom: 2px solid transparent !important;
+}
+[data-theme="dark"] .vault-subtab-btn:hover {
+    color: #f8fafc !important;
+}
+[data-theme="dark"] .vault-subtab-btn.is-active {
+    color: #38bdf8 !important;
+    border-bottom: 2px solid #38bdf8 !important;
+    font-weight: 700 !important;
+}
+
 [data-theme="dark"] .settings-modal-content,
-[data-theme="dark"] #api-vault-body {
+[data-theme="dark"] #api-vault-body,
+[data-theme="dark"] #vault-content-area {
     background-color: #0b1120 !important;
     color: #f8fafc !important;
 }
@@ -482,21 +526,25 @@ body:not([data-theme]) #btn-save-api-vault:hover {
     color: #ffffff !important;
 }
 
-[data-theme="pro-slate"] .settings-modal-sidebar {
+[data-theme="pro-slate"] .settings-modal-sidebar,
+[data-theme="pro-slate"] #vault-sidebar {
     background-color: #f1f5f9 !important;
     border-right: 1px solid #cbd5e1 !important;
 }
 
-[data-theme="pro-slate"] .settings-tab-btn {
+[data-theme="pro-slate"] .settings-tab-btn,
+[data-theme="pro-slate"] .vault-sidebar-btn {
     color: #64748b !important;
     border: 1px solid transparent !important;
     border-radius: 8px !important;
 }
-[data-theme="pro-slate"] .settings-tab-btn:hover {
+[data-theme="pro-slate"] .settings-tab-btn:hover,
+[data-theme="pro-slate"] .vault-sidebar-btn:hover {
     background-color: #e2e8f0 !important;
     color: #0f172a !important;
 }
-[data-theme="pro-slate"] .settings-tab-btn.active {
+[data-theme="pro-slate"] .settings-tab-btn.active,
+[data-theme="pro-slate"] .vault-sidebar-btn.is-active {
     background-color: #ffffff !important;
     color: #0284c7 !important;
     border: 1px solid #0284c7 !important;
@@ -504,8 +552,22 @@ body:not([data-theme]) #btn-save-api-vault:hover {
     font-weight: 700 !important;
 }
 
+[data-theme="pro-slate"] .vault-subtab-btn {
+    color: #64748b !important;
+    border-bottom: 2px solid transparent !important;
+}
+[data-theme="pro-slate"] .vault-subtab-btn:hover {
+    color: #0f172a !important;
+}
+[data-theme="pro-slate"] .vault-subtab-btn.is-active {
+    color: #0284c7 !important;
+    border-bottom: 2px solid #0284c7 !important;
+    font-weight: 700 !important;
+}
+
 [data-theme="pro-slate"] .settings-modal-content,
-[data-theme="pro-slate"] #api-vault-body {
+[data-theme="pro-slate"] #api-vault-body,
+[data-theme="pro-slate"] #vault-content-area {
     background-color: #ffffff !important;
     color: #0f172a !important;
 }
@@ -655,22 +717,26 @@ body:not([data-theme]) #btn-save-api-vault:hover {
     color: #ffffff !important;
 }
 
-[data-theme="retro-warm"] .settings-modal-sidebar {
+[data-theme="retro-warm"] .settings-modal-sidebar,
+[data-theme="retro-warm"] #vault-sidebar {
     background-color: #f5eedc !important;
     border-right: 2px solid #78350f !important;
     font-family: 'Georgia', serif !important;
 }
 
-[data-theme="retro-warm"] .settings-tab-btn {
+[data-theme="retro-warm"] .settings-tab-btn,
+[data-theme="retro-warm"] .vault-sidebar-btn {
     color: #8c7863 !important;
     border: 1px solid transparent !important;
     border-radius: 8px !important;
 }
-[data-theme="retro-warm"] .settings-tab-btn:hover {
+[data-theme="retro-warm"] .settings-tab-btn:hover,
+[data-theme="retro-warm"] .vault-sidebar-btn:hover {
     background-color: rgba(255, 255, 255, 0.4) !important;
     color: #451a03 !important;
 }
-[data-theme="retro-warm"] .settings-tab-btn.active {
+[data-theme="retro-warm"] .settings-tab-btn.active,
+[data-theme="retro-warm"] .vault-sidebar-btn.is-active {
     background-color: #fdfbf7 !important;
     color: #78350f !important;
     border: 1.5px solid #78350f !important;
@@ -678,8 +744,22 @@ body:not([data-theme]) #btn-save-api-vault:hover {
     font-weight: 900 !important;
 }
 
+[data-theme="retro-warm"] .vault-subtab-btn {
+    color: #8c7863 !important;
+    border-bottom: 2px solid transparent !important;
+}
+[data-theme="retro-warm"] .vault-subtab-btn:hover {
+    color: #451a03 !important;
+}
+[data-theme="retro-warm"] .vault-subtab-btn.is-active {
+    color: #78350f !important;
+    border-bottom: 2px solid #78350f !important;
+    font-weight: 900 !important;
+}
+
 [data-theme="retro-warm"] .settings-modal-content,
-[data-theme="retro-warm"] #api-vault-body {
+[data-theme="retro-warm"] #api-vault-body,
+[data-theme="retro-warm"] #vault-content-area {
     background-color: #fdfbf7 !important;
     color: #451a03 !important;
 }

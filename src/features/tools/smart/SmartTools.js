@@ -384,14 +384,27 @@ export default class SmartTools {
             this.canvasEngine.canvas.setActiveObject(activeObject);
             this.canvasEngine.canvas.renderAll();
 
-            // 3. 呼叫 GPT-4o-mini / Vision OCR API
+            // 3. 呼叫 GPT-4o / Vision OCR API 或自訂 vLLM 端點
             let openaiKey = '';
             let apiUrl = 'https://api.openai.com/v1/chat/completions';
             let model = 'gpt-4o-mini';
 
             try {
-                const vault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
-                openaiKey = vault.openaiApiKey || localStorage.getItem('openai_api_key') || (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';
+                const vaultConfig = JSON.parse(localStorage.getItem('EDITOR_V2_VAULT_CONFIG') || '{}');
+                const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+
+                if (vaultConfig.activeLlmType === 'custom' && vaultConfig.custom && vaultConfig.custom.baseUrl) {
+                    apiUrl = vaultConfig.custom.baseUrl.endsWith('/chat/completions') 
+                        ? vaultConfig.custom.baseUrl 
+                        : `${vaultConfig.custom.baseUrl.replace(/\/$/, '')}/chat/completions`;
+                    model = vaultConfig.custom.modelId || 'default-model';
+                    openaiKey = vaultConfig.custom.token || 'bearer-token';
+                } else if (vaultConfig.builtin && vaultConfig.builtin.apiKey) {
+                    openaiKey = vaultConfig.builtin.apiKey;
+                    model = vaultConfig.builtin.model || 'gpt-4o-mini';
+                } else {
+                    openaiKey = legacyVault.openaiApiKey || localStorage.getItem('openai_api_key') || (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';
+                }
             } catch (e) {
                 openaiKey = (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';
             }
@@ -404,7 +417,7 @@ export default class SmartTools {
             }
 
             if (!openaiKey) {
-                throw new Error('未設定 OpenAI API Key（請至右上角系統金鑰保險箱填入 GPT-4o-mini 金鑰）');
+                throw new Error('未設定 AI 模型 API Key（請至右上角系統金鑰保險箱填入 OpenAI 或自訂端點金鑰）');
             }
             
             const requestBody = {

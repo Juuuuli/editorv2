@@ -1118,8 +1118,9 @@ export default class DashboardManager {
 
         let secret = '';
         try {
-            const vault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
-            secret = vault.convertApiKey || localStorage.getItem('convertapi_secret') || (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
+            const vaultConfig = JSON.parse(localStorage.getItem('EDITOR_V2_VAULT_CONFIG') || '{}');
+            const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+            secret = vaultConfig.pptParsing?.secret || legacyVault.convertApiKey || localStorage.getItem('convertapi_secret') || (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
         } catch (e) {
             secret = (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
         }

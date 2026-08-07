@@ -2,8 +2,9 @@ export default class ClipdropAPI {
     static getApiKey() {
         let key = '';
         try {
-            const vault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
-            key = vault.clipdropKey || localStorage.getItem('clipdrop_api_key') || (import.meta.env && import.meta.env.VITE_CLIPDROP_API_KEY) || '';
+            const vaultConfig = JSON.parse(localStorage.getItem('EDITOR_V2_VAULT_CONFIG') || '{}');
+            const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+            key = vaultConfig.imageProcessing?.apiKey || legacyVault.clipdropKey || localStorage.getItem('clipdrop_api_key') || (import.meta.env && import.meta.env.VITE_CLIPDROP_API_KEY) || '';
         } catch (e) {
             key = (import.meta.env && import.meta.env.VITE_CLIPDROP_API_KEY) || '';
         }
