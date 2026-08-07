@@ -125,40 +125,55 @@ export default class DashboardManager {
         
         this.dashboardContainer.innerHTML = `
             <!-- Dashboard Header -->
-            <header class="relative z-40 min-h-[64px] h-auto py-3 px-4 sm:px-8 bg-white border-b-2 border-slate-700 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 shrink-0 shadow-sm">
-                <div class="flex items-center space-x-3 shrink-0">
-                    <div class="sketch flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 text-slate-800 text-xl sm:text-2xl font-black shadow-[2px_2px_0px_#334155] sm:shadow-[3px_3px_0px_#334155] bg-amber-100 shrink-0">
-                        <i class="fas fa-cubes"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <div class="flex items-center space-x-2">
-                            <h1 class="text-xl sm:text-2xl font-black text-slate-800 tracking-wide whitespace-nowrap">專案儀表板</h1>
-                            <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 whitespace-nowrap">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.5.0'}</span>
+            <header class="relative z-40 bg-white border-b-2 border-slate-700 shrink-0 shadow-sm">
+                <!-- 主要行：Logo / 標題 + 右側頭像 (永遠顯示) -->
+                <div class="flex items-center justify-between px-4 sm:px-6 h-14 sm:h-16 gap-3">
+                    <!-- 左：圖示 + 標題 -->
+                    <div class="flex items-center space-x-3 shrink-0 min-w-0">
+                        <div class="sketch flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 text-slate-800 text-lg sm:text-xl font-black shadow-[2px_2px_0px_#334155] bg-amber-100 shrink-0">
+                            <i class="fas fa-cubes"></i>
                         </div>
-                        <p class="hidden md:block text-xs text-slate-500 font-medium">隨時管理、複製、刪除或開啟您的多媒體專案</p>
+                        <div class="min-w-0 hidden xs:block">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h1 class="text-base sm:text-xl font-black text-slate-800 tracking-wide whitespace-nowrap">專案儀表板</h1>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 whitespace-nowrap">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.5.0'}</span>
+                            </div>
+                            <p class="hidden md:block text-xs text-slate-500 font-medium truncate max-w-[280px]">隨時管理、複製、刪除或開啟您的多媒體專案</p>
+                        </div>
+                    </div>
+
+                    <!-- 右：搜尋 + 按鈕群 + 使用者頭像 (頭像永遠顯示) -->
+                    <div id="dashboard-header-right" class="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
+                        <!-- 搜尋列：小螢幕縮短，xs以下隱藏 -->
+                        <div class="relative items-center hidden sm:flex">
+                            <i class="fas fa-search absolute left-3 text-slate-400 text-xs pointer-events-none"></i>
+                            <input type="text" id="dashboard-search-input" class="w-28 md:w-48 lg:w-60 bg-slate-100 border border-slate-300 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:w-40 md:focus:w-56 transition-all duration-200" placeholder="搜尋專案...">
+                        </div>
+
+                        <!-- 匯入按鈕：xs以下只顯示icon -->
+                        <button id="btn-import-project-file" class="sketch-btn px-2 sm:px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 shadow-[1.5px_1.5px_0px_#334155] shrink-0" title="匯入 .editorproj 專案檔、JSON、PDF、簡報或圖片">
+                            <i class="fas fa-file-import text-teal-600 text-sm"></i>
+                            <span class="hidden md:inline">匯入檔案</span>
+                        </button>
+                        <input type="file" id="input-project-file" accept=".editorproj,.json,.pdf,.ppt,.pptx,image/*" class="hidden">
+
+                        <!-- 新建按鈕：xs以下只顯示icon -->
+                        <button id="btn-open-create-modal" class="sketch-btn px-2 sm:px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center gap-1.5 shadow-[2px_2px_0px_#334155] shrink-0 whitespace-nowrap">
+                            <i class="fas fa-plus text-sm"></i>
+                            <span class="hidden sm:inline">新建專案</span>
+                        </button>
+
+                        <!-- 使用者頭像 (永遠顯示在最右側，由 AuthManager 注入) -->
+                        <div id="dashboard-user-profile-widget" class="relative shrink-0"></div>
                     </div>
                 </div>
 
-                <div id="dashboard-header-right" class="flex items-center space-x-2 sm:space-x-3 shrink-0 flex-wrap sm:flex-nowrap justify-end">
-                    <!-- 搜尋列 -->
-                    <div class="relative flex items-center w-32 sm:w-44 md:w-60">
-                        <i class="fas fa-search absolute left-3 text-slate-400 text-xs sm:text-sm pointer-events-none"></i>
-                        <input type="text" id="dashboard-search-input" class="w-full bg-slate-100 border border-slate-300 rounded-xl pl-8 sm:pl-9 pr-3 sm:pr-4 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="搜尋專案...">
+                <!-- 次要行：小螢幕時顯示搜尋列 -->
+                <div class="flex sm:hidden px-4 pb-3 gap-2">
+                    <div class="relative flex-1">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                        <input type="text" id="dashboard-search-input-mobile" class="w-full bg-slate-100 border border-slate-300 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="搜尋專案...">
                     </div>
-
-                    <!-- 匯入專案按鈕 -->
-                    <button id="btn-import-project-file" class="sketch-btn px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-[1.5px_1.5px_0px_#334155]" title="匯入 .editorproj 專案檔、JSON、PDF、簡報或圖片">
-                        <i class="fas fa-file-import mr-1.5 text-teal-600"></i> <span class="hidden sm:inline">匯入檔案</span><span class="sm:hidden">匯入</span>
-                    </button>
-                    <input type="file" id="input-project-file" accept=".editorproj,.json,.pdf,.ppt,.pptx,image/*" class="hidden">
-
-                    <!-- 新建專案按鈕 -->
-                    <button id="btn-open-create-modal" class="sketch-btn px-3.5 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center shadow-[2px_2px_0px_#334155] whitespace-nowrap">
-                        <i class="fas fa-plus mr-1.5"></i> 新建專案
-                    </button>
-
-                    <!-- 使用者頭像與選單 (最右側) -->
-                    <div id="dashboard-user-profile-widget" class="relative ml-1"></div>
                 </div>
             </header>
 
@@ -390,14 +405,20 @@ export default class DashboardManager {
             });
         }
 
-        // 搜尋
+        // 搜尋（桌面 + 行動版同步）
+        const searchHandler = (e) => {
+            this.searchQuery = e.target.value.toLowerCase().trim();
+            // 同步另一個搜尋欄的值
+            const desktop = document.getElementById('dashboard-search-input');
+            const mobile = document.getElementById('dashboard-search-input-mobile');
+            if (desktop && e.target !== desktop) desktop.value = e.target.value;
+            if (mobile && e.target !== mobile) mobile.value = e.target.value;
+            this.renderProjectCards();
+        };
         const searchInput = document.getElementById('dashboard-search-input');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                this.searchQuery = e.target.value.toLowerCase().trim();
-                this.renderProjectCards();
-            });
-        }
+        if (searchInput) searchInput.addEventListener('input', searchHandler);
+        const searchInputMobile = document.getElementById('dashboard-search-input-mobile');
+        if (searchInputMobile) searchInputMobile.addEventListener('input', searchHandler);
 
         // 篩選按鈕
         const filterBtns = this.dashboardContainer.querySelectorAll('.dashboard-filter-btn');
