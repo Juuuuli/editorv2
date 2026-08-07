@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系統金鑰保險箱與模型管理 - 擴充提案</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#0f172a', /* slate-900 */
+                            card: '#1e293b', /* slate-800 */
+                            border: '#334155', /* slate-700 */
+                            text: '#f8fafc', /* slate-50 */
+                            muted: '#94a3b8' /* slate-400 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+        }
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #818cf8, #c084fc);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 10px; }
+    </style>
+</head>
+<body class="antialiased min-h-screen p-4 md:p-8 custom-scrollbar">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <!-- Header -->
+        <header class="text-center space-y-4 py-8">
+            <h1 class="text-3xl md:text-4xl font-black tracking-tight gradient-text">系統金鑰保險箱 & 模型管理</h1>
+            <p class="text-dark-muted font-medium">現有架構釐清與未來擴充提案</p>
+        </header>
+
+        <!-- Section 1: 現有系統內容盤點 -->
+        <div class="bg-dark-card rounded-2xl p-6 md:p-8 shadow-lg border border-dark-border">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg border border-indigo-500/30">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h2 class="text-xl font-bold">1. 現有系統 API/AI 服務盤點</h2>
+            </div>
+            
+            <p class="text-dark-muted mb-4 text-sm leading-relaxed">
+                在討論擴充之前，我們必須先釐清「哪些是 AI 模型？哪些只是一般雲端服務？」<br>
+                目前我們的編輯器主要使用了 <strong>三種截然不同</strong> 的服務，它們在未來的擴充方式也完全不同：
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Type 1 -->
+                <div class="bg-slate-900 rounded-xl p-5 border border-slate-700">
+                    <div class="flex items-center gap-2 text-emerald-400 mb-2 font-bold">
+                        <i class="fas fa-brain"></i> 生成式 AI 模型 (LLM/VLM)
+                    </div>
+                    <div class="text-xs text-slate-400 mb-3 space-y-1">
+                        <p><strong>目前使用：</strong>OpenAI Vision API (GPT-4o-mini)</p>
+                        <p><strong>負責功能：</strong>PDF 文字修改、智慧辨識 (OCR)、AI 助手等。</p>
+                    </div>
+                    <div class="text-[11px] bg-emerald-500/10 text-emerald-300 p-2 rounded border border-emerald-500/20">
+                        <strong>擴充潛力：極高。</strong> 這正是您主管提到的 vLLM、Ollama 等開源模型可以替換的對象。我們需要為它設計「預設」與「自訂(OpenAI相容)」的切換介面。
+                    </div>
+                </div>
+
+                <!-- Type 2 -->
+                <div class="bg-slate-900 rounded-xl p-5 border border-slate-700">
+                    <div class="flex items-center gap-2 text-pink-400 mb-2 font-bold">
+                        <i class="fas fa-image"></i> 專業影像 AI 服務
+                    </div>
+                    <div class="text-xs text-slate-400 mb-3 space-y-1">
+                        <p><strong>目前使用：</strong>Clipdrop API</p>
+                        <p><strong>負責功能：</strong>圖片一鍵去背、塗抹修補 (Inpainting)。</p>
+                    </div>
+                    <div class="text-[11px] bg-pink-500/10 text-pink-300 p-2 rounded border border-pink-500/20">
+                        <strong>擴充潛力：中。</strong> 這是特定領域的 AI 模型，通常不走 LLM API 格式。未來如果要換，可能會替換成自架的 Stable Diffusion (ComfyUI) API。
+                    </div>
+                </div>
+
+                <!-- Type 3 -->
+                <div class="bg-slate-900 rounded-xl p-5 border border-slate-700">
+                    <div class="flex items-center gap-2 text-sky-400 mb-2 font-bold">
+                        <i class="fas fa-cloud"></i> 傳統 SaaS 雲端服務
+                    </div>
+                    <div class="text-xs text-slate-400 mb-3 space-y-1">
+                        <p><strong>目前使用：</strong>ConvertAPI</p>
+                        <p><strong>負責功能：</strong>PPT/PPTX 檔案轉換導入。</p>
+                    </div>
+                    <div class="text-[11px] bg-sky-500/10 text-sky-300 p-2 rounded border border-sky-500/20">
+                        <strong>擴充潛力：低。</strong> 這並非 AI 模型，純粹是雲端檔案轉檔工具。通常只需保留一個固定的 API Key 欄位即可，不需做模型切換。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: 我們的編輯器該做到什麼程度？ -->
+        <div class="bg-dark-card rounded-2xl p-6 md:p-8 shadow-lg border border-dark-border">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h2 class="text-xl font-bold">2. 我們的系統該做到什麼程度？</h2>
+            </div>
+            <div class="text-sm text-dark-muted space-y-4">
+                <p>基於上述分析，我建議將「系統金鑰保險箱」拆分為兩大類別頁籤：</p>
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                    <ul class="space-y-4">
+                        <li>
+                            <strong class="text-indigo-400 text-base">A. 語言與視覺模型 (核心大腦)</strong><br>
+                            這裡實作您主管提到的「動態切換模型」功能。
+                            提供 <strong>內建主流 (OpenAI/Anthropic)</strong> 以及 <strong>自訂 OpenAI 相容端點</strong> 兩種模式。世界上絕大多數開源模型 (含 vLLM, Ollama) 都支援 OpenAI 的 API 格式，因此我們只要實作一套「自訂 Base URL + Key」的介面，就能吃下幾乎所有的開源模型，無須為每個模型客製化開發。
+                        </li>
+                        <li>
+                            <strong class="text-pink-400 text-base">B. 專業外掛服務 (去背 / 轉檔)</strong><br>
+                            這裡保留原本的 Clipdrop (去背修圖) 與 ConvertAPI (PPT 轉檔) 輸入框。因為這類服務是功能特化型的，API 格式各不相同，直接讓使用者填入官方 Key 是最務實的做法，不需要做複雜的「模型選擇」。
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Interactive UI Mockup -->
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold text-center mb-8 text-white">✨ 介面概念展示 (Mockup)</h2>
+            
+            <div class="max-w-2xl mx-auto glass-card rounded-2xl overflow-hidden relative">
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-dark-border flex justify-between items-center bg-slate-900/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-md">
+                            <i class="fas fa-shield-alt text-xs"></i>
+                        </div>
+                        <h3 class="font-bold text-white tracking-wide">模型設定與金鑰保險箱</h3>
+                    </div>
+                    <button class="text-slate-400 hover:text-white transition"><i class="fas fa-times"></i></button>
+                </div>
+
+                <!-- Main Layout -->
+                <div class="flex h-[450px]">
+                    <!-- Sidebar Tabs -->
+                    <div class="w-48 bg-slate-900/80 border-r border-dark-border flex flex-col pt-2">
+                        <button id="sidebar-tab-llm" class="text-left px-5 py-3 text-sm font-bold text-white bg-indigo-600/20 border-r-2 border-indigo-500 transition flex items-center gap-2" onclick="switchSidebar('llm')">
+                            <i class="fas fa-brain w-4 text-indigo-400"></i> AI 文字/視覺模型
+                        </button>
+                        <button id="sidebar-tab-services" class="text-left px-5 py-3 text-sm font-bold text-slate-400 hover:bg-slate-800 transition flex items-center gap-2" onclick="switchSidebar('services')">
+                            <i class="fas fa-tools w-4 text-slate-400"></i> 專業外掛服務
+                        </button>
+                    </div>
+
+                    <!-- Content Area -->
+                    <div class="flex-1 p-6 overflow-y-auto custom-scrollbar relative">
+                        
+                        <!-- Content: LLM Models -->
+                        <div id="view-llm" class="space-y-6">
+                            <!-- Inner Tabs for LLM -->
+                            <div class="flex gap-6 border-b border-slate-700 pb-2 mb-4">
+                                <button id="tab-builtin" class="text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-2 -mb-[10px] transition" onclick="switchLlmTab('builtin')">內建主流 (推薦)</button>
+                                <button id="tab-custom" class="text-sm font-bold text-slate-500 hover:text-slate-300 pb-2 -mb-[10px] transition" onclick="switchLlmTab('custom')">自訂模型端點 (vLLM等)</button>
+                            </div>
+
+                            <!-- Built-in Models -->
+                            <div id="content-builtin" class="space-y-5 animate-[fadeIn_0.2s_ease-out]">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">1. 選擇供應商與模型</label>
+                                    <div class="grid grid-cols-2 gap-3 mb-3">
+                                        <button class="py-2.5 border border-indigo-500/50 bg-indigo-500/10 text-indigo-300 font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-inner">
+                                            <i class="fas fa-robot"></i> OpenAI
+                                        </button>
+                                        <button class="py-2.5 border border-slate-700 hover:border-slate-500 bg-slate-800 text-slate-300 font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition">
+                                            <i class="fas fa-brain"></i> Anthropic
+                                        </button>
+                                    </div>
+                                    <select class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-200 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                                        <option>GPT-4o (推薦)</option>
+                                        <option>GPT-4o-mini</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">2. API Key</label>
+                                    <div class="relative">
+                                        <input type="password" value="sk-proj-xxxxxxxxxxxxxxxxxxxxxx" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono text-slate-200 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-indigo-400"><i class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Custom Endpoint -->
+                            <div id="content-custom" class="space-y-4 hidden animate-[fadeIn_0.2s_ease-out]">
+                                <div class="bg-indigo-900/30 border border-indigo-500/30 rounded-xl p-3 flex gap-3 text-indigo-300 text-xs">
+                                    <i class="fas fa-info-circle mt-0.5"></i>
+                                    <p>支援相容 <strong>OpenAI 格式</strong> 的 API。您可以在此設定私有部署的 vLLM、Ollama 等模型端點。</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">模型識別碼 (Model ID)</label>
+                                    <input type="text" placeholder="例: meta-llama/Meta-Llama-3-8B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm font-mono outline-none focus:border-indigo-500 text-slate-200">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Base URL</label>
+                                    <input type="text" placeholder="https://api.your-company.com/v1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm font-mono outline-none focus:border-indigo-500 text-slate-200">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Bearer Token (API Key)</label>
+                                    <input type="password" placeholder="輸入 Token" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm font-mono outline-none focus:border-indigo-500 text-slate-200">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content: Services APIs -->
+                        <div id="view-services" class="space-y-6 hidden animate-[fadeIn_0.2s_ease-out]">
+                            <h3 class="text-lg font-bold text-white mb-2">專業外掛服務金鑰</h3>
+                            <p class="text-xs text-slate-400 mb-4 leading-relaxed">此處設定負責特定任務（影像去背、檔案轉檔）的第三方服務金鑰。由於各家 API 規格不同，直接填寫對應金鑰即可。</p>
+                            
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50 space-y-2">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="fas fa-image text-pink-400"></i>
+                                    <label class="text-sm font-bold text-slate-200">Clipdrop API</label>
+                                </div>
+                                <p class="text-[11px] text-slate-500 mb-2">用途：圖片去背、智慧塗抹修補</p>
+                                <input type="password" placeholder="輸入 Clipdrop API Key" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-pink-500 text-slate-200">
+                            </div>
+
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50 space-y-2">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="fas fa-file-powerpoint text-sky-400"></i>
+                                    <label class="text-sm font-bold text-slate-200">ConvertAPI</label>
+                                </div>
+                                <p class="text-[11px] text-slate-500 mb-2">用途：PPT/PPTX 簡報高保真轉檔</p>
+                                <input type="password" placeholder="輸入 ConvertAPI Secret" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-sky-500 text-slate-200">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="px-6 py-4 bg-slate-900/80 border-t border-dark-border flex justify-between items-center backdrop-blur-md">
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-[11px] font-bold text-emerald-400">目前作用中：GPT-4o (內建)</span>
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="px-4 py-2 rounded-xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition border border-transparent hover:border-slate-700">取消</button>
+                        <button class="px-6 py-2 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_15px_rgba(79,70,229,0.4)] transition">儲存設定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchSidebar(view) {
+            const btnLlm = document.getElementById('sidebar-tab-llm');
+            const btnServices = document.getElementById('sidebar-tab-services');
+            const viewLlm = document.getElementById('view-llm');
+            const viewServices = document.getElementById('view-services');
+
+            if (view === 'llm') {
+                btnLlm.className = "text-left px-5 py-3 text-sm font-bold text-white bg-indigo-600/20 border-r-2 border-indigo-500 transition flex items-center gap-2";
+                btnServices.className = "text-left px-5 py-3 text-sm font-bold text-slate-400 hover:bg-slate-800 transition flex items-center gap-2";
+                viewLlm.classList.remove('hidden');
+                viewServices.classList.add('hidden');
+            } else {
+                btnServices.className = "text-left px-5 py-3 text-sm font-bold text-white bg-sky-600/20 border-r-2 border-sky-500 transition flex items-center gap-2";
+                btnLlm.className = "text-left px-5 py-3 text-sm font-bold text-slate-400 hover:bg-slate-800 transition flex items-center gap-2";
+                viewServices.classList.remove('hidden');
+                viewLlm.classList.add('hidden');
+            }
+        }
+
+        function switchLlmTab(tab) {
+            const btnBuiltin = document.getElementById('tab-builtin');
+            const btnCustom = document.getElementById('tab-custom');
+            const contentBuiltin = document.getElementById('content-builtin');
+            const contentCustom = document.getElementById('content-custom');
+
+            if (tab === 'builtin') {
+                btnBuiltin.className = "text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-2 -mb-[10px] transition";
+                btnCustom.className = "text-sm font-bold text-slate-500 hover:text-slate-300 pb-2 -mb-[10px] transition";
+                contentBuiltin.classList.remove('hidden');
+                contentCustom.classList.add('hidden');
+            } else {
+                btnCustom.className = "text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-2 -mb-[10px] transition";
+                btnBuiltin.className = "text-sm font-bold text-slate-500 hover:text-slate-300 pb-2 -mb-[10px] transition";
+                contentCustom.classList.remove('hidden');
+                contentBuiltin.classList.add('hidden');
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</body>
+</html>
