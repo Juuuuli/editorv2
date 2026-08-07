@@ -720,9 +720,9 @@ export default class AuthManager {
             dashUserContainer.innerHTML = `
                 <!-- 儀表板使用者按鈕：md以下為純圓形頭像，md以上顯示名稱 -->
                 <button id="btn-dash-user-menu"
-                    class="w-8 h-8 md:w-auto md:h-auto rounded-full md:rounded-[255px_15px_225px_15px/15px_225px_15px_255px] p-0 md:px-3 md:py-1.5 flex items-center justify-center md:gap-2.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm border-2 border-slate-700 shadow-[2px_2px_0px_#334155] transition shrink-0 cursor-pointer overflow-hidden"
+                    class="w-8 h-8 md:w-auto md:h-auto rounded-full md:rounded-[255px_15px_225px_15px/15px_225px_15px_255px] p-0 md:px-3 md:py-1.5 flex items-center justify-center md:gap-2.5 bg-slate-100 md:bg-white hover:bg-slate-200 md:hover:bg-slate-50 text-slate-800 font-bold text-sm border-2 border-slate-700 shadow-[1.5px_1.5px_0px_#334155] md:shadow-[2px_2px_0px_#334155] transition shrink-0 cursor-pointer overflow-hidden"
                     title="${user.name || user.username} (@${user.username})">
-                    <div class="w-full h-full md:w-6 md:h-6 rounded-full text-white flex items-center justify-center text-xs font-black shrink-0" style="background-color: ${user.avatarColor || '#4f46e5'};">
+                    <div class="w-full h-full md:w-6 md:h-6 md:rounded-full text-white flex items-center justify-center text-xs font-black shrink-0" style="background-color: ${user.avatarColor || '#4f46e5'};">
                         ${avatarInitial}
                     </div>
                     <span class="max-w-[100px] truncate hidden md:inline">${user.name || user.username}</span>
