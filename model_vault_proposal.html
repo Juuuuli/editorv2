@@ -5,6 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>系統金鑰保險箱與模型管理 - 擴充提案</title>
     <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Section 5: 可測試之 API 列表 (Testable APIs) -->
+        <div class="mt-16 bg-slate-900/50 rounded-2xl border border-dark-border p-8 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-500"></div>
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <i class="fas fa-plug text-purple-400"></i> 目前可串接測試之 API 列表
+            </h2>
+            
+            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                以下列出我們目前在開發階段，可以立即申請金鑰或直接自建來進行串接測試的各類 API 服務：
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- LLM -->
+                <div class="bg-slate-950 rounded-xl p-5 border border-slate-700/50 hover:border-purple-500/50 transition">
+                    <h3 class="text-indigo-400 font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
+                        <i class="fas fa-brain w-5"></i> AI 核心模型
+                    </h3>
+                    <ul class="space-y-4 text-sm">
+                        <li>
+                            <div class="text-slate-200 font-bold mb-1">OpenAI API</div>
+                            <div class="text-slate-400 text-xs">穩定且功能強大，支援 GPT-4o 的視覺解析。我們目前的主力測試端點。</div>
+                        </li>
+                        <li>
+                            <div class="text-slate-200 font-bold mb-1">Anthropic (Claude 3)</div>
+                            <div class="text-slate-400 text-xs">對於長文本與邏輯解析極佳，與 OpenAI API 架構類似。</div>
+                        </li>
+                        <li>
+                            <div class="text-slate-200 font-bold mb-1">Ollama / vLLM (內網部署)</div>
+                            <div class="text-slate-400 text-xs">支援 OpenAI 相容格式。可於本地端免費架設，完全無需外部網路即可測試 LLM。</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Image -->
+                <div class="bg-slate-950 rounded-xl p-5 border border-slate-700/50 hover:border-pink-500/50 transition">
+                    <h3 class="text-pink-400 font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
+                        <i class="fas fa-image w-5"></i> 影像處理服務
+                    </h3>
+                    <ul class="space-y-4 text-sm">
+                        <li>
+                            <div class="text-slate-200 font-bold mb-1">Clipdrop API</div>
+                            <div class="text-slate-400 text-xs">提供優異的 Inpainting (塗抹修補) 與背景移除功能，是目前系統預設。</div>
+                        </li>
+                        <li>
+                            <div class="text-slate-200 font-bold mb-1">Photoroom API</div>
+                            <div class="text-slate-400 text-xs">電商與專業影像去背首選，提供高品質邊緣處理。</div>
+                        </li>
+                        <li>
+                            <div class="text-slate-200 font-bold mb-1">Remove.bg</div>
+                            <div class="text-slate-400 text-xs">純粹的去背服務，API 申請快速，適合做為輕量替代方案。</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- PPT -->
+                <div class="bg-slate-950 rounded-xl p-5 border border-slate-700/50 hover:border-sky-500/50 transition">
+                    <h3 class="text-sky-400 font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
+                        <i class="fas fa-file-powerpoint w-5"></i> 簡報轉檔解析
+                    </h3>
+                    <ul class="space-y-4 text-sm">
+                        <li>
+                            <div class="text-slate-200 font-bold mb-1">ConvertAPI</div>
+                            <div class="text-slate-400 text-xs">目前系統支援的雲端轉檔服務，負責將 PPT/PPTX 高保真轉換為 PDF。</div>
+                        </li>
+                        <li>
+                            <div class="text-slate-200 font-bold mb-1">CloudConvert</div>
+                            <div class="text-slate-400 text-xs">支援格式極廣的雲端轉檔服務，亦可作為備用 API。</div>
+                        </li>
+                        <li>
+                            <div class="text-slate-200 font-bold mb-1">Gotenberg (Docker)</div>
+                            <div class="text-slate-400 text-xs">基於 LibreOffice 的開源轉檔伺服器，用 Docker 幾分鐘就能在內網架設，資料不外流。</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -409,83 +488,5 @@
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        <!-- Section 5: 可測試之 API 列表 (Testable APIs) -->
-        <div class="mt-16 bg-slate-900/50 rounded-2xl border border-dark-border p-8 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-500"></div>
-            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <i class="fas fa-plug text-purple-400"></i> 目前可串接測試之 API 列表
-            </h2>
-            
-            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
-                以下列出我們目前在開發階段，可以立即申請金鑰或直接自建來進行串接測試的各類 API 服務：
-            </p>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- LLM -->
-                <div class="bg-slate-950 rounded-xl p-5 border border-slate-700/50 hover:border-purple-500/50 transition">
-                    <h3 class="text-indigo-400 font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
-                        <i class="fas fa-brain w-5"></i> AI 核心模型
-                    </h3>
-                    <ul class="space-y-4 text-sm">
-                        <li>
-                            <div class="text-slate-200 font-bold mb-1">OpenAI API</div>
-                            <div class="text-slate-400 text-xs">穩定且功能強大，支援 GPT-4o 的視覺解析。我們目前的主力測試端點。</div>
-                        </li>
-                        <li>
-                            <div class="text-slate-200 font-bold mb-1">Anthropic (Claude 3)</div>
-                            <div class="text-slate-400 text-xs">對於長文本與邏輯解析極佳，與 OpenAI API 架構類似。</div>
-                        </li>
-                        <li>
-                            <div class="text-slate-200 font-bold mb-1">Ollama / vLLM (內網部署)</div>
-                            <div class="text-slate-400 text-xs">支援 OpenAI 相容格式。可於本地端免費架設，完全無需外部網路即可測試 LLM。</div>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Image -->
-                <div class="bg-slate-950 rounded-xl p-5 border border-slate-700/50 hover:border-pink-500/50 transition">
-                    <h3 class="text-pink-400 font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
-                        <i class="fas fa-image w-5"></i> 影像處理服務
-                    </h3>
-                    <ul class="space-y-4 text-sm">
-                        <li>
-                            <div class="text-slate-200 font-bold mb-1">Clipdrop API</div>
-                            <div class="text-slate-400 text-xs">提供優異的 Inpainting (塗抹修補) 與背景移除功能，是目前系統預設。</div>
-                        </li>
-                        <li>
-                            <div class="text-slate-200 font-bold mb-1">Photoroom API</div>
-                            <div class="text-slate-400 text-xs">電商與專業影像去背首選，提供高品質邊緣處理。</div>
-                        </li>
-                        <li>
-                            <div class="text-slate-200 font-bold mb-1">Remove.bg</div>
-                            <div class="text-slate-400 text-xs">純粹的去背服務，API 申請快速，適合做為輕量替代方案。</div>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- PPT -->
-                <div class="bg-slate-950 rounded-xl p-5 border border-slate-700/50 hover:border-sky-500/50 transition">
-                    <h3 class="text-sky-400 font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
-                        <i class="fas fa-file-powerpoint w-5"></i> 簡報轉檔解析
-                    </h3>
-                    <ul class="space-y-4 text-sm">
-                        <li>
-                            <div class="text-slate-200 font-bold mb-1">ConvertAPI</div>
-                            <div class="text-slate-400 text-xs">目前系統支援的雲端轉檔服務，負責將 PPT/PPTX 高保真轉換為 PDF。</div>
-                        </li>
-                        <li>
-                            <div class="text-slate-200 font-bold mb-1">CloudConvert</div>
-                            <div class="text-slate-400 text-xs">支援格式極廣的雲端轉檔服務，亦可作為備用 API。</div>
-                        </li>
-                        <li>
-                            <div class="text-slate-200 font-bold mb-1">Gotenberg (Docker)</div>
-                            <div class="text-slate-400 text-xs">基於 LibreOffice 的開源轉檔伺服器，用 Docker 幾分鐘就能在內網架設，資料不外流。</div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </body>
 </html>
