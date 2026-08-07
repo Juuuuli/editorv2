@@ -761,7 +761,8 @@ export default class DashboardManager {
      * 開啟特定專案進入編輯器
      */
     async openProject(projectId, updateRouter = true) {
-        const project = await this.storageEngine.getProject(projectId);
+        try {
+            const project = await this.storageEngine.getProject(projectId);
         if (!project) {
             alert('專案不存在或已被移除');
             return;
@@ -824,13 +825,18 @@ export default class DashboardManager {
             this.canvasEngine.fitToScreen();
         }
 
-        // 隱藏 Dashboard，顯示 Editor
-        this.dashboardContainer.classList.add('opacity-0', 'pointer-events-none');
-        setTimeout(() => {
-            this.dashboardContainer.classList.add('hidden');
-        }, 300);
+            // 隱藏 Dashboard，顯示 Editor
+            this.dashboardContainer.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                this.dashboardContainer.classList.add('hidden');
+                this.dashboardContainer.style.display = 'none';
+            }, 300);
 
-        this.showAutoSaveFeedback('專案載入完成');
+            this.showAutoSaveFeedback('專案載入完成');
+        } catch (error) {
+            alert("開啟專案發生錯誤: " + error.message + "\n" + error.stack);
+            console.error("openProject error:", error);
+        }
     }
 
     /**
