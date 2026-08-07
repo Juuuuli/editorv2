@@ -86,7 +86,11 @@ export default class ContextualHelper {
 
             btn.addEventListener('mouseenter', (e) => {
                 // 將換行符號 \n 轉換為 <br>
-                tooltipEl.innerHTML = tooltipText.replace(/\n/g, '<br><span class="text-slate-400 font-normal text-xs mt-1 block">') + '</span>';
+                if (tooltipText.includes('\n')) {
+                    tooltipEl.innerHTML = tooltipText.replace(/\n/g, '<br><span class="text-slate-400 font-normal text-xs mt-1 block">') + '</span>';
+                } else {
+                    tooltipEl.innerHTML = tooltipText;
+                }
                 
                 const rect = btn.getBoundingClientRect();
                 
@@ -106,7 +110,7 @@ export default class ContextualHelper {
                     if (ttRect.bottom > window.innerHeight - 8) {
                         tooltipEl.style.top = (rect.top - ttRect.height - 8) + 'px';
                     }
-                    if (ttRect.right > window.innerWidth - 8) {
+                    if (ttRect.right > window.innerWidth - 8 && rect.left > window.innerWidth / 2) {
                         tooltipEl.style.left = Math.max(8, window.innerWidth - ttRect.width - 8) + 'px';
                     }
                 });

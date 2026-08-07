@@ -86,6 +86,8 @@
     transform: translateY(5px);
     transition: opacity 0.2s ease, transform 0.2s ease;
     white-space: nowrap;
+    width: max-content;
+    max-width: 300px;
     box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
   }
   .sketch-tooltip.show {
