@@ -430,10 +430,16 @@ export default class SmartTools {
                     if (!geminiKey) {
                         throw new Error('未設定 Google Gemini API Key（請至右上角系統金鑰保險箱填入 Gemini 金鑰）');
                     }
-                    let geminiModel = vaultConfig.builtin?.model || 'gemini-1.5-flash';
+                    const candidateModels = Array.from(new Set([
+                        vaultConfig.builtin?.model || 'gemini-1.5-flash-8b',
+                        'gemini-1.5-flash-8b',
+                        'gemini-2.5-flash',
+                        'gemini-2.0-flash-exp',
+                        'gemini-1.5-flash-latest',
+                        'gemini-1.5-pro'
+                    ]));
+                    
                     const base64Data = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
-                    console.log('[SmartTools] 🚀 正在呼叫 Google Gemini 視覺模型進行 OCR:', geminiModel);
-
                     const requestPayload = {
                         contents: [{
                             parts: [
@@ -447,32 +453,34 @@ export default class SmartTools {
                         }
                     };
 
-                    let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestPayload)
-                    });
-
-                    // 若 2.0-flash 遇到 Free Tier 額度限制 (limit: 0)，自動降級嘗試 1.5-flash
-                    if (!res.ok && geminiModel !== 'gemini-1.5-flash') {
-                        const err = await res.json().catch(() => ({}));
-                        if (res.status === 429 || err.error?.message?.includes('Quota exceeded')) {
-                            console.warn('[SmartTools] ⚠️ Gemini 2.0 遇到免費配額限制，自動切換至 Gemini 1.5 Flash 重試...');
-                            geminiModel = 'gemini-1.5-flash';
-                            res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`, {
+                    let lastError = null;
+                    for (const m of candidateModels) {
+                        try {
+                            console.log(`[SmartTools] 🚀 嘗試呼叫 Gemini 模型: ${m}`);
+                            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${geminiKey}`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(requestPayload)
                             });
+
+                            if (res.ok) {
+                                const result = await res.json();
+                                textContent = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+                                console.log(`[SmartTools] ✅ Gemini 模型 ${m} 辨識成功！`);
+                                break;
+                            } else {
+                                const err = await res.json().catch(() => ({}));
+                                lastError = new Error(`Gemini API 錯誤 (${m}): ${err.error?.message || res.statusText}`);
+                                console.warn(`[SmartTools] ⚠️ 模型 ${m} 呼叫失敗，嘗試下一個候選模型:`, err.error?.message);
+                            }
+                        } catch (e) {
+                            lastError = e;
                         }
                     }
 
-                    if (!res.ok) {
-                        const err = await res.json().catch(() => ({}));
-                        throw new Error(`Gemini API 錯誤: ${err.error?.message || res.statusText}`);
+                    if (!textContent && lastError) {
+                        throw lastError;
                     }
-                    const result = await res.json();
-                    textContent = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
                 } else {
                     // OpenAI Vision API
                     const openaiKey = vaultConfig.builtin?.openaiApiKey || vaultConfig.builtin?.apiKey || legacyVault.openaiApiKey || localStorage.getItem('openai_api_key') || (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';

@@ -249,8 +249,9 @@ export default class ApiVaultManager {
                                         <div class="space-y-1">
                                             <label class="text-[11px] font-bold">模型版本選擇</label>
                                             <select id="vault-builtin-model" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs">
-                                                <option value="gemini-1.5-flash">Gemini 1.5 Flash (推薦 · 免費配額最充足)</option>
-                                                <option value="gemini-2.0-flash">Gemini 2.0 Flash (次世代極速旗艦)</option>
+                                                <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash-8B (極速輕量 · 免費配額首選)</option>
+                                                <option value="gemini-2.5-flash">Gemini 2.5 Flash (最新推理旗艦)</option>
+                                                <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (次世代預覽版)</option>
                                                 <option value="gemini-1.5-pro">Gemini 1.5 Pro (深度推理)</option>
                                             </select>
                                         </div>
@@ -534,8 +535,9 @@ export default class ApiVaultManager {
                 const prov = builtinProvider.value;
                 if (prov === 'gemini') {
                     builtinModel.innerHTML = `
-                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (推薦 · 免費配額最充足)</option>
-                        <option value="gemini-2.0-flash">Gemini 2.0 Flash (次世代極速旗艦)</option>
+                        <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash-8B (極速輕量 · 免費配額首選)</option>
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (最新推理旗艦)</option>
+                        <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (次世代預覽版)</option>
                         <option value="gemini-1.5-pro">Gemini 1.5 Pro (深度推理)</option>
                     `;
                     builtinKeyLabel.textContent = 'Google Gemini API Key';
