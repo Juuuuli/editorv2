@@ -864,6 +864,7 @@ export default class DashboardManager {
 
         // 顯示 Dashboard
         this.dashboardContainer.classList.remove('hidden');
+        this.dashboardContainer.style.display = '';
         setTimeout(() => {
             this.dashboardContainer.classList.remove('opacity-0', 'pointer-events-none');
         }, 10);
