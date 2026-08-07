@@ -37,6 +37,20 @@
     transition: all 0.15s ease !important;
 }
 
+/* 保險箱輸入框與下拉選單全域對齊保證 */
+.vault-input-field {
+    box-sizing: border-box !important;
+    height: 38px !important;
+    max-height: 38px !important;
+    line-height: 1.4 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+select.vault-input-field {
+    appearance: auto !important;
+}
+
 
 /* --------------------------------------------------------------------------
    1. 🎨 經典手繪 (Light Sketch) - [data-theme="light"] 或預設

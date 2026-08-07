@@ -234,21 +234,23 @@ export default class ApiVaultManager {
                             <!-- 內建主流模型內容 -->
                             <div id="vault-subcontent-builtin" class="space-y-4">
                                 <div class="vault-section-card p-4 rounded-xl space-y-3.5">
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div class="space-y-1">
-                                            <label class="text-[11px] font-bold flex items-center gap-1.5">
+                                    <div class="grid grid-cols-2 gap-3 items-start">
+                                        <div class="space-y-1.5">
+                                            <label class="text-[11px] font-bold h-5 flex items-center gap-1.5 leading-none">
                                                 <span>服務提供商</span>
                                                 <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-normal">(推薦 Gemini)</span>
                                             </label>
-                                            <select id="vault-builtin-provider" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs">
+                                            <select id="vault-builtin-provider" class="vault-input-field w-full h-[38px] rounded-lg px-3 py-2 text-xs box-border">
                                                 <option value="gemini">Google Gemini (免費/超快/多模態)</option>
                                                 <option value="openai">OpenAI (GPT-4o / 4o-mini)</option>
                                                 <option value="anthropic">Anthropic (Claude 3.5)</option>
                                             </select>
                                         </div>
-                                        <div class="space-y-1">
-                                            <label class="text-[11px] font-bold">模型版本選擇</label>
-                                            <select id="vault-builtin-model" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs">
+                                        <div class="space-y-1.5">
+                                            <label class="text-[11px] font-bold h-5 flex items-center leading-none">
+                                                <span>模型版本選擇</span>
+                                            </label>
+                                            <select id="vault-builtin-model" class="vault-input-field w-full h-[38px] rounded-lg px-3 py-2 text-xs truncate box-border">
                                                 <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash-8B (極速輕量 · 免費配額首選)</option>
                                                 <option value="gemini-2.5-flash">Gemini 2.5 Flash (最新推理旗艦)</option>
                                                 <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (次世代預覽版)</option>
@@ -304,15 +306,19 @@ export default class ApiVaultManager {
                                         </label>
                                         <input type="text" id="vault-custom-url" placeholder="http://localhost:8000/v1" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono">
                                     </div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div class="space-y-1">
-                                            <label class="text-[11px] font-bold">模型識別碼 (Model ID)</label>
-                                            <input type="text" id="vault-custom-model" placeholder="meta-llama/Llama-3.2-Vision" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs font-mono">
+                                    <div class="grid grid-cols-2 gap-3 items-start">
+                                        <div class="space-y-1.5">
+                                            <label class="text-[11px] font-bold h-5 flex items-center leading-none">
+                                                <span>模型識別碼 (Model ID)</span>
+                                            </label>
+                                            <input type="text" id="vault-custom-model" placeholder="meta-llama/Llama-3.2-Vision" class="vault-input-field w-full h-[38px] rounded-lg px-3 py-2 text-xs font-mono box-border">
                                         </div>
-                                        <div class="space-y-1">
-                                            <label class="text-[11px] font-bold">Bearer Token / Key (選填)</label>
+                                        <div class="space-y-1.5">
+                                            <label class="text-[11px] font-bold h-5 flex items-center leading-none">
+                                                <span>Bearer Token / Key (選填)</span>
+                                            </label>
                                             <div class="relative flex items-center">
-                                                <input type="password" id="vault-custom-token" placeholder="Optional" class="vault-input-field w-full rounded-lg px-3 py-2 pr-10 text-xs font-mono">
+                                                <input type="password" id="vault-custom-token" placeholder="Optional" class="vault-input-field w-full h-[38px] rounded-lg px-3 py-2 pr-10 text-xs font-mono box-border">
                                                 <button type="button" class="vault-toggle-pwd absolute right-3 text-xs opacity-60 hover:opacity-100">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
