@@ -72,45 +72,45 @@
                 <!-- Type 1 -->
                 <div class="bg-slate-900 rounded-xl p-5 border border-slate-700 flex flex-col">
                     <div class="flex items-center gap-2 text-emerald-400 mb-2 font-bold">
-                        <i class="fas fa-brain"></i> 智慧辨識 (OCR)
+                        <i class="fas fa-brain"></i> 生成式 AI 模型 (LLM/VLM)
                     </div>
-                    <div class="text-xs text-slate-400 mb-3 space-y-1 flex-1">
-                        <p><strong>目前使用：</strong>OpenAI Vision API (GPT-4o-mini)</p>
-                        <p><strong>負責功能：</strong>框選畫布文字區域，辨識複雜版面、文字擷取與多國語言。</p>
+                    <div class="text-xs text-slate-400 mb-4 space-y-1 flex-1">
+                        <p><strong>目前串接：</strong>OpenAI Vision API (GPT-4o-mini)</p>
+                        <p><strong>負責功能：</strong>框選畫布文字區域，辨識複雜版面、文字擷取與多國語言 (OCR 智慧辨識)。</p>
                     </div>
-                    <div class="text-[11px] bg-emerald-500/10 text-emerald-300 p-2 rounded border border-emerald-500/20 mt-auto">
-                        <strong>擴充替換方案：</strong><br>
-                        可從 OpenAI 雲端服務替換為純前端邊緣運算的 <span class="text-emerald-200 font-mono">Tesseract.js</span>，或內網自建的 <span class="text-emerald-200 font-mono">Ollama (Vision)</span> 模型，實現完全斷網辨識。
+                    <div class="text-[11px] bg-emerald-500/10 text-emerald-300 p-3 rounded border border-emerald-500/20 space-y-1.5">
+                        <div class="font-bold border-b border-emerald-500/20 pb-1 mb-1"><i class="fas fa-exchange-alt"></i> 擴充與技術替換方案</div>
+                        <p>可從 OpenAI 雲端服務替換為純前端邊緣運算的 <code>Tesseract.js</code>，或內網自建的 <code>Ollama (Vision)</code> 模型，實現完全斷網辨識。</p>
                     </div>
                 </div>
 
                 <!-- Type 2 -->
                 <div class="bg-slate-900 rounded-xl p-5 border border-slate-700 flex flex-col">
                     <div class="flex items-center gap-2 text-pink-400 mb-2 font-bold">
-                        <i class="fas fa-image"></i> 去背與塗抹修補
+                        <i class="fas fa-image"></i> 專業影像 AI 服務
                     </div>
-                    <div class="text-xs text-slate-400 mb-3 space-y-1 flex-1">
-                        <p><strong>目前使用：</strong>Clipdrop API / Photoroom</p>
-                        <p><strong>負責功能：</strong>透過生成式 AI 無縫去背與填補抹除物件後的背景。</p>
+                    <div class="text-xs text-slate-400 mb-4 space-y-1 flex-1">
+                        <p><strong>目前串接：</strong>Clipdrop API (Inpainting & Remove-BG)</p>
+                        <p><strong>負責功能：</strong>透過生成式 AI 無縫去背與填補抹除物件後的背景 (去背與塗抹修補)。</p>
                     </div>
-                    <div class="text-[11px] bg-pink-500/10 text-pink-300 p-2 rounded border border-pink-500/20 mt-auto">
-                        <strong>擴充替換方案：</strong><br>
-                        未來可串接私有部署的 <span class="text-pink-200 font-mono">Stable Diffusion</span> 伺服器，或開源的 <span class="text-pink-200 font-mono">Lama Cleaner</span>，確保修改圖片不外流。
+                    <div class="text-[11px] bg-pink-500/10 text-pink-300 p-3 rounded border border-pink-500/20 space-y-1.5">
+                        <div class="font-bold border-b border-pink-500/20 pb-1 mb-1"><i class="fas fa-exchange-alt"></i> 擴充與技術替換方案</div>
+                        <p>目前使用雲端生成，未來可串接私有部署的 <code>Stable Diffusion</code> 伺服器，或開源的 <code>Lama Cleaner</code>，確保修改圖片不外流。</p>
                     </div>
                 </div>
 
                 <!-- Type 3 -->
                 <div class="bg-slate-900 rounded-xl p-5 border border-slate-700 flex flex-col">
                     <div class="flex items-center gap-2 text-sky-400 mb-2 font-bold">
-                        <i class="fas fa-file-powerpoint"></i> 簡報解析 (PPT/PPTX)
+                        <i class="fas fa-cloud"></i> 傳統 SaaS 雲端服務
                     </div>
-                    <div class="text-xs text-slate-400 mb-3 space-y-1 flex-1">
-                        <p><strong>目前使用：</strong>ConvertAPI</p>
-                        <p><strong>負責功能：</strong>將企業常見的 PPT 簡報雲端轉換為標準 PDF，以利匯入畫布。</p>
+                    <div class="text-xs text-slate-400 mb-4 space-y-1 flex-1">
+                        <p><strong>目前串接：</strong>ConvertAPI</p>
+                        <p><strong>負責功能：</strong>將企業常見的 PPT 簡報雲端轉換為標準 PDF，以利匯入畫布成為多頁面專案 (簡報解析)。</p>
                     </div>
-                    <div class="text-[11px] bg-sky-500/10 text-sky-300 p-2 rounded border border-sky-500/20 mt-auto">
-                        <strong>擴充替換方案：</strong><br>
-                        系統設計相容於自架的 <span class="text-sky-200 font-mono">LibreOffice (Gotenberg)</span> 伺服器，可隨時切換為 100% 內網離線轉檔架構。
+                    <div class="text-[11px] bg-sky-500/10 text-sky-300 p-3 rounded border border-sky-500/20 space-y-1.5">
+                        <div class="font-bold border-b border-sky-500/20 pb-1 mb-1"><i class="fas fa-exchange-alt"></i> 擴充與技術替換方案</div>
+                        <p>除了依賴目前的 ConvertAPI 外，系統設計相容於自架的 <code>LibreOffice (Gotenberg)</code> 伺服器，可隨時切換為 100% 內網離線轉檔架構。</p>
                     </div>
                 </div>
             </div>
