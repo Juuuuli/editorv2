@@ -662,7 +662,7 @@ export default class AuthManager {
                     </div>
 
                     <!-- 快捷操作區塊 (說明書、匯入、匯出) -->
-                    <div class="py-1 border-b border-slate-100 bg-slate-50/50">
+                    <div class="py-1 border-b border-slate-100 bg-slate-50/50 lg:hidden">
                         <button id="menu-btn-manual" class="w-full px-4 py-2 text-xs text-left hover:bg-blue-50 font-bold text-blue-700 flex items-center gap-2.5">
                             <i class="fas fa-book text-blue-600 w-4 text-center"></i> 系統說明書
                         </button>
