@@ -70,44 +70,47 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Type 1 -->
-                <div class="bg-slate-900 rounded-xl p-5 border border-slate-700">
+                <div class="bg-slate-900 rounded-xl p-5 border border-slate-700 flex flex-col">
                     <div class="flex items-center gap-2 text-emerald-400 mb-2 font-bold">
-                        <i class="fas fa-brain"></i> 生成式 AI 模型 (LLM/VLM)
+                        <i class="fas fa-brain"></i> 智慧辨識 (OCR)
                     </div>
-                    <div class="text-xs text-slate-400 mb-3 space-y-1">
+                    <div class="text-xs text-slate-400 mb-3 space-y-1 flex-1">
                         <p><strong>目前使用：</strong>OpenAI Vision API (GPT-4o-mini)</p>
-                        <p><strong>負責功能：</strong>PDF 文字修改、智慧辨識 (OCR)、AI 助手等。</p>
+                        <p><strong>負責功能：</strong>框選畫布文字區域，辨識複雜版面、文字擷取與多國語言。</p>
                     </div>
-                    <div class="text-[11px] bg-emerald-500/10 text-emerald-300 p-2 rounded border border-emerald-500/20">
-                        <strong>擴充潛力：極高。</strong> 這正是您主管提到的 vLLM、Ollama 等開源模型可以替換的對象。我們需要為它設計「預設」與「自訂(OpenAI相容)」的切換介面。
+                    <div class="text-[11px] bg-emerald-500/10 text-emerald-300 p-2 rounded border border-emerald-500/20 mt-auto">
+                        <strong>擴充替換方案：</strong><br>
+                        可從 OpenAI 雲端服務替換為純前端邊緣運算的 <span class="text-emerald-200 font-mono">Tesseract.js</span>，或內網自建的 <span class="text-emerald-200 font-mono">Ollama (Vision)</span> 模型，實現完全斷網辨識。
                     </div>
                 </div>
 
                 <!-- Type 2 -->
-                <div class="bg-slate-900 rounded-xl p-5 border border-slate-700">
+                <div class="bg-slate-900 rounded-xl p-5 border border-slate-700 flex flex-col">
                     <div class="flex items-center gap-2 text-pink-400 mb-2 font-bold">
-                        <i class="fas fa-image"></i> 專業影像 AI 服務
+                        <i class="fas fa-image"></i> 去背與塗抹修補
                     </div>
-                    <div class="text-xs text-slate-400 mb-3 space-y-1">
-                        <p><strong>目前使用：</strong>Clipdrop API</p>
-                        <p><strong>負責功能：</strong>圖片一鍵去背、塗抹修補 (Inpainting)。</p>
+                    <div class="text-xs text-slate-400 mb-3 space-y-1 flex-1">
+                        <p><strong>目前使用：</strong>Clipdrop API / Photoroom</p>
+                        <p><strong>負責功能：</strong>透過生成式 AI 無縫去背與填補抹除物件後的背景。</p>
                     </div>
-                    <div class="text-[11px] bg-pink-500/10 text-pink-300 p-2 rounded border border-pink-500/20">
-                        <strong>擴充潛力：中。</strong> 這是特定領域的 AI 模型，通常不走 LLM API 格式。未來如果要換，可能會替換成自架的 Stable Diffusion (ComfyUI) API。
+                    <div class="text-[11px] bg-pink-500/10 text-pink-300 p-2 rounded border border-pink-500/20 mt-auto">
+                        <strong>擴充替換方案：</strong><br>
+                        未來可串接私有部署的 <span class="text-pink-200 font-mono">Stable Diffusion</span> 伺服器，或開源的 <span class="text-pink-200 font-mono">Lama Cleaner</span>，確保修改圖片不外流。
                     </div>
                 </div>
 
                 <!-- Type 3 -->
-                <div class="bg-slate-900 rounded-xl p-5 border border-slate-700">
+                <div class="bg-slate-900 rounded-xl p-5 border border-slate-700 flex flex-col">
                     <div class="flex items-center gap-2 text-sky-400 mb-2 font-bold">
-                        <i class="fas fa-cloud"></i> 傳統 SaaS 雲端服務
+                        <i class="fas fa-file-powerpoint"></i> 簡報解析 (PPT/PPTX)
                     </div>
-                    <div class="text-xs text-slate-400 mb-3 space-y-1">
+                    <div class="text-xs text-slate-400 mb-3 space-y-1 flex-1">
                         <p><strong>目前使用：</strong>ConvertAPI</p>
-                        <p><strong>負責功能：</strong>PPT/PPTX 檔案轉換導入。</p>
+                        <p><strong>負責功能：</strong>將企業常見的 PPT 簡報雲端轉換為標準 PDF，以利匯入畫布。</p>
                     </div>
-                    <div class="text-[11px] bg-sky-500/10 text-sky-300 p-2 rounded border border-sky-500/20">
-                        <strong>擴充潛力：低。</strong> 這並非 AI 模型，純粹是雲端檔案轉檔工具。通常只需保留一個固定的 API Key 欄位即可，不需做模型切換。
+                    <div class="text-[11px] bg-sky-500/10 text-sky-300 p-2 rounded border border-sky-500/20 mt-auto">
+                        <strong>擴充替換方案：</strong><br>
+                        系統設計相容於自架的 <span class="text-sky-200 font-mono">LibreOffice (Gotenberg)</span> 伺服器，可隨時切換為 100% 內網離線轉檔架構。
                     </div>
                 </div>
             </div>
