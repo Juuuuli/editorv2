@@ -125,25 +125,23 @@ export default class DashboardManager {
         
         this.dashboardContainer.innerHTML = `
             <!-- Dashboard Header -->
-            <header class="relative z-40 bg-white border-b-2 border-slate-700 shrink-0 shadow-sm">
+            <header class="relative z-40 bg-white border-b-2 border-slate-700 shrink-0 shadow-sm overflow-hidden">
                 <!-- 主要行：Logo / 標題 + 右側頭像 (永遠顯示) -->
                 <div class="flex items-center justify-between px-4 sm:px-6 h-14 sm:h-16 gap-3">
                     <!-- 左：圖示 + 標題 (永遠顯示) -->
-                    <div class="flex items-center gap-2.5 shrink-0 min-w-0">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
                         <div class="sketch flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 text-slate-800 text-lg sm:text-xl font-black shadow-[2px_2px_0px_#334155] bg-amber-100 shrink-0">
                             <i class="fas fa-cubes"></i>
                         </div>
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <h1 class="text-sm sm:text-xl font-black text-slate-800 tracking-wide whitespace-nowrap">專案儀表板</h1>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 whitespace-nowrap hidden sm:inline">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.5.0'}</span>
-                            </div>
-                            <p class="hidden md:block text-xs text-slate-500 font-medium truncate max-w-[280px]">隨時管理、複製、刪除或開啟您的多媒體專案</p>
+                        <div class="min-w-0 flex items-center gap-2">
+                            <h1 class="text-sm sm:text-xl font-black text-slate-800 tracking-wide whitespace-nowrap truncate">專案儀表板</h1>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 whitespace-nowrap hidden sm:inline shrink-0">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.5.0'}</span>
+                            <p class="hidden lg:block text-xs text-slate-500 font-medium truncate ml-2">隨時管理、複製、刪除或開啟您的多媒體專案</p>
                         </div>
                     </div>
 
                     <!-- 右：搜尋 + 按鈕群 + 使用者頭像 (頭像永遠顯示) -->
-                    <div id="dashboard-header-right" class="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
+                    <div id="dashboard-header-right" class="flex items-center gap-2 sm:gap-3 shrink-0">
                         <!-- 搜尋列：sm以下隱藏（移至第二行） -->
                         <div class="relative items-center hidden sm:flex">
                             <i class="fas fa-search absolute left-3 text-slate-400 text-xs pointer-events-none"></i>
