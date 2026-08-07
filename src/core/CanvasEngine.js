@@ -407,7 +407,14 @@ export default class CanvasEngine {
         this.pageStates[this.currentPageId] = objects.map(obj => obj.toObject(['layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']));
     }
 
-    loadPageState(pageId) {
+    loadPageState(pageId, forceLoad = false) {
+        if (!forceLoad && this.currentPageId === pageId) return;
+        
+        // 切換前，先儲存當前頁面的狀態 (只有當真的要離開當前頁面時才儲存，避免覆寫新專案的預設模板)
+        if (this.currentPageId && this.canvas && this.currentPageId !== pageId) {
+            this.savePageState();
+        }
+        
         this.currentPageId = pageId;
         // 清空畫布(除了底板與智慧輔助線)
         this.canvas.discardActiveObject();

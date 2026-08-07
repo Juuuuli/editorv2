@@ -760,82 +760,90 @@ export default class DashboardManager {
     /**
      * 開啟特定專案進入編輯器
      */
-    async openProject(projectId, updateRouter = true) {
-        const project = await this.storageEngine.getProject(projectId);
-        if (!project) {
-            alert('專案不存在或已被移除');
-            return;
-        }
-
-        this.currentProjectId = project.id;
-        console.log(`[DashboardManager] 開啟專案: ${project.name} (${project.id})`);
-
-        // 推送專案 URL 路由並連線協作通道
-        if (updateRouter && this.eventBus) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const roomId = urlParams.get('room') || null;
-            this.eventBus.emit('ROUTER:NAVIGATE_PROJECT', { projectId: project.id, roomId });
-        }
-        if (this.eventBus) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const roomId = urlParams.get('room') || null;
-            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || 'main' });
-        }
-
-        // 更新 Header 專案標題
-        const titleDisplay = document.getElementById('current-project-title-display');
-        if (titleDisplay) {
-            titleDisplay.textContent = project.name;
-        }
-
-        // 切換工作區模式 (IMAGE / PDF)，傳入 force=true 避免無謂未儲存提示
-        if (this.workspaceManager) {
-            this.workspaceManager.setDirty(false);
-            this.workspaceManager.switchMode(project.type || 'PDF', true);
-        }
-
-        // 調整畫布底板尺寸
-        const dim = project.dimension || { width: 1280, height: 720 };
-        this.canvasEngine.resizeArtboard(dim.width, dim.height);
-
-        // 載入專案 pageStates 與 pageSizes
-        this.canvasEngine.pageStates = project.pageStates || {};
-        this.canvasEngine.pageSizes = project.pageSizes || {};
-
-        const pageIds = Object.keys(this.canvasEngine.pageStates);
-        const activePageId = project.currentPageId || (pageIds.length > 0 ? pageIds[0] : 'page-1');
-
-        if (!this.canvasEngine.pageStates[activePageId]) {
-            this.canvasEngine.pageStates[activePageId] = [];
-        }
-
-        // 觸發專案載入事件，讓 ThumbnailsPanel 更新縮圖清單並傳遞已存在的頁面縮圖
-        this.eventBus.emit('PROJECT:IMPORTED', {
-            projectData: {
-                pageStates: this.canvasEngine.pageStates,
-                currentPageId: activePageId,
-                pages: project.pages || []
-            }
-        });
-
-        // 切換到活動頁面並還原畫布物件
-        this.canvasEngine.loadPageState(activePageId);
-        if (typeof this.canvasEngine.fitToScreen === 'function') {
-            this.canvasEngine.fitToScreen();
-        }
-
-        // 隱藏 Dashboard，顯示 Editor
-        this.dashboardContainer.classList.add('opacity-0', 'pointer-events-none');
-        setTimeout(() => {
-            this.dashboardContainer.classList.add('hidden');
-        }, 300);
-
-        this.showAutoSaveFeedback('專案載入完成');
-    }
-
-    /**
-     * 關閉編輯器並返回 Dashboard
-     */
+��        a s y n c   o p e n P r o j e c t ( p r o j e c t I d ,   u p d a t e R o u t e r   =   t r u e )   { 
+                 t r y   { 
+                         c o n s t   p r o j e c t   =   a w a i t   t h i s . s t o r a g e E n g i n e . g e t P r o j e c t ( p r o j e c t I d ) ; 
+                         i f   ( ! p r o j e c t )   { 
+                                 a l e r t ( ' \HhNX[(Wb�]���yd�' ) ; 
+                                 r e t u r n ; 
+                         } 
+ 
+                         t h i s . c u r r e n t P r o j e c t I d   =   p r o j e c t . i d ; 
+                         c o n s o l e . l o g ( [ D a s h b o a r d M a n a g e r ]   ��_U\Hh:     ( ) ) ; 
+ 
+                         / /   �c�\Hh  U R L   �1u&N#��}TS\O�S�
+                         i f   ( u p d a t e R o u t e r   & &   t h i s . e v e n t B u s )   { 
+                                 c o n s t   u r l P a r a m s   =   n e w   U R L S e a r c h P a r a m s ( w i n d o w . l o c a t i o n . s e a r c h ) ; 
+                                 c o n s t   r o o m I d   =   u r l P a r a m s . g e t ( ' r o o m ' )   | |   n u l l ; 
+                                 t h i s . e v e n t B u s . e m i t ( ' R O U T E R : N A V I G A T E _ P R O J E C T ' ,   {   p r o j e c t I d :   p r o j e c t . i d ,   r o o m I d   } ) ; 
+                         } 
+                         i f   ( t h i s . e v e n t B u s )   { 
+                                 c o n s t   u r l P a r a m s   =   n e w   U R L S e a r c h P a r a m s ( w i n d o w . l o c a t i o n . s e a r c h ) ; 
+                                 c o n s t   r o o m I d   =   u r l P a r a m s . g e t ( ' r o o m ' )   | |   n u l l ; 
+                                 t h i s . e v e n t B u s . e m i t ( ' C O L L A B : C O N N E C T _ R O O M ' ,   {   p r o j e c t I d :   p r o j e c t . i d ,   r o o m I d :   r o o m I d   | |   ' m a i n '   } ) ; 
+                         } 
+ 
+                         / /   �f�e  H e a d e r   \HhjL�
+                         c o n s t   t i t l e D i s p l a y   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' c u r r e n t - p r o j e c t - t i t l e - d i s p l a y ' ) ; 
+                         i f   ( t i t l e D i s p l a y )   { 
+                                 t i t l e D i s p l a y . t e x t C o n t e n t   =   p r o j e c t . n a m e ; 
+                         } 
+ 
+                         / /   R�c�]\O@S!j_  ( I M A G E   /   P D F ) ��PeQ  f o r c e = t r u e   �MQ!q�*g2QX[�c:y
+                         i f   ( t h i s . w o r k s p a c e M a n a g e r )   { 
+                                 t h i s . w o r k s p a c e M a n a g e r . s e t D i r t y ( f a l s e ) ; 
+                                 t h i s . w o r k s p a c e M a n a g e r . s w i t c h M o d e ( p r o j e c t . t y p e   | |   ' P D F ' ,   t r u e ) ; 
+                         } 
+ 
+                         / /   ��teku^�^g:\�[
+                         c o n s t   d i m   =   p r o j e c t . d i m e n s i o n   | |   {   w i d t h :   1 2 8 0 ,   h e i g h t :   7 2 0   } ; 
+                         t h i s . c a n v a s E n g i n e . r e s i z e A r t b o a r d ( d i m . w i d t h ,   d i m . h e i g h t ) ; 
+ 
+                         / /   	�eQ\Hh  p a g e S t a t e s   �  p a g e S i z e s 
+                         t h i s . c a n v a s E n g i n e . p a g e S t a t e s   =   p r o j e c t . p a g e S t a t e s   | |   { } ; 
+                         t h i s . c a n v a s E n g i n e . p a g e S i z e s   =   p r o j e c t . p a g e S i z e s   | |   { } ; 
+                         t h i s . c a n v a s E n g i n e . p a g e s   =   p r o j e c t . p a g e s   | |   [ ] ;   / /   ��=~�xen�U
+ 
+                         c o n s t   p a g e I d s   =   O b j e c t . k e y s ( t h i s . c a n v a s E n g i n e . p a g e S t a t e s ) ; 
+                         c o n s t   a c t i v e P a g e I d   =   p r o j e c t . c u r r e n t P a g e I d   | |   ( p a g e I d s . l e n g t h   >   0   ?   p a g e I d s [ 0 ]   :   ' p a g e - 1 ' ) ; 
+ 
+                         i f   ( ! t h i s . c a n v a s E n g i n e . p a g e S t a t e s [ a c t i v e P a g e I d ] )   { 
+                                 t h i s . c a n v a s E n g i n e . p a g e S t a t e s [ a c t i v e P a g e I d ]   =   [ ] ; 
+                         } 
+ 
+                         / /   ��|v\Hh	�eQ�N�N���  T h u m b n a i l s P a n e l   �f�e.~Wn�U&N�P^��]X[(W�v�b�.~W
+                         t h i s . e v e n t B u s . e m i t ( ' P R O J E C T : I M P O R T E D ' ,   { 
+                                 p r o j e c t D a t a :   { 
+                                         p a g e S t a t e s :   t h i s . c a n v a s E n g i n e . p a g e S t a t e s , 
+                                         c u r r e n t P a g e I d :   a c t i v e P a g e I d , 
+                                         p a g e s :   p r o j e c t . p a g e s   | |   [ ] 
+                                 } 
+                         } ) ; 
+ 
+                         / /   R�c0R;m�R�b�&N���Sku^ir�N
+                         t h i s . c a n v a s E n g i n e . l o a d P a g e S t a t e ( a c t i v e P a g e I d ,   t r u e ) ; 
+                         i f   ( t y p e o f   t h i s . c a n v a s E n g i n e . f i t T o S c r e e n   = = =   ' f u n c t i o n ' )   { 
+                                 t h i s . c a n v a s E n g i n e . f i t T o S c r e e n ( ) ; 
+                         } 
+ 
+                         / /   ��υ  D a s h b o a r d �o�:y  E d i t o r 
+                         t h i s . d a s h b o a r d C o n t a i n e r . c l a s s L i s t . a d d ( ' o p a c i t y - 0 ' ,   ' p o i n t e r - e v e n t s - n o n e ' ) ; 
+                         s e t T i m e o u t ( ( )   = >   { 
+                                 t h i s . d a s h b o a r d C o n t a i n e r . c l a s s L i s t . a d d ( ' h i d d e n ' ) ; 
+                                 t h i s . d a s h b o a r d C o n t a i n e r . s t y l e . d i s p l a y   =   ' n o n e ' ; 
+                         } ,   3 0 0 ) ; 
+ 
+                         t h i s . s h o w A u t o S a v e F e e d b a c k ( ' \Hh	�eQ�[b' ) ; 
+                 }   c a t c h   ( e r r o r )   { 
+                         a l e r t ( \  
+ E r r o r  
+ i n  
+ o p e n P r o j e c t :  
+ \   +   e r r o r . m e s s a g e   +   \ \ \ n \   +   e r r o r . s t a c k ) ; 
+                         c o n s o l e . e r r o r ( e r r o r ) ; 
+                 } 
+         }  
+ 
     async closeProjectToDashboard(updateRouter = true) {
         if (this.currentProjectId) {
             this.eventBus.emit('LOADING:START', { message: '正在儲存專案...' });

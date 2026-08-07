@@ -10,8 +10,6 @@ export default class ProjectRouter {
         this.currentProjectId = null;
         this.currentRoomId = null;
         this.isInitialized = false;
-
-        this.init();
     }
 
     init() {

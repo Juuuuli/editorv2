@@ -183,5 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // 延遲初始化路由，確保所有模組皆已完成 EventBus 註冊
+    projectRouter.init();
+
     setupSidebarToggles();
 });
