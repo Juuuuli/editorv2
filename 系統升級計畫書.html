@@ -338,8 +338,8 @@
                             <p class="text-slate-400">配置公用主帳密，供團隊所有人登入以獲得系統完整操作與管理權限。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
-                            <div class="font-bold text-purple-400"><i class="fas fa-shield-alt mr-2"></i>系統金鑰保險箱 (API Vault)</div>
-                            <p class="text-slate-400">提供集中加密金鑰保管，管理 Clipdrop、Spark 或其他 AI 權杖。</p>
+                            <div class="font-bold text-purple-400"><i class="fas fa-shield-alt mr-2"></i>系統模型與金鑰保險箱 (API Vault)</div>
+                            <p class="text-slate-400">獨立模組 <code class="text-purple-300">ApiVaultManager.js</code>，提供三大分頁：AI 核心模型 (OpenAI/Claude/vLLM)、影像去背修補 (Clipdrop/Photoroom)、簡報轉檔 (ConvertAPI/Gotenberg)。</p>
                         </div>
                     </div>
                 </div>
@@ -381,7 +381,7 @@
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                         <div class="flex items-center space-x-3">
                             <span class="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 font-mono text-xs font-bold border border-amber-500/30">FEATURE 03 · AI 擴充</span>
-                            <h3 class="text-xl font-bold text-white">3. 多模型整合閘道與 Spark 預備架構 (AI Model Gateway)</h3>
+                            <h3 class="text-xl font-bold text-white">3. 多模型整合閘道與自建端點預備架構 (AI Model Gateway)</h3>
                         </div>
                         <span class="text-xs bg-slate-800 text-amber-400 px-3 py-1 rounded-full border border-slate-700 font-semibold">
                             預定版本：v1.6.0 · Sprint 5
@@ -389,7 +389,7 @@
                     </div>
 
                     <p class="text-slate-300 text-sm leading-relaxed mb-6">
-                        重構系統 AI 工具的底層通訊層，建立統一的 <strong>Adapter 適配器介面</strong>。一旦公司內部 Spark 環境架設完成，即可直接無縫接入。
+                        重構系統 AI 工具的底層通訊層，建立統一的 <strong>Adapter 適配器介面</strong>，支援企業自建端點 (vLLM / Ollama / Spark / 私有伺服器) 無縫接入。
                     </p>
 
                     <div class="grid md:grid-cols-3 gap-4 text-xs">
@@ -398,12 +398,12 @@
                             <p class="text-slate-400">將「影像去背/修補」與「文字生成/潤飾」標準化，上層 UI 工具不綁定特定 API，透過 Provider 注入呼叫。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
-                            <div class="font-bold text-amber-400"><i class="fas fa-bolt mr-2"></i>Spark 專屬串接通道</div>
-                            <p class="text-slate-400">預留 Spark WebSocket/REST API 規格介面，具備 Token 流式傳輸與 Prompt 範本微調能力。</p>
+                            <div class="font-bold text-amber-400"><i class="fas fa-bolt mr-2"></i>OpenAI 相容與自建端點通道</div>
+                            <p class="text-slate-400">對接 ApiVaultManager 設定之自訂 Base URL、Model ID 與 Token，具備流式傳輸與 Prompt 範本微調能力。</p>
                         </div>
                         <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
                             <div class="font-bold text-amber-400"><i class="fas fa-sliders-h mr-2"></i>多模型測試切換面板</div>
-                            <p class="text-slate-400">在「系統設定」中提供模型切換開關（預設 Clipdrop / 本地 Mock / 企業 Spark），方便進行 A/B 測試。</p>
+                            <p class="text-slate-400">在「系統設定」中提供模型切換開關（預設 Clipdrop / 本地 Mock / 雲端主流 / 內網自建端點），方便進行 A/B 測試。</p>
                         </div>
                     </div>
                 </div>
