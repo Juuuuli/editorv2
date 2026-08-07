@@ -25,11 +25,11 @@ export default class ApiVaultManager {
             activeLlmType: 'builtin',
             builtin: {
                 provider: 'gemini', // 預設推薦 Gemini
-                model: 'gemini-2.0-flash',
+                model: 'gemini-1.5-flash',
                 apiKey: '',
                 geminiApiKey: '',
                 openaiApiKey: '',
-                geminiModel: 'gemini-2.0-flash',
+                geminiModel: 'gemini-1.5-flash',
                 openaiModel: 'gpt-4o-mini'
             },
             custom: {
@@ -249,8 +249,8 @@ export default class ApiVaultManager {
                                         <div class="space-y-1">
                                             <label class="text-[11px] font-bold">模型版本選擇</label>
                                             <select id="vault-builtin-model" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs">
+                                                <option value="gemini-1.5-flash">Gemini 1.5 Flash (推薦 · 免費配額最充足)</option>
                                                 <option value="gemini-2.0-flash">Gemini 2.0 Flash (次世代極速旗艦)</option>
-                                                <option value="gemini-1.5-flash">Gemini 1.5 Flash (超快輕量)</option>
                                                 <option value="gemini-1.5-pro">Gemini 1.5 Pro (深度推理)</option>
                                             </select>
                                         </div>
@@ -534,8 +534,8 @@ export default class ApiVaultManager {
                 const prov = builtinProvider.value;
                 if (prov === 'gemini') {
                     builtinModel.innerHTML = `
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (推薦 · 免費配額最充足)</option>
                         <option value="gemini-2.0-flash">Gemini 2.0 Flash (次世代極速旗艦)</option>
-                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (超快輕量)</option>
                         <option value="gemini-1.5-pro">Gemini 1.5 Pro (深度推理)</option>
                     `;
                     builtinKeyLabel.textContent = 'Google Gemini API Key';

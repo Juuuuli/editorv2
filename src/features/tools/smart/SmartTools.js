@@ -430,26 +430,43 @@ export default class SmartTools {
                     if (!geminiKey) {
                         throw new Error('未設定 Google Gemini API Key（請至右上角系統金鑰保險箱填入 Gemini 金鑰）');
                     }
-                    const geminiModel = vaultConfig.builtin?.model || 'gemini-2.0-flash';
+                    let geminiModel = vaultConfig.builtin?.model || 'gemini-1.5-flash';
                     const base64Data = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
                     console.log('[SmartTools] 🚀 正在呼叫 Google Gemini 視覺模型進行 OCR:', geminiModel);
 
-                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`, {
+                    const requestPayload = {
+                        contents: [{
+                            parts: [
+                                { text: "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。" },
+                                { inline_data: { mime_type: "image/png", data: base64Data } }
+                            ]
+                        }],
+                        generationConfig: {
+                            temperature: 0.1,
+                            maxOutputTokens: 1024
+                        }
+                    };
+
+                    let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [
-                                    { text: "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。" },
-                                    { inline_data: { mime_type: "image/png", data: base64Data } }
-                                ]
-                            }],
-                            generationConfig: {
-                                temperature: 0.1,
-                                maxOutputTokens: 1024
-                            }
-                        })
+                        body: JSON.stringify(requestPayload)
                     });
+
+                    // 若 2.0-flash 遇到 Free Tier 額度限制 (limit: 0)，自動降級嘗試 1.5-flash
+                    if (!res.ok && geminiModel !== 'gemini-1.5-flash') {
+                        const err = await res.json().catch(() => ({}));
+                        if (res.status === 429 || err.error?.message?.includes('Quota exceeded')) {
+                            console.warn('[SmartTools] ⚠️ Gemini 2.0 遇到免費配額限制，自動切換至 Gemini 1.5 Flash 重試...');
+                            geminiModel = 'gemini-1.5-flash';
+                            res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(requestPayload)
+                            });
+                        }
+                    }
+
                     if (!res.ok) {
                         const err = await res.json().catch(() => ({}));
                         throw new Error(`Gemini API 錯誤: ${err.error?.message || res.statusText}`);
