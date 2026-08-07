@@ -384,70 +384,113 @@ export default class SmartTools {
             this.canvasEngine.canvas.setActiveObject(activeObject);
             this.canvasEngine.canvas.renderAll();
 
-            // 3. 呼叫 GPT-4o / Vision OCR API 或自訂 vLLM 端點
-            let openaiKey = '';
-            let apiUrl = 'https://api.openai.com/v1/chat/completions';
-            let model = 'gpt-4o-mini';
-
+            // 3. 呼叫 Google Gemini / GPT-4o / Vision OCR API 或自訂端點
+            let textContent = '';
+            
             try {
                 const vaultConfig = JSON.parse(localStorage.getItem('EDITOR_V2_VAULT_CONFIG') || '{}');
                 const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+                const activeLlmType = vaultConfig.activeLlmType || 'builtin';
+                const provider = vaultConfig.builtin?.provider || 'gemini';
 
-                if (vaultConfig.activeLlmType === 'custom' && vaultConfig.custom && vaultConfig.custom.baseUrl) {
-                    apiUrl = vaultConfig.custom.baseUrl.endsWith('/chat/completions') 
+                if (activeLlmType === 'custom' && vaultConfig.custom?.baseUrl) {
+                    // 自訂 OpenAI 相容端點 (vLLM / Ollama)
+                    const apiUrl = vaultConfig.custom.baseUrl.endsWith('/chat/completions') 
                         ? vaultConfig.custom.baseUrl 
                         : `${vaultConfig.custom.baseUrl.replace(/\/$/, '')}/chat/completions`;
-                    model = vaultConfig.custom.modelId || 'default-model';
-                    openaiKey = vaultConfig.custom.token || 'bearer-token';
-                } else if (vaultConfig.builtin && vaultConfig.builtin.apiKey) {
-                    openaiKey = vaultConfig.builtin.apiKey;
-                    model = vaultConfig.builtin.model || 'gpt-4o-mini';
+                    const model = vaultConfig.custom.modelId || 'default-model';
+                    const token = vaultConfig.custom.token || 'bearer-token';
+
+                    const res = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            model: model,
+                            messages: [{
+                                role: "user",
+                                content: [
+                                    { type: "text", text: "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。" },
+                                    { type: "image_url", image_url: { url: dataUrl } }
+                                ]
+                            }],
+                            max_tokens: 1024,
+                            temperature: 0.1
+                        })
+                    });
+                    if (!res.ok) throw new Error(`自訂端點錯誤: ${res.status} ${res.statusText}`);
+                    const result = await res.json();
+                    textContent = result.choices?.[0]?.message?.content?.trim() || '';
+                } else if (provider === 'gemini') {
+                    // Google Gemini Vision API
+                    const geminiKey = vaultConfig.builtin?.geminiApiKey || vaultConfig.builtin?.apiKey || localStorage.getItem('gemini_api_key') || (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || '';
+                    if (!geminiKey) {
+                        throw new Error('未設定 Google Gemini API Key（請至右上角系統金鑰保險箱填入 Gemini 金鑰）');
+                    }
+                    const geminiModel = vaultConfig.builtin?.model || 'gemini-2.0-flash';
+                    const base64Data = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
+
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [
+                                    { text: "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。" },
+                                    { inline_data: { mime_type: "image/png", data: base64Data } }
+                                ]
+                            }],
+                            generationConfig: {
+                                temperature: 0.1,
+                                maxOutputTokens: 1024
+                            }
+                        })
+                    });
+                    if (!res.ok) {
+                        const err = await res.json().catch(() => ({}));
+                        throw new Error(`Gemini API 錯誤: ${err.error?.message || res.statusText}`);
+                    }
+                    const result = await res.json();
+                    textContent = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
                 } else {
-                    openaiKey = legacyVault.openaiApiKey || localStorage.getItem('openai_api_key') || (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';
+                    // OpenAI Vision API
+                    const openaiKey = vaultConfig.builtin?.openaiApiKey || vaultConfig.builtin?.apiKey || legacyVault.openaiApiKey || localStorage.getItem('openai_api_key') || (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';
+                    if (!openaiKey) {
+                        throw new Error('未設定 OpenAI API Key（請至右上角系統金鑰保險箱填入 OpenAI 金鑰）');
+                    }
+                    const openaiModel = vaultConfig.builtin?.model || 'gpt-4o-mini';
+
+                    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${openaiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: openaiModel,
+                            messages: [{
+                                role: "user",
+                                content: [
+                                    { type: "text", text: "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。" },
+                                    { type: "image_url", image_url: { url: dataUrl } }
+                                ]
+                            }],
+                            max_tokens: 1024,
+                            temperature: 0.1
+                        })
+                    });
+                    if (!res.ok) throw new Error(`OpenAI API 錯誤: ${res.status} ${res.statusText}`);
+                    const result = await res.json();
+                    textContent = result.choices?.[0]?.message?.content?.trim() || '';
                 }
-            } catch (e) {
-                openaiKey = (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';
+            } catch (err) {
+                console.error('[SmartTools] 智慧 OCR 辨識失敗:', err);
+                alert(`辨識失敗: ${err.message}`);
+                this.setButtonLoading(btn, false, '智慧辨識 (OCR)', 'fa-font');
+                return;
             }
-
-            // 若環境設定了自訂 vLLM 端點且無填寫 OpenAI Key，則向後相容
-            if (!openaiKey && import.meta.env && import.meta.env.VITE_VLLM_API_URL) {
-                apiUrl = import.meta.env.VITE_VLLM_API_URL;
-                model = 'nemotron-omni';
-                openaiKey = 'token-123qwe';
-            }
-
-            if (!openaiKey) {
-                throw new Error('未設定 AI 模型 API Key（請至右上角系統金鑰保險箱填入 OpenAI 或自訂端點金鑰）');
-            }
-            
-            const requestBody = {
-                model: model,
-                messages: [{
-                    role: "user",
-                    content: [
-                        { type: "text", text: "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。" },
-                        { type: "image_url", image_url: { url: dataUrl } }
-                    ]
-                }],
-                max_tokens: 1024,
-                temperature: 0.1
-            };
-
-            const res = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${openaiKey}`
-                },
-                body: JSON.stringify(requestBody)
-            });
-            
-            if (!res.ok) {
-                throw new Error(`API 錯誤: ${res.status} ${res.statusText}`);
-            }
-
-            const result = await res.json();
-            const textContent = result.choices?.[0]?.message?.content?.trim();
 
             if (!textContent) {
                 alert('沒有辨識到文字或辨識失敗。');
