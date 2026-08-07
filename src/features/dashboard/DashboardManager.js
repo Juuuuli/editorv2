@@ -243,72 +243,50 @@ export default class DashboardManager {
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">精選排版與尺寸模板</label>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3" id="template-options-container">
-                                <!-- 模板 1: 簡報 16:9 -->
-                                <div data-template="pdf_16_9" class="template-card border-2 border-indigo-600 bg-indigo-50/50 rounded-2xl p-3.5 cursor-pointer hover:border-indigo-600 transition flex items-center space-x-3">
+                                <!-- 模板 1: 圖片 16:9 -->
+                                <div data-template="image_16_9" class="template-card border-2 border-indigo-600 bg-indigo-50/50 rounded-2xl p-3.5 cursor-pointer hover:border-indigo-600 transition flex items-center space-x-3">
                                     <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl shrink-0">
-                                        <i class="fas fa-desktop"></i>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
-                                            <span>簡報提案 (16:9)</span>
-                                            <span class="text-[10px] bg-indigo-200 text-indigo-800 px-1.5 py-0.2 rounded font-bold">推薦</span>
-                                        </div>
-                                        <div class="text-xs text-slate-500">1280 × 720 · 商業企劃多頁</div>
-                                    </div>
-                                </div>
-
-                                <!-- 模板 2: 經典簡報 4:3 -->
-                                <div data-template="pdf_4_3" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl shrink-0">
-                                        <i class="fas fa-chalkboard-teacher"></i>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="font-bold text-sm text-slate-800">教學簡報 (4:3)</div>
-                                        <div class="text-xs text-slate-500">1024 × 768 · 學術投影多頁</div>
-                                    </div>
-                                </div>
-
-                                <!-- 模板 3: 社群貼文 1:1 -->
-                                <div data-template="image_1_1" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl shrink-0">
-                                        <i class="fas fa-square"></i>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="font-bold text-sm text-slate-800">社群貼文 (1:1)</div>
-                                        <div class="text-xs text-slate-500">1080 × 1080 · IG/FB 方形圖文</div>
-                                    </div>
-                                </div>
-
-                                <!-- 模板 4: 社群橫幅 16:9 -->
-                                <div data-template="image_16_9" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl shrink-0">
                                         <i class="fas fa-image"></i>
                                     </div>
                                     <div class="min-w-0">
-                                        <div class="font-bold text-sm text-slate-800">社群封面 (16:9)</div>
-                                        <div class="text-xs text-slate-500">1280 × 720 · 橫幅去背圖層</div>
+                                        <div class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                                            <span>圖片 (16:9)</span>
+                                            <span class="text-[10px] bg-indigo-200 text-indigo-800 px-1.5 py-0.2 rounded font-bold">推薦</span>
+                                        </div>
+                                        <div class="text-xs text-slate-500">1280 × 720 · 橫幅設計</div>
                                     </div>
                                 </div>
 
-                                <!-- 模板 5: 肖像海報 4:5 -->
-                                <div data-template="image_4_5" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl shrink-0">
-                                        <i class="fas fa-portrait"></i>
+                                <!-- 模板 2: 圖片 4:3 -->
+                                <div data-template="image_4_3" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fas fa-desktop"></i>
                                     </div>
                                     <div class="min-w-0">
-                                        <div class="font-bold text-sm text-slate-800">肖像海報 (4:5)</div>
-                                        <div class="text-xs text-slate-500">1080 × 1350 · 活動宣傳廣告</div>
+                                        <div class="font-bold text-sm text-slate-800">圖片 (4:3)</div>
+                                        <div class="text-xs text-slate-500">1024 × 768 · 經典顯示</div>
                                     </div>
                                 </div>
 
-                                <!-- 模板 6: A4 直式文件 -->
+                                <!-- 模板 3: PPT -->
+                                <div data-template="pdf_16_9" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fas fa-file-powerpoint"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-sm text-slate-800">PPT 簡報 (16:9)</div>
+                                        <div class="text-xs text-slate-500">1280 × 720 · 多頁簡報</div>
+                                    </div>
+                                </div>
+
+                                <!-- 模板 4: PDF -->
                                 <div data-template="pdf_a4" class="template-card border-2 border-slate-200 bg-white rounded-2xl p-3.5 cursor-pointer hover:border-indigo-500 transition flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shrink-0">
-                                        <i class="fas fa-file-alt"></i>
+                                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fas fa-file-pdf"></i>
                                     </div>
                                     <div class="min-w-0">
-                                        <div class="font-bold text-sm text-slate-800">A4 報告書 (直式)</div>
-                                        <div class="text-xs text-slate-500">794 × 1123 · 企劃多頁文件</div>
+                                        <div class="font-bold text-sm text-slate-800">PDF 文件 (A4)</div>
+                                        <div class="text-xs text-slate-500">794 × 1123 · 直式文件</div>
                                     </div>
                                 </div>
                             </div>
@@ -485,18 +463,14 @@ export default class DashboardManager {
                 const nameInput = document.getElementById('input-new-project-name');
                 const name = nameInput ? nameInput.value.trim() || '未命名專案' : '未命名專案';
 
-                let options = { name, type: 'PDF', width: 1280, height: 720, ratio: '16:9', template: 'pdf_16_9' };
+                let options = { name, type: 'IMAGE', width: 1280, height: 720, ratio: '16:9', template: 'image_16_9' };
 
-                if (selectedTemplate === 'pdf_16_9') {
-                    options = { name, type: 'PDF', width: 1280, height: 720, ratio: '16:9', template: 'pdf_16_9' };
-                } else if (selectedTemplate === 'pdf_4_3') {
-                    options = { name, type: 'PDF', width: 1024, height: 768, ratio: '4:3', template: 'pdf_4_3' };
-                } else if (selectedTemplate === 'image_1_1') {
-                    options = { name, type: 'IMAGE', width: 1080, height: 1080, ratio: '1:1', template: 'image_1_1' };
-                } else if (selectedTemplate === 'image_16_9') {
+                if (selectedTemplate === 'image_16_9') {
                     options = { name, type: 'IMAGE', width: 1280, height: 720, ratio: '16:9', template: 'image_16_9' };
-                } else if (selectedTemplate === 'image_4_5') {
-                    options = { name, type: 'IMAGE', width: 1080, height: 1350, ratio: '4:5', template: 'image_4_5' };
+                } else if (selectedTemplate === 'image_4_3') {
+                    options = { name, type: 'IMAGE', width: 1024, height: 768, ratio: '4:3', template: 'image_4_3' };
+                } else if (selectedTemplate === 'pdf_16_9') {
+                    options = { name, type: 'PDF', width: 1280, height: 720, ratio: '16:9', template: 'pdf_16_9' };
                 } else if (selectedTemplate === 'pdf_a4') {
                     options = { name, type: 'PDF', width: 794, height: 1123, ratio: 'A4', template: 'pdf_a4' };
                 }
