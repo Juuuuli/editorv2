@@ -400,6 +400,7 @@ export default class SmartTools {
                         : `${vaultConfig.custom.baseUrl.replace(/\/$/, '')}/chat/completions`;
                     const model = vaultConfig.custom.modelId || 'default-model';
                     const token = vaultConfig.custom.token || 'bearer-token';
+                    console.log('[SmartTools] 🚀 正在呼叫自訂端點進行 OCR:', apiUrl, '模型:', model);
 
                     const res = await fetch(apiUrl, {
                         method: 'POST',
@@ -431,6 +432,7 @@ export default class SmartTools {
                     }
                     const geminiModel = vaultConfig.builtin?.model || 'gemini-2.0-flash';
                     const base64Data = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
+                    console.log('[SmartTools] 🚀 正在呼叫 Google Gemini 視覺模型進行 OCR:', geminiModel);
 
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`, {
                         method: 'POST',
@@ -461,6 +463,7 @@ export default class SmartTools {
                         throw new Error('未設定 OpenAI API Key（請至右上角系統金鑰保險箱填入 OpenAI 金鑰）');
                     }
                     const openaiModel = vaultConfig.builtin?.model || 'gpt-4o-mini';
+                    console.log('[SmartTools] 🚀 正在呼叫 OpenAI 模型進行 OCR:', openaiModel);
 
                     const res = await fetch('https://api.openai.com/v1/chat/completions', {
                         method: 'POST',
