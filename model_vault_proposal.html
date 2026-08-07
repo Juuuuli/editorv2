@@ -42,6 +42,7 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 10px; }
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="antialiased min-h-screen p-4 md:p-8 custom-scrollbar">
@@ -324,38 +325,33 @@
         <div class="mt-16 bg-slate-900/50 rounded-2xl border border-dark-border p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
             <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <i class="fas fa-map-signs text-emerald-400"></i> 開發實作藍圖 (Implementation Plan)
+                <i class="fas fa-map-signs text-emerald-400"></i> 4. 開發實作藍圖 (Implementation Plan)
             </h2>
             
             <div class="space-y-6 text-slate-300 text-sm leading-relaxed">
                 
                 <div class="space-y-2">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fas fa-folder-open text-indigo-400"></i> 1. 檔案與目錄結構 (是否新增資料夾)</h3>
-                    <p>目前 <code>AuthManager.js</code> 已經承載了登入/註冊以及舊版的保險箱邏輯。因為新版保險箱加入了非常多動態切換 (Tab, Dropdown, 各式 Key 存取) 的功能，如果全部塞進 <code>AuthManager.js</code> 會讓檔案過於肥大。</p>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fas fa-folder-open text-indigo-400"></i> 1. 檔案與目錄結構 (已決策)</h3>
+                    <p>目前 <code>AuthManager.js</code> 已經承載了登入/註冊以及舊版的保險箱邏輯。為了避免檔案肥大，我們將建立專屬的 <code>src/features/vault/ApiVaultManager.js</code> 來獨立維護保險箱 UI 與事件綁定。</p>
                     <div class="p-4 bg-slate-950 rounded-xl border border-slate-700/50">
-                        <p class="font-bold text-emerald-400 mb-2">👉 建議做法：</p>
-                        <p>我們可以建立一個專屬的 <code>ApiVaultManager.js</code> (放在 <code>src/features/auth/</code> 或是新增一個 <code>src/features/vault/</code> 資料夾)。把保險箱的 UI 生成、按鈕綁定、LocalStorage 存取獨立出來，然後由 <code>AuthManager</code> 去呼叫它。您覺得需要拆分檔案嗎？</p>
+                        <p class="font-bold text-emerald-400 mb-1">👉 實作策略：</p>
+                        <p>建立 <code>ApiVaultManager.js</code> 處理保險箱介面與設定讀寫，完成後於 <code>.agents/rules/</code> 補上對應架構說明規則。</p>
                     </div>
                 </div>
 
                 <div class="space-y-2">
                     <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fas fa-code-branch text-indigo-400"></i> 2. 主題樣式 (Theme) 的整合</h3>
-                    <p>目前的 Mockup (上圖) 是純深色模式 (Dark Mode)。但我們的系統架構支援 4 種主題 (Light, Dark, Pro-Slate, Retro)。</p>
-                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-700/50">
-                        <p class="font-bold text-emerald-400 mb-2">👉 建議做法：</p>
-                        <p>在實際寫入系統時，我會將 HTML 內的 <code>bg-slate-900</code> 等寫死顏色拔除，改套用我們 <code>settings-modal.css</code> 裡面的語意化 Class (如 <code>vault-card</code>)，讓它可以完美切換系統的四種主題。這部分我會處理好，不會影響您喜歡的佈局排版。</p>
-                    </div>
+                    <p>將 Mockup 中的寫死顏色改為 <code>settings-modal.css</code> 的語意化 Class，確保能無縫支援系統的 4 種主題風格 (Light, Dark, Pro-Slate, Retro)。</p>
                 </div>
 
                 <div class="space-y-2">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fas fa-database text-indigo-400"></i> 3. 資料儲存與工作流程</h3>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fas fa-tasks text-indigo-400"></i> 3. 開發實作步驟</h3>
                     <div class="p-4 bg-slate-950 rounded-xl border border-slate-700/50">
-                        <p class="font-bold text-emerald-400 mb-2">👉 工作流程規劃：</p>
                         <ol class="list-decimal pl-5 space-y-2">
                             <li>確認此 Mockup 介面定案 (三個側邊欄：核心模型、影像處理、簡報轉檔)。</li>
-                            <li>確認程式碼存放位置 (是否建立 <code>ApiVaultManager.js</code>)。</li>
-                            <li>我開始修改 JS 檔案，實作 DOM 與事件綁定。</li>
-                            <li>我修改 <code>settings-modal.css</code>，將四個系統主題顏色補齊。</li>
+                            <li>建立 <code>src/features/vault/ApiVaultManager.js</code> 模組。</li>
+                            <li>修改 JS 檔案，實作 DOM 與事件綁定。</li>
+                            <li>更新 <code>settings-modal.css</code> 支援四種主題樣式。</li>
                             <li>完成後提供測試路徑供您審閱。</li>
                         </ol>
                     </div>
@@ -363,57 +359,12 @@
 
             </div>
         </div>
-    </div>
 
-    <script>
-        function switchSidebar(view) {
-            const tabs = ["llm", "image", "ppt"];
-            
-            tabs.forEach(tab => {
-                const btn = document.getElementById(`sidebar-tab-${tab}`);
-                const viewEl = document.getElementById(`view-${tab}`);
-                
-                if (tab === view) {
-                    btn.className = "text-left px-5 py-3 text-sm font-bold text-white bg-indigo-600/20 border-r-2 border-indigo-500 transition flex items-center gap-2";
-                    if (tab === "image") btn.className = btn.className.replace("indigo", "pink").replace("indigo", "pink").replace("indigo", "pink");
-                    if (tab === "ppt") btn.className = btn.className.replace("indigo", "sky").replace("indigo", "sky").replace("indigo", "sky");
-                    viewEl.classList.remove("hidden");
-                } else {
-                    btn.className = "text-left px-5 py-3 text-sm font-bold text-slate-400 hover:bg-slate-800 transition flex items-center gap-2";
-                    viewEl.classList.add("hidden");
-                }
-            });
-        }
-
-        function switchLlmTab(tab) {
-            const btnBuiltin = document.getElementById("tab-builtin");
-            const btnCustom = document.getElementById("tab-custom");
-            const contentBuiltin = document.getElementById("content-builtin");
-            const contentCustom = document.getElementById("content-custom");
-
-            if (tab === "builtin") {
-                btnBuiltin.className = "text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-2 -mb-[10px] transition";
-                btnCustom.className = "text-sm font-bold text-slate-500 hover:text-slate-300 pb-2 -mb-[10px] transition";
-                contentBuiltin.classList.remove("hidden");
-                contentCustom.classList.add("hidden");
-            } else {
-                btnCustom.className = "text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-2 -mb-[10px] transition";
-                btnBuiltin.className = "text-sm font-bold text-slate-500 hover:text-slate-300 pb-2 -mb-[10px] transition";
-                contentCustom.classList.remove("hidden");
-                contentBuiltin.classList.add("hidden");
-            }
-        }
-    </script>
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
         <!-- Section 5: 可測試之 API 列表 (Testable APIs) -->
         <div class="mt-16 bg-slate-900/50 rounded-2xl border border-dark-border p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-500"></div>
             <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <i class="fas fa-plug text-purple-400"></i> 目前可串接測試之 API 列表
+                <i class="fas fa-plug text-purple-400"></i> 5. 目前可串接測試之 API 列表
             </h2>
             
             <p class="text-slate-300 text-sm mb-6 leading-relaxed">
@@ -485,8 +436,47 @@
                 </div>
             </div>
         </div>
-    </div>
 
+    </div> <!-- Close max-w-5xl -->
 
+    <script>
+        function switchSidebar(view) {
+            const tabs = ["llm", "image", "ppt"];
+            
+            tabs.forEach(tab => {
+                const btn = document.getElementById(`sidebar-tab-${tab}`);
+                const viewEl = document.getElementById(`view-${tab}`);
+                
+                if (tab === view) {
+                    btn.className = "text-left px-5 py-3 text-sm font-bold text-white bg-indigo-600/20 border-r-2 border-indigo-500 transition flex items-center gap-2";
+                    if (tab === "image") btn.className = btn.className.replace(/indigo/g, "pink");
+                    if (tab === "ppt") btn.className = btn.className.replace(/indigo/g, "sky");
+                    viewEl.classList.remove("hidden");
+                } else {
+                    btn.className = "text-left px-5 py-3 text-sm font-bold text-slate-400 hover:bg-slate-800 transition flex items-center gap-2";
+                    viewEl.classList.add("hidden");
+                }
+            });
+        }
+
+        function switchLlmTab(tab) {
+            const btnBuiltin = document.getElementById("tab-builtin");
+            const btnCustom = document.getElementById("tab-custom");
+            const contentBuiltin = document.getElementById("content-builtin");
+            const contentCustom = document.getElementById("content-custom");
+
+            if (tab === "builtin") {
+                btnBuiltin.className = "text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-2 -mb-[10px] transition";
+                btnCustom.className = "text-sm font-bold text-slate-500 hover:text-slate-300 pb-2 -mb-[10px] transition";
+                contentBuiltin.classList.remove("hidden");
+                contentCustom.classList.add("hidden");
+            } else {
+                btnCustom.className = "text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-2 -mb-[10px] transition";
+                btnBuiltin.className = "text-sm font-bold text-slate-500 hover:text-slate-300 pb-2 -mb-[10px] transition";
+                contentCustom.classList.remove("hidden");
+                contentBuiltin.classList.add("hidden");
+            }
+        }
+    </script>
 </body>
 </html>
