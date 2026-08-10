@@ -1,10 +1,10 @@
-import ClipdropAPI from './ClipdropAPI.js';
-import MockAPI from './MockAPI.js';
+import AIProviderAdapter from '../../core/AIProviderAdapter.js';
 
 export default class SmartTools {
     constructor(canvasEngine, eventBus) {
         this.canvasEngine = canvasEngine;
         this.eventBus = eventBus;
+        this.aiAdapter = new AIProviderAdapter(eventBus);
         
         this.bindEvents();
     }
@@ -95,7 +95,7 @@ export default class SmartTools {
             const res = await fetch(dataUrl);
             const imageBlob = await res.blob();
             
-            const resultUrl = await ClipdropAPI.removeBackground(imageBlob);
+            const resultUrl = await this.aiAdapter.removeBackground(imageBlob);
             
             fabric.Image.fromURL(resultUrl, (img) => {
                 img.set({
@@ -384,135 +384,11 @@ export default class SmartTools {
             this.canvasEngine.canvas.setActiveObject(activeObject);
             this.canvasEngine.canvas.renderAll();
 
-            // 3. 呼叫 Google Gemini / GPT-4o / Vision OCR API 或自訂端點
+            // 3. 呼叫 AIProviderAdapter 進行 OCR
             let textContent = '';
             
             try {
-                const vaultConfig = JSON.parse(localStorage.getItem('EDITOR_V2_VAULT_CONFIG') || '{}');
-                const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
-                const activeLlmType = vaultConfig.activeLlmType || 'builtin';
-                const provider = vaultConfig.builtin?.provider || 'gemini';
-
-                if (activeLlmType === 'custom' && vaultConfig.custom?.baseUrl) {
-                    // 自訂 OpenAI 相容端點 (vLLM / Ollama)
-                    const apiUrl = vaultConfig.custom.baseUrl.endsWith('/chat/completions') 
-                        ? vaultConfig.custom.baseUrl 
-                        : `${vaultConfig.custom.baseUrl.replace(/\/$/, '')}/chat/completions`;
-                    const model = vaultConfig.custom.modelId || 'default-model';
-                    const token = vaultConfig.custom.token || 'bearer-token';
-                    console.log('[SmartTools] 🚀 正在呼叫自訂端點進行 OCR:', apiUrl, '模型:', model);
-
-                    const res = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({
-                            model: model,
-                            messages: [{
-                                role: "user",
-                                content: [
-                                    { type: "text", text: "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。" },
-                                    { type: "image_url", image_url: { url: dataUrl } }
-                                ]
-                            }],
-                            max_tokens: 1024,
-                            temperature: 0.1
-                        })
-                    });
-                    if (!res.ok) throw new Error(`自訂端點錯誤: ${res.status} ${res.statusText}`);
-                    const result = await res.json();
-                    textContent = result.choices?.[0]?.message?.content?.trim() || '';
-                } else if (provider === 'gemini') {
-                    // Google Gemini Vision API
-                    const geminiKey = vaultConfig.builtin?.geminiApiKey || vaultConfig.builtin?.apiKey || localStorage.getItem('gemini_api_key') || (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || '';
-                    if (!geminiKey) {
-                        throw new Error('未設定 Google Gemini API Key（請至右上角系統金鑰保險箱填入 Gemini 金鑰）');
-                    }
-                    const candidateModels = Array.from(new Set([
-                        vaultConfig.builtin?.model || 'gemini-1.5-flash-8b',
-                        'gemini-1.5-flash-8b',
-                        'gemini-2.5-flash',
-                        'gemini-2.0-flash-exp',
-                        'gemini-1.5-flash-latest',
-                        'gemini-1.5-pro'
-                    ]));
-                    
-                    const base64Data = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
-                    const requestPayload = {
-                        contents: [{
-                            parts: [
-                                { text: "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。" },
-                                { inline_data: { mime_type: "image/png", data: base64Data } }
-                            ]
-                        }],
-                        generationConfig: {
-                            temperature: 0.1,
-                            maxOutputTokens: 1024
-                        }
-                    };
-
-                    let lastError = null;
-                    for (const m of candidateModels) {
-                        try {
-                            console.log(`[SmartTools] 🚀 嘗試呼叫 Gemini 模型: ${m}`);
-                            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${geminiKey}`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(requestPayload)
-                            });
-
-                            if (res.ok) {
-                                const result = await res.json();
-                                textContent = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-                                console.log(`[SmartTools] ✅ Gemini 模型 ${m} 辨識成功！`);
-                                break;
-                            } else {
-                                const err = await res.json().catch(() => ({}));
-                                lastError = new Error(`Gemini API 錯誤 (${m}): ${err.error?.message || res.statusText}`);
-                                console.warn(`[SmartTools] ⚠️ 模型 ${m} 呼叫失敗，嘗試下一個候選模型:`, err.error?.message);
-                            }
-                        } catch (e) {
-                            lastError = e;
-                        }
-                    }
-
-                    if (!textContent && lastError) {
-                        throw lastError;
-                    }
-                } else {
-                    // OpenAI Vision API
-                    const openaiKey = vaultConfig.builtin?.openaiApiKey || vaultConfig.builtin?.apiKey || legacyVault.openaiApiKey || localStorage.getItem('openai_api_key') || (import.meta.env && import.meta.env.VITE_OPENAI_API_KEY) || '';
-                    if (!openaiKey) {
-                        throw new Error('未設定 OpenAI API Key（請至右上角系統金鑰保險箱填入 OpenAI 金鑰）');
-                    }
-                    const openaiModel = vaultConfig.builtin?.model || 'gpt-4o-mini';
-                    console.log('[SmartTools] 🚀 正在呼叫 OpenAI 模型進行 OCR:', openaiModel);
-
-                    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${openaiKey}`
-                        },
-                        body: JSON.stringify({
-                            model: openaiModel,
-                            messages: [{
-                                role: "user",
-                                content: [
-                                    { type: "text", text: "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。" },
-                                    { type: "image_url", image_url: { url: dataUrl } }
-                                ]
-                            }],
-                            max_tokens: 1024,
-                            temperature: 0.1
-                        })
-                    });
-                    if (!res.ok) throw new Error(`OpenAI API 錯誤: ${res.status} ${res.statusText}`);
-                    const result = await res.json();
-                    textContent = result.choices?.[0]?.message?.content?.trim() || '';
-                }
+                textContent = await this.aiAdapter.ocr(dataUrl);
             } catch (err) {
                 console.error('[SmartTools] 智慧 OCR 辨識失敗:', err);
                 alert(`辨識失敗: ${err.message}`);
@@ -704,7 +580,7 @@ export default class SmartTools {
                     const imageBlob = await fetch(imageDataUrl).then(r => r.blob());
                     const maskBlob = await fetch(maskDataUrl).then(r => r.blob());
 
-                    const resultUrl = await ClipdropAPI.inpaint(imageBlob, maskBlob);
+                    const resultUrl = await this.aiAdapter.inpaint(imageBlob, maskBlob);
 
                     // 6. 替換原圖
                     fabric.Image.fromURL(resultUrl, (img) => {
