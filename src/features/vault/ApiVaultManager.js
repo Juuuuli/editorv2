@@ -442,7 +442,7 @@ export default class ApiVaultManager {
                                             <span>API Secret / 伺服器金鑰</span>
                                             <span class="text-[10px] opacity-60">Secret</span>
                                         </label>
-                                        <a href="https://www.convertapi.com/a" target="_blank" rel="noopener noreferrer" class="text-[10px] text-indigo-500 hover:underline flex items-center gap-1 font-semibold">
+                                        <a href="https://www.convertapi.com/a" id="vault-ppt-key-link" target="_blank" rel="noopener noreferrer" class="text-[10px] text-indigo-500 hover:underline flex items-center gap-1 font-semibold">
                                             <span>取得 ConvertAPI Secret</span>
                                             <i class="fas fa-external-link-alt text-[8px]"></i>
                                         </a>
@@ -682,8 +682,30 @@ export default class ApiVaultManager {
         }
         
         const pptProvider = this.modal.querySelector('#vault-ppt-provider');
+        const pptSecretInput = this.modal.querySelector('#vault-ppt-secret');
+        const pptKeyLink = this.modal.querySelector('#vault-ppt-key-link');
+
         if (pptProvider) {
             pptProvider.addEventListener('change', () => {
+                const prov = pptProvider.value;
+                if (prov === 'convertapi') {
+                    if (pptSecretInput) pptSecretInput.placeholder = '填入 ConvertAPI Secret (jCHj...)';
+                    if (pptKeyLink) {
+                        pptKeyLink.href = 'https://www.convertapi.com/a';
+                        pptKeyLink.innerHTML = '<span>取得 ConvertAPI Secret</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
+                        pptKeyLink.classList.remove('hidden');
+                    }
+                } else if (prov === 'cloudconvert') {
+                    if (pptSecretInput) pptSecretInput.placeholder = '填入 CloudConvert API Key';
+                    if (pptKeyLink) {
+                        pptKeyLink.href = 'https://cloudconvert.com/dashboard/api/v2/keys';
+                        pptKeyLink.innerHTML = '<span>取得 CloudConvert Key</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
+                        pptKeyLink.classList.remove('hidden');
+                    }
+                } else if (prov === 'gotenberg') {
+                    if (pptSecretInput) pptSecretInput.placeholder = '此為自建伺服器，暫無需填寫金鑰';
+                    if (pptKeyLink) pptKeyLink.classList.add('hidden');
+                }
                 this.updateActiveBadge();
             });
         }
@@ -1025,7 +1047,10 @@ export default class ApiVaultManager {
         const pptProvider = this.modal.querySelector('#vault-ppt-provider');
         const pptSecret = this.modal.querySelector('#vault-ppt-secret');
 
-        if (pptProvider) pptProvider.value = c.pptParsing?.provider || 'convertapi';
+        if (pptProvider) {
+            pptProvider.value = c.pptParsing?.provider || 'convertapi';
+            pptProvider.dispatchEvent(new Event('change'));
+        }
         if (pptSecret) pptSecret.value = c.pptParsing?.secret || '';
 
         this.switchLlmSubTab(c.activeLlmType || 'builtin');
