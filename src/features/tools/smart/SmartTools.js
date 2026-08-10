@@ -5,6 +5,7 @@ export default class SmartTools {
         this.canvasEngine = canvasEngine;
         this.eventBus = eventBus;
         this.aiAdapter = new AIProviderAdapter(eventBus);
+        console.log('[SmartTools] 智慧工具模組已載入 (v1.5.1 強制更新版)');
         
         this.bindEvents();
     }
