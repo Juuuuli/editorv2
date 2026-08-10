@@ -610,6 +610,7 @@ export default class ApiVaultManager {
                     }
                 }
                 this.updateActiveBadge();
+            });
         }
         
         // Image Provider 切換時更新 Placeholder 與連結
