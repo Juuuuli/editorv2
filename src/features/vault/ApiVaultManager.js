@@ -689,21 +689,30 @@ export default class ApiVaultManager {
             pptProvider.addEventListener('change', () => {
                 const prov = pptProvider.value;
                 if (prov === 'convertapi') {
-                    if (pptSecretInput) pptSecretInput.placeholder = '填入 ConvertAPI Secret (jCHj...)';
+                    if (pptSecretInput) {
+                        pptSecretInput.placeholder = '填入 ConvertAPI Secret (jCHj...)';
+                        pptSecretInput.value = this.config.pptParsing?.convertapiSecret || (this.config.pptParsing?.provider === 'convertapi' ? this.config.pptParsing?.secret : '') || '';
+                    }
                     if (pptKeyLink) {
                         pptKeyLink.href = 'https://www.convertapi.com/a';
                         pptKeyLink.innerHTML = '<span>取得 ConvertAPI Secret</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
                         pptKeyLink.classList.remove('hidden');
                     }
                 } else if (prov === 'cloudconvert') {
-                    if (pptSecretInput) pptSecretInput.placeholder = '填入 CloudConvert API Key';
+                    if (pptSecretInput) {
+                        pptSecretInput.placeholder = '填入 CloudConvert API Key';
+                        pptSecretInput.value = this.config.pptParsing?.cloudconvertSecret || (this.config.pptParsing?.provider === 'cloudconvert' ? this.config.pptParsing?.secret : '') || '';
+                    }
                     if (pptKeyLink) {
                         pptKeyLink.href = 'https://cloudconvert.com/dashboard/api/v2/keys';
                         pptKeyLink.innerHTML = '<span>取得 CloudConvert Key</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
                         pptKeyLink.classList.remove('hidden');
                     }
                 } else if (prov === 'gotenberg') {
-                    if (pptSecretInput) pptSecretInput.placeholder = '此為自建伺服器，暫無需填寫金鑰';
+                    if (pptSecretInput) {
+                        pptSecretInput.placeholder = '此為自建伺服器，暫無需填寫金鑰';
+                        pptSecretInput.value = '';
+                    }
                     if (pptKeyLink) pptKeyLink.classList.add('hidden');
                 }
                 this.updateActiveBadge();
@@ -1166,6 +1175,11 @@ export default class ApiVaultManager {
         const prevPhotoroomKey = this.config.imageProcessing?.photoroomApiKey || (this.config.imageProcessing?.provider === 'photoroom' ? this.config.imageProcessing?.apiKey : '') || '';
         const prevRemovebgKey = this.config.imageProcessing?.removebgApiKey || (this.config.imageProcessing?.provider === 'removebg' ? this.config.imageProcessing?.apiKey : '') || '';
 
+        const pptProv = this.modal.querySelector('#vault-ppt-provider')?.value || 'convertapi';
+        const pptSecret = this.modal.querySelector('#vault-ppt-secret')?.value.trim() || '';
+        const prevConvertApiKey = this.config.pptParsing?.convertapiSecret || (this.config.pptParsing?.provider === 'convertapi' ? this.config.pptParsing?.secret : '') || '';
+        const prevCloudConvertKey = this.config.pptParsing?.cloudconvertSecret || (this.config.pptParsing?.provider === 'cloudconvert' ? this.config.pptParsing?.secret : '') || '';
+
         const newConfig = {
             activeLlmType: this.activeLlmSubTab,
             builtin: {
@@ -1189,8 +1203,10 @@ export default class ApiVaultManager {
                 removebgApiKey: imgProv === 'removebg' ? imgKey : prevRemovebgKey
             },
             pptParsing: {
-                provider: this.modal.querySelector('#vault-ppt-provider')?.value || 'convertapi',
-                secret: this.modal.querySelector('#vault-ppt-secret')?.value.trim() || ''
+                provider: pptProv,
+                secret: pptSecret,
+                convertapiSecret: pptProv === 'convertapi' ? pptSecret : prevConvertApiKey,
+                cloudconvertSecret: pptProv === 'cloudconvert' ? pptSecret : prevCloudConvertKey
             }
         };
 
