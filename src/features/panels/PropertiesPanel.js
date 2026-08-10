@@ -361,6 +361,10 @@ export default class PropertiesPanel {
                 this.canvasEngine.canvas.requestRenderAll();
                 this.eventBus.emit('CANVAS:DIRTY', true);
             });
+            textContent.addEventListener('change', () => {
+                this.canvasEngine.saveHistory();
+                this.eventBus.emit('CANVAS:DIRTY', true);
+            });
             // 監聽畫布上直接編輯時，同步回屬性面板
             this.activeObject.on('changed', () => {
                 textContent.value = this.activeObject.text;

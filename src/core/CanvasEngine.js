@@ -319,6 +319,21 @@ export default class CanvasEngine {
         // 綁定滑鼠滾輪縮放
         this.canvas.on('mouse:wheel', this.onMouseWheel.bind(this));
 
+        // 監聽文字編輯事件，確保自動存檔與歷史紀錄
+        this.canvas.on('text:changed', () => {
+            if (this.eventBus) {
+                this.eventBus.emit('CANVAS:DIRTY', true);
+            }
+        });
+        
+        this.canvas.on('text:editing:exited', () => {
+            this.saveHistory();
+            if (this.eventBus) {
+                this.eventBus.emit('CANVAS:DIRTY', true);
+                this.updateThumbnail();
+            }
+        });
+
         // 監聽畫布異動，廣播髒標記與縮圖
         this.canvas.on('object:added', (e) => {
             // 排除背景版
