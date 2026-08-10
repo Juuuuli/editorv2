@@ -413,26 +413,15 @@ export default class PropertiesPanel {
                     btnAiMagic.classList.add('opacity-50', 'pointer-events-none');
 
                     try {
-                        const response = await fetch("http://10.1.1.103:11435/v1/chat/completions", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": "Bearer token-123qwe"
-                            },
-                            body: JSON.stringify({
-                                model: "nemotron-omni",
-                                messages: [{ role: "user", content: prompt }],
-                                max_tokens: 1024,
-                                temperature: 0.3
-                            })
-                        });
-
-                        if (!response.ok) throw new Error(`API 錯誤: ${response.status}`);
-                        const data = await response.json();
+                        if (!window.editorApp || !window.editorApp.aiAdapter) {
+                            throw new Error("AI Adapter 未初始化");
+                        }
                         
-                        const message = data.choices[0].message;
-                        let newText = message.content || "";
-                        let reasoningText = message.reasoning_content || "";
+                        const systemPrompt = "你是一個專業的繁體中文編輯助手。請務必直接輸出修改後的結果，不要加入任何開場白或說明。請確保使用繁體中文輸出（除非使用者特別要求翻譯成其他語言）。";
+                        const result = await window.editorApp.aiAdapter.generateText(prompt, systemPrompt);
+                        
+                        let newText = result || "";
+                        let reasoningText = "";
                         
                         if (newText) {
                             newText = newText.trim();
@@ -450,10 +439,12 @@ export default class PropertiesPanel {
                             newText = originalText;
                         }
                         
+                        const modelName = window.editorApp.aiAdapter.getActiveLlmModelName();
+                        
                         // 顯示彈窗
-                        this.showAiModal(originalText, reasoningText, newText, textContent);
+                        this.showAiModal(originalText, reasoningText, newText, textContent, modelName);
                     } catch (err) {
-                        alert("AI 處理失敗: " + err.message + "\n(請確認內網 10.1.1.103 伺服器是否有啟動)");
+                        alert("AI 處理失敗: " + err.message);
                         this.activeObject.set('text', originalText);
                         this.canvasEngine.canvas.requestRenderAll();
                     } finally {
@@ -1328,7 +1319,7 @@ export default class PropertiesPanel {
         `;
     }
 
-    showAiModal(originalText, reasoningText, newText, textContentInput) {
+    showAiModal(originalText, reasoningText, newText, textContentInput, modelName = "") {
         const modal = document.getElementById('ai-text-modal');
         if (!modal) return;
         
@@ -1336,6 +1327,11 @@ export default class PropertiesPanel {
         const finalTextEl = document.getElementById('ai-modal-final-text');
         const btnCancel = document.getElementById('btn-ai-modal-cancel');
         const btnConfirm = document.getElementById('btn-ai-modal-confirm');
+        const modelNameEl = document.getElementById('ai-modal-model-name');
+        
+        if (modelNameEl && modelName) {
+            modelNameEl.innerText = `模型: ${modelName}`;
+        }
         
         origTextEl.innerText = originalText;
         finalTextEl.value = newText;

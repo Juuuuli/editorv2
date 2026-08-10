@@ -11,6 +11,25 @@ export default class AIProviderAdapter {
         }
     }
 
+    /**
+     * 取得當前使用的 LLM 模型名稱 (供 UI 顯示)
+     */
+    getActiveLlmModelName() {
+        const isCustom = this.config.activeLlmType === 'custom';
+        if (isCustom) {
+            const activeEp = this.config.customEndpoints?.find(e => e.id === this.config.activeCustomId);
+            return activeEp?.modelId || '未知自訂模型';
+        } else {
+            const provider = this.config.builtin?.provider || 'gemini';
+            if (provider === 'gemini') {
+                return this.config.builtin?.geminiModel || this.config.builtin?.model || 'gemini-1.5-flash';
+            } else if (provider === 'openai') {
+                return this.config.builtin?.openaiModel || this.config.builtin?.model || 'gpt-4o-mini';
+            }
+            return '未知內建模型';
+        }
+    }
+
     loadConfig() {
         const raw = localStorage.getItem('EDITOR_V2_VAULT_CONFIG');
         if (raw) {
