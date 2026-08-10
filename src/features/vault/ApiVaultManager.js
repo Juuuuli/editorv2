@@ -895,7 +895,7 @@ export default class ApiVaultManager {
                     statusEl.className = 'text-[11px] flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold';
                     statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>有效 (餘量: ${sec} · ${duration}ms)</span>`;
                 } else if (prov === 'cloudconvert') {
-                    const res = await fetch(`https://api.cloudconvert.com/v2/users/me`, {
+                    const res = await fetch(`https://api.cloudconvert.com/v2/jobs?per_page=1`, {
                         headers: { 'Authorization': 'Bearer ' + secret }
                     });
                     if (!res.ok) {
@@ -905,7 +905,7 @@ export default class ApiVaultManager {
                     const data = await res.json();
                     const duration = Date.now() - startTime;
                     statusEl.className = 'text-[11px] flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold';
-                    statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>有效 (${data.data.username} · ${duration}ms)</span>`;
+                    statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>金鑰有效 · 回應 ${duration}ms</span>`;
                 } else if (prov === 'gotenberg') {
                     throw new Error('暫不支援 Gotenberg 的連線測試');
                 }
