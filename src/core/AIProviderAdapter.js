@@ -23,7 +23,7 @@ export default class AIProviderAdapter {
         return {
             activeLlmType: 'builtin',
             builtin: { provider: 'gemini', model: 'gemini-1.5-flash', geminiApiKey: '', openaiApiKey: '' },
-            custom: { name: '', baseUrl: '', modelId: '', token: '' },
+            customEndpoints: [], activeCustomId: '',
             imageProcessing: { provider: 'clipdrop', apiKey: '' },
             pptParsing: { provider: 'convertapi', secret: '' }
         };
@@ -121,7 +121,8 @@ export default class AIProviderAdapter {
     }
 
     async _callCustomEndpoint(prompt, systemPrompt) {
-        const { baseUrl, modelId, token } = this.config.custom || {};
+        const activeEp = this.config.customEndpoints?.find(e => e.id === this.config.activeCustomId);
+        const { baseUrl, modelId, token } = activeEp || {};
         if (!baseUrl) throw new Error('未設定自訂 Endpoint URL');
         
         // Assume OpenAI compatible interface for custom endpoints (like vLLM/Ollama with compatible layer)
@@ -293,7 +294,8 @@ export default class AIProviderAdapter {
             });
         }
 
-        if (activeLlmType === 'custom' && this.config.custom?.baseUrl) {
+        const activeEp = this.config.customEndpoints?.find(e => e.id === this.config.activeCustomId);
+        if (activeLlmType === 'custom' && activeEp?.baseUrl) {
             return this._callCustomOcr(dataUrl);
         } else if (provider === 'gemini') {
             return this._callGeminiOcr(dataUrl);
@@ -307,7 +309,8 @@ export default class AIProviderAdapter {
     }
 
     async _callCustomOcr(dataUrl) {
-        const { baseUrl, modelId, token } = this.config.custom;
+        const activeEp = this.config.customEndpoints?.find(e => e.id === this.config.activeCustomId);
+        const { baseUrl, modelId, token } = activeEp || {};
         const apiUrl = baseUrl.endsWith('/chat/completions') ? baseUrl : `${baseUrl.replace(/\/$/, '')}/chat/completions`;
         const model = modelId || 'default-model';
         const prompt = "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。";

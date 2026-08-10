@@ -38,6 +38,8 @@ export default class ApiVaultManager {
                 modelId: '',
                 token: ''
             },
+            customEndpoints: [], // 預設為空，動態管理
+            activeCustomId: '',
             imageProcessing: {
                 provider: 'clipdrop',
                 apiKey: ''
@@ -57,8 +59,20 @@ export default class ApiVaultManager {
                 // 補齊巢狀物件
                 merged.builtin = { ...defaultConfig.builtin, ...(parsed.builtin || {}) };
                 merged.custom = { ...defaultConfig.custom, ...(parsed.custom || {}) };
+                merged.customEndpoints = parsed.customEndpoints || [];
+                merged.activeCustomId = parsed.activeCustomId || '';
                 merged.imageProcessing = { ...defaultConfig.imageProcessing, ...(parsed.imageProcessing || {}) };
                 merged.pptParsing = { ...defaultConfig.pptParsing, ...(parsed.pptParsing || {}) };
+                
+                // 向後相容：如果沒有 customEndpoints 但有舊的 custom.baseUrl，遷移它
+                if (merged.customEndpoints.length === 0 && merged.custom.baseUrl) {
+                    const legacyId = 'custom-' + Date.now();
+                    merged.customEndpoints.push({
+                        id: legacyId,
+                        ...merged.custom
+                    });
+                    merged.activeCustomId = legacyId;
+                }
                 
                 // 相容 gemini / openai 獨立 key
                 if (!merged.builtin.geminiApiKey && merged.builtin.provider === 'gemini' && merged.builtin.apiKey) {
@@ -294,7 +308,18 @@ export default class ApiVaultManager {
 
                             <!-- 自訂模型端點內容 -->
                             <div id="vault-subcontent-custom" class="space-y-4 hidden">
-                                <div class="vault-section-card p-4 rounded-xl space-y-3.5">
+                                <div class="flex items-center gap-2">
+                                    <select id="vault-custom-list" class="vault-input-field flex-1 rounded-lg px-3 py-1.5 text-xs font-bold outline-none border-none">
+                                        <!-- 動態產生 -->
+                                    </select>
+                                    <button type="button" id="btn-add-custom" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition" title="新增設定檔">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button type="button" id="btn-del-custom" class="px-2.5 py-1.5 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition" title="刪除此設定檔">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                                <div class="vault-section-card p-4 rounded-xl space-y-3.5" id="vault-custom-form">
                                     <div class="space-y-1">
                                         <label class="text-[11px] font-bold">配置名稱 (標籤)</label>
                                         <input type="text" id="vault-custom-name" placeholder="例如：內網 vLLM / Ollama 伺服器" class="vault-input-field w-full rounded-lg px-3 py-2 text-xs">
@@ -606,6 +631,67 @@ export default class ApiVaultManager {
         if (btnPingPpt) {
             btnPingPpt.addEventListener('click', () => this.handlePing('ppt'));
         }
+
+        // API Profile Manager (Custom Endpoints)
+        const customList = this.modal.querySelector('#vault-custom-list');
+        const btnAddCustom = this.modal.querySelector('#btn-add-custom');
+        const btnDelCustom = this.modal.querySelector('#btn-del-custom');
+        const customName = this.modal.querySelector('#vault-custom-name');
+        const customUrl = this.modal.querySelector('#vault-custom-url');
+        const customModel = this.modal.querySelector('#vault-custom-model');
+        const customToken = this.modal.querySelector('#vault-custom-token');
+
+        if (customList) {
+            customList.addEventListener('change', () => {
+                this.config.activeCustomId = customList.value;
+                this.renderCustomEndpoints();
+                this.updateActiveBadge();
+            });
+        }
+        if (btnAddCustom) {
+            btnAddCustom.addEventListener('click', () => {
+                const newId = 'custom-' + Date.now();
+                this.config.customEndpoints.push({
+                    id: newId,
+                    name: '新端點',
+                    baseUrl: '',
+                    modelId: '',
+                    token: ''
+                });
+                this.config.activeCustomId = newId;
+                this.renderCustomEndpoints();
+                this.updateActiveBadge();
+            });
+        }
+        if (btnDelCustom) {
+            btnDelCustom.addEventListener('click', () => {
+                if (!this.config.activeCustomId) return;
+                if (!confirm('確定要刪除此端點設定嗎？')) return;
+                this.config.customEndpoints = this.config.customEndpoints.filter(e => e.id !== this.config.activeCustomId);
+                this.config.activeCustomId = this.config.customEndpoints.length > 0 ? this.config.customEndpoints[0].id : '';
+                this.renderCustomEndpoints();
+                this.updateActiveBadge();
+            });
+        }
+        
+        const saveActiveEndpoint = () => {
+            const activeEp = this.config.customEndpoints.find(e => e.id === this.config.activeCustomId);
+            if (activeEp) {
+                activeEp.name = customName?.value || '';
+                activeEp.baseUrl = customUrl?.value || '';
+                activeEp.modelId = customModel?.value || '';
+                activeEp.token = customToken?.value || '';
+                // Sync name back to option
+                const opt = customList.querySelector(`option[value="${this.config.activeCustomId}"]`);
+                if (opt) opt.textContent = activeEp.name || '未命名端點';
+                this.updateActiveBadge();
+            }
+        };
+
+        if (customName) customName.addEventListener('input', saveActiveEndpoint);
+        if (customUrl) customUrl.addEventListener('input', saveActiveEndpoint);
+        if (customModel) customModel.addEventListener('input', saveActiveEndpoint);
+        if (customToken) customToken.addEventListener('input', saveActiveEndpoint);
     }
 
     /**
@@ -819,16 +905,8 @@ export default class ApiVaultManager {
             }
         }
 
-        // LLM Custom
-        const customName = this.modal.querySelector('#vault-custom-name');
-        const customUrl = this.modal.querySelector('#vault-custom-url');
-        const customModel = this.modal.querySelector('#vault-custom-model');
-        const customToken = this.modal.querySelector('#vault-custom-token');
-
-        if (customName) customName.value = c.custom?.name || '';
-        if (customUrl) customUrl.value = c.custom?.baseUrl || '';
-        if (customModel) customModel.value = c.custom?.modelId || '';
-        if (customToken) customToken.value = c.custom?.token || '';
+        // LLM Custom (API Profile Manager)
+        this.renderCustomEndpoints();
 
         // Image
         const imgProvider = this.modal.querySelector('#vault-image-provider');
@@ -849,6 +927,55 @@ export default class ApiVaultManager {
     }
 
     /**
+     * 渲染自訂端點選單與表單
+     */
+    renderCustomEndpoints() {
+        const listEl = this.modal.querySelector('#vault-custom-list');
+        const customName = this.modal.querySelector('#vault-custom-name');
+        const customUrl = this.modal.querySelector('#vault-custom-url');
+        const customModel = this.modal.querySelector('#vault-custom-model');
+        const customToken = this.modal.querySelector('#vault-custom-token');
+        const formEl = this.modal.querySelector('#vault-custom-form');
+
+        if (!listEl) return;
+
+        // Ensure at least one activeCustomId if endpoints exist
+        if (this.config.customEndpoints.length > 0 && !this.config.customEndpoints.find(e => e.id === this.config.activeCustomId)) {
+            this.config.activeCustomId = this.config.customEndpoints[0].id;
+        }
+
+        listEl.innerHTML = '';
+        if (this.config.customEndpoints.length === 0) {
+            listEl.innerHTML = '<option value="">(無端點設定，請點擊右側新增)</option>';
+            listEl.disabled = true;
+            if (formEl) formEl.classList.add('opacity-50', 'pointer-events-none');
+            if (customName) customName.value = '';
+            if (customUrl) customUrl.value = '';
+            if (customModel) customModel.value = '';
+            if (customToken) customToken.value = '';
+        } else {
+            listEl.disabled = false;
+            if (formEl) formEl.classList.remove('opacity-50', 'pointer-events-none');
+            
+            this.config.customEndpoints.forEach(ep => {
+                const opt = document.createElement('option');
+                opt.value = ep.id;
+                opt.textContent = ep.name || '未命名端點';
+                if (ep.id === this.config.activeCustomId) opt.selected = true;
+                listEl.appendChild(opt);
+            });
+
+            const activeEp = this.config.customEndpoints.find(e => e.id === this.config.activeCustomId);
+            if (activeEp) {
+                if (customName) customName.value = activeEp.name || '';
+                if (customUrl) customUrl.value = activeEp.baseUrl || '';
+                if (customModel) customModel.value = activeEp.modelId || '';
+                if (customToken) customToken.value = activeEp.token || '';
+            }
+        }
+    }
+
+    /**
      * 更新下方作用中模型標籤
      */
     updateActiveBadge() {
@@ -861,9 +988,12 @@ export default class ApiVaultManager {
             const provName = prov === 'gemini' ? 'Google Gemini' : (prov === 'openai' ? 'OpenAI' : 'Anthropic');
             textEl.textContent = `作用中：${provName} (${model})`;
         } else {
-            const name = this.modal.querySelector('#vault-custom-name')?.value || '自訂端點';
-            const model = this.modal.querySelector('#vault-custom-model')?.value || '自訂模型';
-            textEl.textContent = `作用中：${name} (${model})`;
+            const activeEp = this.config.customEndpoints.find(e => e.id === this.config.activeCustomId);
+            if (activeEp) {
+                textEl.textContent = `作用中：${activeEp.name || '自訂端點'} (${activeEp.modelId || '未設定模型'})`;
+            } else {
+                textEl.textContent = `作用中：(無自訂端點)`;
+            }
         }
     }
 
@@ -890,12 +1020,8 @@ export default class ApiVaultManager {
                 geminiModel: prov === 'gemini' ? model : (this.config.builtin?.geminiModel || 'gemini-2.0-flash'),
                 openaiModel: prov === 'openai' ? model : (this.config.builtin?.openaiModel || 'gpt-4o-mini')
             },
-            custom: {
-                name: this.modal.querySelector('#vault-custom-name')?.value.trim() || '',
-                baseUrl: this.modal.querySelector('#vault-custom-url')?.value.trim() || '',
-                modelId: this.modal.querySelector('#vault-custom-model')?.value.trim() || '',
-                token: this.modal.querySelector('#vault-custom-token')?.value.trim() || ''
-            },
+            customEndpoints: this.config.customEndpoints,
+            activeCustomId: this.config.activeCustomId,
             imageProcessing: {
                 provider: this.modal.querySelector('#vault-image-provider')?.value || 'clipdrop',
                 apiKey: this.modal.querySelector('#vault-image-key')?.value.trim() || ''
