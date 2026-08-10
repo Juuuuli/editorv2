@@ -3,6 +3,24 @@
  * 負責提供 AI 核心模型 (Google Gemini / OpenAI / vLLM)、影像去背與簡報轉檔之多分頁設定彈窗、一鍵連線測試與 LocalStorage 集中管理
  */
 export default class ApiVaultManager {
+    /**
+     * 靜態方法：取得並解密保險箱設定
+     */
+    static getVaultConfig() {
+        const raw = localStorage.getItem('EDITOR_V2_VAULT_CONFIG');
+        if (!raw) return {};
+        try {
+            if (raw.startsWith('ENC:')) {
+                const encoded = raw.substring(4);
+                return JSON.parse(decodeURIComponent(atob(encoded)));
+            }
+            return JSON.parse(raw);
+        } catch (e) {
+            console.warn('[ApiVaultManager] Failed to decrypt vault config', e);
+            return {};
+        }
+    }
+
     constructor(eventBus) {
         this.eventBus = eventBus;
         this.storageKey = 'EDITOR_V2_VAULT_CONFIG';
@@ -52,35 +70,17 @@ export default class ApiVaultManager {
         };
 
         try {
-            const raw = localStorage.getItem(this.storageKey);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                const merged = { ...defaultConfig, ...parsed };
+            const saved = ApiVaultManager.getVaultConfig();
+            if (Object.keys(saved).length > 0) {
+                const merged = { ...defaultConfig, ...saved };
                 // 補齊巢狀物件
-                merged.builtin = { ...defaultConfig.builtin, ...(parsed.builtin || {}) };
-                merged.custom = { ...defaultConfig.custom, ...(parsed.custom || {}) };
-                merged.customEndpoints = parsed.customEndpoints || [];
-                merged.activeCustomId = parsed.activeCustomId || '';
-                merged.imageProcessing = { ...defaultConfig.imageProcessing, ...(parsed.imageProcessing || {}) };
-                merged.pptParsing = { ...defaultConfig.pptParsing, ...(parsed.pptParsing || {}) };
+                merged.builtin = { ...defaultConfig.builtin, ...(saved.builtin || {}) };
+                merged.custom = { ...defaultConfig.custom, ...(saved.custom || {}) };
+                merged.customEndpoints = saved.customEndpoints || [];
+                merged.activeCustomId = saved.activeCustomId || '';
+                merged.imageProcessing = { ...defaultConfig.imageProcessing, ...(saved.imageProcessing || {}) };
+                merged.pptParsing = { ...defaultConfig.pptParsing, ...(saved.pptParsing || {}) };
                 
-                // 向後相容：如果沒有 customEndpoints 但有舊的 custom.baseUrl，遷移它
-                if (merged.customEndpoints.length === 0 && merged.custom.baseUrl) {
-                    const legacyId = 'custom-' + Date.now();
-                    merged.customEndpoints.push({
-                        id: legacyId,
-                        ...merged.custom
-                    });
-                    merged.activeCustomId = legacyId;
-                }
-                
-                // 相容 gemini / openai 獨立 key
-                if (!merged.builtin.geminiApiKey && merged.builtin.provider === 'gemini' && merged.builtin.apiKey) {
-                    merged.builtin.geminiApiKey = merged.builtin.apiKey;
-                }
-                if (!merged.builtin.openaiApiKey && merged.builtin.provider === 'openai' && merged.builtin.apiKey) {
-                    merged.builtin.openaiApiKey = merged.builtin.apiKey;
-                }
                 return merged;
             }
 
@@ -130,22 +130,20 @@ export default class ApiVaultManager {
         };
 
         try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.config));
+            // 輕量加密混淆
+            const enc = 'ENC:' + btoa(encodeURIComponent(JSON.stringify(this.config)));
+            localStorage.setItem(this.storageKey, enc);
 
-            // 同步寫入舊版格式，確保 SmartTools, ClipdropAPI, FileImportManager 完全相容
+            // 同步寫入舊版格式，確保 SmartTools, ClipdropAPI 依賴的向下相容事件
             const legacyData = {
                 openaiApiKey: this.config.builtin?.openaiApiKey || (this.config.builtin?.provider === 'openai' ? this.config.builtin?.apiKey : '') || '',
                 clipdropKey: this.config.imageProcessing?.apiKey || '',
                 convertApiKey: this.config.pptParsing?.secret || '',
                 updatedAt: Date.now()
             };
-            localStorage.setItem(this.legacyStorageKey, JSON.stringify(legacyData));
-            localStorage.setItem('editorv2_api_vault', JSON.stringify(legacyData));
-
-            if (this.config.builtin?.openaiApiKey) localStorage.setItem('openai_api_key', this.config.builtin.openaiApiKey);
-            if (this.config.builtin?.geminiApiKey) localStorage.setItem('gemini_api_key', this.config.builtin.geminiApiKey);
-            if (this.config.imageProcessing?.apiKey) localStorage.setItem('clipdrop_api_key', this.config.imageProcessing.apiKey);
-            if (this.config.pptParsing?.secret) localStorage.setItem('convertapi_secret', this.config.pptParsing.secret);
+            const encLegacy = 'ENC:' + btoa(encodeURIComponent(JSON.stringify(legacyData)));
+            localStorage.setItem(this.legacyStorageKey, encLegacy);
+            localStorage.setItem('editorv2_api_vault', encLegacy);
 
             if (this.eventBus) {
                 this.eventBus.emit('VAULT:CONFIG_UPDATED', this.config);
@@ -653,8 +651,8 @@ export default class ApiVaultManager {
                     }
                 } else if (prov === 'sd') {
                     if (imgKeyInput) {
-                        imgKeyInput.placeholder = '暫不支援自建伺服器';
-                        imgKeyInput.value = '';
+                        imgKeyInput.placeholder = '填入 SD WebUI Base URL (例如 http://127.0.0.1:7860)';
+                        imgKeyInput.value = this.config.imageProcessing?.sdBaseUrl || (this.config.imageProcessing?.provider === 'sd' ? this.config.imageProcessing?.apiKey : '') || 'http://127.0.0.1:7860';
                     }
                     if (imgKeyLink) imgKeyLink.classList.add('hidden');
                 }
@@ -710,8 +708,8 @@ export default class ApiVaultManager {
                     }
                 } else if (prov === 'gotenberg') {
                     if (pptSecretInput) {
-                        pptSecretInput.placeholder = '此為自建伺服器，暫無需填寫金鑰';
-                        pptSecretInput.value = '';
+                        pptSecretInput.placeholder = '填入 Gotenberg Base URL (例如 http://localhost:3000)';
+                        pptSecretInput.value = this.config.pptParsing?.gotenbergBaseUrl || (this.config.pptParsing?.provider === 'gotenberg' ? this.config.pptParsing?.secret : '') || 'http://localhost:3000';
                     }
                     if (pptKeyLink) pptKeyLink.classList.add('hidden');
                 }
@@ -884,6 +882,12 @@ export default class ApiVaultManager {
                         method: 'GET',
                         headers: { 'X-Api-Key': key }
                     });
+                } else if (prov === 'sd') {
+                    if (!key) throw new Error('尚未填入 SD WebUI Base URL');
+                    const cleanUrl = key.replace(/\/$/, '');
+                    res = await fetch(`${cleanUrl}/sdapi/v1/progress`, { method: 'GET' }).catch(() => {
+                        throw new Error('無法連線，請確認 SD WebUI 啟動時有加上 --api 與 --cors-allow-origins="*" 參數');
+                    });
                 } else {
                     throw new Error('暫不支援此服務的 Ping 測試');
                 }
@@ -924,7 +928,17 @@ export default class ApiVaultManager {
                     statusEl.className = 'text-[11px] flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold';
                     statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>金鑰有效 · 回應 ${duration}ms</span>`;
                 } else if (prov === 'gotenberg') {
-                    throw new Error('暫不支援 Gotenberg 的連線測試');
+                    if (!secret) throw new Error('尚未填入 Gotenberg Base URL');
+                    const cleanUrl = secret.replace(/\/$/, '');
+                    const res = await fetch(`${cleanUrl}/health`, { method: 'GET' }).catch(() => {
+                        throw new Error('無法連線到 Gotenberg，請確認服務已啟動');
+                    });
+                    if (!res.ok) {
+                        throw new Error(`HTTP ${res.status}`);
+                    }
+                    const duration = Date.now() - startTime;
+                    statusEl.className = 'text-[11px] flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold';
+                    statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>伺服器正常運作中 · 回應 ${duration}ms</span>`;
                 }
             }
         } catch (err) {
@@ -1220,11 +1234,13 @@ export default class ApiVaultManager {
         const prevClipdropKey = this.config.imageProcessing?.clipdropApiKey || (this.config.imageProcessing?.provider === 'clipdrop' ? this.config.imageProcessing?.apiKey : '') || '';
         const prevPhotoroomKey = this.config.imageProcessing?.photoroomApiKey || (this.config.imageProcessing?.provider === 'photoroom' ? this.config.imageProcessing?.apiKey : '') || '';
         const prevRemovebgKey = this.config.imageProcessing?.removebgApiKey || (this.config.imageProcessing?.provider === 'removebg' ? this.config.imageProcessing?.apiKey : '') || '';
+        const prevSdBaseUrl = this.config.imageProcessing?.sdBaseUrl || (this.config.imageProcessing?.provider === 'sd' ? this.config.imageProcessing?.apiKey : '') || '';
 
         const pptProv = this.modal.querySelector('#vault-ppt-provider')?.value || 'convertapi';
         const pptSecret = this.modal.querySelector('#vault-ppt-secret')?.value.trim() || '';
         const prevConvertApiKey = this.config.pptParsing?.convertapiSecret || (this.config.pptParsing?.provider === 'convertapi' ? this.config.pptParsing?.secret : '') || '';
         const prevCloudConvertKey = this.config.pptParsing?.cloudconvertSecret || (this.config.pptParsing?.provider === 'cloudconvert' ? this.config.pptParsing?.secret : '') || '';
+        const prevGotenbergBaseUrl = this.config.pptParsing?.gotenbergBaseUrl || (this.config.pptParsing?.provider === 'gotenberg' ? this.config.pptParsing?.secret : '') || '';
 
         const newConfig = {
             activeLlmType: this.activeLlmSubTab,
@@ -1246,13 +1262,15 @@ export default class ApiVaultManager {
                 apiKey: imgKey,
                 clipdropApiKey: imgProv === 'clipdrop' ? imgKey : prevClipdropKey,
                 photoroomApiKey: imgProv === 'photoroom' ? imgKey : prevPhotoroomKey,
-                removebgApiKey: imgProv === 'removebg' ? imgKey : prevRemovebgKey
+                removebgApiKey: imgProv === 'removebg' ? imgKey : prevRemovebgKey,
+                sdBaseUrl: imgProv === 'sd' ? imgKey : prevSdBaseUrl
             },
             pptParsing: {
                 provider: pptProv,
                 secret: pptSecret,
                 convertapiSecret: pptProv === 'convertapi' ? pptSecret : prevConvertApiKey,
-                cloudconvertSecret: pptProv === 'cloudconvert' ? pptSecret : prevCloudConvertKey
+                cloudconvertSecret: pptProv === 'cloudconvert' ? pptSecret : prevCloudConvertKey,
+                gotenbergBaseUrl: pptProv === 'gotenberg' ? pptSecret : prevGotenbergBaseUrl
             }
         };
 

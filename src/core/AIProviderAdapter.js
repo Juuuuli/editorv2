@@ -250,7 +250,7 @@ export default class AIProviderAdapter {
         } else if (provider === 'removebg') {
             return this._callRemoveBgRemoveBackground(imageBlobOrDataUrl);
         } else if (provider === 'sd') {
-            throw new Error('Stable Diffusion 去背目前尚未實作，請選擇其他服務');
+            return this._callSDRemoveBackground(imageBlobOrDataUrl);
         } else {
             throw new Error(`不支援的影像去背 Provider: ${provider}`);
         }
@@ -310,6 +310,44 @@ export default class AIProviderAdapter {
         const resultBlob = await response.blob();
         return await this._blobToDataUrl(resultBlob);
     }
+
+    async _callSDRemoveBackground(imageBlobOrDataUrl) {
+        const baseUrl = this.config.imageProcessing?.sdBaseUrl || this.config.imageProcessing?.apiKey;
+        if (!baseUrl) throw new Error('未設定 SD WebUI Base URL');
+
+        let dataUrl = imageBlobOrDataUrl;
+        if (imageBlobOrDataUrl instanceof Blob) {
+            dataUrl = await this._blobToDataUrl(imageBlobOrDataUrl);
+        }
+        // 去除 data:image/png;base64, 標頭
+        const base64Image = dataUrl.split(',')[1];
+        
+        const cleanUrl = baseUrl.replace(/\/$/, '');
+        // 使用 SD WebUI 的 rembg API 擴充功能路由
+        const response = await fetch(`${cleanUrl}/rembg`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                input_image: base64Image,
+                model: 'u2net', // 預設使用 u2net
+                return_mask: false,
+                alpha_matting: false
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`SD 去背失敗: ${response.status} ${errorText} (請確認是否安裝 rembg 擴充功能)`);
+        }
+
+        const data = await response.json();
+        if (!data.image) {
+            throw new Error('SD 去背失敗: 回傳結果無影像資料');
+        }
+
+        return `data:image/png;base64,${data.image}`;
+    }
+
 
     async _callClipdropRemoveBackground(imageBlobOrDataUrl) {
         const apiKey = this.config.imageProcessing?.apiKey;

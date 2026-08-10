@@ -1,4 +1,5 @@
 import * as pdfjsLib from 'pdfjs-dist';
+import ApiVaultManager from '../vault/ApiVaultManager.js';
 import RetinaRenderer from '../canvas_auxiliary/RetinaRenderer.js';
 
 // 初始化 PDF.js worker
@@ -12,6 +13,7 @@ export default class DashboardManager {
         this.eventBus = eventBus;
         this.canvasEngine = canvasEngine;
         this.workspaceManager = workspaceManager;
+        this.apiVaultManager = new ApiVaultManager();
 
         this.currentProjectId = null;
         this.currentFilter = 'ALL'; // 'ALL', 'IMAGE', 'PDF'
@@ -1115,9 +1117,15 @@ export default class DashboardManager {
         let secret = '';
         let provider = 'convertapi';
         try {
-            const vaultConfig = JSON.parse(localStorage.getItem('EDITOR_V2_VAULT_CONFIG') || '{}');
+            const vaultConfig = ApiVaultManager.getVaultConfig();
             provider = vaultConfig.pptParsing?.provider || 'convertapi';
-            secret = vaultConfig.pptParsing?.secret || '';
+            if (provider === 'gotenberg') {
+                secret = vaultConfig.pptParsing?.gotenbergBaseUrl || 'http://localhost:3000';
+            } else if (provider === 'cloudconvert') {
+                secret = vaultConfig.pptParsing?.cloudconvertSecret || vaultConfig.pptParsing?.secret || '';
+            } else {
+                secret = vaultConfig.pptParsing?.secret || '';
+            }
         } catch (e) {
             console.warn('Failed to parse vault config', e);
         }
@@ -1127,7 +1135,7 @@ export default class DashboardManager {
         } else if (provider === 'cloudconvert') {
             await this._importPPTWithCloudConvert(file, secret);
         } else if (provider === 'gotenberg') {
-            throw new Error("Gotenberg 轉檔尚未實作");
+            await this._importPPTWithGotenberg(file, secret);
         } else {
             throw new Error("未知的轉檔服務商: " + provider);
         }
@@ -1259,6 +1267,40 @@ export default class DashboardManager {
         if (indicator) {
             indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span> ${msg}`;
             indicator.className = 'text-[11px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center transition';
+        }
+    }
+
+    async _importPPTWithGotenberg(file, baseUrl) {
+        if (!baseUrl) throw new Error("未設定 Gotenberg Base URL");
+        
+        this._showLoading('正在上傳簡報至本地 Gotenberg...');
+        const cleanUrl = baseUrl.replace(/\/$/, '');
+        const formData = new FormData();
+        formData.append('files', file);
+
+        try {
+            const response = await fetch(`${cleanUrl}/forms/libreoffice/convert`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`HTTP ${response.status}: ${text}`);
+            }
+
+            this._showLoading('正在下載 PDF，準備建立專案...');
+            
+            const pdfBlob = await response.blob();
+            const pdfFile = new File([pdfBlob], file.name.replace(/\.pptx?$/i, '.pdf'), { type: 'application/pdf' });
+            
+            await this.importPDFAsNewProject(pdfFile);
+            
+        } catch (error) {
+            console.error('[Gotenberg] 轉檔失敗:', error);
+            alert('Gotenberg 轉檔失敗: ' + error.message);
+        } finally {
+            this._hideLoading();
         }
     }
 }
