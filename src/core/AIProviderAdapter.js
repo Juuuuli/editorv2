@@ -280,7 +280,7 @@ export default class AIProviderAdapter {
         }
 
         const resultBlob = await response.blob();
-        return URL.createObjectURL(resultBlob);
+        return await this._blobToDataUrl(resultBlob);
     }
 
     async _callRemoveBgRemoveBackground(imageBlobOrDataUrl) {
@@ -308,7 +308,7 @@ export default class AIProviderAdapter {
         }
 
         const resultBlob = await response.blob();
-        return URL.createObjectURL(resultBlob);
+        return await this._blobToDataUrl(resultBlob);
     }
 
     async _callClipdropRemoveBackground(imageBlobOrDataUrl) {
@@ -342,7 +342,7 @@ export default class AIProviderAdapter {
         }
 
         const resultBlob = await response.blob();
-        return URL.createObjectURL(resultBlob);
+        return await this._blobToDataUrl(resultBlob);
     }
 
     async _mockRemoveBackground() {
@@ -411,7 +411,7 @@ export default class AIProviderAdapter {
         }
 
         const resultBlob = await response.blob();
-        return URL.createObjectURL(resultBlob);
+        return await this._blobToDataUrl(resultBlob);
     }
 
     /**
