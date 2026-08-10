@@ -610,6 +610,41 @@ export default class ApiVaultManager {
                     }
                 }
                 this.updateActiveBadge();
+        }
+        
+        // Image Provider 切換時更新 Placeholder 與連結
+        const imgProvider = this.modal.querySelector('#vault-image-provider');
+        const imgKeyInput = this.modal.querySelector('#vault-image-key');
+        const imgKeyLink = this.modal.querySelector('a[href*="clipdrop"]')?.parentElement?.querySelector('a'); // 找原本那顆連結
+        
+        if (imgProvider) {
+            imgProvider.addEventListener('change', () => {
+                const prov = imgProvider.value;
+                if (prov === 'clipdrop') {
+                    if (imgKeyInput) imgKeyInput.placeholder = '填入 Clipdrop API Key (c577...)';
+                    if (imgKeyLink) {
+                        imgKeyLink.href = 'https://clipdrop.co/apis';
+                        imgKeyLink.innerHTML = '<span>取得 Clipdrop Key</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
+                        imgKeyLink.classList.remove('hidden');
+                    }
+                } else if (prov === 'photoroom') {
+                    if (imgKeyInput) imgKeyInput.placeholder = '填入 Photoroom API Key';
+                    if (imgKeyLink) {
+                        imgKeyLink.href = 'https://app.photoroom.com/api-dashboard';
+                        imgKeyLink.innerHTML = '<span>取得 Photoroom Key</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
+                        imgKeyLink.classList.remove('hidden');
+                    }
+                } else if (prov === 'removebg') {
+                    if (imgKeyInput) imgKeyInput.placeholder = '填入 Remove.bg API Key';
+                    if (imgKeyLink) {
+                        imgKeyLink.href = 'https://www.remove.bg/dashboard#api-key';
+                        imgKeyLink.innerHTML = '<span>取得 Remove.bg Key</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
+                        imgKeyLink.classList.remove('hidden');
+                    }
+                } else if (prov === 'sd') {
+                    if (imgKeyInput) imgKeyInput.placeholder = '暫不支援自建伺服器';
+                    if (imgKeyLink) imgKeyLink.classList.add('hidden');
+                }
             });
         }
 

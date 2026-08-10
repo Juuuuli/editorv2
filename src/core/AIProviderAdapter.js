@@ -245,9 +245,70 @@ export default class AIProviderAdapter {
             return this._mockRemoveBackground();
         } else if (provider === 'clipdrop') {
             return this._callClipdropRemoveBackground(imageBlobOrDataUrl);
+        } else if (provider === 'photoroom') {
+            return this._callPhotoroomRemoveBackground(imageBlobOrDataUrl);
+        } else if (provider === 'removebg') {
+            return this._callRemoveBgRemoveBackground(imageBlobOrDataUrl);
+        } else if (provider === 'sd') {
+            throw new Error('Stable Diffusion 去背目前尚未實作，請選擇其他服務');
         } else {
             throw new Error(`不支援的影像去背 Provider: ${provider}`);
         }
+    }
+
+    async _callPhotoroomRemoveBackground(imageBlobOrDataUrl) {
+        const apiKey = this.config.imageProcessing?.apiKey;
+        if (!apiKey) throw new Error('未設定 Photoroom API Key');
+
+        let blob = imageBlobOrDataUrl;
+        if (typeof imageBlobOrDataUrl === 'string' && imageBlobOrDataUrl.startsWith('data:')) {
+            blob = await (await fetch(imageBlobOrDataUrl)).blob();
+        }
+
+        const formData = new FormData();
+        formData.append('image_file', blob);
+
+        const response = await fetch('https://image-api.photoroom.com/v2/edit', {
+            method: 'POST',
+            headers: { 'x-api-key': apiKey },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Photoroom 去背失敗: ${response.status} ${errorText}`);
+        }
+
+        const resultBlob = await response.blob();
+        return URL.createObjectURL(resultBlob);
+    }
+
+    async _callRemoveBgRemoveBackground(imageBlobOrDataUrl) {
+        const apiKey = this.config.imageProcessing?.apiKey;
+        if (!apiKey) throw new Error('未設定 Remove.bg API Key');
+
+        let blob = imageBlobOrDataUrl;
+        if (typeof imageBlobOrDataUrl === 'string' && imageBlobOrDataUrl.startsWith('data:')) {
+            blob = await (await fetch(imageBlobOrDataUrl)).blob();
+        }
+
+        const formData = new FormData();
+        formData.append('size', 'auto');
+        formData.append('image_file', blob);
+
+        const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+            method: 'POST',
+            headers: { 'X-Api-Key': apiKey },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Remove.bg 去背失敗: ${response.status} ${errorText}`);
+        }
+
+        const resultBlob = await response.blob();
+        return URL.createObjectURL(resultBlob);
     }
 
     async _callClipdropRemoveBackground(imageBlobOrDataUrl) {
