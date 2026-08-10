@@ -1,4 +1,4 @@
-import AIProviderAdapter from '../../core/AIProviderAdapter.js';
+import AIProviderAdapter from '../../../core/AIProviderAdapter.js';
 
 export default class SmartTools {
     constructor(canvasEngine, eventBus) {
