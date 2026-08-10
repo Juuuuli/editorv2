@@ -934,18 +934,21 @@ export default class ApiVaultManager {
             const msgLower = msg.toLowerCase();
             const statusMatch = msg.match(/HTTP\s*(\d{3})/i);
             
-            if (statusMatch) {
+            if (msgLower.includes('expired')) {
+                msg = '金鑰已過期，請至原網站重新申請 (過期)';
+            } else if (statusMatch) {
                 const status = statusMatch[1];
-                if (status === '401') msg = '無效的金鑰，請檢查是否輸入正確 (401)';
-                else if (status === '403') msg = '沒有權限或可用額度不足 (403)';
+                if (status === '401') msg = '無效或已過期的金鑰，請確認輸入正確 (401)';
+                else if (status === '402') msg = '可用額度已耗盡或需要付費 (402)';
+                else if (status === '403') msg = '沒有權限、額度不足或金鑰已過期 (403)';
                 else if (status === '404') msg = '找不到指定的 API 端點 (404)';
                 else if (status === '400') msg = '請求格式或參數錯誤 (400)';
                 else if (status === '429') msg = '請求過於頻繁，請稍後再試 (429)';
                 else if (status >= '500') msg = `伺服器異常，請稍後再試 (${status})`;
             } else if (msgLower.includes('unauthenticated') || msgLower.includes('unauthorized') || msgLower.includes('invalid api key') || msgLower.includes('invalid secret')) {
-                msg = '無效的金鑰，請檢查是否輸入完整且無空白 (401)';
-            } else if (msgLower.includes('forbidden')) {
-                msg = '沒有權限或可用額度不足 (403)';
+                msg = '無效或已過期的金鑰，請確認輸入完整無空白 (401)';
+            } else if (msgLower.includes('forbidden') || msgLower.includes('quota') || msgLower.includes('insufficient')) {
+                msg = '沒有權限、可用額度不足或已過期 (403)';
             } else if (msgLower.includes('not found')) {
                 msg = '找不到指定的 API 端點 (404)';
             }
