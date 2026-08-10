@@ -804,14 +804,31 @@ export default class ApiVaultManager {
                     statusEl.innerHTML = `<i class="fas fa-info-circle"></i> <span>端點已探測 (可能無 /models 路由)</span>`;
                 }
             } else if (target === 'image') {
+                const prov = this.modal.querySelector('#vault-image-provider')?.value || 'clipdrop';
                 const key = this.modal.querySelector('#vault-image-key')?.value.trim();
                 if (!key) throw new Error('尚未填入 API Key');
 
                 const startTime = Date.now();
-                const res = await fetch('https://clipdrop-api.co/remove-background/v1', {
-                    method: 'POST',
-                    headers: { 'x-api-key': key }
-                });
+                let res;
+                if (prov === 'clipdrop') {
+                    res = await fetch('https://clipdrop-api.co/remove-background/v1', {
+                        method: 'POST',
+                        headers: { 'x-api-key': key }
+                    });
+                } else if (prov === 'photoroom') {
+                    res = await fetch('https://image-api.photoroom.com/v1/account', {
+                        method: 'GET',
+                        headers: { 'x-api-key': key }
+                    });
+                } else if (prov === 'removebg') {
+                    res = await fetch('https://api.remove.bg/v1.0/account', {
+                        method: 'GET',
+                        headers: { 'X-Api-Key': key }
+                    });
+                } else {
+                    throw new Error('暫不支援此服務的 Ping 測試');
+                }
+                
                 const duration = Date.now() - startTime;
                 if (res.status === 401 || res.status === 403) {
                     throw new Error('金鑰無效或授權失敗 (HTTP 401/403)');
