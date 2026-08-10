@@ -97,6 +97,7 @@ export default class ThumbnailsPanel {
         this.pages.push({ id: newId, active: true });
         
         this.eventBus.emit('PAGE:ADD', { pageId: newId });
+        this.eventBus.emit('PAGE:SWITCH', { newPageId: newId });
         this.render();
     }
 

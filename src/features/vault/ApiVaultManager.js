@@ -622,28 +622,40 @@ export default class ApiVaultManager {
             imgProvider.addEventListener('change', () => {
                 const prov = imgProvider.value;
                 if (prov === 'clipdrop') {
-                    if (imgKeyInput) imgKeyInput.placeholder = '填入 Clipdrop API Key (c577...)';
+                    if (imgKeyInput) {
+                        imgKeyInput.placeholder = '填入 Clipdrop API Key (c577...)';
+                        imgKeyInput.value = this.config.imageProcessing?.clipdropApiKey || (this.config.imageProcessing?.provider === 'clipdrop' ? this.config.imageProcessing?.apiKey : '') || '';
+                    }
                     if (imgKeyLink) {
                         imgKeyLink.href = 'https://clipdrop.co/apis';
                         imgKeyLink.innerHTML = '<span>取得 Clipdrop Key</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
                         imgKeyLink.classList.remove('hidden');
                     }
                 } else if (prov === 'photoroom') {
-                    if (imgKeyInput) imgKeyInput.placeholder = '填入 Photoroom API Key';
+                    if (imgKeyInput) {
+                        imgKeyInput.placeholder = '填入 Photoroom API Key';
+                        imgKeyInput.value = this.config.imageProcessing?.photoroomApiKey || (this.config.imageProcessing?.provider === 'photoroom' ? this.config.imageProcessing?.apiKey : '') || '';
+                    }
                     if (imgKeyLink) {
                         imgKeyLink.href = 'https://app.photoroom.com/api-dashboard';
                         imgKeyLink.innerHTML = '<span>取得 Photoroom Key</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
                         imgKeyLink.classList.remove('hidden');
                     }
                 } else if (prov === 'removebg') {
-                    if (imgKeyInput) imgKeyInput.placeholder = '填入 Remove.bg API Key';
+                    if (imgKeyInput) {
+                        imgKeyInput.placeholder = '填入 Remove.bg API Key';
+                        imgKeyInput.value = this.config.imageProcessing?.removebgApiKey || (this.config.imageProcessing?.provider === 'removebg' ? this.config.imageProcessing?.apiKey : '') || '';
+                    }
                     if (imgKeyLink) {
                         imgKeyLink.href = 'https://www.remove.bg/dashboard#api-key';
                         imgKeyLink.innerHTML = '<span>取得 Remove.bg Key</span> <i class="fas fa-external-link-alt text-[8px]"></i>';
                         imgKeyLink.classList.remove('hidden');
                     }
                 } else if (prov === 'sd') {
-                    if (imgKeyInput) imgKeyInput.placeholder = '暫不支援自建伺服器';
+                    if (imgKeyInput) {
+                        imgKeyInput.placeholder = '暫不支援自建伺服器';
+                        imgKeyInput.value = '';
+                    }
                     if (imgKeyLink) imgKeyLink.classList.add('hidden');
                 }
             });
@@ -965,8 +977,22 @@ export default class ApiVaultManager {
         const imgProvider = this.modal.querySelector('#vault-image-provider');
         const imgKey = this.modal.querySelector('#vault-image-key');
 
-        if (imgProvider) imgProvider.value = c.imageProcessing?.provider || 'clipdrop';
-        if (imgKey) imgKey.value = c.imageProcessing?.apiKey || '';
+        const currentImgProv = c.imageProcessing?.provider || 'clipdrop';
+        if (imgProvider) {
+            imgProvider.value = currentImgProv;
+            imgProvider.dispatchEvent(new Event('change'));
+        }
+        if (imgKey) {
+            if (currentImgProv === 'clipdrop') {
+                imgKey.value = c.imageProcessing?.clipdropApiKey || c.imageProcessing?.apiKey || '';
+            } else if (currentImgProv === 'photoroom') {
+                imgKey.value = c.imageProcessing?.photoroomApiKey || c.imageProcessing?.apiKey || '';
+            } else if (currentImgProv === 'removebg') {
+                imgKey.value = c.imageProcessing?.removebgApiKey || c.imageProcessing?.apiKey || '';
+            } else {
+                imgKey.value = c.imageProcessing?.apiKey || '';
+            }
+        }
 
         // PPT
         const pptProvider = this.modal.querySelector('#vault-ppt-provider');
@@ -1063,6 +1089,12 @@ export default class ApiVaultManager {
         const prevOpenAiKey = this.config.builtin?.openaiApiKey || '';
         const prevAnthropicKey = this.config.builtin?.anthropicApiKey || '';
 
+        const imgProv = this.modal.querySelector('#vault-image-provider')?.value || 'clipdrop';
+        const imgKey = this.modal.querySelector('#vault-image-key')?.value.trim() || '';
+        const prevClipdropKey = this.config.imageProcessing?.clipdropApiKey || (this.config.imageProcessing?.provider === 'clipdrop' ? this.config.imageProcessing?.apiKey : '') || '';
+        const prevPhotoroomKey = this.config.imageProcessing?.photoroomApiKey || (this.config.imageProcessing?.provider === 'photoroom' ? this.config.imageProcessing?.apiKey : '') || '';
+        const prevRemovebgKey = this.config.imageProcessing?.removebgApiKey || (this.config.imageProcessing?.provider === 'removebg' ? this.config.imageProcessing?.apiKey : '') || '';
+
         const newConfig = {
             activeLlmType: this.activeLlmSubTab,
             builtin: {
@@ -1079,8 +1111,11 @@ export default class ApiVaultManager {
             customEndpoints: this.config.customEndpoints,
             activeCustomId: this.config.activeCustomId,
             imageProcessing: {
-                provider: this.modal.querySelector('#vault-image-provider')?.value || 'clipdrop',
-                apiKey: this.modal.querySelector('#vault-image-key')?.value.trim() || ''
+                provider: imgProv,
+                apiKey: imgKey,
+                clipdropApiKey: imgProv === 'clipdrop' ? imgKey : prevClipdropKey,
+                photoroomApiKey: imgProv === 'photoroom' ? imgKey : prevPhotoroomKey,
+                removebgApiKey: imgProv === 'removebg' ? imgKey : prevRemovebgKey
             },
             pptParsing: {
                 provider: this.modal.querySelector('#vault-ppt-provider')?.value || 'convertapi',
