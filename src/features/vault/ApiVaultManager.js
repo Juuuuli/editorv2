@@ -658,6 +658,7 @@ export default class ApiVaultManager {
                     }
                     if (imgKeyLink) imgKeyLink.classList.add('hidden');
                 }
+                this.updateActiveBadge();
             });
         }
 
@@ -914,6 +915,8 @@ export default class ApiVaultManager {
                 if (view) view.classList.add('hidden');
             }
         });
+
+        this.updateActiveBadge();
     }
 
     /**
@@ -1061,17 +1064,30 @@ export default class ApiVaultManager {
         const textEl = this.modal.querySelector('#vault-active-model-text');
         if (!textEl) return;
 
-        if (this.activeLlmSubTab === 'builtin') {
-            const prov = this.modal.querySelector('#vault-builtin-provider')?.value || 'gemini';
-            const model = this.modal.querySelector('#vault-builtin-model')?.value || 'gemini-2.0-flash';
-            const provName = prov === 'gemini' ? 'Google Gemini' : (prov === 'openai' ? 'OpenAI' : 'Anthropic');
-            textEl.textContent = `作用中：${provName} (${model})`;
+        if (this.activeTab === 'image') {
+            const prov = this.modal.querySelector('#vault-image-provider')?.value || 'clipdrop';
+            const provNames = {
+                'clipdrop': 'Clipdrop API',
+                'photoroom': 'Photoroom API',
+                'removebg': 'Remove.bg API',
+                'sd': 'Stable Diffusion (尚未支援)'
+            };
+            textEl.textContent = `作用中：${provNames[prov] || prov}`;
+        } else if (this.activeTab === 'ppt') {
+            textEl.textContent = `作用中：ConvertAPI`;
         } else {
-            const activeEp = this.config.customEndpoints.find(e => e.id === this.config.activeCustomId);
-            if (activeEp) {
-                textEl.textContent = `作用中：${activeEp.name || '自訂端點'} (${activeEp.modelId || '未設定模型'})`;
+            if (this.activeLlmSubTab === 'builtin') {
+                const prov = this.modal.querySelector('#vault-builtin-provider')?.value || 'gemini';
+                const model = this.modal.querySelector('#vault-builtin-model')?.value || 'gemini-2.0-flash';
+                const provName = prov === 'gemini' ? 'Google Gemini' : (prov === 'openai' ? 'OpenAI' : 'Anthropic');
+                textEl.textContent = `作用中：${provName} (${model})`;
             } else {
-                textEl.textContent = `作用中：(無自訂端點)`;
+                const activeEp = this.config.customEndpoints.find(e => e.id === this.config.activeCustomId);
+                if (activeEp) {
+                    textEl.textContent = `作用中：${activeEp.name || '自訂端點'} (${activeEp.modelId || '未設定模型'})`;
+                } else {
+                    textEl.textContent = `作用中：(無自訂端點)`;
+                }
             }
         }
     }
