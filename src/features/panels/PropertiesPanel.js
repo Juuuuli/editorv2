@@ -1,3 +1,5 @@
+import AIProviderAdapter from '../../core/AIProviderAdapter.js';
+
 export default class PropertiesPanel {
     constructor(eventBus, canvasEngine) {
         this.eventBus = eventBus;
@@ -6,6 +8,7 @@ export default class PropertiesPanel {
         this.emptyState = document.getElementById('prop-empty-state');
         
         this.activeObject = null;
+        this.aiAdapter = new AIProviderAdapter(eventBus);
         
         this.bindEvents();
     }
@@ -413,12 +416,8 @@ export default class PropertiesPanel {
                     btnAiMagic.classList.add('opacity-50', 'pointer-events-none');
 
                     try {
-                        if (!window.editorApp || !window.editorApp.aiAdapter) {
-                            throw new Error("AI Adapter 未初始化");
-                        }
-                        
                         const systemPrompt = "你是一個專業的繁體中文編輯助手。請務必直接輸出修改後的結果，不要加入任何開場白或說明。請確保使用繁體中文輸出（除非使用者特別要求翻譯成其他語言）。";
-                        const result = await window.editorApp.aiAdapter.generateText(prompt, systemPrompt);
+                        const result = await this.aiAdapter.generateText(prompt, systemPrompt);
                         
                         let newText = result || "";
                         let reasoningText = "";
@@ -439,7 +438,7 @@ export default class PropertiesPanel {
                             newText = originalText;
                         }
                         
-                        const modelName = window.editorApp.aiAdapter.getActiveLlmModelName();
+                        const modelName = this.aiAdapter.getActiveLlmModelName();
                         
                         // 顯示彈窗
                         this.showAiModal(originalText, reasoningText, newText, textContent, modelName);
