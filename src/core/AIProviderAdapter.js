@@ -625,4 +625,13 @@ export default class AIProviderAdapter {
             }, 1000);
         });
     }
+
+    async _blobToDataUrl(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
 }
