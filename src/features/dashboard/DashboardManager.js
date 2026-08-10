@@ -13,7 +13,7 @@ export default class DashboardManager {
         this.eventBus = eventBus;
         this.canvasEngine = canvasEngine;
         this.workspaceManager = workspaceManager;
-        this.apiVaultManager = new ApiVaultManager();
+
 
         this.currentProjectId = null;
         this.currentFilter = 'ALL'; // 'ALL', 'IMAGE', 'PDF'
