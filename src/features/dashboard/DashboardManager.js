@@ -1112,25 +1112,44 @@ export default class DashboardManager {
      * 從 PPT/PPTX 建立新專案並開啟
      */
     async importPPTAsNewProject(file) {
+        let secret = '';
+        let provider = 'convertapi';
+        try {
+            const vaultConfig = JSON.parse(localStorage.getItem('EDITOR_V2_VAULT_CONFIG') || '{}');
+            provider = vaultConfig.pptParsing?.provider || 'convertapi';
+            secret = vaultConfig.pptParsing?.secret || '';
+        } catch (e) {
+            console.warn('Failed to parse vault config', e);
+        }
+
+        if (provider === 'convertapi') {
+            await this._importPPTWithConvertAPI(file, secret);
+        } else if (provider === 'cloudconvert') {
+            await this._importPPTWithCloudConvert(file, secret);
+        } else if (provider === 'gotenberg') {
+            throw new Error("Gotenberg 轉檔尚未實作");
+        } else {
+            throw new Error("未知的轉檔服務商: " + provider);
+        }
+    }
+
+    async _importPPTWithConvertAPI(file, secret) {
+        if (!secret) {
+            try {
+                const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+                secret = legacyVault.convertApiKey || localStorage.getItem('convertapi_secret') || (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
+            } catch (e) {
+                secret = (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
+            }
+        }
+        if (!secret) throw new Error("未設定 ConvertAPI 金鑰（請至金鑰保險箱設定）");
+
         const formData = new FormData();
         formData.append('File', file);
         
         const ext = file.name.split('.').pop().toLowerCase();
         const format = (ext === 'pptx') ? 'pptx' : 'ppt';
 
-        let secret = '';
-        try {
-            const vaultConfig = JSON.parse(localStorage.getItem('EDITOR_V2_VAULT_CONFIG') || '{}');
-            const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
-            secret = vaultConfig.pptParsing?.secret || legacyVault.convertApiKey || localStorage.getItem('convertapi_secret') || (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
-        } catch (e) {
-            secret = (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
-        }
-
-        if (!secret) {
-            throw new Error("未設定 ConvertAPI 金鑰（請至右上角系統金鑰保險箱設定或配置環境變數）");
-        }
-        
         const response = await fetch(`https://v2.convertapi.com/convert/${format}/to/pdf?Secret=${secret}&StoreFile=false`, {
             method: 'POST',
             body: formData
@@ -1157,6 +1176,82 @@ export default class DashboardManager {
         } else {
             throw new Error("API 未回傳有效的 PDF 資料");
         }
+    }
+
+    async _importPPTWithCloudConvert(file, secret) {
+        if (!secret) throw new Error("未設定 CloudConvert API Key（請至金鑰保險箱設定）");
+
+        // 1. Create Job
+        const jobRes = await fetch('https://api.cloudconvert.com/v2/jobs', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + secret,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tasks: {
+                    "import-my-file": { "operation": "import/upload" },
+                    "convert-my-file": { 
+                        "operation": "convert", 
+                        "input": "import-my-file", 
+                        "output_format": "pdf" 
+                    },
+                    "export-my-file": { 
+                        "operation": "export/url", 
+                        "input": "convert-my-file" 
+                    }
+                }
+            })
+        });
+        const jobData = await jobRes.json();
+        if (!jobRes.ok) throw new Error('任務建立失敗: ' + (jobData.message || jobRes.status));
+
+        const uploadTask = jobData.data.tasks.find(t => t.name === 'import-my-file');
+        const jobId = jobData.data.id;
+
+        // 2. Upload File
+        const formData = new FormData();
+        for (const [key, val] of Object.entries(uploadTask.result.form.parameters)) {
+            formData.append(key, val);
+        }
+        formData.append('file', file);
+        
+        const uploadRes = await fetch(uploadTask.result.form.url, {
+            method: 'POST',
+            body: formData
+        });
+        if (!uploadRes.ok) throw new Error('檔案上傳失敗');
+
+        // 3. Poll Job Status
+        let isFinished = false;
+        let exportUrl = null;
+        while (!isFinished) {
+            await new Promise(r => setTimeout(r, 2000));
+            const statusRes = await fetch(`https://api.cloudconvert.com/v2/jobs/${jobId}`, {
+                headers: { 'Authorization': 'Bearer ' + secret }
+            });
+            const statusData = await statusRes.json();
+            const status = statusData.data.status;
+            
+            if (status === 'error') throw new Error('雲端轉檔發生錯誤');
+            if (status === 'finished') {
+                const exportTask = statusData.data.tasks.find(t => t.name === 'export-my-file');
+                if (exportTask && exportTask.result && exportTask.result.files && exportTask.result.files[0]) {
+                    exportUrl = exportTask.result.files[0].url;
+                    isFinished = true;
+                } else {
+                    throw new Error('無法取得下載連結');
+                }
+            }
+        }
+
+        // 4. Download PDF
+        const pdfRes = await fetch(exportUrl);
+        if (!pdfRes.ok) throw new Error('下載 PDF 失敗');
+        const pdfBlob = await pdfRes.blob();
+        const pdfFile = new File([pdfBlob], file.name.replace(/\.pptx?$/i, '.pdf'), { type: 'application/pdf' });
+        
+        await this.importPDFAsNewProject(pdfFile);
     }
 
     showAutoSaveFeedback(msg = '已儲存') {
