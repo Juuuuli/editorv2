@@ -75,31 +75,46 @@ export default class AIProviderAdapter {
         const apiKey = this.config.builtin?.geminiApiKey || this.config.builtin?.apiKey;
         if (!apiKey) throw new Error('未設定 Gemini API Key');
         
-        const model = this.config.builtin?.geminiModel || this.config.builtin?.model || 'gemini-1.5-flash';
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        
         let contents = [];
         if (systemPrompt) {
             contents.push({ role: 'user', parts: [{ text: systemPrompt }] });
             contents.push({ role: 'model', parts: [{ text: 'OK.' }] });
         }
         contents.push({ role: 'user', parts: [{ text: prompt }] });
-        
         const payload = { contents };
+        
+        const candidateModels = Array.from(new Set([
+            this.config.builtin?.geminiModel || this.config.builtin?.model || 'gemini-1.5-flash',
+            'gemini-1.5-flash',
+            'gemini-1.5-flash-latest',
+            'gemini-2.0-flash-exp',
+            'gemini-1.5-pro-latest'
+        ]));
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        let lastError = null;
+        for (const m of candidateModels) {
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-        if (!response.ok) {
-            const err = await response.text();
-            throw new Error(`Gemini API 錯誤: ${response.status} ${err}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                } else {
+                    const err = await response.json().catch(() => ({}));
+                    lastError = new Error(`Gemini API 錯誤 (${m}): ${err.error?.message || response.statusText}`);
+                }
+            } catch (e) {
+                lastError = e;
+            }
         }
-
-        const data = await response.json();
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        
+        if (lastError) throw lastError;
+        return '';
     }
 
     async _callOpenAI(prompt, systemPrompt) {
