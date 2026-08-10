@@ -85,6 +85,7 @@ export default class AIProviderAdapter {
         
         const candidateModels = Array.from(new Set([
             this.config.builtin?.geminiModel || this.config.builtin?.model || 'gemini-1.5-flash',
+            'gemini-2.5-flash',
             'gemini-1.5-flash',
             'gemini-1.5-flash-latest',
             'gemini-2.0-flash-exp',
