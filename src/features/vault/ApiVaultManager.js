@@ -1008,6 +1008,7 @@ export default class ApiVaultManager {
         // 保留各家 key 避免切換時遺失
         const prevGeminiKey = this.config.builtin?.geminiApiKey || '';
         const prevOpenAiKey = this.config.builtin?.openaiApiKey || '';
+        const prevAnthropicKey = this.config.builtin?.anthropicApiKey || '';
 
         const newConfig = {
             activeLlmType: this.activeLlmSubTab,
@@ -1017,8 +1018,10 @@ export default class ApiVaultManager {
                 apiKey: inputKey,
                 geminiApiKey: prov === 'gemini' ? inputKey : prevGeminiKey,
                 openaiApiKey: prov === 'openai' ? inputKey : prevOpenAiKey,
+                anthropicApiKey: prov === 'anthropic' ? inputKey : prevAnthropicKey,
                 geminiModel: prov === 'gemini' ? model : (this.config.builtin?.geminiModel || 'gemini-2.0-flash'),
-                openaiModel: prov === 'openai' ? model : (this.config.builtin?.openaiModel || 'gpt-4o-mini')
+                openaiModel: prov === 'openai' ? model : (this.config.builtin?.openaiModel || 'gpt-4o-mini'),
+                anthropicModel: prov === 'anthropic' ? model : (this.config.builtin?.anthropicModel || 'claude-3-5-sonnet-20241022')
             },
             customEndpoints: this.config.customEndpoints,
             activeCustomId: this.config.activeCustomId,

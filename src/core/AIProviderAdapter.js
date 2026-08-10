@@ -25,6 +25,8 @@ export default class AIProviderAdapter {
                 return this.config.builtin?.geminiModel || this.config.builtin?.model || 'gemini-1.5-flash';
             } else if (provider === 'openai') {
                 return this.config.builtin?.openaiModel || this.config.builtin?.model || 'gpt-4o-mini';
+            } else if (provider === 'anthropic') {
+                return this.config.builtin?.anthropicModel || this.config.builtin?.model || 'claude-3-5-sonnet-20241022';
             }
             return '未知內建模型';
         }
@@ -65,6 +67,8 @@ export default class AIProviderAdapter {
                 return this._callGemini(prompt, systemPrompt);
             } else if (provider === 'openai') {
                 return this._callOpenAI(prompt, systemPrompt);
+            } else if (provider === 'anthropic') {
+                return this._callAnthropic(prompt, systemPrompt);
             } else {
                 throw new Error(`不支援的內建 Provider: ${provider}`);
             }
@@ -153,6 +157,42 @@ export default class AIProviderAdapter {
 
         const data = await response.json();
         return data.choices?.[0]?.message?.content || '';
+    }
+
+    async _callAnthropic(prompt, systemPrompt) {
+        const apiKey = this.config.builtin?.anthropicApiKey;
+        if (!apiKey) throw new Error('未設定 Anthropic API Key');
+        
+        const model = this.config.builtin?.anthropicModel || this.config.builtin?.model || 'claude-3-5-sonnet-20241022';
+        const url = 'https://api.anthropic.com/v1/messages';
+        
+        const payload = {
+            model,
+            max_tokens: 1024,
+            messages: [{ role: 'user', content: prompt }]
+        };
+        if (systemPrompt) {
+            payload.system = systemPrompt;
+        }
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey,
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const err = await response.text();
+            throw new Error(`Anthropic API 錯誤: ${response.status} ${err}`);
+        }
+
+        const data = await response.json();
+        return data.content?.[0]?.text || '';
     }
 
     async _callCustomEndpoint(prompt, systemPrompt) {
@@ -336,6 +376,8 @@ export default class AIProviderAdapter {
             return this._callGeminiOcr(dataUrl);
         } else if (provider === 'openai') {
             return this._callOpenAIOcr(dataUrl);
+        } else if (provider === 'anthropic') {
+            return this._callAnthropicOcr(dataUrl);
         } else if (provider === 'mock') {
             return this._mockOcr(dataUrl);
         } else {
@@ -461,6 +503,52 @@ export default class AIProviderAdapter {
         if (!res.ok) throw new Error(`OpenAI API 錯誤: ${res.status} ${res.statusText}`);
         const result = await res.json();
         return result.choices?.[0]?.message?.content?.trim() || '';
+    }
+
+    async _callAnthropicOcr(dataUrl) {
+        const apiKey = this.config.builtin?.anthropicApiKey;
+        if (!apiKey) throw new Error('未設定 Anthropic API Key');
+        
+        const model = this.config.builtin?.anthropicModel || this.config.builtin?.model || 'claude-3-5-sonnet-20241022';
+        
+        let mediaType = "image/jpeg";
+        let base64Data = dataUrl;
+        if (dataUrl.includes(',')) {
+            const parts = dataUrl.split(',');
+            const match = parts[0].match(/:(.*?);/);
+            if (match) mediaType = match[1];
+            base64Data = parts[1];
+        }
+
+        const prompt = "請辨識圖片中的文字。請「只」輸出辨識到的文字，不要加上任何其他說明、解釋或標籤符號。如果沒有文字請輸出空字串。";
+
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey,
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify({
+                model,
+                max_tokens: 1024,
+                messages: [{
+                    role: "user",
+                    content: [
+                        { type: "image", source: { type: "base64", media_type: mediaType, data: base64Data } },
+                        { type: "text", text: prompt }
+                    ]
+                }]
+            })
+        });
+        
+        if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(`Anthropic API 錯誤: ${res.status} ${res.statusText} - ${errText}`);
+        }
+        const result = await res.json();
+        return result.content?.[0]?.text?.trim() || '';
     }
 
     async _mockOcr(dataUrl) {
