@@ -735,6 +735,14 @@ export default class ApiVaultManager {
                 this.updateActiveBadge();
             });
         }
+        
+        // 即時監聽輸入變更以更新徽章狀態
+        const builtinKeyInputForBadge = this.modal.querySelector('#vault-builtin-key');
+        const imgKeyInputForBadge = this.modal.querySelector('#vault-image-key');
+        const pptSecretInputForBadge = this.modal.querySelector('#vault-ppt-secret');
+        if (builtinKeyInputForBadge) builtinKeyInputForBadge.addEventListener('input', () => this.updateActiveBadge());
+        if (imgKeyInputForBadge) imgKeyInputForBadge.addEventListener('input', () => this.updateActiveBadge());
+        if (pptSecretInputForBadge) pptSecretInputForBadge.addEventListener('input', () => this.updateActiveBadge());
         if (btnAddCustom) {
             btnAddCustom.addEventListener('click', () => {
                 const newId = 'custom-' + Date.now();
@@ -920,8 +928,30 @@ export default class ApiVaultManager {
                 }
             }
         } catch (err) {
+            let msg = err.message || '連線失敗';
+            
+            // 將常見的英文錯誤訊息或 HTTP 狀態碼轉換為好懂的中文
+            const msgLower = msg.toLowerCase();
+            const statusMatch = msg.match(/HTTP\s*(\d{3})/i);
+            
+            if (statusMatch) {
+                const status = statusMatch[1];
+                if (status === '401') msg = '無效的金鑰，請檢查是否輸入正確 (401)';
+                else if (status === '403') msg = '沒有權限或可用額度不足 (403)';
+                else if (status === '404') msg = '找不到指定的 API 端點 (404)';
+                else if (status === '400') msg = '請求格式或參數錯誤 (400)';
+                else if (status === '429') msg = '請求過於頻繁，請稍後再試 (429)';
+                else if (status >= '500') msg = `伺服器異常，請稍後再試 (${status})`;
+            } else if (msgLower.includes('unauthenticated') || msgLower.includes('unauthorized') || msgLower.includes('invalid api key') || msgLower.includes('invalid secret')) {
+                msg = '無效的金鑰，請檢查是否輸入完整且無空白 (401)';
+            } else if (msgLower.includes('forbidden')) {
+                msg = '沒有權限或可用額度不足 (403)';
+            } else if (msgLower.includes('not found')) {
+                msg = '找不到指定的 API 端點 (404)';
+            }
+
             statusEl.className = 'text-[11px] flex items-center gap-1.5 text-rose-500 font-bold';
-            statusEl.innerHTML = `<i class="fas fa-times-circle"></i> <span>${err.message || '連線失敗'}</span>`;
+            statusEl.innerHTML = `<i class="fas fa-times-circle"></i> <span>${msg}</span>`;
         } finally {
             btn.disabled = false;
             btn.innerHTML = origBtnHtml;
@@ -1121,41 +1151,54 @@ export default class ApiVaultManager {
     updateActiveBadge() {
         const textEl = this.modal.querySelector('#vault-active-model-text');
         if (!textEl) return;
+        
+        const dotEl = textEl.previousElementSibling;
+        
+        const setBadge = (hasKey, text) => {
+            textEl.textContent = hasKey ? `作用中：${text}` : `未連接：${text}`;
+            if (dotEl) {
+                dotEl.className = `w-2 h-2 rounded-full animate-pulse ${hasKey ? 'bg-emerald-500' : 'bg-amber-400'}`;
+            }
+        };
 
         if (this.activeTab === 'image') {
             const prov = this.modal.querySelector('#vault-image-provider')?.value || 'clipdrop';
+            const key = this.modal.querySelector('#vault-image-key')?.value.trim();
             const provNames = {
                 'clipdrop': 'Clipdrop API',
                 'photoroom': 'Photoroom API',
                 'removebg': 'Remove.bg API',
-                'sd': 'Stable Diffusion (尚未支援)'
+                'sd': 'Stable Diffusion'
             };
-            textEl.textContent = `作用中：${provNames[prov] || prov}`;
+            setBadge(!!key, provNames[prov] || prov);
         } else if (this.activeTab === 'ppt') {
             const prov = this.modal.querySelector('#vault-ppt-provider')?.value || 'convertapi';
+            const key = this.modal.querySelector('#vault-ppt-secret')?.value.trim();
             const provNames = {
                 'convertapi': 'ConvertAPI',
                 'cloudconvert': 'CloudConvert',
-                'gotenberg': 'Gotenberg (尚未支援)'
+                'gotenberg': 'Gotenberg'
             };
-            textEl.textContent = `作用中：${provNames[prov] || prov}`;
+            setBadge(!!key, provNames[prov] || prov);
         } else {
             if (this.activeLlmSubTab === 'builtin') {
                 const prov = this.modal.querySelector('#vault-builtin-provider')?.value || 'gemini';
                 const model = this.modal.querySelector('#vault-builtin-model')?.value || 'gemini-2.0-flash';
+                const key = this.modal.querySelector('#vault-builtin-key')?.value.trim();
                 const provName = prov === 'gemini' ? 'Google Gemini' : (prov === 'openai' ? 'OpenAI' : 'Anthropic');
-                textEl.textContent = `作用中：${provName} (${model})`;
+                setBadge(!!key, `${provName} (${model})`);
             } else {
                 const activeEp = this.config.customEndpoints.find(e => e.id === this.config.activeCustomId);
+                const hasKey = activeEp && activeEp.baseUrl.trim();
                 if (activeEp) {
-                    textEl.textContent = `作用中：${activeEp.name || '自訂端點'} (${activeEp.modelId || '未設定模型'})`;
+                    setBadge(!!hasKey, `${activeEp.name || '自訂端點'} (${activeEp.modelId || '未設定模型'})`);
                 } else {
-                    textEl.textContent = `作用中：(無自訂端點)`;
+                    setBadge(false, `(無自訂端點)`);
                 }
             }
         }
     }
-
+    
     /**
      * 處理表單送出儲存
      */
