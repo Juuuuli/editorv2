@@ -565,10 +565,9 @@ export default class ApiVaultManager {
                 const prov = builtinProvider.value;
                 if (prov === 'gemini') {
                     builtinModel.innerHTML = `
-                        <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash-8B (極速輕量 · 免費配額首選)</option>
-                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (最新推理旗艦)</option>
-                        <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (次世代預覽版)</option>
-                        <option value="gemini-1.5-pro">Gemini 1.5 Pro (深度推理)</option>
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (極速輕量 · 預設首選)</option>
+                        <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (次世代實驗版)</option>
+                        <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro (深度推理旗艦)</option>
                     `;
                     builtinKeyLabel.textContent = 'Google Gemini API Key';
                     builtinKeyHint.textContent = 'AIzaSy...';
