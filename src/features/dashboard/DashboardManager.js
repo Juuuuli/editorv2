@@ -794,7 +794,9 @@ export default class DashboardManager {
         });
 
         // 切換到活動頁面並還原畫布物件
-        this.canvasEngine.loadPageState(activePageId);
+        // 先將當前 ID 設為 null，避免 loadPageState 誤判需要先儲存當前的空畫布
+        this.canvasEngine.currentPageId = null; 
+        this.canvasEngine.loadPageState(activePageId, true);
         if (typeof this.canvasEngine.fitToScreen === 'function') {
             this.canvasEngine.fitToScreen();
         }
