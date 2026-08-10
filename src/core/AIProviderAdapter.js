@@ -367,6 +367,10 @@ export default class AIProviderAdapter {
             return this._mockInpaint();
         } else if (provider === 'clipdrop') {
             return this._callClipdropInpaint(imageBlobOrDataUrl, maskBlobOrDataUrl);
+        } else if (provider === 'photoroom' || provider === 'removebg') {
+            throw new Error(`您目前選擇的「${provider === 'photoroom' ? 'Photoroom API' : 'Remove.bg API'}」僅專精於影像去背。若要使用畫筆塗抹修補(Inpainting)功能，請至系統保險箱將影像處理服務切換為「Clipdrop API」。`);
+        } else if (provider === 'sd') {
+            throw new Error('Stable Diffusion 修補功能目前尚未實作，請選擇 Clipdrop 服務');
         } else {
             throw new Error(`不支援的影像修補 Provider: ${provider}`);
         }
