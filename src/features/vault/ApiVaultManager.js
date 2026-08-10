@@ -267,7 +267,7 @@ export default class ApiVaultManager {
                                             <select id="vault-builtin-model" class="vault-input-field w-full h-[38px] rounded-lg px-3 py-2 text-xs truncate box-border">
                                                 <option value="gemini-1.5-flash">Gemini 1.5 Flash (極速輕量 · 預設首選)</option>
                                                 <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (次世代實驗版)</option>
-                                                <option value="gemini-1.5-pro">Gemini 1.5 Pro (深度推理旗艦)</option>
+                                                <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro (深度推理旗艦)</option>
                                             </select>
                                         </div>
                                     </div>
