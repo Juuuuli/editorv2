@@ -126,55 +126,26 @@ export default class FileImportManager {
     }
 
     async importPPT(file) {
-        this.eventBus.emit('LOADING:START', { message: '正在上傳並將簡報轉換為 PDF，請稍候...' });
+        this.eventBus.emit('LOADING:START', { message: '正在準備轉檔，請稍候...' });
         try {
-            const formData = new FormData();
-            formData.append('File', file);
-            
-            const ext = file.name.split('.').pop().toLowerCase();
-            const format = (ext === 'pptx') ? 'pptx' : 'ppt';
-
             let secret = '';
+            let provider = 'convertapi';
             try {
                 const vaultConfig = JSON.parse(localStorage.getItem('EDITOR_V2_VAULT_CONFIG') || '{}');
-                const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
-                secret = vaultConfig.pptParsing?.secret || legacyVault.convertApiKey || localStorage.getItem('convertapi_secret') || (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
+                provider = vaultConfig.pptParsing?.provider || 'convertapi';
+                secret = vaultConfig.pptParsing?.secret || '';
             } catch (e) {
-                secret = (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
+                console.warn('Failed to parse vault config', e);
             }
 
-            if (!secret) {
-                throw new Error("未設定 ConvertAPI 金鑰（請至右上角系統金鑰保險箱設定或配置環境變數）");
-            }
-            
-            const response = await fetch(`https://v2.convertapi.com/convert/${format}/to/pdf?Secret=${secret}&StoreFile=false`, {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.Message || `API 回應錯誤 (${response.status})`);
-            }
-
-            const data = await response.json();
-            
-            if (data.Files && data.Files.length > 0 && data.Files[0].FileData) {
-                this.eventBus.emit('LOADING:START', { message: '轉換完成，正在匯入畫布...' });
-                
-                // Decode base64 to Blob
-                const base64Data = data.Files[0].FileData;
-                const binaryString = window.atob(base64Data);
-                const bytes = new Uint8Array(binaryString.length);
-                for (let i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i);
-                }
-                const pdfBlob = new Blob([bytes], { type: 'application/pdf' });
-                const pdfFile = new File([pdfBlob], file.name.replace(/\.pptx?$/i, '.pdf'), { type: 'application/pdf' });
-                
-                await this.importPDF(pdfFile);
+            if (provider === 'convertapi') {
+                await this._importPPTWithConvertAPI(file, secret);
+            } else if (provider === 'cloudconvert') {
+                await this._importPPTWithCloudConvert(file, secret);
+            } else if (provider === 'gotenberg') {
+                throw new Error("Gotenberg 轉檔尚未實作");
             } else {
-                throw new Error("API 未回傳有效的 PDF 資料");
+                throw new Error("未知的轉檔服務商: " + provider);
             }
         } catch (error) {
             console.error('Error converting PPT:', error);
@@ -182,6 +153,137 @@ export default class FileImportManager {
         } finally {
             this.eventBus.emit('LOADING:END');
         }
+    }
+
+    async _importPPTWithConvertAPI(file, secret) {
+        if (!secret) {
+            try {
+                const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+                secret = legacyVault.convertApiKey || localStorage.getItem('convertapi_secret') || (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
+            } catch (e) {
+                secret = (import.meta.env && import.meta.env.VITE_CONVERTAPI_SECRET) || '';
+            }
+        }
+        if (!secret) throw new Error("未設定 ConvertAPI 金鑰（請至右上角系統金鑰保險箱設定或配置環境變數）");
+
+        this.eventBus.emit('LOADING:START', { message: 'ConvertAPI: 正在上傳並將簡報轉換為 PDF，請稍候...' });
+        
+        const formData = new FormData();
+        formData.append('File', file);
+        
+        const ext = file.name.split('.').pop().toLowerCase();
+        const format = (ext === 'pptx') ? 'pptx' : 'ppt';
+
+        const response = await fetch(`https://v2.convertapi.com/convert/${format}/to/pdf?Secret=${secret}&StoreFile=false`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.Message || `API 回應錯誤 (${response.status})`);
+        }
+
+        const data = await response.json();
+        
+        if (data.Files && data.Files.length > 0 && data.Files[0].FileData) {
+            this.eventBus.emit('LOADING:START', { message: '轉換完成，正在匯入畫布...' });
+            
+            // Decode base64 to Blob
+            const base64Data = data.Files[0].FileData;
+            const binaryString = window.atob(base64Data);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            const pdfBlob = new Blob([bytes], { type: 'application/pdf' });
+            const pdfFile = new File([pdfBlob], file.name.replace(/\.pptx?$/i, '.pdf'), { type: 'application/pdf' });
+            
+            await this.importPDF(pdfFile);
+        } else {
+            throw new Error("API 未回傳有效的 PDF 資料");
+        }
+    }
+
+    async _importPPTWithCloudConvert(file, secret) {
+        if (!secret) throw new Error("未設定 CloudConvert API Key（請至金鑰保險箱設定）");
+
+        this.eventBus.emit('LOADING:START', { message: 'CloudConvert: 建立轉檔任務中...' });
+
+        // 1. Create Job
+        const jobRes = await fetch('https://api.cloudconvert.com/v2/jobs', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + secret,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tasks: {
+                    "import-my-file": { "operation": "import/upload" },
+                    "convert-my-file": { 
+                        "operation": "convert", 
+                        "input": "import-my-file", 
+                        "output_format": "pdf" 
+                    },
+                    "export-my-file": { 
+                        "operation": "export/url", 
+                        "input": "convert-my-file" 
+                    }
+                }
+            })
+        });
+        const jobData = await jobRes.json();
+        if (!jobRes.ok) throw new Error('任務建立失敗: ' + (jobData.message || jobRes.status));
+
+        const uploadTask = jobData.data.tasks.find(t => t.name === 'import-my-file');
+        const jobId = jobData.data.id;
+
+        // 2. Upload File
+        this.eventBus.emit('LOADING:START', { message: 'CloudConvert: 正在上傳簡報檔案...' });
+        const formData = new FormData();
+        for (const [key, val] of Object.entries(uploadTask.result.form.parameters)) {
+            formData.append(key, val);
+        }
+        formData.append('file', file);
+        
+        const uploadRes = await fetch(uploadTask.result.form.url, {
+            method: 'POST',
+            body: formData
+        });
+        if (!uploadRes.ok) throw new Error('檔案上傳失敗');
+
+        // 3. Poll Job Status
+        this.eventBus.emit('LOADING:START', { message: 'CloudConvert: 雲端轉檔中，請稍候...' });
+        let isFinished = false;
+        let exportUrl = null;
+        while (!isFinished) {
+            await new Promise(r => setTimeout(r, 2000)); // poll every 2 seconds
+            const statusRes = await fetch(`https://api.cloudconvert.com/v2/jobs/${jobId}`, {
+                headers: { 'Authorization': 'Bearer ' + secret }
+            });
+            const statusData = await statusRes.json();
+            const status = statusData.data.status;
+            
+            if (status === 'error') throw new Error('雲端轉檔發生錯誤');
+            if (status === 'finished') {
+                const exportTask = statusData.data.tasks.find(t => t.name === 'export-my-file');
+                if (exportTask && exportTask.result && exportTask.result.files && exportTask.result.files[0]) {
+                    exportUrl = exportTask.result.files[0].url;
+                    isFinished = true;
+                } else {
+                    throw new Error('無法取得下載連結');
+                }
+            }
+        }
+
+        // 4. Download PDF
+        this.eventBus.emit('LOADING:START', { message: 'CloudConvert: 轉換完成，正在下載並匯入畫布...' });
+        const pdfRes = await fetch(exportUrl);
+        if (!pdfRes.ok) throw new Error('下載 PDF 失敗');
+        const pdfBlob = await pdfRes.blob();
+        const pdfFile = new File([pdfBlob], file.name.replace(/\.pptx?$/i, '.pdf'), { type: 'application/pdf' });
+        
+        await this.importPDF(pdfFile);
     }
 
     async importImage(file) {

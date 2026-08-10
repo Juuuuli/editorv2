@@ -680,6 +680,13 @@ export default class ApiVaultManager {
         if (btnPingPpt) {
             btnPingPpt.addEventListener('click', () => this.handlePing('ppt'));
         }
+        
+        const pptProvider = this.modal.querySelector('#vault-ppt-provider');
+        if (pptProvider) {
+            pptProvider.addEventListener('change', () => {
+                this.updateActiveBadge();
+            });
+        }
 
         // API Profile Manager (Custom Endpoints)
         const customList = this.modal.querySelector('#vault-custom-list');
@@ -849,20 +856,37 @@ export default class ApiVaultManager {
                 statusEl.className = 'text-[11px] flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold';
                 statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>金鑰有效 · 回應 ${duration}ms</span>`;
             } else if (target === 'ppt') {
+                const prov = this.modal.querySelector('#vault-ppt-provider')?.value || 'convertapi';
                 const secret = this.modal.querySelector('#vault-ppt-secret')?.value.trim();
-                if (!secret) throw new Error('尚未填入 ConvertAPI Secret');
+                if (!secret) throw new Error('尚未填入 API 金鑰');
 
                 const startTime = Date.now();
-                const res = await fetch(`https://v2.convertapi.com/user?Secret=${secret}`);
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({}));
-                    throw new Error(err.Message || `HTTP ${res.status}`);
+                if (prov === 'convertapi') {
+                    const res = await fetch(`https://v2.convertapi.com/user?Secret=${secret}`);
+                    if (!res.ok) {
+                        const err = await res.json().catch(() => ({}));
+                        throw new Error(err.Message || `HTTP ${res.status}`);
+                    }
+                    const data = await res.json();
+                    const duration = Date.now() - startTime;
+                    const sec = data.SecondsLeft !== undefined ? `${data.SecondsLeft}s` : '可用';
+                    statusEl.className = 'text-[11px] flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold';
+                    statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>有效 (餘量: ${sec} · ${duration}ms)</span>`;
+                } else if (prov === 'cloudconvert') {
+                    const res = await fetch(`https://api.cloudconvert.com/v2/users/me`, {
+                        headers: { 'Authorization': 'Bearer ' + secret }
+                    });
+                    if (!res.ok) {
+                        const err = await res.json().catch(() => ({}));
+                        throw new Error(err.message || `HTTP ${res.status}`);
+                    }
+                    const data = await res.json();
+                    const duration = Date.now() - startTime;
+                    statusEl.className = 'text-[11px] flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold';
+                    statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>有效 (${data.data.username} · ${duration}ms)</span>`;
+                } else if (prov === 'gotenberg') {
+                    throw new Error('暫不支援 Gotenberg 的連線測試');
                 }
-                const data = await res.json();
-                const duration = Date.now() - startTime;
-                const sec = data.SecondsLeft !== undefined ? `${data.SecondsLeft}s` : '可用';
-                statusEl.className = 'text-[11px] flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold';
-                statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>有效 (餘量: ${sec} · ${duration}ms)</span>`;
             }
         } catch (err) {
             statusEl.className = 'text-[11px] flex items-center gap-1.5 text-rose-500 font-bold';
@@ -1074,7 +1098,13 @@ export default class ApiVaultManager {
             };
             textEl.textContent = `作用中：${provNames[prov] || prov}`;
         } else if (this.activeTab === 'ppt') {
-            textEl.textContent = `作用中：ConvertAPI`;
+            const prov = this.modal.querySelector('#vault-ppt-provider')?.value || 'convertapi';
+            const provNames = {
+                'convertapi': 'ConvertAPI',
+                'cloudconvert': 'CloudConvert',
+                'gotenberg': 'Gotenberg (尚未支援)'
+            };
+            textEl.textContent = `作用中：${provNames[prov] || prov}`;
         } else {
             if (this.activeLlmSubTab === 'builtin') {
                 const prov = this.modal.querySelector('#vault-builtin-provider')?.value || 'gemini';
