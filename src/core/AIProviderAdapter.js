@@ -266,7 +266,7 @@ export default class AIProviderAdapter {
         }
 
         const formData = new FormData();
-        formData.append('image_file', blob);
+        formData.append('imageFile', blob);
 
         const response = await fetch('https://image-api.photoroom.com/v2/edit', {
             method: 'POST',
