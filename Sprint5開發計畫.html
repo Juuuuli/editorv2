@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprint 5: 即時多人協作共編引擎 開發計畫</title>
+    <style>
+        :root {
+            --primary: #818CF8;
+            --primary-hover: #6366F1;
+            --bg-color: #0F172A;
+            --text-color: #CBD5E1;
+            --card-bg: #1E293B;
+            --border-color: #334155;
+            --accent: #38BDF8;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .layout {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .main-content {
+            flex: 1;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 40px;
+        }
+
+        h1 {
+            color: #F8FAFC;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+
+        h2 {
+            color: var(--accent);
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .phase-card {
+            background: #0F172A;
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .phase-card h3 {
+            margin-top: 0;
+            color: #F8FAFC;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background-color: rgba(56, 189, 248, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.85em;
+            font-weight: bold;
+            background-color: rgba(129, 140, 248, 0.2);
+            color: var(--primary);
+            margin-bottom: 20px;
+            border: 1px solid rgba(129, 140, 248, 0.3);
+        }
+
+        .glossary-item {
+            margin-bottom: 20px;
+        }
+        
+        .glossary-term {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .glossary-desc {
+            font-size: 0.9em;
+            color: #94A3B8;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- 左側主內容區塊 -->
+        <div class="main-content">
+            <h1>Sprint 5 · 專案路由與即時共編旗艦引擎</h1>
+            <div class="status">目標版本：v2.0.0 (MAJOR RELEASE)</div>
+            
+            <p>本階段為 EditorV2 最核心的旗艦升級，目標是將單機版畫布轉型為「<strong>多使用者即時在線協作</strong>」引擎。我們將依賴已完成的系統保險箱與登入系統，實作底層的 P2P/WebSocket 連線機制，並在畫布上渲染出多人的動態操作。</p>
+
+            <h2>📂 檔案存放架構預覽</h2>
+            <div class="phase-card" style="border-left-color: #10B981;">
+                <ul>
+                    <li><span class="highlight">src/features/collaboration/</span>：存放所有共編引擎的核心模組
+                        <ul>
+                            <li><code>CollabEngine.js</code> (連線生命週期與狀態機)</li>
+                            <li><code>MultiplayerCursorOverlay.js</code> (游標與名牌渲染)</li>
+                            <li><code>YjsAdapter.js</code> (Fabric.js 與 Yjs 資料結構的雙向綁定)</li>
+                            <li><code>ObjectLeaseManager.js</code> (物件選取鎖定與防衝突機制)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <h2>📝 需更新/建立的 Markdown 文件</h2>
+            <div class="phase-card" style="border-left-color: #F59E0B;">
+                <ul>
+                    <li><span class="highlight">C:\EditorV2\系統升級計畫書.md</span>：更新 Sprint 5 執行進度與完成狀態。</li>
+                    <li><span class="highlight">C:\EditorV2\src\features\collaboration\README.md</span>：更新版本號為 v2.0.0，並補充新增的共編引擎元件與 EventBus 事件。</li>
+                    <li><span class="highlight">C:\EditorV2\docs\需求書v4.md</span>（或建立 v5）：補充或修改關於「多人即時協作共編引擎」的具體功能需求與情境。</li>
+                    <li><span class="highlight">C:\EditorV2\docs\功能規格_專案路由與協作前置.md</span>：擴充功能規格，補上 Yjs 同步、物件租約等詳細規格（或建立新的功能規格書）。</li>
+                    <li><span class="highlight">C:\EditorV2\.agents\rules\collaboration_architecture.md</span>：(新增) 定義共編系統架構、Yjs 資料結構規範與 WebSocket 廣播事件守則。</li>
+                </ul>
+            </div>
+
+            <h2>🚀 開發階段拆解 (Phases)</h2>
+
+            <div class="phase-card">
+                <h3>Phase 1: 協作通訊底層建設 (CollabEngine & Yjs)</h3>
+                <p><strong>目標：</strong>建立穩定、低延遲且具備防衝突 (CRDT) 的資料同步管道。</p>
+                <ul>
+                    <li>引入 <strong>Yjs</strong> 作為核心 CRDT 結構，取代單純的 JSON 快照覆蓋。</li>
+                    <li>實作 <code>CollabEngine.js</code>，負責接管 WebSocket 的連線生命週期與房間隔離。</li>
+                    <li>實作「加入房間/離開房間」的廣播機制，並接上先前開發的 <code>PresenceManager</code>。</li>
+                </ul>
+            </div>
+
+            <div class="phase-card">
+                <h3>Phase 2: 畫布物件增量同步 (Fabric.js 綁定)</h3>
+                <p><strong>目標：</strong>將 Yjs 的資料變更精準且雙向綁定到 Fabric.js 畫布物件上。</p>
+                <ul>
+                    <li>攔截 Fabric.js 的修改/新增/刪除事件，將變更精準發布到 Yjs Array/Map 中。</li>
+                    <li>監聽 Yjs 的 <code>observe</code> 事件，自動更新畫布上其他使用者修改的物件，而不影響當前使用者的操作。</li>
+                </ul>
+            </div>
+
+            <div class="phase-card">
+                <h3>Phase 3: 多人游標與使用者識別 (Multiplayer Cursors)</h3>
+                <p><strong>目標：</strong>提供直觀的共同作業體驗，讓大家看到彼此「在哪裡」。</p>
+                <ul>
+                    <li>實作 <code>MultiplayerCursorOverlay.js</code>：在 Fabric 畫布上層疊加獨立的游標渲染層。</li>
+                    <li>高頻廣播滑鼠座標，並根據 <code>PresenceManager</code> 提供的會員顏色渲染游標與名牌。</li>
+                    <li>實作平滑移動動畫 (LERP) 以降低網路傳輸帶來的視覺卡頓感。</li>
+                </ul>
+            </div>
+
+            <div class="phase-card">
+                <h3>Phase 4: 狀態鎖定與衝突防止 (Object Lease)</h3>
+                <p><strong>目標：</strong>避免兩人同時拖曳同一個物件造成資料抖動與覆蓋。</p>
+                <ul>
+                    <li>當 User A 點擊選取某物件時，向網路發送「租約 (Lease)」請求。</li>
+                    <li>其他使用者的畫面上，該物件會顯示 <strong>鎖定框 (紅框或擁有者顏色的框)</strong>，且被設為無法選取 (`selectable: false`)。</li>
+                    <li>放開選取時，釋放該物件的租約。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 右側固定名詞解釋區塊 -->
+        <div class="sidebar">
+            <h2>📖 專有名詞說明</h2>
+            
+            <div class="glossary-item">
+                <span class="glossary-term">Yjs (CRDT)</span>
+                <div class="glossary-desc">
+                    Conflict-free Replicated Data Type。一種無衝突的資料結構，能確保在多個使用者同時離線編輯或網路延遲的情況下，大家最終看到的資料都會自動合併且保持一致，是現代共編軟體（如 Figma, Notion）的核心基石。
+                </div>
+            </div>
+
+            <div class="glossary-item">
+                <span class="glossary-term">WebSocket / WebRTC</span>
+                <div class="glossary-desc">
+                    即時雙向通訊技術。相較於傳統的 HTTP 請求，能讓伺服器主動推播（廣播）資料給所有在房間內的使用者，實現「即時」看到對方游標與動作的效果。
+                </div>
+            </div>
+
+            <div class="glossary-item">
+                <span class="glossary-term">Object Lease (物件租約)</span>
+                <div class="glossary-desc">
+                    為了解決物理衝突的機制。當某人點中畫布上的某個形狀時，他會暫時「租借」該物件的修改權（鎖定），此時其他人畫面上該物件會變色並禁止選取，直到原擁有者放開為止。
+                </div>
+            </div>
+
+            <div class="glossary-item">
+                <span class="glossary-term">Presence (在線狀態)</span>
+                <div class="glossary-desc">
+                    紀錄與廣播當前在同一個協作房間內的成員名單與活躍狀態（包含他們被分配的顏色、顯示名稱、最後活動時間等），用於渲染頭像與游標名牌。
+                </div>
+            </div>
+            
+            <div class="glossary-item">
+                <span class="glossary-term">LERP (線性插值)</span>
+                <div class="glossary-desc">
+                    Linear Interpolation。為了避免游標因網路延遲而「瞬間移動」，透過數學算法補足兩點之間的移動軌跡，讓游標看起來是平滑滑動的。
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

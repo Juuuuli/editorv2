@@ -1,22 +1,26 @@
 # 多人協作共編模組 (Collaboration Feature Module)
 
-> **模組版本**：v1.5.0  
+> **模組版本**：v2.0.0  
 > **所屬目錄**：`src/features/collaboration/`  
-> **遵守規範**：[標準規範v2.md](file:///C:/EditorV2/docs/標準規範v2.md)
+> **遵守規範**：[標準規範v2.md](file:///C:/EditorV2/docs/標準規範v2.md) 與 [collaboration_architecture.md](file:///C:/EditorV2/.agents/rules/collaboration_architecture.md)
 
 ---
 
 ## 1. 模組職責
-負責多媒體畫布編輯器的專案分享、房間邀請碼、協作者身分標識 (Presence) 以及跨視窗/跨分頁即時通訊通道。
+負責多媒體畫布編輯器的即時多人協作共編，包含 Yjs 增量同步、專案分享、房間邀請碼、協作者身分標識 (Presence)、以及多人動態游標與物件防衝突租約。
 
 ---
 
 ## 2. 檔案清單與架構
 
-* **`index.js`**：模組整合入口，實例化 Presence、CollabChannel 與 ShareModal。
+* **`CollabEngine.js`**：管理 Yjs (Y.Doc) 生命週期，使用 y-webrtc 廣播增量與 Awareness。
+* **`YjsAdapter.js`**：綁定 Fabric.js 畫布與 Yjs 資料模型，實作雙向同步 (Local <-> Remote)。
+* **`MultiplayerCursorOverlay.js`**：繪製遠端協作者游標與名稱標籤，並套用線性插值 (LERP) 確保移動平滑。
+* **`ObjectLeaseManager.js`**：攔截 Awareness 事件，對遠端使用者選中的畫布物件設定禁止操作之租約鎖定。
+* **`index.js`**：模組整合入口。
 * **`PresenceManager.js`**：維護本地與遠端 Peer 的 Presence 狀態、指派隨機專屬色彩與在線成員列表。
-* **`CollabChannel.js`**：封裝原生 `BroadcastChannel`，提供單機跨分頁 (含無痕視窗) 即時心跳與事件廣播通道。
-* **`ShareModal.js`**：手繪風格 (.sketch) 分享與協作彈窗，提供一鍵複製專案共編 URL、6 位數房間 PIN 碼與權限角色切換。
+* **`CollabChannel.js`**：封裝原生 `BroadcastChannel` (保留為降級廣播與跨分頁狀態感知輔助)。
+* **`ShareModal.js`**：手繪風格 (.sketch) 分享與協作彈窗，提供一鍵複製專案共編 URL、6 位數房間 PIN 碼。
 
 ---
 

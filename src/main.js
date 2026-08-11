@@ -45,9 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ★ 實例化角色帳號與身分認證 (Sprint 3)
     const authManager = new AuthManager(eventBus);
 
-    // ★ 實例化多人共編與專案分享前置模組 (v1.5.0)
-    const collabModule = new CollaborationModule(eventBus, authManager, projectRouter);
-
+    // ★ 實例化多人共編與專案分享前置模組 (v1.5.0) 將在 CanvasEngine 之後實例化
     // 綁定 Loading UI
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingMessage = document.getElementById('loading-message');
@@ -74,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
         width: 1280,
         height: 720
     }, eventBus);
+
+    // ★ 實例化多人共編與專案分享模組 (v2.0.0)
+    const collabModule = new CollaborationModule(eventBus, authManager, projectRouter, canvasEngine);
 
     // 實例化 Sprint 1 模組
     const workspaceManager = new WorkspaceManager(eventBus);
