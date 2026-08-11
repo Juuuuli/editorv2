@@ -74,7 +74,7 @@ export default class DashboardManager {
             console.log(`[DashboardManager] Deep Linking 直通專案: ${targetProject.name} (${targetProject.id})`);
             await this.openProject(targetProject.id, false);
             if (this.eventBus) {
-                this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: targetProject.id, roomId: urlRoomId || 'main', isGuest: false });
+                this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: targetProject.id, roomId: urlRoomId || targetProject.id, isGuest: false });
             }
             return;
         }
@@ -85,7 +85,7 @@ export default class DashboardManager {
         // 連線協作房間並請求快照 (isGuest: true)
         this.eventBus.emit('COLLAB:CONNECT_ROOM', {
             projectId: urlProjectId,
-            roomId: urlRoomId || 'main',
+            roomId: urlRoomId || urlProjectId,
             isGuest: true
         });
 
@@ -105,6 +105,9 @@ export default class DashboardManager {
                 syncCompleted = true;
                 clearTimeout(syncTimeout);
                 console.log(`[DashboardManager] 專案快照同步接收成功: ${data.projectData.name}`);
+
+                // 標記這是一個與他人共編的專案
+                data.projectData.isShared = true;
 
                 // 寫入本地 IndexedDB 並開啟
                 await this.storageEngine.saveProject(data.projectData);
@@ -756,7 +759,7 @@ export default class DashboardManager {
         if (this.eventBus) {
             const urlParams = new URLSearchParams(window.location.search);
             const roomId = urlParams.get('room') || null;
-            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || 'main' });
+            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || project.id });
         }
 
         // 更新 Header 專案標題

@@ -164,16 +164,14 @@ export default class ProjectRouter {
      * @param {string} role 角色權限 ('editor' | 'viewer')
      * @returns {string} 完整的分享 URL
      */
-    getShareUrl(projectId, roomId = null, role = 'editor') {
+    getShareUrl(projectId, role = 'editor') {
         if (typeof window === 'undefined') return '';
         const targetId = projectId || this.currentProjectId;
         if (!targetId) return window.location.href;
 
         const url = new URL(window.location.origin + window.location.pathname);
         url.searchParams.set('project', targetId);
-        if (roomId) {
-            url.searchParams.set('room', roomId);
-        }
+        
         if (role && role !== 'editor') {
             url.searchParams.set('role', role);
         }

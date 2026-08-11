@@ -28,7 +28,7 @@ export default class CollabEngine {
         // 當系統要求連線協作房間時
         this.eventBus.on('COLLAB:CONNECT_ROOM', (data) => {
             if (!data || !data.projectId) return;
-            this.connect(data.projectId, data.roomId || 'main');
+            this.connect(data.projectId, data.roomId || data.projectId);
         });
 
         // 斷線

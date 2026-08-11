@@ -34,7 +34,7 @@ export default class CollabChannel {
         if (this.eventBus) {
             this.eventBus.on('COLLAB:CONNECT_ROOM', (data) => {
                 if (!data || !data.projectId) return;
-                this.connect(data.projectId, data.roomId || 'main', data.isGuest || false);
+                this.connect(data.projectId, data.roomId || data.projectId, data.isGuest || false);
             });
 
             this.eventBus.on('COLLAB:DISCONNECT_ROOM', () => {
@@ -91,7 +91,7 @@ export default class CollabChannel {
     /**
      * 連線至特定專案協作房間 (雙軌啟動 BroadcastChannel + WebRTC)
      */
-    connect(projectId, roomId = 'main', isGuest = false) {
+    connect(projectId, roomId = projectId, isGuest = false) {
         if (this.projectId === projectId && this.roomId === roomId && (this.broadcastChannel || this.peer)) {
             return;
         }

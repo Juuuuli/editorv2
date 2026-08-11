@@ -15,7 +15,6 @@ export default class ShareModal {
         this.isOpen = false;
         this.projectId = null;
         this.projectTitle = '未命名專案';
-        this.roomPin = this.generateRoomPin();
         this.selectedRole = 'editor'; // 'editor' | 'viewer'
 
         this.init();
@@ -24,12 +23,6 @@ export default class ShareModal {
     init() {
         this.createModalDOM();
         this.bindEvents();
-    }
-
-    generateRoomPin() {
-        const p1 = Math.floor(100 + Math.random() * 900);
-        const p2 = Math.floor(100 + Math.random() * 900);
-        return `${p1}-${p2}`;
     }
 
     createModalDOM() {
@@ -85,25 +78,8 @@ export default class ShareModal {
                         </div>
                     </div>
 
-                    <!-- 房間號與權限設定 -->
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <!-- 房間邀請碼 -->
-                        <div class="bg-slate-50 border-2 border-slate-200 rounded-xl p-3 space-y-1.5">
-                            <div class="flex items-center justify-between text-[11px] font-bold text-slate-600">
-                                <span><i class="fas fa-hashtag text-teal-500 mr-1"></i> 房間邀請碼 (PIN)</span>
-                                <button id="btn-refresh-pin" class="text-indigo-600 hover:text-indigo-800 text-[10px]" title="重新產生房間碼">
-                                    <i class="fas fa-redo-alt"></i>
-                                </button>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span id="collab-room-pin-display" class="font-mono text-lg font-black text-slate-800 tracking-wider">892-140</span>
-                                <button id="btn-copy-room-pin" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 shadow-sm">
-                                    複製
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- 權限角色選擇 -->
+                    <!-- 權限角色選擇 -->
+                    <div class="pt-1">
                         <div class="bg-slate-50 border-2 border-slate-200 rounded-xl p-3 space-y-1.5">
                             <div class="text-[11px] font-bold text-slate-600">
                                 <i class="fas fa-user-shield text-purple-500 mr-1"></i> 預設給予權限
@@ -176,28 +152,6 @@ export default class ShareModal {
             btnCopyUrl.addEventListener('click', () => this.copyShareUrl());
         }
 
-        // 複製 Room PIN
-        const btnCopyPin = this.modalContainer.querySelector('#btn-copy-room-pin');
-        if (btnCopyPin) {
-            btnCopyPin.addEventListener('click', () => this.copyRoomPin());
-        }
-
-        // 重新產生 PIN
-        const btnRefreshPin = this.modalContainer.querySelector('#btn-refresh-pin');
-        if (btnRefreshPin) {
-            btnRefreshPin.addEventListener('click', () => {
-                this.roomPin = this.generateRoomPin();
-                this.updateUI();
-                // 重新連線到新房間通道
-                if (this.eventBus && this.projectId) {
-                    this.eventBus.emit('COLLAB:CONNECT_ROOM', {
-                        projectId: this.projectId,
-                        roomId: this.roomPin
-                    });
-                }
-            });
-        }
-
         // 權限切換
         const roleSelector = this.modalContainer.querySelector('#collab-role-selector');
         if (roleSelector) {
@@ -227,14 +181,11 @@ export default class ShareModal {
     /**
      * 開啟分享彈窗
      */
-    open(projectId = null, projectTitle = null, roomId = null) {
+    open(projectId = null, projectTitle = null) {
         if (!this.modalContainer) return;
 
         this.projectId = projectId || (this.projectRouter ? this.projectRouter.currentProjectId : null);
         this.projectTitle = projectTitle || '當前專案';
-        if (roomId) {
-            this.roomPin = roomId;
-        }
 
         if (!this.projectId) {
             alert('請先開啟或建立專案後再進行協作分享！');
@@ -249,7 +200,7 @@ export default class ShareModal {
         if (this.eventBus) {
             this.eventBus.emit('COLLAB:CONNECT_ROOM', {
                 projectId: this.projectId,
-                roomId: this.roomPin
+                roomId: this.projectId
             });
         }
 
@@ -297,14 +248,10 @@ export default class ShareModal {
             titleElem.textContent = `${this.projectTitle} (${this.projectId})`;
         }
 
-        const pinElem = this.modalContainer.querySelector('#collab-room-pin-display');
-        if (pinElem) {
-            pinElem.textContent = this.roomPin;
-        }
-
         const urlInput = this.modalContainer.querySelector('#collab-share-url-input');
         if (urlInput && this.projectRouter) {
-            const shareUrl = this.projectRouter.getShareUrl(this.projectId, this.roomPin, this.selectedRole);
+            // 不再傳遞 roomPin，改用 projectId 作為房間號
+            const shareUrl = this.projectRouter.getShareUrl(this.projectId, this.selectedRole);
             urlInput.value = shareUrl;
         }
     }
@@ -374,27 +321,6 @@ export default class ShareModal {
             urlInput.select();
             document.execCommand('copy');
             alert('已複製專案連結至剪貼簿！');
-        }
-    }
-
-    /**
-     * 複製 Room PIN
-     */
-    async copyRoomPin() {
-        const btn = this.modalContainer.querySelector('#btn-copy-room-pin');
-        try {
-            await navigator.clipboard.writeText(this.roomPin);
-            if (btn) {
-                const origText = btn.textContent;
-                btn.textContent = '已複製';
-                btn.classList.add('text-emerald-600', 'border-emerald-400');
-                setTimeout(() => {
-                    btn.textContent = origText;
-                    btn.classList.remove('text-emerald-600', 'border-emerald-400');
-                }, 1500);
-            }
-        } catch (e) {
-            alert(`房間碼: ${this.roomPin}`);
         }
     }
 }
