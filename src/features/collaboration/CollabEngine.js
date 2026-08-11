@@ -5,7 +5,7 @@
  */
 
 import * as Y from 'yjs';
-import { WebrtcProvider } from 'y-webrtc';
+import FirebaseProvider from './FirebaseProvider.js';
 
 export default class CollabEngine {
     constructor(eventBus, presenceManager) {
@@ -58,16 +58,13 @@ export default class CollabEngine {
         this.roomId = roomId;
         const roomName = `editorv2_yjs_${projectId}_${roomId}`;
 
-        console.log(`[CollabEngine] 啟動 Yjs 共編連線，房間：${roomName}`);
+        console.log(`[CollabEngine] 啟動 Firebase 共編連線，房間：${roomName}`);
 
         // 初始化 Y.Doc
         this.ydoc = new Y.Doc();
 
-        // 建立 WebRTC Provider，使用官方測試 Signaling 伺服器 (開發期)
-        // 實務上應更換為自建的 signaling server
-        this.provider = new WebrtcProvider(roomName, this.ydoc, {
-            signaling: ['wss://signaling.yjs.dev', 'wss://y-webrtc-signaling-eu.herokuapp.com']
-        });
+        // 建立 Firebase Provider
+        this.provider = new FirebaseProvider(roomName, this.ydoc);
 
         this.awareness = this.provider.awareness;
 

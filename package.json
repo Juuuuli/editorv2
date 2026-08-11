@@ -19,6 +19,7 @@
     "@tailwindcss/postcss": "^4.3.3",
     "autoprefixer": "^10.5.4",
     "fabric": "^5.3.0",
+    "firebase": "^12.17.1",
     "jspdf": "^4.2.1",
     "pdfjs-dist": "^6.1.200",
     "peerjs": "^1.5.5",
@@ -26,6 +27,7 @@
     "pptxgenjs": "^4.0.1",
     "tailwindcss": "^4.3.3",
     "vite": "^8.1.5",
+    "y-protocols": "^1.0.7",
     "y-webrtc": "^10.3.0",
     "yjs": "^13.6.32"
   }

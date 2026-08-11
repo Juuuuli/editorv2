@@ -8,9 +8,10 @@ import { fabric } from 'fabric';
 import * as Y from 'yjs';
 
 export default class YjsAdapter {
-    constructor(canvas, ydoc, eventBus, pageId = 'page_1') {
+    constructor(canvas, ydoc, provider, eventBus, pageId = 'page_1') {
         this.canvas = canvas;
         this.ydoc = ydoc;
+        this.provider = provider;
         this.eventBus = eventBus;
         this.pageId = pageId;
         
@@ -31,12 +32,28 @@ export default class YjsAdapter {
         this.bindYjsEvents();
         this.bindPageEvents();
         
-        // 初始載入：如果是訪客加入，且 Yjs 已有資料，則同步到本地畫布
-        if (this.yObjects.length > 0) {
-            this.syncCanvasFromYjs();
+        // 初始載入：檢查 Firebase 遠端是否有資料
+        if (this.provider && typeof this.provider.isRoomEmpty === 'function') {
+            this.provider.isRoomEmpty().then(empty => {
+                if (empty) {
+                    // 如果是房主初始建立，且畫布上有物件，推送至 Yjs (Firebase)
+                    this.pushLocalToYjs();
+                } else {
+                    // Firebase 已經有資料，自動觸發 observer 同步
+                    if (this.yObjects.length > 0) {
+                        this.syncCanvasFromYjs();
+                    }
+                }
+            });
         } else {
-            // 如果是房主初始建立，且畫布上有物件，推送至 Yjs
-            this.pushLocalToYjs();
+            // Fallback (for non-Firebase providers)
+            setTimeout(() => {
+                if (this.yObjects.length > 0) {
+                    this.syncCanvasFromYjs();
+                } else {
+                    this.pushLocalToYjs();
+                }
+            }, 100);
         }
     }
 
@@ -60,10 +77,21 @@ export default class YjsAdapter {
             
             // 延遲一點點，確保 CanvasEngine 本地的 loadPageState 已經完成，我們再來覆寫(或被覆寫)
             setTimeout(() => {
-                if (this.yObjects.length > 0) {
-                    this.syncCanvasFromYjs();
+                if (this.provider && typeof this.provider.isRoomEmpty === 'function') {
+                    this.provider.isRoomEmpty().then(empty => {
+                        if (empty) {
+                            this.pushLocalToYjs();
+                        } else if (this.yObjects.length > 0) {
+                            this.syncCanvasFromYjs();
+                        }
+                        this.isSyncing = false;
+                    });
                 } else {
-                    this.pushLocalToYjs();
+                    if (this.yObjects.length > 0) {
+                        this.syncCanvasFromYjs();
+                    } else {
+                        this.pushLocalToYjs();
+                    }
                     this.isSyncing = false;
                 }
             }, 100);

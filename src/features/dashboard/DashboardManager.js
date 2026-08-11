@@ -853,9 +853,17 @@ export default class DashboardManager {
      */
     setupAutoSave() {
         let debounceTimer = null;
+        this.isCollabMode = false;
+
+        this.eventBus.on('COLLAB:CONNECT_ROOM', () => { this.isCollabMode = true; });
+        this.eventBus.on('COLLAB:DISCONNECT_ROOM', () => { this.isCollabMode = false; });
 
         const triggerAutoSave = () => {
             if (!this.currentProjectId) return;
+            if (this.isCollabMode) {
+                // 共編模式下由 Firebase 接管，暫停 IndexedDB 寫入避免衝突
+                return;
+            }
             const indicator = document.getElementById('auto-save-indicator');
             if (indicator) {
                 indicator.innerHTML = `<i class="fas fa-spinner fa-spin mr-1 text-indigo-500"></i> 正在儲存...`;
