@@ -79,16 +79,27 @@ export default class MultiplayerCursorOverlay {
 
     createCursorElement(user) {
         const el = document.createElement('div');
-        el.className = 'remote-cursor absolute top-0 left-0 flex flex-col items-start transition-transform duration-100 ease-linear pointer-events-none';
+        el.className = 'remote-cursor absolute top-0 left-0 flex flex-col items-start transition-transform duration-100 ease-linear pointer-events-none z-[100]';
         
-        const color = user.color || '#F59E0B';
+        let bgColor = '#F59E0B';
+        let textColor = '#ffffff';
+        
+        if (user.color) {
+            if (typeof user.color === 'object' && user.color.bg) {
+                bgColor = user.color.bg;
+                if (user.color.text) textColor = user.color.text;
+            } else if (typeof user.color === 'string') {
+                bgColor = user.color;
+            }
+        }
+        
         const name = user.name || 'Anonymous';
 
         el.innerHTML = `
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="white" stroke-width="2" class="drop-shadow-md relative -left-1 -top-1">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="${bgColor}" stroke="white" stroke-width="2" class="drop-shadow-md relative -left-1 -top-1 z-10">
                 <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.45 0 .67-.54.35-.85L6.35 2.86a.5.5 0 0 0-.85.35Z"></path>
             </svg>
-            <div class="cursor-name px-2 py-0.5 text-[10px] font-bold text-white rounded-md shadow-md mt-1 whitespace-nowrap" style="background-color: ${color};">
+            <div class="cursor-name px-2 py-0.5 text-[11px] font-bold rounded shadow-md whitespace-nowrap z-20" style="background-color: ${bgColor}; color: ${textColor}; transform: translate(10px, -5px);">
                 ${name}
             </div>
         `;
