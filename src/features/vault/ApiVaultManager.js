@@ -621,6 +621,7 @@ export default class ApiVaultManager {
                 const prov = imgProvider.value;
                 if (prov === 'clipdrop') {
                     if (imgKeyInput) {
+                        imgKeyInput.type = 'password';
                         imgKeyInput.placeholder = '填入 Clipdrop API Key (c577...)';
                         imgKeyInput.value = this.config.imageProcessing?.clipdropApiKey || (this.config.imageProcessing?.provider === 'clipdrop' ? this.config.imageProcessing?.apiKey : '') || '';
                     }
@@ -631,6 +632,7 @@ export default class ApiVaultManager {
                     }
                 } else if (prov === 'photoroom') {
                     if (imgKeyInput) {
+                        imgKeyInput.type = 'password';
                         imgKeyInput.placeholder = '填入 Photoroom API Key';
                         imgKeyInput.value = this.config.imageProcessing?.photoroomApiKey || (this.config.imageProcessing?.provider === 'photoroom' ? this.config.imageProcessing?.apiKey : '') || '';
                     }
@@ -641,6 +643,7 @@ export default class ApiVaultManager {
                     }
                 } else if (prov === 'removebg') {
                     if (imgKeyInput) {
+                        imgKeyInput.type = 'password';
                         imgKeyInput.placeholder = '填入 Remove.bg API Key';
                         imgKeyInput.value = this.config.imageProcessing?.removebgApiKey || (this.config.imageProcessing?.provider === 'removebg' ? this.config.imageProcessing?.apiKey : '') || '';
                     }
@@ -651,6 +654,7 @@ export default class ApiVaultManager {
                     }
                 } else if (prov === 'sd') {
                     if (imgKeyInput) {
+                        imgKeyInput.type = 'text';
                         imgKeyInput.placeholder = '填入 SD WebUI Base URL (例如 http://127.0.0.1:7860)';
                         imgKeyInput.value = this.config.imageProcessing?.sdBaseUrl || (this.config.imageProcessing?.provider === 'sd' ? this.config.imageProcessing?.apiKey : '') || 'http://127.0.0.1:7860';
                     }
@@ -688,6 +692,7 @@ export default class ApiVaultManager {
                 const prov = pptProvider.value;
                 if (prov === 'convertapi') {
                     if (pptSecretInput) {
+                        pptSecretInput.type = 'password';
                         pptSecretInput.placeholder = '填入 ConvertAPI Secret (jCHj...)';
                         pptSecretInput.value = this.config.pptParsing?.convertapiSecret || (this.config.pptParsing?.provider === 'convertapi' ? this.config.pptParsing?.secret : '') || '';
                     }
@@ -698,6 +703,7 @@ export default class ApiVaultManager {
                     }
                 } else if (prov === 'cloudconvert') {
                     if (pptSecretInput) {
+                        pptSecretInput.type = 'password';
                         pptSecretInput.placeholder = '填入 CloudConvert API Key';
                         pptSecretInput.value = this.config.pptParsing?.cloudconvertSecret || (this.config.pptParsing?.provider === 'cloudconvert' ? this.config.pptParsing?.secret : '') || '';
                     }
@@ -708,6 +714,7 @@ export default class ApiVaultManager {
                     }
                 } else if (prov === 'gotenberg') {
                     if (pptSecretInput) {
+                        pptSecretInput.type = 'text';
                         pptSecretInput.placeholder = '填入 Gotenberg Base URL (例如 http://localhost:3000)';
                         pptSecretInput.value = this.config.pptParsing?.gotenbergBaseUrl || (this.config.pptParsing?.provider === 'gotenberg' ? this.config.pptParsing?.secret : '') || 'http://localhost:3000';
                     }
@@ -1087,17 +1094,6 @@ export default class ApiVaultManager {
             imgProvider.value = currentImgProv;
             imgProvider.dispatchEvent(new Event('change'));
         }
-        if (imgKey) {
-            if (currentImgProv === 'clipdrop') {
-                imgKey.value = c.imageProcessing?.clipdropApiKey || c.imageProcessing?.apiKey || '';
-            } else if (currentImgProv === 'photoroom') {
-                imgKey.value = c.imageProcessing?.photoroomApiKey || c.imageProcessing?.apiKey || '';
-            } else if (currentImgProv === 'removebg') {
-                imgKey.value = c.imageProcessing?.removebgApiKey || c.imageProcessing?.apiKey || '';
-            } else {
-                imgKey.value = c.imageProcessing?.apiKey || '';
-            }
-        }
 
         // PPT
         const pptProvider = this.modal.querySelector('#vault-ppt-provider');
@@ -1107,7 +1103,6 @@ export default class ApiVaultManager {
             pptProvider.value = c.pptParsing?.provider || 'convertapi';
             pptProvider.dispatchEvent(new Event('change'));
         }
-        if (pptSecret) pptSecret.value = c.pptParsing?.secret || '';
 
         this.switchLlmSubTab(c.activeLlmType || 'builtin');
         this.updateActiveBadge();
@@ -1172,9 +1167,9 @@ export default class ApiVaultManager {
         const dotEl = textEl.previousElementSibling;
         
         const setBadge = (hasKey, text) => {
-            textEl.textContent = hasKey ? `作用中：${text}` : `未連接：${text}`;
+            textEl.textContent = hasKey ? `目前選擇：${text}` : `尚未設定：${text}`;
             if (dotEl) {
-                dotEl.className = `w-2 h-2 rounded-full animate-pulse ${hasKey ? 'bg-emerald-500' : 'bg-amber-400'}`;
+                dotEl.className = `w-2 h-2 rounded-full ${hasKey ? 'bg-emerald-500' : 'bg-amber-400'}`;
             }
         };
 
