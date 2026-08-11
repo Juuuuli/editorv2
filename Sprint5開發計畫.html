@@ -202,13 +202,13 @@
                 </ul>
             </div>
 
-            <div class="phase-card">
-                <h3>Phase 4: 狀態鎖定與衝突防止 (Object Lease)</h3>
-                <p><strong>目標：</strong>避免兩人同時拖曳同一個物件造成資料抖動與覆蓋。</p>
+            <div class="phase-card" style="border-left-color: #EF4444; background: rgba(239, 68, 68, 0.05);">
+                <h3 style="color: #FCA5A5;">Phase 5 (Upgrade): 外部共編伺服器串接 (Firebase 升級計畫)</h3>
+                <p><strong>目標：</strong>解決 P2P (WebRTC) 網路穿透不穩、連線遺失，以及本地 IndexedDB 與 Yjs 互相搶奪資料庫控制權導致的「物件消失」問題。</p>
                 <ul>
-                    <li>當 User A 點擊選取某物件時，向網路發送「租約 (Lease)」請求。</li>
-                    <li>其他使用者的畫面上，該物件會顯示 <strong>鎖定框 (紅框或擁有者顏色的框)</strong>，且被設為無法選取 (`selectable: false`)。</li>
-                    <li>放開選取時，釋放該物件的租約。</li>
+                    <li>將共編核心從純 WebRTC 升級為 <strong>Firebase Realtime Database</strong> 作為絕對權威的「中央伺服器 (Single Source of Truth)」。</li>
+                    <li>在共編模式下自動接管/暫停本地端的 IndexedDB 自動儲存，避免資料庫打架 (Data Conflict)。</li>
+                    <li>實作基於 Firebase 的房間管理 (Room Management) 與權限驗證，提升商業級連線穩定度與資料持久化。</li>
                 </ul>
             </div>
         </div>
