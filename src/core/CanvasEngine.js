@@ -422,7 +422,14 @@ export default class CanvasEngine {
         // 過濾掉底板與標記為 excludeFromExport 的物件 (如裁切框)
         const objects = this.canvas.getObjects().filter(obj => obj !== this.artboard && !obj.excludeFromExport);
         // 儲存當前頁面的完整狀態 (包含所有物件與自訂屬性)
-        this.pageStates[this.currentPageId] = objects.map(obj => obj.toObject(['layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']));
+        this.pageStates[this.currentPageId] = objects.map(obj => {
+            try {
+                return obj.toObject(['layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
+            } catch (e) {
+                console.error("[CanvasEngine] toObject failed in savePageState, skipping:", e);
+                return null;
+            }
+        }).filter(Boolean);
     }
 
     loadPageState(pageId, forceLoad = false) {

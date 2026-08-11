@@ -826,8 +826,13 @@ export default class DashboardManager {
     async closeProjectToDashboard(updateRouter = true) {
         if (this.currentProjectId) {
             this.eventBus.emit('LOADING:START', { message: '正在儲存專案...' });
-            await this.saveCurrentProjectNow();
-            this.eventBus.emit('LOADING:END');
+            try {
+                await this.saveCurrentProjectNow();
+            } catch (err) {
+                console.error("saveCurrentProjectNow failed:", err);
+            } finally {
+                this.eventBus.emit('LOADING:END');
+            }
         }
 
         this.currentProjectId = null;

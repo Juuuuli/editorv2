@@ -153,7 +153,14 @@ export default class KeyboardShortcuts {
         
         // 取得當前除了 artboard 以外的所有物件狀態
         const objects = this.canvasEngine.canvas.getObjects().filter(obj => obj !== this.canvasEngine.artboard);
-        const json = objects.map(obj => obj.toObject(['layerName']));
+        const json = objects.map(obj => {
+            try {
+                return obj.toObject(['layerName']);
+            } catch (e) {
+                console.error("[KeyboardShortcuts] toObject failed during copy, skipping:", e);
+                return null;
+            }
+        }).filter(Boolean);
         
         // 如果不是在最新紀錄，清除後面的歷史
         if (this.historyIndex < this.history.length - 1) {
