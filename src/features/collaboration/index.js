@@ -56,7 +56,7 @@ export default class CollaborationModule {
                 // 游標渲染層 (需掛載在 canvas 容器上)
                 const container = document.getElementById('workspace-container');
                 if (container) {
-                    this.cursorOverlay = new MultiplayerCursorOverlay(container, awareness);
+                    this.cursorOverlay = new MultiplayerCursorOverlay(container, awareness, this.eventBus, currentPage);
                 }
 
                 this.leaseManager = new ObjectLeaseManager(this.canvasEngine.canvas, awareness);

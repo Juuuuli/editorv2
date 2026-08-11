@@ -85,23 +85,12 @@ export default class YjsAdapter {
             
             // 延遲一點點，確保 CanvasEngine 本地的 loadPageState 已經完成，我們再來覆寫(或被覆寫)
             setTimeout(() => {
-                if (this.provider && typeof this.provider.isRoomEmpty === 'function') {
-                    this.provider.isRoomEmpty().then(empty => {
-                        if (empty) {
-                            this.pushLocalToYjs();
-                        } else if (this.yObjects.length > 0) {
-                            this.syncCanvasFromYjs();
-                        }
-                        this.isSyncing = false;
-                    });
+                if (this.yObjects.length > 0) {
+                    this.syncCanvasFromYjs();
                 } else {
-                    if (this.yObjects.length > 0) {
-                        this.syncCanvasFromYjs();
-                    } else {
-                        this.pushLocalToYjs();
-                    }
-                    this.isSyncing = false;
+                    this.pushLocalToYjs();
                 }
+                this.isSyncing = false;
             }, 100);
         });
     }

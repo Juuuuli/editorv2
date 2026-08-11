@@ -1,5 +1,5 @@
 import * as Y from 'yjs';
-import { ref, push, onChildAdded, onValue, set, onDisconnect, get } from 'firebase/database';
+import { ref, push, onChildAdded, onValue, set, onDisconnect, get, remove } from 'firebase/database';
 import * as awarenessProtocol from 'y-protocols/awareness';
 import { rtdb } from '../../config/firebase';
 
@@ -48,10 +48,10 @@ export default class FirebaseProvider {
         // ==========================================
         // 2. Awareness (Cursors & Presence) Sync
         // ==========================================
-        const myAwarenessRef = ref(rtdb, `rooms/${roomName}/awareness/${this.awareness.clientID}`);
+        this.myAwarenessRef = ref(rtdb, `rooms/${roomName}/awareness/${this.awareness.clientID}`);
         
         // 當連線中斷時，自動刪除自己的 Awareness 狀態
-        onDisconnect(myAwarenessRef).remove();
+        onDisconnect(this.myAwarenessRef).remove();
 
         // 監聽本地 Awareness 改變，推送到 Firebase
         this.awarenessUpdateHandler = ({ added, updated, removed }) => {
@@ -63,7 +63,7 @@ export default class FirebaseProvider {
             for (let i = 0; i < len; i++) {
                 binary += String.fromCharCode(state[i]);
             }
-            set(myAwarenessRef, btoa(binary));
+            set(this.myAwarenessRef, btoa(binary));
         };
         this.awareness.on('update', this.awarenessUpdateHandler);
 
@@ -88,6 +88,16 @@ export default class FirebaseProvider {
                 });
             }
         });
+
+        // 確保視窗關閉時即時移除游標
+        this.handleBeforeUnload = () => {
+            if (this.myAwarenessRef) {
+                remove(this.myAwarenessRef);
+            }
+        };
+        if (typeof window !== 'undefined') {
+            window.addEventListener('beforeunload', this.handleBeforeUnload);
+        }
     }
 
     async isRoomEmpty() {
@@ -101,6 +111,13 @@ export default class FirebaseProvider {
     }
 
     destroy() {
+        if (typeof window !== 'undefined' && this.handleBeforeUnload) {
+            window.removeEventListener('beforeunload', this.handleBeforeUnload);
+        }
+        if (this.myAwarenessRef) {
+            // 主動即時清除 Firebase 上的自己節點，避免延遲
+            remove(this.myAwarenessRef);
+        }
         this.ydoc.off('update', this.updateHandler);
         this.awareness.off('update', this.awarenessUpdateHandler);
         if (this.childAddedUnsub) this.childAddedUnsub();

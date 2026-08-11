@@ -4,9 +4,11 @@
  */
 
 export default class MultiplayerCursorOverlay {
-    constructor(container, awareness) {
+    constructor(container, awareness, eventBus = null, currentPageId = 'page-1') {
         this.container = container;
         this.awareness = awareness;
+        this.eventBus = eventBus;
+        this.currentPageId = currentPageId;
         
         // 建立疊加的 DOM 容器
         this.overlay = document.createElement('div');
@@ -14,6 +16,14 @@ export default class MultiplayerCursorOverlay {
         this.container.appendChild(this.overlay);
 
         this.cursors = new Map(); // clientId -> DOM Element
+
+        // 初始設定本地使用者的所在頁面
+        if (this.awareness) {
+            const user = this.awareness.getLocalState()?.user;
+            if (user) {
+                this.awareness.setLocalStateField('user', { ...user, currentPageId: this.currentPageId });
+            }
+        }
 
         this.bindEvents();
     }
@@ -33,6 +43,18 @@ export default class MultiplayerCursorOverlay {
             
             this.awareness.setLocalStateField('cursor', { x, y });
         });
+
+        // 監聽頁面切換，更新自己所在的頁面，並重新渲染游標
+        if (this.eventBus) {
+            this.eventBus.on('PAGE:SWITCH', ({ newPageId }) => {
+                this.currentPageId = newPageId;
+                const user = this.awareness.getLocalState()?.user;
+                if (user) {
+                    this.awareness.setLocalStateField('user', { ...user, currentPageId: this.currentPageId });
+                }
+                this.renderCursors();
+            });
+        }
     }
 
     renderCursors() {
@@ -55,7 +77,8 @@ export default class MultiplayerCursorOverlay {
             const cursor = state.cursor;
             const user = state.user;
 
-            if (cursor && user) {
+            // 僅當游標存在、使用者資料存在，且使用者與自己處於同一頁面時才渲染
+            if (cursor && user && user.currentPageId === this.currentPageId) {
                 let element = this.cursors.get(clientId);
 
                 if (!element) {
@@ -67,7 +90,7 @@ export default class MultiplayerCursorOverlay {
                 // LERP 動畫或 CSS Transition 平滑移動
                 element.style.transform = `translate(${cursor.x}px, ${cursor.y}px)`;
             } else {
-                // 如果沒有 cursor 資料，移除 DOM
+                // 如果沒有 cursor 資料，或是使用者不在同頁面，則隱藏/移除 DOM
                 const element = this.cursors.get(clientId);
                 if (element) {
                     element.remove();
