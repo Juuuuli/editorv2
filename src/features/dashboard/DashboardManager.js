@@ -1273,11 +1273,18 @@ export default class DashboardManager {
         await this.importPDFAsNewProject(pdfFile);
     }
 
-    showAutoSaveFeedback(msg = '已儲存') {
+    showAutoSaveFeedback(msg = '已自動儲存') {
         const indicator = document.getElementById('auto-save-indicator');
         if (indicator) {
             indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span> ${msg}`;
             indicator.className = 'text-[11px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center transition';
+
+            if (msg !== '已自動儲存') {
+                if (this.autoSaveFeedbackTimer) clearTimeout(this.autoSaveFeedbackTimer);
+                this.autoSaveFeedbackTimer = setTimeout(() => {
+                    this.showAutoSaveFeedback('已自動儲存');
+                }, 3000);
+            }
         }
     }
 

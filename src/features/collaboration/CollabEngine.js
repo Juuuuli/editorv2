@@ -62,6 +62,14 @@ export default class CollabEngine {
 
         // 初始化 Y.Doc
         this.ydoc = new Y.Doc();
+        
+        // 為了避免重新整理後產生「幽靈鼠標分身」，將 clientID 持久化在 sessionStorage
+        let myClientId = sessionStorage.getItem('yjs_client_id');
+        if (myClientId) {
+            this.ydoc.clientID = parseInt(myClientId, 10);
+        } else {
+            sessionStorage.setItem('yjs_client_id', this.ydoc.clientID.toString());
+        }
 
         // 建立 Firebase Provider
         this.provider = new FirebaseProvider(roomName, this.ydoc);

@@ -66,6 +66,17 @@ export default class YjsAdapter {
         
         this.eventBus.on('CANVAS:PAGE_LOADING_END', () => {
             this.isPageSwitching = false;
+            
+            // 確保畫布載入完成後才進行同步或推送，避免 Race Condition
+            if (this._needsSyncAfterLoad) {
+                this._needsSyncAfterLoad = false;
+                if (this.yObjects && this.yObjects.length > 0) {
+                    this.syncCanvasFromYjs();
+                } else {
+                    this.pushLocalToYjs();
+                }
+                this.isSyncing = false;
+            }
         });
         
         // 監聽頁面切換
@@ -83,15 +94,8 @@ export default class YjsAdapter {
             this.yObjects = this.ydoc.getArray(`page_objects_${this.pageId}`);
             this.bindYjsEvents();
             
-            // 延遲一點點，確保 CanvasEngine 本地的 loadPageState 已經完成，我們再來覆寫(或被覆寫)
-            setTimeout(() => {
-                if (this.yObjects.length > 0) {
-                    this.syncCanvasFromYjs();
-                } else {
-                    this.pushLocalToYjs();
-                }
-                this.isSyncing = false;
-            }, 100);
+            // 標記需要在載入完成後同步
+            this._needsSyncAfterLoad = true;
         });
     }
 
