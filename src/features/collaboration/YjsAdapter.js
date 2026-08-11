@@ -110,7 +110,13 @@ export default class YjsAdapter {
             
             if (!e.target.id) e.target.id = 'obj_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
             
-            const objJson = e.target.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
+            let objJson;
+            try {
+                objJson = e.target.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
+            } catch (err) {
+                console.error("[YjsAdapter] toJSON failed for object, skipping sync:", err);
+                return;
+            }
             
             this.ydoc.transact(() => {
                 const yMap = new Y.Map();
@@ -126,7 +132,13 @@ export default class YjsAdapter {
             const target = e.target;
             if (!target || !target.id) return;
             
-            const objJson = target.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
+            let objJson;
+            try {
+                objJson = target.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
+            } catch (err) {
+                console.error("[YjsAdapter] toJSON failed for object modification, skipping sync:", err);
+                return;
+            }
             
             this.ydoc.transact(() => {
                 const yArr = this.yObjects.toArray();
@@ -169,7 +181,14 @@ export default class YjsAdapter {
         this.ydoc.transact(() => {
             objects.forEach(obj => {
                 if (!obj.id) obj.id = 'obj_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
-                const objJson = obj.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
+                
+                let objJson;
+                try {
+                    objJson = obj.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
+                } catch (err) {
+                    console.error("[YjsAdapter] toJSON failed for object, skipping push:", err);
+                    return;
+                }
                 
                 const yMap = new Y.Map();
                 for (const key in objJson) {
@@ -209,7 +228,7 @@ export default class YjsAdapter {
 
         fabric.util.enlivenObjects(yJsonList, (enlivenedObjects) => {
             // 清除畫布，但保留 artboard 等不參與同步的物件
-            const objects = this.canvas.getObjects();
+            const objects = [...this.canvas.getObjects()];
             objects.forEach(obj => {
                 if (obj.id !== 'artboard' && !obj.isArtboard && obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport) {
                     this.canvas.remove(obj);

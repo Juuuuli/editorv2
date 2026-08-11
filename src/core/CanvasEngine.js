@@ -380,7 +380,8 @@ export default class CanvasEngine {
         if (this.eventBus) {
             this.eventBus.on('WORKSPACE:MODE_CHANGED', () => {
                 this.canvas.discardActiveObject();
-                const objects = this.canvas.getObjects();
+                this.canvas.discardActiveObject();
+                const objects = [...this.canvas.getObjects()];
                 objects.forEach(obj => {
                     if (obj !== this.artboard && !obj.isSmartGuide) {
                         this.canvas.remove(obj);
@@ -440,7 +441,7 @@ export default class CanvasEngine {
 
         // 清空畫布(除了底板與智慧輔助線)
         this.canvas.discardActiveObject();
-        const objects = this.canvas.getObjects();
+        const objects = [...this.canvas.getObjects()];
         objects.forEach(obj => {
             if (obj !== this.artboard && !obj.isSmartGuide) {
                 this.canvas.remove(obj);
@@ -492,7 +493,14 @@ export default class CanvasEngine {
         
         // 儲存狀態，包含復原所需的自訂屬性
         const objects = this.canvas.getObjects().filter(obj => obj !== this.artboard && !obj.excludeFromExport);
-        const state = objects.map(obj => obj.toObject(['layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']));
+        const state = objects.map(obj => {
+            try {
+                return obj.toObject(['layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
+            } catch (e) {
+                console.error("[CanvasEngine] toObject failed for object, skipping to prevent crash:", e);
+                return null;
+            }
+        }).filter(Boolean);
         
         // 避免重複連續儲存相同狀態
         if (this.historyStack.length > 0) {
