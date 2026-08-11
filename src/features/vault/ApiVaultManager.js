@@ -656,7 +656,7 @@ export default class ApiVaultManager {
                     if (imgKeyInput) {
                         imgKeyInput.type = 'text';
                         imgKeyInput.placeholder = '填入 SD WebUI Base URL (例如 http://127.0.0.1:7860)';
-                        imgKeyInput.value = this.config.imageProcessing?.sdBaseUrl || (this.config.imageProcessing?.provider === 'sd' ? this.config.imageProcessing?.apiKey : '') || 'http://127.0.0.1:7860';
+                        imgKeyInput.value = this.config.imageProcessing?.sdBaseUrl || (this.config.imageProcessing?.provider === 'sd' ? this.config.imageProcessing?.apiKey : '') || '';
                     }
                     if (imgKeyLink) imgKeyLink.classList.add('hidden');
                 }
@@ -716,7 +716,7 @@ export default class ApiVaultManager {
                     if (pptSecretInput) {
                         pptSecretInput.type = 'text';
                         pptSecretInput.placeholder = '填入 Gotenberg Base URL (例如 http://localhost:3000)';
-                        pptSecretInput.value = this.config.pptParsing?.gotenbergBaseUrl || (this.config.pptParsing?.provider === 'gotenberg' ? this.config.pptParsing?.secret : '') || 'http://localhost:3000';
+                        pptSecretInput.value = this.config.pptParsing?.gotenbergBaseUrl || (this.config.pptParsing?.provider === 'gotenberg' ? this.config.pptParsing?.secret : '') || '';
                     }
                     if (pptKeyLink) pptKeyLink.classList.add('hidden');
                 }
@@ -1167,9 +1167,9 @@ export default class ApiVaultManager {
         const dotEl = textEl.previousElementSibling;
         
         const setBadge = (hasKey, text) => {
-            textEl.textContent = hasKey ? `目前選擇：${text}` : `尚未設定：${text}`;
+            textEl.textContent = hasKey ? `作用中：${text}` : `尚未設定：${text}`;
             if (dotEl) {
-                dotEl.className = `w-2 h-2 rounded-full ${hasKey ? 'bg-emerald-500' : 'bg-amber-400'}`;
+                dotEl.className = `w-2 h-2 rounded-full ${hasKey ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}`;
             }
         };
 
