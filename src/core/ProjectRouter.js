@@ -15,6 +15,11 @@ export default class ProjectRouter {
     init() {
         if (this.isInitialized || typeof window === 'undefined') return;
 
+        // 初始化載入時解析當前網址
+        const { projectId, roomId } = this.getQueryParams();
+        this.currentProjectId = projectId;
+        this.currentRoomId = roomId;
+
         // 監聽瀏覽器上一頁/下一頁 (Popstate) 事件
         window.addEventListener('popstate', (event) => {
             this.handlePopState(event);
