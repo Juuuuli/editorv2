@@ -78,7 +78,7 @@ export default class YjsAdapter {
             // 過濾底板與輔助線
             if (e.target === this.canvas.artboard || e.target.isSmartGuide || e.target.excludeFromExport) return;
             
-            if (!e.target.id) e.target.id = fabric.util.getRandomUid();
+            if (!e.target.id) e.target.id = 'obj_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
             
             const objJson = e.target.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
             
@@ -138,7 +138,7 @@ export default class YjsAdapter {
 
         this.ydoc.transact(() => {
             objects.forEach(obj => {
-                if (!obj.id) obj.id = fabric.util.getRandomUid();
+                if (!obj.id) obj.id = 'obj_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
                 const objJson = obj.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
                 
                 const yMap = new Y.Map();
