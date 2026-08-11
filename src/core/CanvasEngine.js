@@ -196,6 +196,8 @@ export default class CanvasEngine {
     initArtboard(width, height) {
         // 建立白色工作區 (Artboard)
         this.artboard = new fabric.Rect({
+            id: 'artboard',
+            isArtboard: true,
             left: 0,
             top: 0,
             width: width,

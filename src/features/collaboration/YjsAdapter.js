@@ -77,7 +77,7 @@ export default class YjsAdapter {
         this.canvas.on('object:added', (e) => {
             if (this.isSyncing || this.isViewer) return;
             // 過濾底板與輔助線
-            if (e.target === this.canvas.artboard || e.target.isSmartGuide || e.target.excludeFromExport) return;
+            if (e.target.id === 'artboard' || e.target.isArtboard || e.target === this.canvas.artboard || e.target.isSmartGuide || e.target.excludeFromExport) return;
             
             if (!e.target.id) e.target.id = 'obj_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
             
@@ -134,7 +134,7 @@ export default class YjsAdapter {
     pushLocalToYjs() {
         if (this.yObjects.length > 0) return; // 已經有資料就不蓋掉
         
-        const objects = this.canvas.getObjects().filter(obj => obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport);
+        const objects = this.canvas.getObjects().filter(obj => obj.id !== 'artboard' && !obj.isArtboard && obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport);
         if (objects.length === 0) return;
 
         this.ydoc.transact(() => {
@@ -182,7 +182,7 @@ export default class YjsAdapter {
             // 清除畫布，但保留 artboard 等不參與同步的物件
             const objects = this.canvas.getObjects();
             objects.forEach(obj => {
-                if (obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport) {
+                if (obj.id !== 'artboard' && !obj.isArtboard && obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport) {
                     this.canvas.remove(obj);
                 }
             });
