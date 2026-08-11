@@ -60,6 +60,14 @@ export default class YjsAdapter {
     bindPageEvents() {
         if (!this.eventBus) return;
         
+        this.eventBus.on('CANVAS:PAGE_LOADING_START', () => {
+            this.isPageSwitching = true;
+        });
+        
+        this.eventBus.on('CANVAS:PAGE_LOADING_END', () => {
+            this.isPageSwitching = false;
+        });
+        
         // 監聽頁面切換
         this.eventBus.on('PAGE:SWITCH', ({ newPageId }) => {
             if (this.pageId === newPageId) return;
@@ -103,7 +111,7 @@ export default class YjsAdapter {
      */
     bindFabricEvents() {
         this.canvas.on('object:added', (e) => {
-            if (this.isSyncing || this.isViewer) return;
+            if (this.isSyncing || this.isViewer || this.isPageSwitching) return;
             // 過濾底板與輔助線
             if (e.target.id === 'artboard' || e.target.isArtboard || e.target === this.canvas.artboard || e.target.isSmartGuide || e.target.excludeFromExport) return;
             
@@ -121,7 +129,7 @@ export default class YjsAdapter {
         });
 
         this.canvas.on('object:modified', (e) => {
-            if (this.isSyncing || this.isViewer) return;
+            if (this.isSyncing || this.isViewer || this.isPageSwitching) return;
             const target = e.target;
             if (!target || !target.id) return;
             
@@ -142,7 +150,7 @@ export default class YjsAdapter {
         });
 
         this.canvas.on('object:removed', (e) => {
-            if (this.isSyncing || this.isViewer) return;
+            if (this.isSyncing || this.isViewer || this.isPageSwitching) return;
             const target = e.target;
             if (!target || !target.id) return;
             

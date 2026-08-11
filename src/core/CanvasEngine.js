@@ -433,6 +433,11 @@ export default class CanvasEngine {
         }
         
         this.currentPageId = pageId;
+        
+        if (this.eventBus) {
+            this.eventBus.emit('CANVAS:PAGE_LOADING_START');
+        }
+
         // 清空畫布(除了底板與智慧輔助線)
         this.canvas.discardActiveObject();
         const objects = this.canvas.getObjects();
@@ -464,6 +469,10 @@ export default class CanvasEngine {
                 this.historyStack = [];
                 this.redoStack = [];
                 this.saveHistory();
+                
+                if (this.eventBus) {
+                    this.eventBus.emit('CANVAS:PAGE_LOADING_END');
+                }
             });
         } else {
             this.canvas.requestRenderAll();
@@ -471,6 +480,10 @@ export default class CanvasEngine {
             this.historyStack = [];
             this.redoStack = [];
             this.saveHistory();
+            
+            if (this.eventBus) {
+                this.eventBus.emit('CANVAS:PAGE_LOADING_END');
+            }
         }
     }
 
