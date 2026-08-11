@@ -5,6 +5,7 @@
  * 2. 監聽 Yjs 的 observe 事件，並更新 Fabric.js 畫布
  */
 import { fabric } from 'fabric';
+import * as Y from 'yjs';
 
 export default class YjsAdapter {
     constructor(canvas, ydoc, eventBus, pageId = 'page_1') {
