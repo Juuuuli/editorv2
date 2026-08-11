@@ -49,8 +49,9 @@ export default class CollaborationModule {
 
             // 若有 canvasEngine，則綁定
             if (this.canvasEngine && this.canvasEngine.canvas) {
-                // 這裡簡化為固定綁定 page_1，實務上應該監聽頁面切換事件
-                this.yjsAdapter = new YjsAdapter(this.canvasEngine.canvas, ydoc, 'page_1');
+                // 傳入 eventBus 與當前的頁面 ID
+                const currentPage = this.canvasEngine.currentPageId || 'page-1';
+                this.yjsAdapter = new YjsAdapter(this.canvasEngine.canvas, ydoc, this.eventBus, currentPage);
                 
                 // 游標渲染層 (需掛載在 canvas 容器上)
                 const container = document.getElementById('workspace-container');
