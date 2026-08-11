@@ -37,15 +37,25 @@ export default class PresenceManager {
             authUser = this.authManager.getCurrentUser();
         }
 
+        // 讀取網址的 role 參數
+        let urlRole = 'editor';
+        if (typeof window !== 'undefined') {
+            const searchParams = new URLSearchParams(window.location.search);
+            if (searchParams.get('role') === 'viewer') {
+                urlRole = 'viewer';
+            }
+        }
+
         // 隨機選取顏色
         const color = PRESENCE_COLORS[Math.floor(Math.random() * PRESENCE_COLORS.length)];
         const randomId = 'user_' + Math.random().toString(36).substring(2, 9);
         const name = authUser ? (authUser.name || authUser.username) : `協作者 ${Math.floor(1000 + Math.random() * 9000)}`;
+        const role = (authUser && authUser.role === 'admin') ? 'admin' : urlRole;
 
         return {
             id: randomId,
             name: name,
-            role: authUser ? (authUser.role || 'editor') : 'editor',
+            role: role,
             color: color,
             joinedAt: Date.now(),
             isLocal: true

@@ -7,18 +7,66 @@
 import { fabric } from 'fabric';
 
 export default class YjsAdapter {
-    constructor(canvas, ydoc, pageId = 'page_1') {
+    constructor(canvas, ydoc, eventBus, pageId = 'page_1') {
         this.canvas = canvas;
         this.ydoc = ydoc;
+        this.eventBus = eventBus;
         this.pageId = pageId;
         
-        // 取得該頁面的 Y.Array (負責存放物件)
         this.yObjects = this.ydoc.getArray(`page_objects_${this.pageId}`);
-        
         this.isSyncing = false; // 防止無限迴圈
+        this._yjsObserver = null;
+        
+        // 判斷是否為 Viewer
+        this.isViewer = false;
+        if (typeof window !== 'undefined') {
+            const searchParams = new URLSearchParams(window.location.search);
+            if (searchParams.get('role') === 'viewer') {
+                this.isViewer = true;
+            }
+        }
 
         this.bindFabricEvents();
         this.bindYjsEvents();
+        this.bindPageEvents();
+        
+        // 初始載入：如果是訪客加入，且 Yjs 已有資料，則同步到本地畫布
+        if (this.yObjects.length > 0) {
+            this.syncCanvasFromYjs();
+        } else {
+            // 如果是房主初始建立，且畫布上有物件，推送至 Yjs
+            this.pushLocalToYjs();
+        }
+    }
+
+    bindPageEvents() {
+        if (!this.eventBus) return;
+        
+        // 監聽頁面切換
+        this.eventBus.on('PAGE:SWITCH', ({ newPageId }) => {
+            if (this.pageId === newPageId) return;
+            
+            this.isSyncing = true; // 暫停上傳本地變更，等待 CanvasEngine 載入完畢
+            
+            // 清理舊的 Observer
+            if (this._yjsObserver) {
+                this.yObjects.unobserveDeep(this._yjsObserver);
+            }
+            
+            this.pageId = newPageId;
+            this.yObjects = this.ydoc.getArray(`page_objects_${this.pageId}`);
+            this.bindYjsEvents();
+            
+            // 延遲一點點，確保 CanvasEngine 本地的 loadPageState 已經完成，我們再來覆寫(或被覆寫)
+            setTimeout(() => {
+                if (this.yObjects.length > 0) {
+                    this.syncCanvasFromYjs();
+                } else {
+                    this.pushLocalToYjs();
+                    this.isSyncing = false;
+                }
+            }, 100);
+        });
     }
 
     /**
@@ -26,13 +74,15 @@ export default class YjsAdapter {
      */
     bindFabricEvents() {
         this.canvas.on('object:added', (e) => {
-            if (this.isSyncing) return;
+            if (this.isSyncing || this.isViewer) return;
+            // 過濾底板與輔助線
+            if (e.target === this.canvas.artboard || e.target.isSmartGuide || e.target.excludeFromExport) return;
+            
             if (!e.target.id) e.target.id = fabric.util.getRandomUid();
             
-            const objJson = e.target.toJSON(['id']);
+            const objJson = e.target.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
             
             this.ydoc.transact(() => {
-                // 將 JSON 轉為 Y.Map
                 const yMap = new Y.Map();
                 for (const key in objJson) {
                     yMap.set(key, objJson[key]);
@@ -42,13 +92,12 @@ export default class YjsAdapter {
         });
 
         this.canvas.on('object:modified', (e) => {
-            if (this.isSyncing) return;
+            if (this.isSyncing || this.isViewer) return;
             const target = e.target;
             if (!target || !target.id) return;
             
-            const objJson = target.toJSON(['id']);
+            const objJson = target.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
             
-            // 尋找對應的 Y.Map 並更新
             this.ydoc.transact(() => {
                 const yArr = this.yObjects.toArray();
                 const idx = yArr.findIndex(yMap => yMap.get('id') === target.id);
@@ -64,7 +113,7 @@ export default class YjsAdapter {
         });
 
         this.canvas.on('object:removed', (e) => {
-            if (this.isSyncing) return;
+            if (this.isSyncing || this.isViewer) return;
             const target = e.target;
             if (!target || !target.id) return;
             
@@ -79,24 +128,45 @@ export default class YjsAdapter {
     }
 
     /**
+     * 將當前畫布的所有有效物件強制推送至 Yjs (例如初次連線為房主)
+     */
+    pushLocalToYjs() {
+        if (this.yObjects.length > 0) return; // 已經有資料就不蓋掉
+        
+        const objects = this.canvas.getObjects().filter(obj => obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport);
+        if (objects.length === 0) return;
+
+        this.ydoc.transact(() => {
+            objects.forEach(obj => {
+                if (!obj.id) obj.id = fabric.util.getRandomUid();
+                const objJson = obj.toJSON(['id', 'layerName', 'isQRCode', 'qrOptions', 'selectable', 'evented', 'isRegionBox', 'isSmartToolOverlay', 'isBackgroundTemplate', 'isTable', 'tableConfig', 'tableRows', 'tableCols', 'colWidths', 'rowHeights']);
+                
+                const yMap = new Y.Map();
+                for (const key in objJson) {
+                    yMap.set(key, objJson[key]);
+                }
+                this.yObjects.push([yMap]);
+            });
+        });
+    }
+
+    /**
      * 從 Yjs 到 Fabric (Remote -> Local)
      */
     bindYjsEvents() {
-        this.yObjects.observeDeep((events) => {
+        this._yjsObserver = (events) => {
             if (events.length > 0) {
-                // 有來自遠端的變更，或者本地的變更 (但我們只關心如何反應在畫面上)
-                // 若這不是本地觸發的 (isLocal = false)
                 const isLocal = events[0].transaction.local;
                 if (!isLocal) {
                     this.syncCanvasFromYjs();
                 }
             }
-        });
+        };
+        this.yObjects.observeDeep(this._yjsObserver);
     }
 
     /**
      * 重新根據 Yjs 資料同步整個 Canvas
-     * (實務上可以針對 delta 做增量更新，此處為簡單實作)
      */
     syncCanvasFromYjs() {
         this.isSyncing = true;
@@ -104,25 +174,55 @@ export default class YjsAdapter {
         const yArr = this.yObjects.toArray();
         const yJsonList = yArr.map(yMap => yMap.toJSON());
         
-        // 暫存目前的選取狀態
         const activeObject = this.canvas.getActiveObject();
         const activeId = activeObject ? activeObject.id : null;
 
-        // 載入 JSON 至 Canvas
         fabric.util.enlivenObjects(yJsonList, (enlivenedObjects) => {
-            this.canvas.clear();
+            // 清除畫布，但保留 artboard 等不參與同步的物件
+            const objects = this.canvas.getObjects();
+            objects.forEach(obj => {
+                if (obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport) {
+                    this.canvas.remove(obj);
+                }
+            });
+
             enlivenedObjects.forEach((obj) => {
+                // 如果是 Viewer 模式，鎖定所有物件
+                if (this.isViewer) {
+                    obj.set({
+                        selectable: false,
+                        evented: false,
+                        lockMovementX: true,
+                        lockMovementY: true,
+                        lockScalingX: true,
+                        lockScalingY: true,
+                        lockRotation: true
+                    });
+                }
+                
                 this.canvas.add(obj);
-                if (activeId && obj.id === activeId) {
+                if (activeId && obj.id === activeId && !this.isViewer) {
                     this.canvas.setActiveObject(obj);
                 }
             });
+            
+            // 如果是 Viewer 模式，關閉畫布的群組選取
+            if (this.isViewer) {
+                this.canvas.selection = false;
+                this.canvas.discardActiveObject();
+                
+                // 強制將浮動工具列等隱藏，可以透過觸發一個取消選取的事件
+                this.canvas.fire('selection:cleared');
+            }
+            
             this.canvas.requestRenderAll();
             this.isSyncing = false;
         }, 'fabric');
     }
 
     destroy() {
-        // 清理綁定
+        if (this._yjsObserver && this.yObjects) {
+            this.yObjects.unobserveDeep(this._yjsObserver);
+        }
     }
 }

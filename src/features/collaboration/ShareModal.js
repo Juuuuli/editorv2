@@ -304,7 +304,7 @@ export default class ShareModal {
 
         const urlInput = this.modalContainer.querySelector('#collab-share-url-input');
         if (urlInput && this.projectRouter) {
-            const shareUrl = this.projectRouter.getShareUrl(this.projectId, this.roomPin);
+            const shareUrl = this.projectRouter.getShareUrl(this.projectId, this.roomPin, this.selectedRole);
             urlInput.value = shareUrl;
         }
     }

@@ -9,6 +9,14 @@ export default class ObjectLeaseManager {
         this.awareness = awareness;
         this.localClientId = awareness.clientID;
         
+        this.isViewer = false;
+        if (typeof window !== 'undefined') {
+            const searchParams = new URLSearchParams(window.location.search);
+            if (searchParams.get('role') === 'viewer') {
+                this.isViewer = true;
+            }
+        }
+        
         this.bindEvents();
     }
 
@@ -70,18 +78,26 @@ export default class ObjectLeaseManager {
                     this.canvas.discardActiveObject();
                 }
             } else {
-                // 恢復正常狀態 (假設原先沒有自訂特殊的 border)
-                // 這裡實務上應該要存下物件的原始 stroke 狀態再恢復
-                // 簡單示範：
+                // 恢復正常狀態
                 if (obj.hoverCursor === 'not-allowed') {
-                    obj.set({
-                        selectable: true,
-                        evented: true,
-                        hoverCursor: 'move',
-                        stroke: null,
-                        strokeWidth: 0,
-                        strokeDashArray: null
-                    });
+                    // 若是 Viewer 則不能解除鎖定 (YjsAdapter 已經全面鎖定了)
+                    if (!this.isViewer) {
+                        obj.set({
+                            selectable: true,
+                            evented: true,
+                            hoverCursor: 'move',
+                            stroke: null,
+                            strokeWidth: 0,
+                            strokeDashArray: null
+                        });
+                    } else {
+                        // 如果是 Viewer，只要把框線移除即可
+                        obj.set({
+                            stroke: null,
+                            strokeWidth: 0,
+                            strokeDashArray: null
+                        });
+                    }
                 }
             }
         });

@@ -44,18 +44,20 @@ export default class ProjectRouter {
 
     /**
      * 解析當前網址 Query 參數
-     * @returns {{ projectId: string|null, roomId: string|null, hasProject: boolean }}
+     * @returns {{ projectId: string|null, roomId: string|null, role: string|null, hasProject: boolean }}
      */
     getQueryParams() {
-        if (typeof window === 'undefined') return { projectId: null, roomId: null, hasProject: false };
+        if (typeof window === 'undefined') return { projectId: null, roomId: null, role: null, hasProject: false };
 
         const searchParams = new URLSearchParams(window.location.search);
         const projectId = searchParams.get('project') || searchParams.get('projectId') || null;
         const roomId = searchParams.get('room') || searchParams.get('roomId') || null;
+        const role = searchParams.get('role') || 'editor';
 
         return {
             projectId: projectId ? projectId.trim() : null,
             roomId: roomId ? roomId.trim() : null,
+            role: role.trim(),
             hasProject: Boolean(projectId && projectId.trim())
         };
     }
@@ -159,9 +161,10 @@ export default class ProjectRouter {
      * 取得特定專案的完整絕對共編分享 URL
      * @param {string} projectId 專案 ID
      * @param {string|null} roomId 房間號
+     * @param {string} role 角色權限 ('editor' | 'viewer')
      * @returns {string} 完整的分享 URL
      */
-    getShareUrl(projectId, roomId = null) {
+    getShareUrl(projectId, roomId = null, role = 'editor') {
         if (typeof window === 'undefined') return '';
         const targetId = projectId || this.currentProjectId;
         if (!targetId) return window.location.href;
@@ -170,6 +173,9 @@ export default class ProjectRouter {
         url.searchParams.set('project', targetId);
         if (roomId) {
             url.searchParams.set('room', roomId);
+        }
+        if (role && role !== 'editor') {
+            url.searchParams.set('role', role);
         }
         return url.toString();
     }
