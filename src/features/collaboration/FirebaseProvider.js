@@ -43,6 +43,14 @@ export default class FirebaseProvider {
                 }
                 Y.applyUpdate(this.ydoc, update, this);
             }
+        }, (error) => {
+            console.error("[FirebaseProvider] onChildAdded error:", error);
+            // 如果因為之前的 bug 導致房間資料太大（超過 Firebase 讀取限制），就清空該房間以恢復運作
+            if (error && error.message && error.message.includes('payload is too large')) {
+                console.warn("[FirebaseProvider] Room data is too large and corrupted. Resetting room updates...");
+                remove(this.roomRef);
+                alert('偵測到房間資料過於龐大或損毀，已自動為您重置連線資料。請重新整理頁面。');
+            }
         });
 
         // ==========================================
