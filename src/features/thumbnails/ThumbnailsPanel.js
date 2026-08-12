@@ -21,7 +21,10 @@ export default class ThumbnailsPanel {
         
         const addPageBtn = document.getElementById('btn-add-page');
         if(addPageBtn) {
-            addPageBtn.addEventListener('click', () => this.addPage());
+            addPageBtn.addEventListener('click', () => {
+                console.log("[ThumbnailsPanel] btn-add-page clicked");
+                this.addPage();
+            });
         }
         
         // 接收 Canvas 產生的實時縮圖
@@ -44,17 +47,21 @@ export default class ThumbnailsPanel {
         const list = document.getElementById('thumbnails-list');
         if (list) {
             list.addEventListener('click', (e) => {
+                console.log("[ThumbnailsPanel] List clicked, target:", e.target);
                 const deleteBtn = e.target.closest('.delete-page-btn');
                 const copyBtn = e.target.closest('.copy-page-btn');
                 const pageItem = e.target.closest('.page-item');
                 
                 if (deleteBtn) {
+                    console.log("[ThumbnailsPanel] Delete btn matched");
                     const id = deleteBtn.dataset.id;
                     this.deletePage(id);
                 } else if (copyBtn) {
+                    console.log("[ThumbnailsPanel] Copy btn matched");
                     const id = copyBtn.dataset.id;
                     this.copyPage(id);
                 } else if (pageItem) {
+                    console.log("[ThumbnailsPanel] Page item matched");
                     const id = pageItem.dataset.id;
                     this.switchPage(id);
                 }
