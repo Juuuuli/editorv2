@@ -226,6 +226,10 @@ export default class YjsAdapter {
         const activeObject = this.canvas.getActiveObject();
         const activeId = activeObject ? activeObject.id : null;
 
+        if (this.eventBus) {
+            this.eventBus.emit('CANVAS:HISTORY_PAUSE');
+        }
+
         fabric.util.enlivenObjects(yJsonList, (enlivenedObjects) => {
             // 清除畫布，但保留 artboard 等不參與同步的物件
             const objects = [...this.canvas.getObjects()];
@@ -265,6 +269,12 @@ export default class YjsAdapter {
             }
             
             this.canvas.requestRenderAll();
+            
+            if (this.eventBus) {
+                this.eventBus.emit('CANVAS:HISTORY_RESUME');
+                this.eventBus.emit('CANVAS:DIRTY', true); // 通知縮圖等更新
+            }
+            
             this.isSyncing = false;
         }, 'fabric');
     }

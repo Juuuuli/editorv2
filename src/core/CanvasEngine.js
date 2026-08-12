@@ -399,6 +399,14 @@ export default class CanvasEngine {
                 this.loadPageState(newPageId);
             });
 
+            this.eventBus.on('CANVAS:HISTORY_PAUSE', () => {
+                this.isHistoryProcessing = true;
+            });
+
+            this.eventBus.on('CANVAS:HISTORY_RESUME', () => {
+                this.isHistoryProcessing = false;
+            });
+
             this.eventBus.on('PAGE:DELETE', ({ pageId }) => {
                 delete this.pageStates[pageId];
             });
@@ -446,6 +454,9 @@ export default class CanvasEngine {
             this.eventBus.emit('CANVAS:PAGE_LOADING_START');
         }
 
+        // 暫停歷史記錄與縮圖更新，避免大量物件被移除時觸發 O(N^2) 的效能災難
+        this.isHistoryProcessing = true;
+
         // 清空畫布(除了底板與智慧輔助線)
         this.canvas.discardActiveObject();
         const objects = [...this.canvas.getObjects()];
@@ -464,7 +475,6 @@ export default class CanvasEngine {
         // 如果有暫存資料，就將其還原到畫布上
         const savedData = this.pageStates[pageId];
         if (savedData && savedData.length > 0) {
-            this.isHistoryProcessing = true;
             fabric.util.enlivenObjects(savedData, (objs) => {
                 objs.forEach(obj => {
                     this.canvas.add(obj);
@@ -485,6 +495,8 @@ export default class CanvasEngine {
         } else {
             this.canvas.requestRenderAll();
             this.updateThumbnail();
+            this.isHistoryProcessing = false;
+            
             this.historyStack = [];
             this.redoStack = [];
             this.saveHistory();
