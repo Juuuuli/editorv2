@@ -19,13 +19,13 @@ export default class FirebaseProvider {
         // 監聽本地 Yjs 改變，並推送到 Firebase
         this.updateHandler = (update, origin) => {
             if (origin !== this) {
-                // 將 Uint8Array 轉為 base64 字串，大幅節省 Firebase 空間
-                let binary = '';
-                const len = update.byteLength;
-                for (let i = 0; i < len; i++) {
-                    binary += String.fromCharCode(update[i]);
+                // 將 Uint8Array 轉為 base64 字串，避免字元串聯迴圈造成嚴重的 GC 卡頓與效能瓶頸
+                const chunkSize = 0x8000;
+                const chunks = [];
+                for (let i = 0; i < update.length; i += chunkSize) {
+                    chunks.push(String.fromCharCode.apply(null, update.subarray(i, i + chunkSize)));
                 }
-                const base64Update = btoa(binary);
+                const base64Update = btoa(chunks.join(''));
                 push(this.roomRef, base64Update);
             }
         };

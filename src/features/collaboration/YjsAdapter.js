@@ -165,7 +165,8 @@ export default class YjsAdapter {
                 if (idx !== -1) {
                     const yMap = yArr[idx];
                     for (const key in objJson) {
-                        if (yMap.get(key) !== objJson[key]) {
+                        // 使用深層比對，避免將沒有變更的大型物件 (如圖片的 src、Path 的點陣列) 重複推送到 Firebase
+                        if (JSON.stringify(yMap.get(key)) !== JSON.stringify(objJson[key])) {
                             yMap.set(key, objJson[key]);
                         }
                     }
