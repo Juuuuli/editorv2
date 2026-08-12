@@ -672,8 +672,14 @@ export default class DashboardManager {
         grid.innerHTML = '';
 
         filtered.forEach(proj => {
+            const isSelected = this.selectedProjectIds.has(proj.id);
+
             const card = document.createElement('div');
-            card.className = 'glass-card project-card group rounded-2xl overflow-hidden border-2 border-slate-700 bg-white shadow-[4px_4px_0px_#334155] hover:shadow-[6px_6px_0px_#334155] transition flex flex-col cursor-pointer';
+            card.className = `project-card bg-white rounded-2xl border-2 overflow-hidden flex flex-col transition-all duration-200 cursor-pointer relative group ${
+                isSelected 
+                ? 'border-indigo-600 shadow-[5px_5px_0px_#4f46e5] -translate-y-1 ring-2 ring-indigo-600 ring-offset-2 ring-offset-slate-50' 
+                : 'border-slate-700 shadow-[3px_3px_0px_#334155] hover:shadow-[5px_5px_0px_#334155] hover:-translate-y-1'
+            }`;
             card.dataset.id = proj.id;
 
             const timeStr = new Date(proj.updatedAt || proj.createdAt).toLocaleString('zh-TW', {
@@ -710,11 +716,9 @@ export default class DashboardManager {
                      </div>
                    </div>`;
 
-            const isSelected = this.selectedProjectIds.has(proj.id);
-
             card.innerHTML = `
                 <!-- 縮圖區 -->
-                <div class="project-card-thumbnail h-44 bg-slate-100/90 border-b-2 border-slate-700 relative overflow-hidden flex items-center justify-center group-hover:bg-slate-200/60 transition select-none ${isSelected ? 'ring-4 ring-inset ring-indigo-600' : ''}">
+                <div class="project-card-thumbnail h-44 bg-slate-100/90 border-b-2 ${isSelected ? 'border-indigo-100' : 'border-slate-700'} relative overflow-hidden flex items-center justify-center group-hover:bg-slate-200/60 transition select-none">
                     ${thumbnailContent}
                     ${this.isSelectionMode ? `
                     <div class="absolute inset-0 z-10 flex items-start justify-end p-3 pointer-events-none">
