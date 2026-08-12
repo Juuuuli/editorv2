@@ -16,8 +16,11 @@ export default class YjsAdapter {
         this.pageId = pageId;
         
         this.yObjects = this.ydoc.getArray(`page_objects_${this.pageId}`);
+        this.yPages = this.ydoc.getArray('project_pages');
+        
         this.isSyncing = false; // 防止無限迴圈
         this._yjsObserver = null;
+        this._pagesObserver = null;
         
         // 判斷是否為 Viewer
         this.isViewer = false;
@@ -96,6 +99,22 @@ export default class YjsAdapter {
             
             // 標記需要在載入完成後同步
             this._needsSyncAfterLoad = true;
+        });
+        
+        // 監聽 ThumbnailsPanel 的本地頁面清單變更，推送到 Yjs
+        this.eventBus.on('PAGE:LIST_CHANGED', ({ pages }) => {
+            if (this.isViewer) return;
+            
+            // 寫入 Yjs
+            this.ydoc.transact(() => {
+                this.yPages.delete(0, this.yPages.length);
+                pages.forEach(p => {
+                    const yMap = new Y.Map();
+                    yMap.set('id', p.id);
+                    yMap.set('thumbnail', p.thumbnail || '');
+                    this.yPages.push([yMap]);
+                });
+            });
         });
     }
 
@@ -212,6 +231,24 @@ export default class YjsAdapter {
             }
         };
         this.yObjects.observeDeep(this._yjsObserver);
+        
+        if (!this._pagesObserver) {
+            this._pagesObserver = (events) => {
+                if (events.length > 0) {
+                    const isLocal = events[0].transaction.local;
+                    if (!isLocal) {
+                        const pages = this.yPages.toArray().map(yMap => ({
+                            id: yMap.get('id'),
+                            thumbnail: yMap.get('thumbnail') || null
+                        }));
+                        if (pages.length > 0) {
+                            this.eventBus.emit('PAGE:REMOTE_SYNC', { pages });
+                        }
+                    }
+                }
+            };
+            this.yPages.observeDeep(this._pagesObserver);
+        }
     }
 
     /**

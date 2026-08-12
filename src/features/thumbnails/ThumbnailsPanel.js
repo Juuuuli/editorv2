@@ -93,8 +93,31 @@ export default class ThumbnailsPanel {
                 if (!this.pages.find(p => p.active) && this.pages.length > 0) {
                     this.pages[0].active = true;
                 }
+                this.eventBus.emit('PAGE:LIST_CHANGED', { pages: this.pages });
                 this.render();
             }
+        });
+
+        // 監聽 Yjs 遠端傳來的頁面清單更新
+        this.eventBus.on('PAGE:REMOTE_SYNC', ({ pages }) => {
+            if (!pages || pages.length === 0) return;
+            
+            const currentActiveId = this.pages.find(p => p.active)?.id;
+            
+            // 合併遠端與本地，以遠端為主，保留本地的 active 狀態
+            this.pages = pages.map(p => ({
+                id: p.id,
+                thumbnail: p.thumbnail || null,
+                active: p.id === currentActiveId
+            }));
+
+            // 如果原本選中的頁面被遠端刪除了，或是目前沒有活躍頁面，預設切換到第一頁
+            if (!this.pages.find(p => p.active)) {
+                this.pages[0].active = true;
+                this.eventBus.emit('PAGE:SWITCH', { newPageId: this.pages[0].id });
+            }
+
+            this.render();
         });
     }
 
@@ -105,6 +128,7 @@ export default class ThumbnailsPanel {
         
         this.eventBus.emit('PAGE:ADD', { pageId: newId });
         this.eventBus.emit('PAGE:SWITCH', { newPageId: newId });
+        this.eventBus.emit('PAGE:LIST_CHANGED', { pages: this.pages });
         this.render();
     }
 
@@ -120,6 +144,7 @@ export default class ThumbnailsPanel {
         }
         
         this.eventBus.emit('PAGE:DELETE', { pageId });
+        this.eventBus.emit('PAGE:LIST_CHANGED', { pages: this.pages });
         this.render();
     }
 
@@ -143,6 +168,8 @@ export default class ThumbnailsPanel {
         
         // 2. 通知引擎切換到這張新的 (剛拷貝好的) 頁面
         this.eventBus.emit('PAGE:SWITCH', { newPageId: newId });
+        
+        this.eventBus.emit('PAGE:LIST_CHANGED', { pages: this.pages });
         
         this.render();
     }
