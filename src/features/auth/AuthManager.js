@@ -139,7 +139,12 @@ export default class AuthManager {
                 };
                 localStorage.setItem(this.storageKeyApiVault, JSON.stringify(initialVault));
             } else {
-                const parsed = JSON.parse(raw);
+                let parsed;
+                if (raw.startsWith('ENC:')) {
+                    parsed = JSON.parse(decodeURIComponent(atob(raw.substring(4))));
+                } else {
+                    parsed = JSON.parse(raw);
+                }
                 let changed = false;
                 if (parsed.openaiApiKey === undefined) {
                     parsed.openaiApiKey = localStorage.getItem('openai_api_key') || envOpenai || '';

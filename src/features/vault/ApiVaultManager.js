@@ -87,7 +87,12 @@ export default class ApiVaultManager {
             // 檢查舊版 editor_api_vault
             const legacyRaw = localStorage.getItem(this.legacyStorageKey);
             if (legacyRaw) {
-                const legacy = JSON.parse(legacyRaw);
+                let legacy;
+                if (legacyRaw.startsWith('ENC:')) {
+                    legacy = JSON.parse(decodeURIComponent(atob(legacyRaw.substring(4))));
+                } else {
+                    legacy = JSON.parse(legacyRaw);
+                }
                 if (legacy.openaiApiKey) {
                     defaultConfig.builtin.openaiApiKey = legacy.openaiApiKey;
                     defaultConfig.builtin.apiKey = legacy.openaiApiKey;

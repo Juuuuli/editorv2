@@ -36,6 +36,9 @@ export default class AIProviderAdapter {
         const raw = localStorage.getItem('EDITOR_V2_VAULT_CONFIG');
         if (raw) {
             try {
+                if (raw.startsWith('ENC:')) {
+                    return JSON.parse(decodeURIComponent(atob(raw.substring(4))));
+                }
                 return JSON.parse(raw);
             } catch (e) {
                 console.warn('Failed to parse EDITOR_V2_VAULT_CONFIG', e);
