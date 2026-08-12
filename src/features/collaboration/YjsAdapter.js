@@ -111,7 +111,7 @@ export default class YjsAdapter {
                 pages.forEach(p => {
                     const yMap = new Y.Map();
                     yMap.set('id', p.id);
-                    yMap.set('thumbnail', p.thumbnail || '');
+                    // 不透過 Yjs 同步 thumbnail 避免影響即時性與 Firebase 負載
                     this.yPages.push([yMap]);
                 });
             });
@@ -238,8 +238,7 @@ export default class YjsAdapter {
                     const isLocal = events[0].transaction.local;
                     if (!isLocal) {
                         const pages = this.yPages.toArray().map(yMap => ({
-                            id: yMap.get('id'),
-                            thumbnail: yMap.get('thumbnail') || null
+                            id: yMap.get('id')
                         }));
                         if (pages.length > 0) {
                             this.eventBus.emit('PAGE:REMOTE_SYNC', { pages });
@@ -248,6 +247,14 @@ export default class YjsAdapter {
                 }
             };
             this.yPages.observeDeep(this._pagesObserver);
+            
+            // 初次載入時，如果 yPages 已經有資料，手動觸發一次同步
+            if (this.yPages.length > 0) {
+                const initialPages = this.yPages.toArray().map(yMap => ({
+                    id: yMap.get('id')
+                }));
+                this.eventBus.emit('PAGE:REMOTE_SYNC', { pages: initialPages });
+            }
         }
     }
 
