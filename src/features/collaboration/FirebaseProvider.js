@@ -57,13 +57,16 @@ export default class FirebaseProvider {
         this.awarenessUpdateHandler = ({ added, updated, removed }) => {
             const changedClients = added.concat(updated).concat(removed);
             const state = awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients);
-            
-            let binary = '';
-            const len = state.byteLength;
-            for (let i = 0; i < len; i++) {
-                binary += String.fromCharCode(state[i]);
+            // 將 Uint8Array 轉為 base64 字串，避免字元串聯迴圈造成 GC 卡頓
+            const chunkSize = 0x8000;
+            const chunks = [];
+            for (let i = 0; i < state.length; i += chunkSize) {
+                chunks.push(String.fromCharCode.apply(null, state.subarray(i, i + chunkSize)));
             }
-            set(this.myAwarenessRef, btoa(binary));
+            const base64State = btoa(chunks.join(''));
+            
+            // 寫入自己的狀態到 Firebase
+            set(this.myAwarenessRef, base64State);
         };
         this.awareness.on('update', this.awarenessUpdateHandler);
 

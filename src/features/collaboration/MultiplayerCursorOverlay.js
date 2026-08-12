@@ -35,8 +35,13 @@ export default class MultiplayerCursorOverlay {
             this.renderCursors();
         });
 
-        // 監聽本地滑鼠移動並更新 Awareness
+        // 監聽本地滑鼠移動並更新 Awareness，加入 throttle 避免每秒發送上百次拖垮 Firebase
+        let lastMoveTime = 0;
         this.container.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastMoveTime < 50) return; // 限制更新頻率為 ~20fps
+            lastMoveTime = now;
+            
             const rect = this.container.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
