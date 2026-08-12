@@ -731,31 +731,34 @@ export default class DashboardManager {
                         ${isPdf ? `<span class="project-page-badge px-2 py-1 rounded-lg text-[10px] font-bold bg-white/90 text-slate-700 border border-slate-300 shadow-sm">${pageCount} 頁</span>` : ''}
                     </div>
 
-                    <!-- 操作按鈕選單觸發 -->
-                    <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition z-20">
-                        <div class="relative dropdown-container">
-                            <button class="btn-card-menu w-8 h-8 rounded-xl bg-white/90 border border-slate-300 hover:bg-white text-slate-700 flex items-center justify-center shadow-sm">
-                                <i class="fas fa-ellipsis-v text-xs"></i>
-                            </button>
-                            <div class="card-dropdown hidden absolute right-0 mt-1 w-36 bg-white border-2 border-slate-700 rounded-xl shadow-[3px_3px_0px_#334155] py-1.5 z-30 text-xs">
-                                <button class="btn-card-rename w-full text-left px-3 py-1.5 hover:bg-indigo-50 text-slate-700 font-bold flex items-center">
-                                    <i class="fas fa-pencil-alt mr-2 text-indigo-500"></i> 重命名
-                                </button>
-                                <button class="btn-card-duplicate w-full text-left px-3 py-1.5 hover:bg-indigo-50 text-slate-700 font-bold flex items-center">
-                                    <i class="fas fa-copy mr-2 text-teal-500"></i> 建立副本
-                                </button>
-                                <button class="btn-card-export w-full text-left px-3 py-1.5 hover:bg-indigo-50 text-slate-700 font-bold flex items-center">
-                                    <i class="fas fa-download mr-2 text-blue-500"></i> 匯出專案
-                                </button>
-                                <div class="border-t border-slate-200 my-1"></div>
-                                <button class="btn-card-delete w-full text-left px-3 py-1.5 hover:bg-rose-50 text-rose-600 font-bold flex items-center">
-                                    <i class="fas fa-trash-alt mr-2"></i> 刪除專案
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                     ` : ''}
                 </div>
+
+                <!-- 操作按鈕選單觸發 (移出 thumbnail 以免被 overflow-hidden 裁切) -->
+                ${!this.isSelectionMode ? `
+                <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition z-30">
+                    <div class="relative dropdown-container">
+                        <button class="btn-card-menu w-8 h-8 rounded-xl bg-white/90 border border-slate-300 hover:bg-white text-slate-700 flex items-center justify-center shadow-sm">
+                            <i class="fas fa-ellipsis-v text-xs"></i>
+                        </button>
+                        <div class="card-dropdown hidden absolute right-0 mt-1 w-36 bg-white border-2 border-slate-700 rounded-xl shadow-[3px_3px_0px_#334155] py-1.5 z-40 text-xs">
+                            <button class="btn-card-rename w-full text-left px-3 py-1.5 hover:bg-indigo-50 text-slate-700 font-bold flex items-center">
+                                <i class="fas fa-pencil-alt mr-2 text-indigo-500"></i> 重命名
+                            </button>
+                            <button class="btn-card-duplicate w-full text-left px-3 py-1.5 hover:bg-indigo-50 text-slate-700 font-bold flex items-center">
+                                <i class="fas fa-copy mr-2 text-teal-500"></i> 建立副本
+                            </button>
+                            <button class="btn-card-export w-full text-left px-3 py-1.5 hover:bg-indigo-50 text-slate-700 font-bold flex items-center">
+                                <i class="fas fa-download mr-2 text-blue-500"></i> 匯出專案
+                            </button>
+                            <div class="border-t border-slate-200 my-1"></div>
+                            <button class="btn-card-delete w-full text-left px-3 py-1.5 hover:bg-rose-50 text-rose-600 font-bold flex items-center">
+                                <i class="fas fa-trash-alt mr-2"></i> 刪除專案
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
 
                 <!-- 資訊區 -->
                 <div class="project-card-info p-4 flex flex-col justify-between flex-1 ${isSelected ? 'bg-indigo-50' : 'bg-white'}">
