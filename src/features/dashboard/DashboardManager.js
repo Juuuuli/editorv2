@@ -379,6 +379,10 @@ export default class DashboardManager {
             this.eventBus.on('COLLAB:SYNC_REQUEST_RECEIVED', async (req) => {
                 const targetId = (req && req.projectId) ? req.projectId : this.currentProjectId;
                 if (targetId) {
+                    // 若請求的正是當前開啟的專案，強制先儲存最新狀態，以確保訪客拿到最新的模式與畫布
+                    if (targetId === this.currentProjectId) {
+                        await this.saveCurrentProjectNow();
+                    }
                     const proj = await this.storageEngine.getProject(targetId);
                     if (proj) {
                         console.log(`[DashboardManager] 房主收到同步請求，正在回傳專案 ${proj.name} 快照至通道...`);
@@ -891,6 +895,7 @@ export default class DashboardManager {
         this.eventBus.on('PAGE:ADD', triggerAutoSave);
         this.eventBus.on('PAGE:DELETE', triggerAutoSave);
         this.eventBus.on('PAGE:COPY', triggerAutoSave);
+        this.eventBus.on('WORKSPACE:MODE_CHANGED', triggerAutoSave);
     }
 
     /**

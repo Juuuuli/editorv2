@@ -13,8 +13,11 @@ export default class WorkspaceManager {
         this.bindEvents();
         
         // 初始化時自動切換至預設的 PDF 工作區，確保所有相關元件 (如比例按鈕) 狀態同步
+        // 但僅限於尚未載入任何專案（保持在 IDLE 狀態）的情況下，避免覆寫啟動時讀取到的專案類型
         setTimeout(() => {
-            this.switchMode(WorkspaceMode.PDF);
+            if (this.currentMode === WorkspaceMode.IDLE) {
+                this.switchMode(WorkspaceMode.PDF);
+            }
         }, 0);
     }
 
