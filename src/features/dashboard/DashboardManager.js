@@ -1,6 +1,7 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import ApiVaultManager from '../vault/ApiVaultManager.js';
 import RetinaRenderer from '../canvas_auxiliary/RetinaRenderer.js';
+import FirebaseProvider from '../collaboration/FirebaseProvider.js';
 
 // 初始化 PDF.js worker
 if (typeof window !== 'undefined' && pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
@@ -14,6 +15,8 @@ export default class DashboardManager {
         this.canvasEngine = canvasEngine;
         this.workspaceManager = workspaceManager;
 
+        this.isSelectionMode = false;
+        this.selectedProjectIds = new Set();
 
         this.currentProjectId = null;
         this.currentFilter = 'ALL'; // 'ALL', 'IMAGE', 'PDF'
@@ -154,6 +157,18 @@ export default class DashboardManager {
                             <i class="fas fa-search absolute left-3 text-slate-400 text-xs pointer-events-none"></i>
                             <input type="text" id="dashboard-search-input" class="w-28 md:w-48 lg:w-60 bg-slate-100 border border-slate-300 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:w-40 md:focus:w-56 transition-all duration-200" placeholder="搜尋專案...">
                         </div>
+
+                        <!-- 刪除已選按鈕 (預設隱藏) -->
+                        <button id="btn-delete-selected" class="hidden sketch-btn px-2 sm:px-3 py-1.5 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 flex items-center gap-1.5 shadow-[1.5px_1.5px_0px_#334155] shrink-0">
+                            <i class="fas fa-trash-alt text-sm"></i>
+                            <span class="hidden md:inline">刪除已選 (0)</span>
+                        </button>
+
+                        <!-- 批次選取按鈕 -->
+                        <button id="btn-toggle-selection-mode" class="sketch-btn px-2 sm:px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 shadow-[1.5px_1.5px_0px_#334155] shrink-0" title="批次刪除專案">
+                            <i class="fas fa-check-square text-indigo-600 text-sm"></i>
+                            <span class="hidden md:inline">批次選取</span>
+                        </button>
 
                         <!-- 匯入按鈕 -->
                         <button id="btn-import-project-file" class="sketch-btn px-2 sm:px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 shadow-[1.5px_1.5px_0px_#334155] shrink-0" title="匯入 .editorproj 專案檔、JSON、PDF、簡報或圖片">
@@ -392,6 +407,61 @@ export default class DashboardManager {
             });
         }
 
+        // 批次選取按鈕
+        const btnToggleSelection = document.getElementById('btn-toggle-selection-mode');
+        if (btnToggleSelection) {
+            btnToggleSelection.addEventListener('click', () => {
+                this.isSelectionMode = !this.isSelectionMode;
+                this.selectedProjectIds.clear();
+                
+                const span = btnToggleSelection.querySelector('span');
+                if (span) span.textContent = this.isSelectionMode ? '取消選取' : '批次選取';
+                
+                if (this.isSelectionMode) {
+                    btnToggleSelection.classList.add('bg-slate-200');
+                    btnToggleSelection.classList.remove('hover:bg-slate-50');
+                } else {
+                    btnToggleSelection.classList.remove('bg-slate-200');
+                    btnToggleSelection.classList.add('hover:bg-slate-50');
+                }
+                
+                this.renderProjectCards();
+                this.updateBatchActionUI();
+            });
+        }
+
+        // 刪除已選按鈕
+        const btnDeleteSelected = document.getElementById('btn-delete-selected');
+        if (btnDeleteSelected) {
+            btnDeleteSelected.addEventListener('click', async () => {
+                if (this.selectedProjectIds.size === 0) return;
+                if (confirm(`確定要刪除選取的 ${this.selectedProjectIds.size} 個專案嗎？此動作無法復原。`)) {
+                    this.eventBus.emit('LOADING:START', { message: '正在刪除專案...' });
+                    try {
+                        const deletePromises = Array.from(this.selectedProjectIds).map(id => this.storageEngine.deleteProject(id));
+                        await Promise.all(deletePromises);
+                        this.selectedProjectIds.clear();
+                        this.isSelectionMode = false;
+                        
+                        if (btnToggleSelection) {
+                            const span = btnToggleSelection.querySelector('span');
+                            if (span) span.textContent = '批次選取';
+                            btnToggleSelection.classList.remove('bg-slate-200');
+                            btnToggleSelection.classList.add('hover:bg-slate-50');
+                        }
+                        
+                        await this.loadProjects();
+                        this.updateBatchActionUI();
+                    } catch (err) {
+                        console.error('[DashboardManager] 批次刪除失敗', err);
+                        alert('刪除過程中發生錯誤：' + err.message);
+                    } finally {
+                        this.eventBus.emit('LOADING:END');
+                    }
+                }
+            });
+        }
+
         // 搜尋（桌面 + 行動版同步）
         const searchHandler = (e) => {
             this.searchQuery = e.target.value.toLowerCase().trim();
@@ -564,6 +634,19 @@ export default class DashboardManager {
         if (countImage) countImage.textContent = this.projects.filter(p => p.type === 'IMAGE').length;
     }
 
+    updateBatchActionUI() {
+        const btnDeleteSelected = document.getElementById('btn-delete-selected');
+        if (!btnDeleteSelected) return;
+
+        if (this.isSelectionMode && this.selectedProjectIds.size > 0) {
+            btnDeleteSelected.classList.remove('hidden');
+            const span = btnDeleteSelected.querySelector('span');
+            if (span) span.textContent = `刪除已選 (${this.selectedProjectIds.size})`;
+        } else {
+            btnDeleteSelected.classList.add('hidden');
+        }
+    }
+
     renderProjectCards() {
         const grid = document.getElementById('projects-grid');
         const emptyPlaceholder = document.getElementById('empty-projects-placeholder');
@@ -627,11 +710,21 @@ export default class DashboardManager {
                      </div>
                    </div>`;
 
+            const isSelected = this.selectedProjectIds.has(proj.id);
+
             card.innerHTML = `
                 <!-- 縮圖區 -->
-                <div class="project-card-thumbnail h-44 bg-slate-100/90 border-b-2 border-slate-700 relative overflow-hidden flex items-center justify-center group-hover:bg-slate-200/60 transition select-none">
+                <div class="project-card-thumbnail h-44 bg-slate-100/90 border-b-2 border-slate-700 relative overflow-hidden flex items-center justify-center group-hover:bg-slate-200/60 transition select-none ${isSelected ? 'ring-4 ring-inset ring-indigo-600' : ''}">
                     ${thumbnailContent}
-                    <div class="absolute top-3 left-3 flex items-center space-x-1.5">
+                    ${this.isSelectionMode ? `
+                    <div class="absolute inset-0 z-10 flex items-start justify-end p-3 pointer-events-none">
+                         <div class="w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors shadow-sm ${isSelected ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-400 bg-white/90 text-transparent group-hover:border-indigo-400'}">
+                             <i class="fas fa-check text-xs"></i>
+                         </div>
+                    </div>` : ''}
+                    
+                    ${!this.isSelectionMode ? `
+                    <div class="absolute top-3 left-3 flex items-center space-x-1.5 z-20">
                         <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${isPdf ? 'bg-indigo-600 text-white' : 'bg-teal-600 text-white'} shadow-sm">
                             ${isPdf ? '📊 簡報/PDF' : '🖼️ 圖片'}
                         </span>
@@ -639,12 +732,12 @@ export default class DashboardManager {
                     </div>
 
                     <!-- 操作按鈕選單觸發 -->
-                    <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition">
+                    <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition z-20">
                         <div class="relative dropdown-container">
                             <button class="btn-card-menu w-8 h-8 rounded-xl bg-white/90 border border-slate-300 hover:bg-white text-slate-700 flex items-center justify-center shadow-sm">
                                 <i class="fas fa-ellipsis-v text-xs"></i>
                             </button>
-                            <div class="card-dropdown hidden absolute right-0 mt-1 w-36 bg-white border-2 border-slate-700 rounded-xl shadow-[3px_3px_0px_#334155] py-1.5 z-20 text-xs">
+                            <div class="card-dropdown hidden absolute right-0 mt-1 w-36 bg-white border-2 border-slate-700 rounded-xl shadow-[3px_3px_0px_#334155] py-1.5 z-30 text-xs">
                                 <button class="btn-card-rename w-full text-left px-3 py-1.5 hover:bg-indigo-50 text-slate-700 font-bold flex items-center">
                                     <i class="fas fa-pencil-alt mr-2 text-indigo-500"></i> 重命名
                                 </button>
@@ -661,13 +754,14 @@ export default class DashboardManager {
                             </div>
                         </div>
                     </div>
+                    ` : ''}
                 </div>
 
                 <!-- 資訊區 -->
-                <div class="project-card-info p-4 flex flex-col justify-between flex-1 bg-white">
+                <div class="project-card-info p-4 flex flex-col justify-between flex-1 ${isSelected ? 'bg-indigo-50' : 'bg-white'}">
                     <div>
-                        <h4 class="project-card-title font-bold text-sm text-slate-800 truncate mb-1" title="${proj.name}">${proj.name}</h4>
-                        <div class="project-card-date text-[11px] text-slate-400 flex items-center">
+                        <h4 class="project-card-title font-bold text-sm ${isSelected ? 'text-indigo-900' : 'text-slate-800'} truncate mb-1" title="${proj.name}">${proj.name}</h4>
+                        <div class="project-card-date text-[11px] ${isSelected ? 'text-indigo-400' : 'text-slate-400'} flex items-center">
                             <i class="far fa-clock mr-1.5"></i> ${timeStr}
                         </div>
                     </div>
@@ -677,7 +771,18 @@ export default class DashboardManager {
             // 點擊卡片開啟專案
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.dropdown-container')) return;
-                this.openProject(proj.id);
+                
+                if (this.isSelectionMode) {
+                    if (this.selectedProjectIds.has(proj.id)) {
+                        this.selectedProjectIds.delete(proj.id);
+                    } else {
+                        this.selectedProjectIds.add(proj.id);
+                    }
+                    this.renderProjectCards();
+                    this.updateBatchActionUI();
+                } else {
+                    this.openProject(proj.id);
+                }
             });
 
             // 綁定卡片右上方選單
@@ -994,7 +1099,19 @@ export default class DashboardManager {
             const bgWidth = bgResult.width;
             const bgHeight = bgResult.height;
 
-            // 2. 產生縮圖 (委派給 RetinaRenderer 模組)
+            // 將高解析背景轉為 Blob 並上傳至 Firebase Storage
+            const fetchRes = await fetch(highResDataUrl);
+            const blob = await fetchRes.blob();
+            
+            this.eventBus.emit('LOADING:START', `上傳 PDF 第 ${i} 頁...`);
+            let finalSrc = highResDataUrl;
+            try {
+                finalSrc = await FirebaseProvider.uploadAsset(blob, `pdf_page_${i}.jpg`);
+            } catch (err) {
+                console.error(`第 ${i} 頁上傳失敗，退回使用本地 Base64:`, err);
+            }
+
+            // 2. 產生縮圖 (縮圖保持本機小圖即可，不一定要上傳，或是也可上傳)
             const thumbDataUrl = await RetinaRenderer.renderPageThumbnail(page, 0.5, 0.8);
 
             const pageId = `page-${Date.now()}-${i}`;
@@ -1013,7 +1130,7 @@ export default class DashboardManager {
                 height: bgHeight,
                 scaleX: 1,
                 scaleY: 1,
-                src: highResDataUrl,
+                src: finalSrc,
                 crossOrigin: 'anonymous',
                 selectable: false,
                 evented: false,
@@ -1069,6 +1186,15 @@ export default class DashboardManager {
                         const height = img.naturalHeight || 720;
                         const baseName = file.name.replace(/\.[^.]+$/, '');
                         const pageId = `page-${Date.now()}-1`;
+                        
+                        this.eventBus.emit('LOADING:START', '上傳圖片至雲端...');
+                        let finalSrc = dataUrl;
+                        try {
+                            finalSrc = await FirebaseProvider.uploadAsset(file, file.name);
+                        } catch (err) {
+                            console.error('圖片上傳失敗，退回使用本地 Base64:', err);
+                        }
+                        this.eventBus.emit('LOADING:END');
 
                         const newProject = {
                             id: 'proj_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
@@ -1093,7 +1219,7 @@ export default class DashboardManager {
                                     height: height,
                                     scaleX: 1,
                                     scaleY: 1,
-                                    src: dataUrl,
+                                    src: finalSrc,
                                     crossOrigin: 'anonymous',
                                     selectable: false,
                                     evented: false,
