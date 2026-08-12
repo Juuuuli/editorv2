@@ -123,6 +123,18 @@ if (fabric.Textbox) {
     };
 }
 
+// 修正 Fabric.js 在特定損毀的 text styles 下 toObject() 會崩潰的問題 (TypeError: Cannot read properties of undefined)
+if (fabric.util && fabric.util.stylesToArray) {
+    const originalStylesToArray = fabric.util.stylesToArray;
+    fabric.util.stylesToArray = function(styles, text) {
+        try {
+            return originalStylesToArray(styles, text);
+        } catch (e) {
+            console.warn('[Fabric Patch] stylesToArray failed for malformed styles, skipping styles:', e);
+            return [];
+        }
+    };
+}
 
 /**
  * 畫布核心引擎
