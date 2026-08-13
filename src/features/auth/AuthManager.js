@@ -285,7 +285,8 @@ export default class AuthManager {
         if (this.eventBus) {
             this.eventBus.emit('AUTH:LOGOUT');
         }
-        this.showAuthGate();
+        // 重新整理回 base URL，確保清除所有 JS/DOM 狀態
+        window.location.href = window.location.origin + window.location.pathname;
     }
 
     /**
