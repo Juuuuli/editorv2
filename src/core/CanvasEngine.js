@@ -429,9 +429,15 @@ export default class CanvasEngine {
                     this.savePageState();
                 }
                 
-                // 將來源頁面的快取資料深拷貝給新頁面
+                // 將來源頁面的快取資料深拷貝給新頁面，並重新生成物件 ID 以免衝突
                 if (this.pageStates[sourceId]) {
-                    this.pageStates[newId] = JSON.parse(JSON.stringify(this.pageStates[sourceId]));
+                    const copiedData = JSON.parse(JSON.stringify(this.pageStates[sourceId]));
+                    copiedData.forEach(obj => {
+                        if (obj.id && obj.id !== 'artboard') {
+                            obj.id = 'obj_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
+                        }
+                    });
+                    this.pageStates[newId] = copiedData;
                 }
             });
         }

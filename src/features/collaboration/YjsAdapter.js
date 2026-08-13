@@ -69,17 +69,6 @@ export default class YjsAdapter {
         
         this.eventBus.on('CANVAS:PAGE_LOADING_END', () => {
             this.isPageSwitching = false;
-            
-            // 確保畫布載入完成後才進行同步或推送，避免 Race Condition
-            if (this._needsSyncAfterLoad) {
-                this._needsSyncAfterLoad = false;
-                if (this.yObjects && this.yObjects.length > 0) {
-                    this.syncCanvasFromYjs();
-                } else {
-                    this.pushLocalToYjs();
-                }
-                this.isSyncing = false;
-            }
         });
         
         // 監聽頁面切換
@@ -97,8 +86,16 @@ export default class YjsAdapter {
             this.yObjects = this.ydoc.getArray(`page_objects_${this.pageId}`);
             this.bindYjsEvents();
             
-            // 標記需要在載入完成後同步
-            this._needsSyncAfterLoad = true;
+            // 由於 EventBus 的執行順序，CanvasEngine 可能已經同步執行完 loadPageState 並發出了 CANVAS:PAGE_LOADING_END。
+            // 我們稍微延遲來檢查並執行同步，確保所有畫布重繪都已完成。
+            setTimeout(() => {
+                if (this.yObjects && this.yObjects.length > 0) {
+                    this.syncCanvasFromYjs();
+                } else {
+                    this.pushLocalToYjs();
+                }
+                this.isSyncing = false;
+            }, 100);
         });
         
         // 監聽 ThumbnailsPanel 的本地頁面清單變更，推送到 Yjs
