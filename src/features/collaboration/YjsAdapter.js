@@ -22,13 +22,10 @@ export default class YjsAdapter {
         this._yjsObserver = null;
         this._pagesObserver = null;
         
-        // 判斷是否為 Viewer
+        // 判斷是否為 Viewer (統一由 main.js 控制 body class)
         this.isViewer = false;
-        if (typeof window !== 'undefined') {
-            const searchParams = new URLSearchParams(window.location.search);
-            if (searchParams.get('role') === 'viewer') {
-                this.isViewer = true;
-            }
+        if (typeof document !== 'undefined') {
+            this.isViewer = document.body.classList.contains('viewer-mode');
         }
 
         this.bindFabricEvents();

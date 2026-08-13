@@ -33,11 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         versionBadge.classList.remove('hidden');
     }
 
-    // 檢查是否為僅供檢視 (Viewer) 模式，若是則套用全域 CSS class 禁用 UI 工具
-    const searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.get('role') === 'viewer') {
-        document.body.classList.add('viewer-mode');
-    }
+    // viewer-mode 檢查移至 AuthManager 實例化之後
 
     // 實例化全域 EventBus
     const eventBus = new EventBus();
@@ -50,6 +46,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ★ 實例化角色帳號與身分認證 (Sprint 3)
     const authManager = new AuthManager(eventBus);
+
+    // 檢查是否為僅供檢視 (Viewer) 模式，若是則套用全域 CSS class 禁用 UI 工具
+    let isViewer = false;
+    const currentUser = authManager.getCurrentUser();
+    
+    if (currentUser) {
+        // 若已登入，以帳號權限為主
+        if (currentUser.role === 'viewer') isViewer = true;
+    } else {
+        // 若未登入，以 URL 參數為主
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get('role') === 'viewer') isViewer = true;
+    }
+    
+    if (isViewer) {
+        document.body.classList.add('viewer-mode');
+    }
 
     // ★ 實例化多人共編與專案分享前置模組 (v1.5.0) 將在 CanvasEngine 之後實例化
     // 綁定 Loading UI

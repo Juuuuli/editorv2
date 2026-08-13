@@ -60,7 +60,7 @@ export default class PresenceManager {
         const color = PRESENCE_COLORS[Math.floor(Math.random() * PRESENCE_COLORS.length)];
         const randomId = 'user_' + Math.random().toString(36).substring(2, 9);
         const name = authUser ? (authUser.name || authUser.username) : `協作者 ${Math.floor(1000 + Math.random() * 9000)}`;
-        const role = (authUser && authUser.role === 'admin') ? 'admin' : urlRole;
+        const role = authUser ? authUser.role : urlRole;
 
         return {
             id: randomId,
