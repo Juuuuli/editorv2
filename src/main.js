@@ -33,6 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
         versionBadge.classList.remove('hidden');
     }
 
+    // 檢查是否為僅供檢視 (Viewer) 模式，若是則套用全域 CSS class 禁用 UI 工具
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('role') === 'viewer') {
+        document.body.classList.add('viewer-mode');
+    }
+
     // 實例化全域 EventBus
     const eventBus = new EventBus();
 

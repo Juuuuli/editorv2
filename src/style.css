@@ -98,3 +98,14 @@
 .sidebar-toggle-handle:hover {
   transform: translateY(-50%) scale(1.08);
 }
+
+/* Viewer Mode Restrictions */
+body.viewer-mode #panel-tools,
+body.viewer-mode #btn-import-project,
+body.viewer-mode #btn-undo,
+body.viewer-mode #btn-redo,
+body.viewer-mode #floating-tools-container {
+    pointer-events: none !important;
+    opacity: 0.5 !important;
+}
+

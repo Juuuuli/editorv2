@@ -14,8 +14,8 @@ export default class KeyboardShortcuts {
 
     bindEvents() {
         document.addEventListener('keydown', (e) => {
-            // 避免在輸入框中觸發快捷鍵
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            // 避免在輸入框中觸發快捷鍵，或在 viewer 模式下禁用
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || document.body.classList.contains('viewer-mode')) return;
 
             const isCtrl = e.ctrlKey || e.metaKey;
             
