@@ -489,6 +489,18 @@ export default class CanvasEngine {
         if (savedData && savedData.length > 0) {
             fabric.util.enlivenObjects(savedData, (objs) => {
                 objs.forEach(obj => {
+                    if (document.body.classList.contains('viewer-mode')) {
+                        obj.set({
+                            selectable: false,
+                            evented: false,
+                            editable: false,
+                            lockMovementX: true,
+                            lockMovementY: true,
+                            lockScalingX: true,
+                            lockScalingY: true,
+                            lockRotation: true
+                        });
+                    }
                     this.canvas.add(obj);
                 });
                 this.canvas.requestRenderAll();

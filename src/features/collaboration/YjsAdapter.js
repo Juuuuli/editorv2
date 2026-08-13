@@ -293,6 +293,18 @@ export default class YjsAdapter {
             const existingObj = currentObjects.find(o => o.id === yJson.id);
             if (existingObj) {
                 existingObj.set(yJson);
+                if (this.isViewer) {
+                    existingObj.set({
+                        selectable: false,
+                        evented: false,
+                        lockMovementX: true,
+                        lockMovementY: true,
+                        lockScalingX: true,
+                        lockScalingY: true,
+                        lockRotation: true,
+                        editable: false
+                    });
+                }
                 existingObj.setCoords();
             } else {
                 objectsToAdd.push(yJson);
@@ -327,7 +339,8 @@ export default class YjsAdapter {
                             lockMovementY: true,
                             lockScalingX: true,
                             lockScalingY: true,
-                            lockRotation: true
+                            lockRotation: true,
+                            editable: false
                         });
                     }
                     this.canvas.add(obj);
