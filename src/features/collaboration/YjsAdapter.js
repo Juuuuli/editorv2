@@ -123,7 +123,7 @@ export default class YjsAdapter {
      */
     bindFabricEvents() {
         this.canvas.on('object:added', (e) => {
-            if (this.isSyncing || this.isViewer || this.isPageSwitching) return;
+            if (this.isViewer || this.isPageSwitching || e.target.isRemoteSync) return;
             // 過濾底板與輔助線
             if (e.target.id === 'artboard' || e.target.isArtboard || e.target === this.canvas.artboard || e.target.isSmartGuide || e.target.excludeFromExport) return;
             
@@ -147,7 +147,7 @@ export default class YjsAdapter {
         });
 
         this.canvas.on('object:modified', (e) => {
-            if (this.isSyncing || this.isViewer || this.isPageSwitching) return;
+            if (this.isViewer || this.isPageSwitching) return;
             const target = e.target;
             if (!target || !target.id) return;
             
@@ -175,7 +175,7 @@ export default class YjsAdapter {
         });
 
         this.canvas.on('object:removed', (e) => {
-            if (this.isSyncing || this.isViewer || this.isPageSwitching) return;
+            if (this.isViewer || this.isPageSwitching || e.target.isRemoteSync) return;
             const target = e.target;
             if (!target || !target.id) return;
             
@@ -275,53 +275,73 @@ export default class YjsAdapter {
             this.eventBus.emit('CANVAS:HISTORY_PAUSE');
         }
 
-        fabric.util.enlivenObjects(yJsonList, (enlivenedObjects) => {
-            // 清除畫布，但保留 artboard 等不參與同步的物件
-            const objects = [...this.canvas.getObjects()];
-            objects.forEach(obj => {
-                if (obj.id !== 'artboard' && !obj.isArtboard && obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport) {
-                    this.canvas.remove(obj);
-                }
-            });
+        const currentObjects = this.canvas.getObjects().filter(obj => 
+            obj.id !== 'artboard' && !obj.isArtboard && obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport
+        );
 
-            enlivenedObjects.forEach((obj) => {
-                // 如果是 Viewer 模式，鎖定所有物件
-                if (this.isViewer) {
-                    obj.set({
-                        selectable: false,
-                        evented: false,
-                        lockMovementX: true,
-                        lockMovementY: true,
-                        lockScalingX: true,
-                        lockScalingY: true,
-                        lockRotation: true
-                    });
-                }
-                
-                this.canvas.add(obj);
-                if (activeId && obj.id === activeId && !this.isViewer) {
-                    this.canvas.setActiveObject(obj);
-                }
-            });
-            
-            // 如果是 Viewer 模式，關閉畫布的群組選取
+        // 1. 移除 (本地有，但 Yjs 已經沒有)
+        const objectsToRemove = currentObjects.filter(obj => !yJsonList.find(y => y.id === obj.id));
+        objectsToRemove.forEach(obj => {
+            obj.isRemoteSync = true;
+            this.canvas.remove(obj);
+            obj.isRemoteSync = false;
+        });
+
+        // 2. 更新 (兩邊都有) 與 收集新增
+        const objectsToAdd = [];
+        yJsonList.forEach(yJson => {
+            const existingObj = currentObjects.find(o => o.id === yJson.id);
+            if (existingObj) {
+                existingObj.set(yJson);
+                existingObj.setCoords();
+            } else {
+                objectsToAdd.push(yJson);
+            }
+        });
+
+        // 3. 新增 (Yjs 有，但本地沒有)
+        const finalizeSync = () => {
             if (this.isViewer) {
                 this.canvas.selection = false;
                 this.canvas.discardActiveObject();
-                
-                // 強制將浮動工具列等隱藏，可以透過觸發一個取消選取的事件
                 this.canvas.fire('selection:cleared');
             }
-            
             this.canvas.requestRenderAll();
             
             if (this.eventBus) {
                 this.eventBus.emit('CANVAS:HISTORY_RESUME');
-                this.eventBus.emit('CANVAS:DIRTY', true); // 通知縮圖等更新
+                this.eventBus.emit('CANVAS:DIRTY', true);
             }
-            
             this.isSyncing = false;
-        }, 'fabric');
+        };
+
+        if (objectsToAdd.length > 0) {
+            fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjects) => {
+                enlivenedObjects.forEach((obj) => {
+                    obj.isRemoteSync = true;
+                    if (this.isViewer) {
+                        obj.set({
+                            selectable: false,
+                            evented: false,
+                            lockMovementX: true,
+                            lockMovementY: true,
+                            lockScalingX: true,
+                            lockScalingY: true,
+                            lockRotation: true
+                        });
+                    }
+                    this.canvas.add(obj);
+                    obj.isRemoteSync = false;
+                    
+                    if (activeId && obj.id === activeId && !this.isViewer) {
+                        this.canvas.setActiveObject(obj);
+                    }
+                });
+                finalizeSync();
+            }, 'fabric');
+        } else {
+            finalizeSync();
+        }
     }
 
     destroy() {
