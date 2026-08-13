@@ -58,7 +58,7 @@ export default class ShareModal {
                 <div class="p-6 space-y-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
 
                     <!-- 專案共編邀請連結區塊 -->
-                    <div class="space-y-2">
+                    <div id="collab-share-link-block" class="space-y-2">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                                 <i class="fas fa-link text-indigo-500"></i> 專案專屬共編連結
@@ -79,7 +79,7 @@ export default class ShareModal {
                     </div>
 
                     <!-- 權限角色選擇 -->
-                    <div class="pt-1">
+                    <div id="collab-role-selector-block" class="pt-1">
                         <div class="bg-slate-50 border-2 border-slate-200 rounded-xl p-3 space-y-1.5">
                             <div class="text-[11px] font-bold text-slate-600">
                                 <i class="fas fa-user-shield text-purple-500 mr-1"></i> 預設給予權限
@@ -238,6 +238,16 @@ export default class ShareModal {
     }
 
     /**
+     * 取得當前使用者的角色
+     */
+    getLocalRole() {
+        if (!this.presenceManager) return 'editor';
+        const users = this.presenceManager.getAllOnlineUsers();
+        const localUser = users.find(u => u.isLocal);
+        return localUser ? localUser.role : 'editor';
+    }
+
+    /**
      * 更新彈窗介面內容
      */
     updateUI() {
@@ -253,6 +263,18 @@ export default class ShareModal {
             // 不再傳遞 roomPin，改用 projectId 作為房間號
             const shareUrl = this.projectRouter.getShareUrl(this.projectId, this.selectedRole);
             urlInput.value = shareUrl;
+        }
+
+        const role = this.getLocalRole();
+        const shareLinkBlock = this.modalContainer.querySelector('#collab-share-link-block');
+        const roleSelectorBlock = this.modalContainer.querySelector('#collab-role-selector-block');
+        
+        if (role === 'admin') {
+            if (shareLinkBlock) shareLinkBlock.style.display = 'block';
+            if (roleSelectorBlock) roleSelectorBlock.style.display = 'block';
+        } else {
+            if (shareLinkBlock) shareLinkBlock.style.display = 'none';
+            if (roleSelectorBlock) roleSelectorBlock.style.display = 'none';
         }
     }
 
