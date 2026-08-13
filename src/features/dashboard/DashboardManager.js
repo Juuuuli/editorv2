@@ -77,7 +77,8 @@ export default class DashboardManager {
             console.log(`[DashboardManager] Deep Linking 直通專案: ${targetProject.name} (${targetProject.id})`);
             await this.openProject(targetProject.id, false);
             if (this.eventBus) {
-                this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: targetProject.id, roomId: urlRoomId || targetProject.id, isGuest: false });
+                const isGuest = targetProject.isShared === true;
+                this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: targetProject.id, roomId: urlRoomId || targetProject.id, isGuest: isGuest });
             }
             return;
         }
@@ -875,7 +876,9 @@ export default class DashboardManager {
         if (this.eventBus) {
             const urlParams = new URLSearchParams(window.location.search);
             const roomId = urlParams.get('room') || null;
-            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || project.id, isGuest: false });
+            // 根據專案的 isShared 屬性來判斷是否為客端
+            const isGuest = project.isShared === true;
+            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || project.id, isGuest: isGuest });
         }
 
         // 更新 Header 專案標題
