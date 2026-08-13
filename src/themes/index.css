@@ -2,7 +2,10 @@
    主題風格模組整合入口 (Themes Index)
    ========================================================================== */
 
-/* 1. 系統設定彈窗與主題卡片隔離樣式模組 */
+/* 1. 🎨 經典手繪 (Light Sketch) - 作為全站基底預設風格 */
+@import './light-sketch/light-sketch.css';
+
+/* 2. 系統設定彈窗與主題卡片隔離樣式模組 */
 @import './settings-modal/settings-modal.css';
 
 /* 2. 🌙 深色極客 (Dark Geek) 風格資料夾 */

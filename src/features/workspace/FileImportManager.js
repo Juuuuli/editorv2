@@ -2,6 +2,7 @@ import { fabric } from 'fabric';
 import * as pdfjsLib from 'pdfjs-dist';
 import ApiVaultManager from '../vault/ApiVaultManager.js';
 import RetinaRenderer from '../canvas_auxiliary/RetinaRenderer.js';
+import FirebaseProvider from '../collaboration/FirebaseProvider.js';
 
 // 初始化 PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -345,9 +346,19 @@ export default class FileImportManager {
     async importImage(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 const dataUrl = e.target.result;
-                fabric.Image.fromURL(dataUrl, (img) => {
+                
+                this.eventBus.emit('LOADING:START', { message: '上傳圖片至雲端...' });
+                let finalSrc = dataUrl;
+                try {
+                    finalSrc = await FirebaseProvider.uploadAsset(file, file.name);
+                } catch (err) {
+                    console.error('圖片上傳失敗，退回使用本地 Base64:', err);
+                }
+                this.eventBus.emit('LOADING:END');
+
+                fabric.Image.fromURL(finalSrc, (img) => {
                     // 設定畫布大小與圖片相符
                     this.canvasEngine.resizeArtboard(img.width, img.height);
                     
@@ -417,6 +428,17 @@ export default class FileImportManager {
                 const highResDataUrl = bgResult.dataUrl;
                 const bgWidth = bgResult.width;
                 const bgHeight = bgResult.height;
+                
+                this.eventBus.emit('LOADING:START', { message: `上傳 PDF 第 ${i} 頁至雲端...` });
+                const fetchRes = await fetch(highResDataUrl);
+                const blob = await fetchRes.blob();
+                
+                let finalSrc = highResDataUrl;
+                try {
+                    finalSrc = await FirebaseProvider.uploadAsset(blob, `pdf_page_${i}.jpg`);
+                } catch (err) {
+                    console.error(`第 ${i} 頁上傳失敗，退回使用本地 Base64:`, err);
+                }
 
                 // 2. 產生低解析度縮圖用 (委派給 RetinaRenderer 模組)
                 const thumbDataUrl = await RetinaRenderer.renderPageThumbnail(page, 0.5, 0.8);
@@ -438,7 +460,7 @@ export default class FileImportManager {
                     height: bgHeight,
                     scaleX: 1,
                     scaleY: 1,
-                    src: highResDataUrl,
+                    src: finalSrc,
                     crossOrigin: 'anonymous',
                     selectable: false,
                     evented: false,

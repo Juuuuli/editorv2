@@ -1,4 +1,5 @@
 import { buildTableGroup, extractTableData } from './tableBuilder';
+import FirebaseProvider from '../../collaboration/FirebaseProvider.js';
 
 export default class ObjectsTools {
     constructor(canvasEngine, eventBus) {
@@ -67,14 +68,22 @@ export default class ObjectsTools {
         const inputExtImg = document.getElementById('input-tool-ext-img');
         if (btnExtImg && inputExtImg) {
             btnExtImg.addEventListener('click', () => inputExtImg.click());
-            inputExtImg.addEventListener('change', (e) => {
+            inputExtImg.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        this.addExternalImage(event.target.result);
-                    };
-                    reader.readAsDataURL(file);
+                    this.eventBus.emit('LOADING:START', { message: '上傳圖片至雲端...' });
+                    try {
+                        const downloadUrl = await FirebaseProvider.uploadAsset(file, file.name);
+                        this.addExternalImage(downloadUrl);
+                    } catch (err) {
+                        console.error('圖片上傳失敗，退回使用本地 Base64:', err);
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            this.addExternalImage(event.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                    this.eventBus.emit('LOADING:END');
                 }
                 e.target.value = ''; // 清空
             });

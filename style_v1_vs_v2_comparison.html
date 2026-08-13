@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>風格指令 V1 vs V2 比較器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap');
+        
+        .font-serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        /* Webkit scrollbar for neatness */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5); 
+            border-radius: 4px;
+        }
+
+        /* 模擬 V2 主題的按鈕互動特效 */
+        .mockup-btn {
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* 手繪風格特有 (Light Sketch / Settings) */
+        [data-mockup-theme="light-sketch"] .mockup-btn:hover,
+        [data-mockup-theme="settings-modal"] .mockup-btn:hover {
+            transform: translateY(-1.5px);
+            box-shadow: 4px 4px 0px rgba(51, 65, 85, 1) !important;
+            background-color: #fef9c3 !important; /* 淡淡的底色變化 */
+            color: #334155 !important;
+        }
+        [data-mockup-theme="light-sketch"] .mockup-btn:active,
+        [data-mockup-theme="settings-modal"] .mockup-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0px 0px 0px rgba(51, 65, 85, 1) !important;
+            background-color: #fef08a !important;
+        }
+
+        /* 俐落冷灰特有 (Pro Slate) */
+        [data-mockup-theme="pro-slate"] .mockup-btn:hover {
+            transform: translateY(-1.5px);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15) !important;
+            background-color: #f0f9ff !important; /* 淡淡的科技藍 (sky-50) */
+            color: #0284c7 !important; /* 深藍文字 (sky-600) */
+        }
+        [data-mockup-theme="pro-slate"] .mockup-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1) !important;
+            background-color: #e0f2fe !important; /* 按下時稍微變深 (sky-100) */
+        }
+
+        /* 深色極客特有 (Dark Geek) */
+        [data-mockup-theme="dark-geek"] .mockup-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 3px 3px 0px #020617 !important;
+            background-color: rgba(56, 189, 248, 0.15) !important; /* 幽藍底色 */
+            color: #38bdf8 !important; /* 科技藍文字 */
+        }
+        [data-mockup-theme="dark-geek"] .mockup-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0px 0px 0px #020617 !important;
+            filter: brightness(1.4);
+        }
+
+        /* 復古文青特有 (Retro Warm) */
+        [data-mockup-theme="retro-warm"] .mockup-btn:hover {
+            transform: translateY(-1.5px);
+            box-shadow: 3px 3px 0px rgba(133, 99, 75, 0.4) !important;
+            background-color: #fffbeb !important;
+        }
+        [data-mockup-theme="retro-warm"] .mockup-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0px 0px 0px rgba(133, 99, 75, 0.4) !important;
+            background-color: #fef3c7 !important;
+        }
+    </style>
+</head>
+<body class="flex h-screen bg-gray-100 font-sans overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-900 text-white flex flex-col shrink-0 shadow-xl z-20 relative">
+        <div class="p-5 border-b border-gray-700">
+            <h1 class="text-lg font-bold">🎨 風格指令比較器</h1>
+            <p class="text-xs text-gray-400 mt-1">V1 (隨性) vs V2 (絕對約束)</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto p-4 space-y-2" id="sidebar-nav">
+            <!-- Buttons injected by JS -->
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAACVJREFUKFNjZCASMDKgC/7//59EQ4H1Y2RgZGBgYIQrIFEDkQAA6pAH91XvKNEAAAAASUVORK5CYII=')]">
+        
+        <!-- V1 Area (Top) -->
+        <div class="flex-1 flex flex-col relative overflow-hidden border-b-[4px] border-red-500 shadow-lg">
+            <div class="absolute top-0 right-0 bg-red-600 text-white px-5 py-2 rounded-bl-xl font-bold z-10 text-sm shadow-md flex items-center space-x-2">
+                <span>❌ V1 (風格指令.md) - 缺乏約束力、過度裝飾</span>
+            </div>
+            <div id="v1-container" class="flex-1 p-10 w-full h-full overflow-y-auto transition-colors duration-300 flex flex-col items-center justify-center">
+                <!-- V1 Content -->
+            </div>
+        </div>
+        
+        <!-- V2 Area (Bottom) -->
+        <div class="flex-1 flex flex-col relative overflow-hidden">
+            <div class="absolute top-0 right-0 bg-[#059669] text-white px-5 py-2 rounded-bl-xl font-bold z-10 text-sm shadow-md flex items-center space-x-2">
+                <span>✅ V2 (風格指令v2.md) - 高密度、嚴謹防呆、Component Blueprints</span>
+            </div>
+            <div id="v2-container" class="flex-1 p-10 w-full h-full overflow-y-auto transition-colors duration-300 flex flex-col items-center justify-center">
+                <!-- V2 Content -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 輔助生成完整編輯器 UI Mockup 的模板函數
+        function generateEditorMockup(theme) {
+            return `
+            <div class="w-full max-w-[850px] border-[0.5px] border-slate-400/30 shadow-2xl flex flex-col h-[400px] overflow-hidden rounded-xl text-left transform transition hover:scale-[1.01]">
+                <!-- Header -->
+                <div class="h-14 flex items-center justify-between px-4 shrink-0 transition-colors" style="background-color: ${theme.headerBg}; border-bottom: ${theme.headerBorder};">
+                    <div class="flex items-center space-x-3">
+                        <div class="px-3 py-1.5 rounded text-[12px] font-bold flex items-center space-x-1.5 mockup-btn" style="${theme.homeBtnStyle}">
+                            <span>🏠</span><span>首頁</span>
+                        </div>
+                        <div class="px-3 py-1 rounded-full text-[11px] font-bold" style="${theme.autoSaveStyle}">
+                            ● 已自動儲存
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="px-4 py-2 rounded text-[12px] font-bold flex items-center space-x-1.5 mockup-btn" style="${theme.exportBtnStyle}">
+                            <span>📥</span><span>匯出 ﹀</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="flex flex-1 overflow-hidden transition-colors">
+                    <!-- Sidebar -->
+                    <div class="w-[220px] shrink-0 flex flex-col" style="background-color: ${theme.sidebarBg}; border-right: ${theme.sidebarBorder};">
+                        <div class="p-4">
+                            <div class="text-[11px] font-bold uppercase tracking-wider mb-3" style="color: ${theme.sidebarTitle};">智慧去背與修補</div>
+                            <div class="space-y-2">
+                                <div class="px-3 py-2.5 text-[12px] font-bold mockup-btn" style="${theme.sidebarBtnStyle}">
+                                    🪄 一鍵去背
+                                </div>
+                                <div class="px-3 py-2.5 text-[12px] font-bold mockup-btn" style="${theme.sidebarBtnStyle}">
+                                    ✂️ 摳圖去背
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Canvas -->
+                    <div class="flex-1 flex flex-col items-center justify-center p-6 overflow-y-auto" style="${theme.canvasStyle}">
+                        ${theme.canvasContent}
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // 輔助生成完整設定彈窗 UI Mockup 的模板函數
+        function generateSettingsMockup(theme) {
+            return `
+            <style>
+                .palette-card { transition: all 0.3s ease; border-width: 1px; border-style: solid; position: relative; }
+                .palette-card:hover { transform: translateY(-3px); box-shadow: 0 0 20px var(--glow-shadow); border-color: var(--glow-color) !important; z-index: 10; }
+                .palette-card .color-circle { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; }
+                .palette-card:hover .color-circle { transform: scale(1.3); box-shadow: 0 0 12px var(--glow-color); border-color: transparent; }
+            </style>
+            <div class="w-full max-w-[1050px] mt-12 flex flex-row items-start justify-center gap-10">
+                <!-- 色系面板 (框外左側) -->
+                ${theme.palette ? `
+                <div class="w-[200px] flex flex-col shrink-0 mt-[44px]">
+                    <h4 class="text-[12px] font-bold mb-4 opacity-70 uppercase tracking-widest flex items-center" style="color: ${theme.sidebarTitle || 'inherit'};">
+                        <span class="mr-2">🎨</span> 色系與應用說明
+                    </h4>
+                    <div class="flex flex-col space-y-3">
+                        ${theme.palette.map(c => {
+                            const colorHex = c.hex.split(' ')[0];
+                            const borderMatch = theme.sidebarBorder ? theme.sidebarBorder.match(/solid\s+(.*)/) : null;
+                            const borderColor = borderMatch ? borderMatch[1] : 'rgba(0,0,0,0.1)';
+                            return `
+                            <div class="palette-card group flex items-center p-3.5 rounded-xl cursor-pointer" 
+                                 style="--glow-color: ${colorHex}; --glow-shadow: ${colorHex}66; background-color: ${theme.sidebarBg}; color: ${theme.sidebarTitle}; border-color: ${borderColor};">
+                                <div class="color-circle w-5 h-5 rounded-full border border-black/20 shrink-0 mr-3" style="background-color: ${colorHex};"></div>
+                                <div class="flex flex-col">
+                                    <span class="text-[12px] font-bold leading-none">${c.name}</span>
+                                    <span class="text-[10px] opacity-70 font-mono mt-1">${c.hex}</span>
+                                </div>
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Settings Modal 主體 -->
+                <div class="flex flex-col w-[760px] shrink-0">
+                    <h4 class="text-sm font-bold mb-4 w-full opacity-60 uppercase tracking-widest text-left" style="color: ${theme.sidebarTitle || 'inherit'};">⚙️ Settings Modal (設定彈窗)</h4>
+                    <div class="w-full min-h-[500px] flex flex-col overflow-hidden transform transition-all relative mockup-settings mb-12" style="background-color: ${theme.sidebarBg}; border: ${theme.settingsBorder || theme.sidebarBorder}; border-radius: ${theme.settingsRadius || '12px'}; box-shadow: ${theme.settingsShadow || '0 20px 25px -5px rgba(0,0,0,0.1)'};">
+                        <!-- Header -->
+                        <header class="h-[64px] shrink-0 px-6 flex items-center justify-between relative z-10" style="background-color: ${theme.headerBg}; border-bottom: ${theme.sidebarBorder};">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 flex items-center justify-center text-white font-bold text-lg" style="background-color: ${theme.settingsIconBg || '#3b82f6'}; border: ${theme.settingsBorder || 'none'}; border-radius: ${theme.settingsIconRadius || '8px'};">
+                                    <span>⚙️</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-[16px] font-bold tracking-tight" style="color: ${theme.sidebarTitle};">系統與外觀設定 (V2 Blueprint)</h2>
+                                    <p class="text-[12px] opacity-70" style="color: ${theme.sidebarTitle};">自訂編輯器風格、操作偏好與畫布輔助工具</p>
+                                </div>
+                            </div>
+                            <button class="transition font-bold text-xl opacity-50 hover:opacity-100" style="color: ${theme.sidebarTitle};">✕</button>
+                        </header>
+                        
+                        <!-- Body -->
+                        <div class="flex-1 flex" style="background-color: ${theme.canvasBg || theme.canvasStyle.match(/background-color: ([^;]+)/)[1]};">
+                            <!-- Left Nav -->
+                            <nav class="w-[220px] p-4 flex flex-col shrink-0" style="border-right: ${theme.sidebarBorder}; background-color: ${theme.sidebarBg};">
+                                <div class="space-y-3">
+                                    <button class="w-full text-left px-4 py-3 text-[14px] font-bold flex items-center space-x-2 mockup-btn" style="${theme.settingsActiveTab}">
+                                        <span>🎨</span> <span>主題與風格</span>
+                                    </button>
+                                    <button class="w-full text-left px-4 py-3 text-[14px] font-bold flex items-center space-x-2 opacity-60 hover:opacity-100 mockup-btn" style="color: ${theme.sidebarTitle};">
+                                        <span>📐</span> <span>畫布輔助</span>
+                                    </button>
+                                    <button class="w-full text-left px-4 py-3 text-[14px] font-bold flex items-center space-x-2 opacity-60 hover:opacity-100 mockup-btn" style="color: ${theme.sidebarTitle};">
+                                        <span>ℹ️</span> <span>關於系統</span>
+                                    </button>
+                                </div>
+                            </nav>
+                            
+                            <!-- Right Content -->
+                            <div class="flex-1 p-6 flex flex-col items-center justify-center relative" style="${theme.canvasStyle}">
+                                <div class="px-6 py-8 flex flex-col items-center text-center opacity-60 p-6 rounded-xl backdrop-blur-sm" style="background-color: ${theme.sidebarBg}; border: ${theme.sidebarBorder};">
+                                    <span class="text-4xl mb-3">🎨</span>
+                                    <p class="text-[14px] font-bold" style="color: ${theme.sidebarTitle};">彈窗內容區塊依據各風格自動排版，告別 V1 的破版問題</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <footer class="p-4 flex justify-between items-center shrink-0" style="background-color: ${theme.headerBg}; border-top: ${theme.sidebarBorder};">
+                            <div class="text-[12px] opacity-70 flex items-center space-x-1 font-medium" style="color: ${theme.sidebarTitle};">
+                                <span>ℹ️</span> <span>設定變更已即時自動儲存於瀏覽器</span>
+                            </div>
+                            <button class="px-6 py-2.5 font-bold text-[13px] mockup-btn" style="${theme.settingsSaveBtn}">
+                                完成設定
+                            </button>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        const themes = {
+            'light-sketch': {
+                name: 'Light Sketch (經典手繪)',
+                v1: {
+                    bg: 'bg-[#fbfbfb] bg-[url("data:image/svg+xml,%3Csvg width=\\\'20\\\' height=\\\'20\\\' xmlns=\\\'http://www.w3.org/2000/svg\\\'%3E%3Cpath d=\\\'M 20 0 L 0 0 0 20\\\' fill=\\\'none\\\' stroke=\\\'%23e5e7eb\\\' stroke-width=\\\'1\\\'/%3E%3C/svg%3E")]',
+                    text: 'text-slate-800',
+                    html: `
+                        <div class="p-8 bg-white border-2 border-slate-700 w-full max-w-3xl relative" style="border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;">
+                            <h3 class="text-2xl font-bold mb-4">基礎手繪風格 (V1 隨性)</h3>
+                            <p class="text-slate-500 mb-8 leading-relaxed">V1 沒有嚴格的手繪變數，所有的邊框、陰影都是直接利用 Tailwind class 或是手寫 style。按鈕陰影可能因為沒有統一管理，導致各個區塊陰影深淺不一，且沒有規範特定的 Hover 互動。</p>
+                            <div class="flex space-x-4">
+                                <button class="px-6 py-2.5 bg-white border-[1.5px] border-slate-700 text-slate-800 font-bold" style="border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 2px 2px 0px rgba(51,65,85,0.15);">儲存畫布</button>
+                            </div>
+                        </div>
+                    `
+                },
+                v2: {
+                    bg: 'bg-[#f8fafc]',
+                    text: 'text-[#0f172a]',
+                    palette: [
+                        {name: '--sketch-bg', hex: '#ffffff'},
+                        {name: '--sketch-border', hex: '#334155'},
+                        {name: '--sketch-shadow', hex: 'rgba(51, 65, 85, 1)'},
+                        {name: '--sketch-highlight', hex: '#fef08a (淡螢光黃)'},
+                        {name: '--canvas-bg', hex: '#fbfbfb'}
+                    ],
+                    html: generateEditorMockup({
+                        headerBg: '#ffffff',
+                        headerBorder: '2px solid #334155',
+                        homeBtnStyle: 'background-color: #ffffff; color: #334155; border: 1.5px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 2px 2px 0px rgba(51, 65, 85, 1);',
+                        autoSaveStyle: 'background-color: #fef08a; color: #334155; border: 1.5px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;',
+                        exportBtnStyle: 'background-color: #fef08a; color: #334155; border: 1.5px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 3px 3px 0px rgba(51, 65, 85, 1);',
+                        sidebarBg: '#ffffff',
+                        sidebarBorder: '2px solid #334155',
+                        sidebarTitle: '#334155',
+                        sidebarBtnStyle: 'background-color: #ffffff; color: #334155; border: 1.5px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 2px 2px 0px rgba(51, 65, 85, 1);',
+                        canvasStyle: 'background-color: #fbfbfb; background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px); background-size: 20px 20px;',
+                        canvasContent: `
+                            <div class="p-6 bg-white w-[360px]" style="border: 2px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 6px 6px 0px rgba(51,65,85,1);">
+                                <h3 class="text-[17px] font-bold mb-3 text-[#334155]">一致化手繪風格 (V2)</h3>
+                                <p class="text-slate-600 text-[13px] leading-relaxed">解決了原本 Header 配色違和的問題。將頂部背景改為純白，並導入統一的深色墨水框 <code>#334155</code> 與硬陰影。重點按鈕與狀態使用統一的淡螢光黃 <code>#fef08a</code> 點綴，視覺瞬間凝聚。</p>
+                            </div>
+                        `,
+                        settingsBorder: '2px solid #334155',
+                        settingsRadius: '255px 15px 225px 15px/15px 225px 15px 255px',
+                        settingsShadow: '8px 8px 0px rgba(51, 65, 85, 1)',
+                        settingsIconBg: '#ffffff',
+                        settingsIconRadius: '255px 15px 225px 15px/15px 225px 15px 255px',
+                        settingsActiveTab: 'background-color: #fef08a; color: #334155; border: 2px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 3px 3px 0px rgba(51, 65, 85, 1);',
+                        settingsSaveBtn: 'background-color: #fef08a; color: #334155; border: 2px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 3px 3px 0px rgba(51, 65, 85, 1);'
+                    }) + generateSettingsMockup({
+                        sidebarBg: '#ffffff',
+                        headerBg: '#ffffff',
+                        sidebarBorder: '2px solid #334155',
+                        sidebarTitle: '#334155',
+                        canvasStyle: 'background-color: #fbfbfb; background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px); background-size: 20px 20px;',
+                        settingsBorder: '2px solid #334155',
+                        settingsRadius: '255px 15px 225px 15px/15px 225px 15px 255px',
+                        settingsShadow: '8px 8px 0px rgba(51, 65, 85, 1)',
+                        settingsIconBg: '#3b82f6',
+                        settingsIconRadius: '255px 15px 225px 15px/15px 225px 15px 255px',
+                        settingsActiveTab: 'background-color: #fef08a; color: #334155; border: 2px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 3px 3px 0px rgba(51, 65, 85, 1);',
+                        settingsSaveBtn: 'background-color: #fef08a; color: #334155; border: 2px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 3px 3px 0px rgba(51, 65, 85, 1);',
+                        palette: [
+                            {name: '背景/卡片', hex: '#ffffff'},
+                            {name: '墨水框/文字', hex: '#334155'},
+                            {name: '陰影', hex: 'rgba(51,65,85,1)'},
+                            {name: '重點按鈕', hex: '#fef08a (淡螢光黃)'},
+                            {name: '畫布背景', hex: '#fbfbfb'}
+                        ]
+                    })
+                }
+            },
+            'pro-slate': {
+                name: 'Pro Slate (專業冷灰)',
+                v1: {
+                    bg: 'bg-[#f8fafc]',
+                    text: 'text-slate-800',
+                    html: `
+                        <div class="p-8 bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-3xl">
+                            <h3 class="text-2xl font-bold mb-4">專案卡片 (V1 樣式)</h3>
+                            <p class="text-slate-500 mb-8">V1 大量依賴 Tailwind 預設的 shadow-lg，導致畫面看起來每個方塊都在飄浮。按鈕使用全大寫字體，缺乏專業後台的細膩度。</p>
+                            <div class="flex space-x-4 mb-6">
+                                <button class="px-6 py-2.5 bg-blue-500 text-white rounded-md shadow-md uppercase font-bold tracking-wider">Submit Data</button>
+                            </div>
+                        </div>
+                    `
+                },
+                v2: {
+                    bg: 'bg-[#e2e8f0]',
+                    text: 'text-[#0f172a]',
+                    palette: [
+                        {name: '--bg-app', hex: '#e2e8f0'},
+                        {name: '--bg-surface', hex: '#ffffff'},
+                        {name: '--header-bg', hex: '#1e293b'},
+                        {name: '--header-export', hex: '#0284c7 (Gradient)'},
+                        {name: '--sidebar-bg', hex: '#ffffff'},
+                        {name: '--canvas-bg', hex: '#cbd5e1'}
+                    ],
+                    html: generateEditorMockup({
+                        headerBg: '#1e293b',
+                        headerBorder: '1px solid #334155',
+                        homeBtnStyle: 'background-color: #0f172a; color: #f8fafc; border: 1px solid #334155;',
+                        autoSaveStyle: 'background-color: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);',
+                        exportBtnStyle: 'background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: 1px solid #38bdf8;',
+                        sidebarBg: '#ffffff',
+                        sidebarBorder: '1px solid #cbd5e1',
+                        sidebarTitle: '#475569',
+                        sidebarBtnStyle: 'background-color: #f8fafc; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);',
+                        canvasStyle: 'background-color: #cbd5e1; background-image: linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px); background-size: 20px 20px;',
+                        canvasContent: `
+                            <div class="p-6 bg-[#ffffff] rounded-xl border-[0.5px] border-[rgba(15,23,42,0.1)] shadow-none w-[360px]">
+                                <h3 class="text-[15px] font-bold mb-3">Pro Slate 專業冷灰 (V2)</h3>
+                                <p class="text-[#64748b] text-[13px]">俐落的 0.5px 實線區分層級。畫布背景為冷灰 <code>#cbd5e1</code>，Header 採用深石墨 <code>#1e293b</code>，徹底拔除不必要的手繪框與厚重陰影。</p>
+                            </div>
+                        `
+                    }) + generateSettingsMockup({
+                        sidebarBg: '#ffffff',
+                        headerBg: '#f8fafc',
+                        sidebarBorder: '1px solid #cbd5e1',
+                        sidebarTitle: '#475569',
+                        canvasStyle: 'background-color: #cbd5e1; background-image: linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px); background-size: 20px 20px;',
+                        settingsBorder: '1px solid #cbd5e1',
+                        settingsRadius: '12px',
+                        settingsShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
+                        settingsIconBg: '#0f172a',
+                        settingsIconRadius: '8px',
+                        settingsActiveTab: 'background-color: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px;',
+                        settingsSaveBtn: 'background-color: #0f172a; color: #ffffff; border: 1px solid #334155; border-radius: 8px;',
+                        palette: [
+                            {name: '全域背景', hex: '#e2e8f0'},
+                            {name: '卡片/側邊', hex: '#ffffff'},
+                            {name: 'Header', hex: '#1e293b'},
+                            {name: '重點按鈕', hex: '#0284c7'},
+                            {name: '畫布網格', hex: '#cbd5e1'}
+                        ]
+                    })
+                }
+            },
+            'dark-geek': {
+                name: 'Dark Geek (深色極客)',
+                v1: {
+                    bg: 'bg-[#0f172a]',
+                    text: 'text-white',
+                    html: `
+                        <div class="p-8 bg-[#1e293b] rounded-2xl shadow-[0_0_30px_rgba(56,189,248,0.4)] border border-[#38bdf8] w-full max-w-3xl transform transition hover:scale-[1.02]">
+                            <h3 class="text-2xl font-bold mb-4">專案卡片 (V1 樣式)</h3>
+                            <p class="text-gray-300 mb-8 leading-relaxed">舊版 V1 會在一般卡片周圍加上強烈的霓虹陰影與 1px 發光邊框。這種設計雖然第一眼看起來很酷炫，但在含有大量列表的高密度專業後台中，會產生嚴重的視覺干擾，造成眼睛極度疲勞。</p>
+                            <div class="flex space-x-4">
+                                <button class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg shadow-[0_0_20px_rgba(37,99,235,0.6)] font-bold transition">主要按鈕</button>
+                            </div>
+                        </div>
+                    `
+                },
+                v2: {
+                    bg: 'bg-[#090d16]',
+                    text: 'text-[#f8fafc]',
+                    palette: [
+                        {name: '--bg-app', hex: '#090d16'},
+                        {name: '--bg-surface', hex: '#1e293b'},
+                        {name: '--header-bg', hex: '#0f172a'},
+                        {name: '--header-export', hex: '#1e293b'},
+                        {name: '--sidebar-bg', hex: '#0f172a'},
+                        {name: '--canvas-bg', hex: '#090d16'}
+                    ],
+                    html: generateEditorMockup({
+                        headerBg: '#0f172a',
+                        headerBorder: '1px solid #334155',
+                        homeBtnStyle: 'background-color: #1e293b; color: #e2e8f0; border: 1px solid #475569; box-shadow: 2px 2px 0px #020617;',
+                        autoSaveStyle: 'background-color: rgba(6, 78, 59, 0.4); color: #34d399; border: 1px solid #065f46;',
+                        exportBtnStyle: 'background-color: #1e293b; color: #c084fc; border: 1px solid #581c87;',
+                        sidebarBg: '#0f172a',
+                        sidebarBorder: '1px solid #334155',
+                        sidebarTitle: '#f8fafc',
+                        sidebarBtnStyle: 'background-color: #1e293b; color: #e2e8f0; border: 1px solid #475569; box-shadow: 2px 2px 0px #020617; border-radius: 8px;',
+                        canvasStyle: 'background-color: #090d16; background-image: linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px); background-size: 20px 20px;',
+                        canvasContent: `
+                            <div class="p-6 bg-[#1e293b] rounded-[12px] border-[0.5px] border-[rgba(56,189,248,0.2)] shadow-none w-[360px]">
+                                <h3 class="text-[15px] font-bold mb-3 tracking-wide text-[#f8fafc]">Dark Geek 深色極客 (V2)</h3>
+                                <p class="text-[#64748b] text-[13px] leading-relaxed">全域背景為極深的 <code>#090d16</code>，畫布網格使用 <code>#1e293b</code>。按鈕具有 <code>#020617</code> 顏色的硬陰影，匯出按鈕採用低調的紫色 <code>#c084fc</code>，避免過度霓虹干擾。</p>
+                            </div>
+                        `
+                    }) + generateSettingsMockup({
+                        sidebarBg: '#0f172a',
+                        headerBg: '#1e293b',
+                        sidebarBorder: '1px solid #334155',
+                        sidebarTitle: '#f8fafc',
+                        canvasStyle: 'background-color: #090d16; background-image: linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px); background-size: 20px 20px;',
+                        settingsBorder: '1px solid #334155',
+                        settingsRadius: '12px',
+                        settingsShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px #334155',
+                        settingsIconBg: 'rgba(56, 189, 248, 0.15)',
+                        settingsIconRadius: '8px',
+                        settingsActiveTab: 'background-color: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; box-shadow: 0 0 10px rgba(56, 189, 248, 0.1);',
+                        settingsSaveBtn: 'background-color: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; border-radius: 8px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);',
+                        palette: [
+                            {name: '全域背景', hex: '#090d16'},
+                            {name: '卡片介面', hex: '#1e293b'},
+                            {name: 'Header', hex: '#0f172a'},
+                            {name: '文字與線條', hex: '#334155'}
+                        ]
+                    })
+                }
+            },
+            'retro-warm': {
+                name: 'Retro Warm (復古文青)',
+                v1: {
+                    bg: 'bg-[#fdfbf7]',
+                    text: 'text-[#451a03]',
+                    html: `
+                        <div class="p-8 bg-[#f5eedc] rounded-xl shadow-[6px_6px_0_rgba(133,99,75,0.3)] border-[2.5px] border-[#85634b] w-full max-w-3xl font-serif relative">
+                            <h3 class="text-2xl font-bold mb-4">手帳卡片 (V1 樣式)</h3>
+                            <p class="text-[#785b46] mb-8 leading-relaxed">V1 所有的卡片與邊框都有厚重的手帳壓印陰影與粗框，在大規模列表中顯得非常繁雜且難以閱讀。</p>
+                            <button class="px-6 py-2.5 bg-amber-700 text-white rounded-lg shadow-[4px_4px_0_rgba(133,99,75,0.4)] border-[2.5px] border-[#85634b] font-bold">儲存變更</button>
+                        </div>
+                    `
+                },
+                v2: {
+                    bg: 'bg-[#f5eedc]',
+                    text: 'text-[#38271d]',
+                    palette: [
+                        {name: '--bg-app', hex: '#f5eedc'},
+                        {name: '--header-bg', hex: '#36261c'},
+                        {name: '--header-export', hex: '#b45309 (Gradient)'},
+                        {name: '--sidebar-bg', hex: '#fdfbf7'},
+                        {name: '--sidebar-btn', hex: '#fdfaf5'},
+                        {name: '--canvas-bg', hex: '#ede2cd'}
+                    ],
+                    html: generateEditorMockup({
+                        headerBg: '#36261c',
+                        headerBorder: '2px solid #5c412f',
+                        homeBtnStyle: 'background-color: #261911; color: #fdfaf5; border: 1.5px solid #5c412f; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);',
+                        autoSaveStyle: 'background-color: rgba(245, 158, 11, 0.18); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.35);',
+                        exportBtnStyle: 'background: linear-gradient(135deg, #b45309, #854d0e); color: #ffffff; border: 1.5px solid #f59e0b; box-shadow: 0 2px 8px rgba(180, 83, 9, 0.4);',
+                        sidebarBg: '#fdfbf7',
+                        sidebarBorder: '2px solid #85634b',
+                        sidebarTitle: '#614634',
+                        sidebarBtnStyle: 'background-color: #fdfaf5; color: #36261c; border: 1.5px solid #85634b; border-radius: 8px; box-shadow: 2px 2px 0px rgba(133, 99, 75, 0.2);',
+                        canvasStyle: 'background-color: #ede2cd; background-image: linear-gradient(to right, #dacaba 1.5px, transparent 1.5px), linear-gradient(to bottom, #dacaba 1.5px, transparent 1.5px); background-size: 20px 20px;',
+                        canvasContent: `
+                            <div class="p-6 bg-[#fdfbf7] rounded-[10px] shadow-[3px_3px_0px_rgba(133,99,75,0.25)] border-[1.5px] border-[#85634b] w-[360px] font-serif">
+                                <h3 class="text-[17px] font-bold mb-3 text-[#36261c]">Retro Warm 復古文青 (V2)</h3>
+                                <p class="text-[#785b46] text-[13px]">Header 採用深胡桃木色 <code>#36261c</code>，左側邊欄為復古羊皮紙 <code>#fdfbf7</code>，畫布背景則是暖色牛皮紙 <code>#ede2cd</code>。展現沈穩文藝的手帳質感。</p>
+                            </div>
+                        `
+                    }) + generateSettingsMockup({
+                        sidebarBg: '#fdfbf7',
+                        headerBg: '#36261c',
+                        sidebarBorder: '2px solid #85634b',
+                        sidebarTitle: '#614634',
+                        canvasStyle: 'background-color: #ede2cd; background-image: linear-gradient(to right, #dacaba 1.5px, transparent 1.5px), linear-gradient(to bottom, #dacaba 1.5px, transparent 1.5px); background-size: 20px 20px;',
+                        settingsBorder: '2px solid #85634b',
+                        settingsRadius: '12px',
+                        settingsShadow: '4px 4px 0px rgba(133, 99, 75, 0.2)',
+                        settingsIconBg: '#b45309',
+                        settingsIconRadius: '8px',
+                        settingsActiveTab: 'background-color: #fdfaf5; color: #36261c; border: 2px solid #85634b; border-radius: 8px; box-shadow: 2px 2px 0px rgba(133, 99, 75, 0.2);',
+                        settingsSaveBtn: 'background-color: #b45309; color: #ffffff; border: 2px solid #85634b; border-radius: 8px; box-shadow: 2px 2px 0px rgba(133, 99, 75, 0.3);',
+                        palette: [
+                            {name: '羊皮紙背景', hex: '#fdfbf7'},
+                            {name: '深木色Header', hex: '#36261c'},
+                            {name: '牛皮紙畫布', hex: '#ede2cd'},
+                            {name: '邊框與文字', hex: '#85634b'}
+                        ]
+                    })
+                }
+            },
+            'auth-modal': {
+                name: 'Auth Modal (登入彈窗)',
+                v1: {
+                    bg: 'bg-gray-100',
+                    text: 'text-gray-800',
+                    html: `
+                        <div class="w-full max-w-[400px] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+                            <div class="p-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                                <h2 class="text-xl font-bold text-center">登入系統 (V1 隨意拼湊)</h2>
+                            </div>
+                            <div class="p-8 space-y-5">
+                                <div>
+                                    <label class="block text-sm mb-2 text-gray-600">電子信箱</label>
+                                    <input type="text" class="w-full border p-3 rounded bg-gray-50" placeholder="user@example.com">
+                                </div>
+                                <button class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg mt-4 font-bold shadow-md">馬上登入</button>
+                            </div>
+                        </div>
+                    `
+                },
+                v2: {
+                    bg: 'bg-black/60 relative',
+                    text: 'text-[#0f172a]',
+                    palette: [],
+                    html: `
+                        <div class="w-full max-w-[850px] mt-12 flex flex-col items-center">
+                            <h4 class="text-sm font-bold mb-4 w-full opacity-90 uppercase tracking-widest text-left text-white">⚙️ Auth Modal (登入彈窗)</h4>
+                            <div class="w-[400px] bg-white flex flex-col overflow-hidden shrink-0 transform transition-all relative mockup-settings mb-12" style="border: 2px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 8px 8px 0px rgba(51, 65, 85, 1);">
+                                <div class="p-8 space-y-5">
+                                    <h2 class="text-xl font-bold text-center" style="color: #334155;">登入系統 (V2)</h2>
+                                    <div>
+                                        <label class="block text-sm font-bold mb-2" style="color: #334155;">電子信箱</label>
+                                        <input type="text" class="w-full p-3 bg-[#fbfbfb] focus:outline-none" placeholder="user@example.com" style="border: 2px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;">
+                                    </div>
+                                    <button class="w-full py-3 font-bold mockup-btn" style="background-color: #fef08a; color: #334155; border: 2px solid #334155; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; box-shadow: 4px 4px 0px rgba(51, 65, 85, 1);">
+                                        馬上登入
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                }
+            }
+        };
+
+        const sidebarNav = document.getElementById('sidebar-nav');
+        const v1Container = document.getElementById('v1-container');
+        const v2Container = document.getElementById('v2-container');
+
+        function loadTheme(themeKey) {
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('text-gray-400', 'hover:bg-gray-800');
+            });
+            document.getElementById('btn-' + themeKey).classList.add('bg-blue-600', 'text-white');
+            document.getElementById('btn-' + themeKey).classList.remove('text-gray-400', 'hover:bg-gray-800');
+
+            const theme = themes[themeKey];
+            
+            v1Container.className = "flex-1 p-10 w-full h-full overflow-y-auto transition-colors duration-300 flex flex-col items-center justify-center " + theme.v1.bg + " " + theme.v1.text;
+            v1Container.innerHTML = theme.v1.html;
+
+            v2Container.className = "flex-1 p-10 w-full h-full overflow-y-auto transition-colors duration-300 flex flex-col items-center justify-center " + theme.v2.bg + " " + theme.v2.text;
+            v2Container.innerHTML = theme.v2.html;
+            v2Container.setAttribute('data-mockup-theme', themeKey);
+        }
+
+        Object.keys(themes).forEach((key, index) => {
+            const btn = document.createElement('button');
+            btn.id = 'btn-' + key;
+            btn.className = "theme-btn w-full text-left px-4 py-3 rounded-lg text-sm font-bold transition-colors " + (index === 0 ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-800');
+            btn.innerText = themes[key].name;
+            btn.onclick = () => loadTheme(key);
+            sidebarNav.appendChild(btn);
+        });
+
+        loadTheme(Object.keys(themes)[0]);
+    </script>
+</body>
+</html>

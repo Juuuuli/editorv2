@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>協作架構升級分析報告</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0B0F19;
+            --card-bg: rgba(20, 27, 45, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #38BDF8;
+            --secondary: #818CF8;
+            --success: #34D399;
+            --danger: #F87171;
+            --text-main: #F1F5F9;
+            --text-muted: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1.5rem;
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1.2rem;
+        }
+
+        .icon-s2 {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+        }
+
+        .icon-s3 {
+            background: rgba(129, 140, 248, 0.1);
+            color: var(--secondary);
+        }
+
+        .card-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .card-title p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section h3 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section h3 i {
+            margin-right: 0.5rem;
+        }
+
+        .list {
+            list-style: none;
+        }
+
+        .list li {
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .list li i {
+            margin-top: 0.3rem;
+            margin-right: 0.8rem;
+        }
+
+        .pro i { color: var(--success); }
+        .con i { color: var(--danger); }
+        .tool i { color: #FBBF24; }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+        }
+
+        .verdict {
+            background: linear-gradient(90deg, rgba(56,189,248,0.1) 0%, rgba(129,140,248,0.1) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .verdict h2 {
+            margin-bottom: 1rem;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>協作效能瓶頸：架構升級分析報告</h1>
+            <p class="subtitle">針對多媒體畫布編輯器，深入比較「外部雲端儲存」與「專屬協作伺服器」兩種解決方案的優劣與適用情境。</p>
+        </header>
+
+        <div class="comparison-grid">
+            <!-- 方案二 Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon-box icon-s2">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="card-title">
+                        <h2>方案二：導入外部雲端儲存</h2>
+                        <p>Asset Offloading (S3 / Storage)</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-bullseye"></i> 核心目標</h3>
+                    <p class="text-muted">解決「巨量媒體載荷 (Payload)」問題。將龐大的 Base64 圖片抽出，Yjs 同步通道內僅傳遞輕量的 URL 短網址。</p>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-check-circle text-success"></i> 優點 (Pros)</h3>
+                    <ul class="list pro">
+                        <li><i class="fas fa-check"></i> <strong>開發成本低：</strong> 維持目前的無伺服器架構，只需抽換圖片上傳邏輯。</li>
+                        <li><i class="fas fa-check"></i> <strong>維護極簡：</strong> 雲端儲存服務（如 S3）穩定度極高，幾乎不需要工程師維護。</li>
+                        <li><i class="fas fa-check"></i> <strong>效能顯著：</strong> 圖片/PDF 所造成的卡頓與當機能獲得 99% 的改善。</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-times-circle text-danger"></i> 缺點 (Cons)</h3>
+                    <ul class="list con">
+                        <li><i class="fas fa-times"></i> <strong>治標不治本：</strong> 無法解決長時間、超高頻繁打字與畫圖所累積的「歷史紀錄膨脹」問題。</li>
+                        <li><i class="fas fa-times"></i> <strong>依賴圖床：</strong> 若圖片伺服器連線不穩，畫布上的圖片會破圖。</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-wrench"></i> 具體開發工具與服務</h3>
+                    <div class="tag-container">
+                        <span class="tag"><i class="fas fa-fire text-orange-500"></i> Firebase Storage (推薦)</span>
+                        <span class="tag"><i class="fab fa-aws text-orange-400"></i> AWS S3</span>
+                        <span class="tag"><i class="fas fa-cloud text-blue-400"></i> Cloudflare R2 (免流量費)</span>
+                        <span class="tag"><i class="fas fa-database text-green-400"></i> Supabase Storage</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-chart-line"></i> 額外比較面向</h3>
+                    <ul class="list text-muted" style="font-size: 0.9rem;">
+                        <li><strong>💰 成本預估：</strong> 極低。Cloudflare R2 甚至提供免費額度，超出也僅需幾塊美金。</li>
+                        <li><strong>🔌 離線支援：</strong> 佳。可搭配 IndexedDB 暫存圖片快取，斷網仍可瀏覽。</li>
+                        <li><strong>👥 承載人數：</strong> 中等 (5~10人)。取決於 Firebase Realtime DB / WebRTC 的極限。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 方案三 Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon-box icon-s3">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="card-title">
+                        <h2>方案三：專屬 WebSocket 伺服器</h2>
+                        <p>Dedicated CRDT Server</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-bullseye"></i> 核心目標</h3>
+                    <p class="text-muted">解決「CRDT 歷史累積與網路廣播」問題。由伺服器在背景執行垃圾回收 (GC)，壓縮歷史紀錄並集中派發資料。</p>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-check-circle text-success"></i> 優點 (Pros)</h3>
+                    <ul class="list pro">
+                        <li><i class="fas fa-check"></i> <strong>徹底解決效能極限：</strong> 伺服器會定期清理無用的歷史節點，前端永遠只會拿到乾淨、輕量的最終狀態。</li>
+                        <li><i class="fas fa-check"></i> <strong>支援大型連線：</strong> 突破 WebRTC 與 Firebase 限制，支援 50+ 人同時在線流暢共編。</li>
+                        <li><i class="fas fa-check"></i> <strong>權限與驗證：</strong> 可以在伺服器端驗證每一筆寫入，防止惡意竄改資料。</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-times-circle text-danger"></i> 缺點 (Cons)</h3>
+                    <ul class="list con">
+                        <li><i class="fas fa-times"></i> <strong>開發難度高：</strong> 需要建置 Node.js 後端，處理斷線重連、房間生命週期與內存管理。</li>
+                        <li><i class="fas fa-times"></i> <strong>維運成本高：</strong> 伺服器若當機，所有人的協作會立刻中斷。</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-wrench"></i> 具體開發工具與技術棧</h3>
+                    <div class="tag-container">
+                        <span class="tag"><i class="fab fa-node-js text-green-500"></i> y-websocket (官方基礎)</span>
+                        <span class="tag"><i class="fas fa-layer-group text-purple-400"></i> Hocuspocus (Tiptap 企業級)</span>
+                        <span class="tag"><i class="fas fa-bolt text-yellow-400"></i> Liveblocks (全託管免自建)</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-chart-line"></i> 額外比較面向</h3>
+                    <ul class="list text-muted" style="font-size: 0.9rem;">
+                        <li><strong>💰 成本預估：</strong> 中高。至少需要租用 VPS (如 EC2, Zeabur)，每月 $10~$50 美金起跳。若用 Liveblocks 等託管服務則按用量計費。</li>
+                        <li><strong>🔌 離線支援：</strong> 需小心處理。離線時的修改在重新連線後，需與伺服器進行合併 (Merge) 解決衝突。</li>
+                        <li><strong>👥 承載人數：</strong> 極高 (50+人)。伺服器集中派發，前端無網路廣播壓力。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="verdict">
+            <h2><i class="fas fa-balance-scale"></i> 最終綜合建議 (Verdict)</h2>
+            <p style="margin-bottom: 1rem;">在您的編輯器情境中，由於<strong>「圖片與 PDF」是產生龐大 Payload 的絕對主因</strong>，我強烈建議優先導入 <strong>【方案二：外部雲端儲存】</strong>。</p>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">方案二可以用最低的開發與維護成本，解決 99% 迫在眉睫的當機與卡頓問題。</p>
+            <p style="color: var(--text-muted);">只有當您的用戶群成長到「純粹打字與畫表格，也能因為連續編輯好幾小時而卡頓」，或者需要單一房間內 20 人以上同時協作時，才需要考慮投入重金與人力開發 <strong>【方案三：專屬伺服器】</strong>。</p>
+        </div>
+    </div>
+</body>
+</html>

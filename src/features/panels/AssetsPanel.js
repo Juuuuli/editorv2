@@ -1,4 +1,6 @@
+import { fabric } from 'fabric';
 import AssetsManager from './AssetsManager.js';
+import FirebaseProvider from '../collaboration/FirebaseProvider.js';
 
 export default class AssetsPanel {
     constructor(canvasEngine, eventBus) {
@@ -44,16 +46,26 @@ export default class AssetsPanel {
                 inputUpload.click();
             });
 
-            inputUpload.addEventListener('change', (e) => {
+            inputUpload.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = async (event) => {
-                        const dataUrl = event.target.result;
-                        await this.assetsManager.saveAsset(dataUrl);
+                    this.eventBus.emit('LOADING:START', { message: '上傳素材至雲端...' });
+                    try {
+                        const downloadUrl = await FirebaseProvider.uploadAsset(file, file.name);
+                        await this.assetsManager.saveAsset(downloadUrl);
                         this.loadAssets();
-                    };
-                    reader.readAsDataURL(file);
+                    } catch (err) {
+                        console.error('素材上傳失敗:', err);
+                        // 退回本地 Base64 處理
+                        const reader = new FileReader();
+                        reader.onload = async (event) => {
+                            const dataUrl = event.target.result;
+                            await this.assetsManager.saveAsset(dataUrl);
+                            this.loadAssets();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                    this.eventBus.emit('LOADING:END');
                 }
                 // 清空 input，允許重複上傳相同檔案
                 e.target.value = '';

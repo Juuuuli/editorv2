@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>現有主題指令與新規範比較分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #1c2738; color: #c4cdda; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; }
+        .hairline-border { border: 0.5px solid rgba(255, 255, 255, 0.1); }
+        .card { background-color: #28344a; border: 0.5px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+        h1, h2, h3 { color: #ffffff; }
+        pre { background-color: #0f172a; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; border: 0.5px solid rgba(255,255,255,0.1); color: #c4cdda;}
+        .note { border-left: 3px solid #3b82f6; background-color: #1e3a8a; color: #bfdbfe; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 24px; }
+    </style>
+</head>
+<body class="p-8 max-w-4xl mx-auto">
+
+    <header class="mb-10 border-b border-white/10 pb-6">
+        <h1 class="text-3xl font-bold mb-2">📊 系統風格指令比較與改進分析</h1>
+        <p class="text-[#7d8aa0]">針對 `src/themes` 現有 Agent 指令與 `Downloads/style` 規範的深度剖析</p>
+    </header>
+
+    <div class="note">
+        <strong>分析目的：</strong>檢視目前專案中針對 Agent 設計的「風格指令 (Directives)」，找出與新版「高密度後台設計系統」的落差，並具體說明現有指令應如何升級，最後產出一份全新的「深色專業風格指令」草案供參考。
+    </div>
+
+    <main>
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-2">🔍</span> 1. 兩份資料的根本差異與改進點</h2>
+            
+            <div class="card">
+                <h3 class="text-lg font-bold mb-2 text-white">現有 `src/themes` 指令的現況</h3>
+                <p class="mb-4 text-sm">目前的指令（如 <code>auth-modal/風格指令.md</code>、<code>pro-slate/風格指令.md</code>）主要是<strong>「視覺屬性 (Visual Tokens) 的映射字典」</strong>。它們非常盡責地告訴 Agent 在不同主題下該用什麼色碼、多少 px 的邊框、哪種 box-shadow。這讓系統能輕易切換「皮膚 (Skin)」。</p>
+                
+                <h3 class="text-lg font-bold mb-2 text-white mt-6">新規範 `Downloads/style` 的層次</h3>
+                <p class="mb-4 text-sm">新規範不只是換皮，它是一套<strong>「使用者體驗 (UX) 與互動框架」</strong>。它規定了「層級式操作 (列表 ➔ 抽屜)」、「0.5px 極細邊框的克制」、「全面禁用卡片陰影」、「Note 提示框的防呆說明」。</p>
+
+                <h3 class="text-lg font-bold mb-2 text-[#34d399] mt-6">💡 現有指令可改進的地方</h3>
+                <ul class="list-disc pl-5 space-y-2 text-sm">
+                    <li><strong>加入 UX 互動約束</strong>：目前的風格指令完全沒提到 Modal 還是 Drawer，這會導致 Agent 在新增功能時，隨意創造全螢幕彈窗或把一堆表單塞在同一頁。必須在所有 <code>風格指令.md</code> 補上「互動慣例（列表進抽屜）」。</li>
+                    <li><strong>修改邊框與陰影的底層邏輯</strong>：目前的 <code>dark-geek</code> 和 <code>light</code> 都大量依賴陰影。我們應該修改這些指令，強制規定「陰影僅限浮層」，並將邊框粗細統一收斂至 <code>0.5px</code>（或 Tailwind 的 <code>border-opacity</code> 來模擬）。</li>
+                    <li><strong>統一語意色</strong>：目前的指令讓主按鈕顏色隨主題變來變去。應在總綱規定「綠色永遠是成功/完成」，確保系統語意一致。</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-2">📝</span> 2. 產出示範：深色專業風格指令草案</h2>
+            <p class="mb-4 text-sm text-[#7d8aa0]">以下是我融合 <code>Downloads/style</code> 精神，並仿照您現有的 <code>風格指令.md</code> 格式，所撰寫的「深色專業後台 (Pro Dark)」風格指令。若您覺得合適，這份指令可以直接存成 <code>src/themes/pro-dark/風格指令.md</code> 讓未來 Agent 遵循。</p>
+
+            <pre><code># 🌙 深色專業後台 (Pro Dark Backend) 風格指令
+
+## 1. 模組定位與設計哲學
+- **核心定位**：高資料密度、零干擾、高度專業的深色管理後台。
+- **設計哲學**：捨棄 `dark-geek` 的霓虹炫光與厚重陰影。全面採用 **0.5px 半透明邊框**來分層，並使用暖色調的深藍灰（`#1c2738`）降低長時間工作的視覺疲勞。畫面絕對扁平，陰影僅保留給浮出抽屜（Drawer）與彈窗（Modal）。
+
+---
+
+## 2. 色彩調色盤 (Design Tokens)
+
+| Token 名稱 | Hex 色碼 / 設定 | 用途說明 |
+| :--- | :--- | :--- |
+| `--bg-app` | `#1c2738` | 全域最深底色（側欄與主背景） |
+| `--bg-surface` | `#28344a` | 卡片、表格、區塊的背景色 |
+| `--border-hairline` | `rgba(255,255,255,0.1)` | **0.5px** 極細分割線（絕對禁用 1px 以上實線） |
+| `--accent-primary` | `#f8f7f4` | 主要按鈕背景（暖白色），文字配黑色 |
+| `--status-green` | `#3B6D11` | 成功、完成狀態（禁止用於一般操作按鈕） |
+| `--status-amber` | `#854F0B` | 警告、進行中、需注意 |
+| `--text-main` | `#c4cdda` | 主要內容文字 |
+| `--text-muted` | `#7d8aa0` | 輔助說明、次要文字 |
+
+---
+
+## 3. 核心視覺與互動準則 (嚴格遵守)
+
+### 3.1 視覺克制 (Anti-Glow & Anti-Shadow)
+- **零陰影原則**：卡片、按鈕、表格**絕對不可有 `box-shadow`**。層級僅依靠 `bg-surface` 與 `border-hairline` 區分。
+- **極細邊框**：所有元件邊框強制 `border-width: 0.5px`，顏色套用 `--border-hairline`。
+
+### 3.2 互動架構 (UX Patterns)
+- **層級式操作**：第一層頁面**僅顯示列表**。點擊列表列時，一律從**右側滑出抽屜 (Drawer)** 顯示詳細設定。
+- **彈窗限制**：Modal 僅限用於「單次新增」或「破壞性確認 (如刪除)」，嚴禁將複雜表單放入 Modal。
+
+### 3.3 Note 提示框 (防呆與取捨說明)
+遇到系統限制或破壞性操作，必須使用 Note 提示框。
+- 樣式：左側 `3px solid --status-amber` 實心邊條，背景微亮，文字使用對應狀態色。
+- 內容：講因果不只講規則（例如：「因為 A，若改成 B 會導致 C」）。
+
+---
+
+## 4. CSS 擴充與選擇器準則
+- 所有此主題專屬樣式掛載在 `[data-theme="pro-dark"]` 作用域下。
+- 使用 `!important` 確保強制覆蓋原有厚重的 `sketch-*` 或 Tailwind 的陰影/邊框類別。</code></pre>
+        </section>
+    </main>
+
+</body>
+</html>
