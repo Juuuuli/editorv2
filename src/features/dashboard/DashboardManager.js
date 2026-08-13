@@ -52,7 +52,15 @@ export default class DashboardManager {
         // 監聽登入成功事件，若之前有未處理的 Deep Link 則在此執行
         if (this.eventBus) {
             this.eventBus.on('AUTH:LOGIN_SUCCESS', () => {
-                this.handleInitialRouting();
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlProjectId = urlParams.get('project') || urlParams.get('projectId');
+                if (urlProjectId) {
+                    // 有專案 ID → 嘗試 Deep Link 直通
+                    this.handleInitialRouting();
+                } else {
+                    // 無專案 ID → 確保 Dashboard 顯示
+                    this.showDashboard();
+                }
             });
         }
 
@@ -122,6 +130,16 @@ export default class DashboardManager {
                 this.showAutoSaveFeedback('專案資料同步完成，已加入協作！');
             }
         });
+    }
+
+    /**
+     * 顯示 Dashboard 覆蓋層（供登入成功或登出後呼叫）
+     */
+    showDashboard() {
+        if (!this.dashboardContainer) return;
+        this.dashboardContainer.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+        this.dashboardContainer.style.display = '';
+        this.loadProjects();
     }
 
     createDashboardDOM() {

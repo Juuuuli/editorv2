@@ -218,6 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
         await dashboardManager.closeProjectToDashboard(true);
         // 清除 viewer-mode，等待下一次登入重新判定
         document.body.classList.remove('viewer-mode');
+        // 明確確保 Dashboard 顯示出來
+        dashboardManager.showDashboard();
     });
 
     // ★ 監聽登入成功事件：根據新帳號角色重新套用 viewer-mode
