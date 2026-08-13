@@ -25,6 +25,16 @@ export default class PresenceManager {
         this.onlinePeers = new Map(); // peerId -> peerData
         this.currentRoomId = null;
 
+        if (this.eventBus) {
+            this.eventBus.on('COLLAB:CONNECT_ROOM', (data) => {
+                if (data && data.isGuest === false) {
+                    if (this.localUser.role !== 'admin') {
+                        this.updateLocalUser(null, 'admin');
+                    }
+                }
+            });
+        }
+
         console.log(`[PresenceManager] 本地使用者 Presence 建立: ${this.localUser.name} (${this.localUser.color.bg})`);
     }
 

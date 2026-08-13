@@ -875,7 +875,7 @@ export default class DashboardManager {
         if (this.eventBus) {
             const urlParams = new URLSearchParams(window.location.search);
             const roomId = urlParams.get('room') || null;
-            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || project.id });
+            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || project.id, isGuest: false });
         }
 
         // 更新 Header 專案標題
