@@ -212,14 +212,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupSidebarToggles();
 
-    // ★ 監聽登出事件：強制關閉 Editor 並返回 Dashboard，清除 viewer-mode
-    eventBus.on('AUTH:LOGOUT', async () => {
-        // 強制關閉專案（不更新路由，避免殘留 ?project= 在 URL）
-        await dashboardManager.closeProjectToDashboard(true);
-        // 清除 viewer-mode，等待下一次登入重新判定
-        document.body.classList.remove('viewer-mode');
-        // 明確確保 Dashboard 顯示出來
-        dashboardManager.showDashboard();
+    // ★ 監聽登出事件：導向 base URL 並強制重新整理，確保清除所有狀態
+    eventBus.on('AUTH:LOGOUT', () => {
+        // 清除 URL 中的 project/room 參數，重新整理頁面回儀表板
+        window.location.href = window.location.origin + window.location.pathname;
     });
 
     // ★ 監聽登入成功事件：根據新帳號角色重新套用 viewer-mode
