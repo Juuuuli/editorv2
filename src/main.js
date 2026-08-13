@@ -211,4 +211,21 @@ document.addEventListener('DOMContentLoaded', () => {
     projectRouter.init();
 
     setupSidebarToggles();
+
+    // ★ 監聽登出事件：強制關閉 Editor 並返回 Dashboard，清除 viewer-mode
+    eventBus.on('AUTH:LOGOUT', async () => {
+        // 強制關閉專案（不更新路由，避免殘留 ?project= 在 URL）
+        await dashboardManager.closeProjectToDashboard(true);
+        // 清除 viewer-mode，等待下一次登入重新判定
+        document.body.classList.remove('viewer-mode');
+    });
+
+    // ★ 監聽登入成功事件：根據新帳號角色重新套用 viewer-mode
+    eventBus.on('AUTH:LOGIN_SUCCESS', (user) => {
+        if (user && user.role === 'viewer') {
+            document.body.classList.add('viewer-mode');
+        } else {
+            document.body.classList.remove('viewer-mode');
+        }
+    });
 });
