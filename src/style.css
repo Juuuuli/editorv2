@@ -102,9 +102,15 @@
 /* Viewer Mode Restrictions */
 body.viewer-mode #panel-tools,
 body.viewer-mode #btn-import-project,
+body.viewer-mode #btn-export-dropdown,
 body.viewer-mode #btn-undo,
 body.viewer-mode #btn-redo,
-body.viewer-mode #floating-tools-container {
+body.viewer-mode #floating-tools-container,
+body.viewer-mode .sketch-header-group,
+body.viewer-mode #current-project-title-display,
+body.viewer-mode #btn-add-page,
+body.viewer-mode .copy-page-btn,
+body.viewer-mode .delete-page-btn {
     pointer-events: none !important;
     opacity: 0.5 !important;
 }
