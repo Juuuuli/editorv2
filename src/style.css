@@ -4,6 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom z-index overrides to ensure they are never purged */
+.z-\[60\] { z-index: 60 !important; }
+.z-\[70\] { z-index: 70 !important; }
+.z-\[100\] { z-index: 100 !important; }
+.z-\[120\] { z-index: 120 !important; }
+.z-\[9990\] { z-index: 9990 !important; }
+.z-\[9998\] { z-index: 9998 !important; }
+.z-\[9999\] { z-index: 9999 !important; }
+.z-\[10000\] { z-index: 10000 !important; }
+
 @layer base {
   body {
     font-family: 'Noto Sans TC', sans-serif;
@@ -105,7 +115,7 @@ body.viewer-mode #btn-import-project,
 body.viewer-mode #btn-export-dropdown,
 body.viewer-mode #btn-undo,
 body.viewer-mode #btn-redo,
-body.viewer-mode #floating-tools-container,
+body.viewer-mode #btn-tool-layers,
 body.viewer-mode .sketch-header-group,
 body.viewer-mode #current-project-title-display,
 body.viewer-mode #btn-add-page,
