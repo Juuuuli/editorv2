@@ -171,8 +171,8 @@ export default class DashboardManager {
 
                     <!-- 右：搜尋 + 按鈕群 + 使用者頭像 (頭像永遠顯示) -->
                     <div id="dashboard-header-right" class="flex items-center gap-2 sm:gap-3 shrink-0">
-                        <!-- 搜尋列：sm以下隱藏（移至第二行） -->
-                        <div class="relative items-center hidden sm:flex">
+                        <!-- 搜尋列：lg以下隱藏（移至第二行） -->
+                        <div class="relative items-center hidden lg:flex">
                             <i class="fas fa-search absolute left-3 text-slate-400 text-xs pointer-events-none"></i>
                             <input type="text" id="dashboard-search-input" class="w-28 md:w-48 lg:w-60 bg-slate-100 border border-slate-300 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:w-40 md:focus:w-56 transition-all duration-200" placeholder="搜尋專案...">
                         </div>
@@ -207,8 +207,8 @@ export default class DashboardManager {
                     </div>
                 </div>
 
-                <!-- 次要行：sm以下顯示搜尋列 -->
-                <div class="flex sm:hidden px-4 pb-3 gap-2">
+                <!-- 次要行：lg以下顯示搜尋列 -->
+                <div class="flex lg:hidden px-4 pb-3 gap-2">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                         <input type="text" id="dashboard-search-input-mobile" class="w-full bg-slate-100 border border-slate-300 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="搜尋專案...">
