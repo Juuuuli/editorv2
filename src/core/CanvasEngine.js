@@ -487,8 +487,10 @@ export default class CanvasEngine {
         // 如果有記錄該頁面的特定大小，自動調整底板
         if (this.pageSizes && this.pageSizes[pageId]) {
             this.resizeArtboard(this.pageSizes[pageId].width, this.pageSizes[pageId].height);
-            this.fitToScreen();
         }
+        
+        // 確保每次切換頁面或載入專案時，都能自動適應螢幕大小，避免 PDF 被放大
+        this.fitToScreen();
 
         // 如果有暫存資料，就將其還原到畫布上
         const savedData = this.pageStates[pageId];
@@ -641,17 +643,23 @@ export default class CanvasEngine {
         this.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
         this.canvas.renderAll();
 
-        const dataUrl = this.canvas.toDataURL({
-            left: this.artboard.left,
-            top: this.artboard.top,
-            width: this.artboard.width,
-            height: this.artboard.height,
-            multiplier: multiplier,
-            format: 'png'
-        });
-
-        this.canvas.setViewportTransform(originalVpt);
-        this.canvas.renderAll();
+        let dataUrl = null;
+        try {
+            dataUrl = this.canvas.toDataURL({
+                left: this.artboard.left,
+                top: this.artboard.top,
+                width: this.artboard.width,
+                height: this.artboard.height,
+                multiplier: multiplier,
+                format: 'png'
+            });
+        } catch (error) {
+            console.warn('無法產生縮圖 (可能是 CORS 跨域限制導致 canvas 被污染):', error);
+        } finally {
+            this.canvas.setViewportTransform(originalVpt);
+            this.canvas.renderAll();
+        }
+        
         return dataUrl;
     }
 
