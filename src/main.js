@@ -47,26 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ★ 實例化角色帳號與身分認證 (Sprint 3)
     const authManager = new AuthManager(eventBus);
 
-    // 檢查是否為僅供檢視 (Viewer) 模式，若是則套用全域 CSS class 禁用 UI 工具
-    let isViewer = false;
-    const currentUser = authManager.getCurrentUser();
-    const searchParams = new URLSearchParams(window.location.search);
-    const urlRole = searchParams.get('role');
-    
-    if (currentUser) {
-        // 若已登入，且網址強制為 viewer (非 admin)，或本身就是 viewer
-        if ((urlRole === 'viewer' && currentUser.role !== 'admin') || currentUser.role === 'viewer') {
-            isViewer = true;
-        }
-    } else {
-        // 若未登入，以 URL 參數為主
-        if (urlRole === 'viewer') isViewer = true;
-    }
-    
-    if (isViewer) {
-        document.body.classList.add('viewer-mode');
-    }
-
     // ★ 實例化多人共編與專案分享前置模組 (v1.5.0) 將在 CanvasEngine 之後實例化
     // 綁定 Loading UI
     const loadingOverlay = document.getElementById('loading-overlay');
@@ -162,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeManager = new ThemeManager(eventBus);
 
     // ★ 實例化專案儲存引擎與專案檔案儀表板 (Sprint 1)
-    const storageEngine = new ProjectStorageEngine();
+    const storageEngine = new ProjectStorageEngine(authManager);
     const dashboardManager = new DashboardManager(storageEngine, eventBus, canvasEngine, workspaceManager);
 
     // ★ 側邊欄展開 / 收合邏輯與畫布自適應更新
@@ -221,17 +201,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = window.location.origin + window.location.pathname;
     });
 
-    // ★ 監聽登入成功事件：根據新帳號角色重新套用 viewer-mode
+    // ★ 監聽登入成功事件：此處不再寫死 viewer-mode，改由專案層級判定
     eventBus.on('AUTH:LOGIN_SUCCESS', (user) => {
-        const currentUrlRole = new URLSearchParams(window.location.search).get('role');
-        if (user) {
-            if ((currentUrlRole === 'viewer' && user.role !== 'admin') || user.role === 'viewer') {
-                document.body.classList.add('viewer-mode');
-            } else {
-                document.body.classList.remove('viewer-mode');
-            }
-        } else {
-            document.body.classList.remove('viewer-mode');
-        }
+        // 登入後可視需求自動重新整理或留在首頁
     });
 });

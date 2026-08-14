@@ -5,7 +5,8 @@
  */
 
 export default class ProjectStorageEngine {
-    constructor() {
+    constructor(authManager = null) {
+        this.authManager = authManager;
         this.dbName = 'EditorV2_ProjectsDB';
         this.storeName = 'projects';
         this.dbVersion = 1;
@@ -52,6 +53,15 @@ export default class ProjectStorageEngine {
 
             request.onsuccess = () => {
                 const projects = request.result || [];
+                let currentUserId = 'unknown';
+                if (this.authManager && this.authManager.getCurrentUser()) {
+                    currentUserId = this.authManager.getCurrentUser().id;
+                }
+                
+                projects.forEach(p => {
+                    if (!p.ownerId) p.ownerId = currentUserId; // 相容舊專案
+                });
+                
                 // 依 updatedAt 排序 (新 -> 舊)
                 projects.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
                 resolve(projects);
@@ -71,7 +81,17 @@ export default class ProjectStorageEngine {
             const store = transaction.objectStore(this.storeName);
             const request = store.get(id);
 
-            request.onsuccess = () => resolve(request.result || null);
+            request.onsuccess = () => {
+                const project = request.result || null;
+                if (project && !project.ownerId) {
+                    let currentUserId = 'unknown';
+                    if (this.authManager && this.authManager.getCurrentUser()) {
+                        currentUserId = this.authManager.getCurrentUser().id;
+                    }
+                    project.ownerId = currentUserId;
+                }
+                resolve(project);
+            };
             request.onerror = () => reject(request.error);
         });
     }
@@ -120,8 +140,14 @@ export default class ProjectStorageEngine {
             pageObjects = this.generateTemplateObjects(template, width, height, name);
         }
 
+        let ownerId = 'unknown';
+        if (this.authManager && this.authManager.getCurrentUser()) {
+            ownerId = this.authManager.getCurrentUser().id;
+        }
+
         const newProject = {
             id,
+            ownerId,
             name,
             type,
             dimension: { width, height, ratio },
@@ -390,6 +416,13 @@ export default class ProjectStorageEngine {
 
         clonedProject.id = newId;
         clonedProject.name = `${source.name} (副本)`;
+        
+        let currentUserId = 'unknown';
+        if (this.authManager && this.authManager.getCurrentUser()) {
+            currentUserId = this.authManager.getCurrentUser().id;
+        }
+        clonedProject.ownerId = currentUserId;
+        
         clonedProject.createdAt = Date.now();
         clonedProject.updatedAt = Date.now();
 
@@ -477,8 +510,14 @@ export default class ProjectStorageEngine {
                     const cleanName = file.name.replace(/\.(editorproj|json)$/i, '');
 
                     // 補齊缺失欄位
+                    let currentUserId = 'unknown';
+                    if (this.authManager && this.authManager.getCurrentUser()) {
+                        currentUserId = this.authManager.getCurrentUser().id;
+                    }
+
                     const newProject = {
                         id: 'proj_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+                        ownerId: currentUserId,
                         name: project.name ? `${project.name} (匯入)` : `${cleanName} (匯入)`,
                         type: project.type || (pageIds.length > 1 ? 'PDF' : 'IMAGE'),
                         dimension: project.dimension || {

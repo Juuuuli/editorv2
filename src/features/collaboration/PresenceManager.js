@@ -27,10 +27,18 @@ export default class PresenceManager {
 
         if (this.eventBus) {
             this.eventBus.on('COLLAB:CONNECT_ROOM', (data) => {
-                if (data && data.isGuest === false) {
-                    if (this.localUser.role !== 'admin') {
-                        this.updateLocalUser(null, 'admin');
+                if (data && data.isOwner) {
+                    this.updateLocalUser(null, 'admin'); // Owner is always admin in this project
+                } else if (data && data.isOwner === false) {
+                    const urlRole = new URLSearchParams(window.location.search).get('role');
+                    const currentUser = this.authManager ? this.authManager.getCurrentUser() : null;
+                    let newRole = 'editor';
+                    if (urlRole === 'viewer' && (!currentUser || currentUser.role !== 'admin')) {
+                        newRole = 'viewer';
+                    } else if (urlRole === 'editor') {
+                        newRole = 'editor';
                     }
+                    this.updateLocalUser(null, newRole);
                 }
             });
         }
@@ -56,19 +64,22 @@ export default class PresenceManager {
             }
         }
 
-        // 隨機選取顏色
-        const color = PRESENCE_COLORS[Math.floor(Math.random() * PRESENCE_COLORS.length)];
-        const randomId = 'user_' + Math.random().toString(36).substring(2, 9);
-        const name = authUser ? (authUser.name || authUser.username) : `協作者 ${Math.floor(1000 + Math.random() * 9000)}`;
-        
-        let role = urlRole;
+        // 決定初始角色 (稍後 COLLAB:CONNECT_ROOM 觸發時會依據 isOwner 再進行精確修正)
+        let role = 'editor';
         if (authUser) {
             if (urlRole === 'viewer' && authUser.role !== 'admin') {
                 role = 'viewer';
             } else {
-                role = authUser.role;
+                role = authUser.role === 'admin' ? 'admin' : 'editor';
             }
+        } else {
+            role = urlRole;
         }
+
+        // 隨機選取顏色
+        const color = PRESENCE_COLORS[Math.floor(Math.random() * PRESENCE_COLORS.length)];
+        const randomId = 'user_' + Math.random().toString(36).substring(2, 9);
+        const name = authUser ? (authUser.name || authUser.username) : `協作者 ${Math.floor(1000 + Math.random() * 9000)}`;
 
         return {
             id: randomId,

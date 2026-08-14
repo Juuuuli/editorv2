@@ -887,6 +887,20 @@ export default class DashboardManager {
         this.currentProjectId = project.id;
         console.log(`[DashboardManager] 開啟專案: ${project.name} (${project.id})`);
 
+        // ★ 動態判定權限 (Canva 模式)
+        const currentUser = this.storageEngine.authManager ? this.storageEngine.authManager.getCurrentUser() : null;
+        const currentUserId = currentUser ? currentUser.id : 'unknown';
+        const isOwner = project.ownerId === currentUserId;
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlRole = urlParams.get('role');
+        
+        if (!isOwner && urlRole === 'viewer' && (!currentUser || currentUser.role !== 'admin')) {
+            document.body.classList.add('viewer-mode');
+        } else {
+            document.body.classList.remove('viewer-mode');
+        }
+
         // 推送專案 URL 路由並連線協作通道
         if (updateRouter && this.eventBus) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -898,7 +912,7 @@ export default class DashboardManager {
             const roomId = urlParams.get('room') || null;
             // 根據專案的 isShared 屬性來判斷是否為客端
             const isGuest = project.isShared === true;
-            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || project.id, isGuest: isGuest });
+            this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId: project.id, roomId: roomId || project.id, isGuest: isGuest, isOwner: isOwner });
         }
 
         // 更新 Header 專案標題
