@@ -269,7 +269,7 @@ export default class ShareModal {
         const shareLinkBlock = this.modalContainer.querySelector('#collab-share-link-block');
         const roleSelectorBlock = this.modalContainer.querySelector('#collab-role-selector-block');
         
-        if (role === 'admin') {
+        if (role === 'owner') {
             if (shareLinkBlock) shareLinkBlock.style.display = 'block';
             if (roleSelectorBlock) roleSelectorBlock.style.display = 'block';
         } else {
