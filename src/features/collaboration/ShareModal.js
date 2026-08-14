@@ -309,7 +309,7 @@ export default class ShareModal {
                     </div>
                     <div class="flex items-center space-x-1.5">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span class="text-[11px] text-slate-500 font-medium">${user.role === 'admin' ? '擁有者' : (user.role === 'editor' ? '編輯者' : '檢視者')}</span>
+                        <span class="text-[11px] text-slate-500 font-medium">${user.role === 'owner' ? '擁有者' : (user.role === 'editor' ? '編輯者' : '檢視者')}</span>
                     </div>
                 </div>
             `;

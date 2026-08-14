@@ -28,15 +28,12 @@ export default class PresenceManager {
         if (this.eventBus) {
             this.eventBus.on('COLLAB:CONNECT_ROOM', (data) => {
                 if (data && data.isOwner) {
-                    this.updateLocalUser(null, 'admin'); // Owner is always admin in this project
+                    this.updateLocalUser(null, 'owner'); // 專案擁有者
                 } else if (data && data.isOwner === false) {
                     const urlRole = new URLSearchParams(window.location.search).get('role');
-                    const currentUser = this.authManager ? this.authManager.getCurrentUser() : null;
                     let newRole = 'editor';
-                    if (urlRole === 'viewer' && (!currentUser || currentUser.role !== 'admin')) {
+                    if (urlRole === 'viewer') {
                         newRole = 'viewer';
-                    } else if (urlRole === 'editor') {
-                        newRole = 'editor';
                     }
                     this.updateLocalUser(null, newRole);
                 }
@@ -65,16 +62,7 @@ export default class PresenceManager {
         }
 
         // 決定初始角色 (稍後 COLLAB:CONNECT_ROOM 觸發時會依據 isOwner 再進行精確修正)
-        let role = 'editor';
-        if (authUser) {
-            if (urlRole === 'viewer' && authUser.role !== 'admin') {
-                role = 'viewer';
-            } else {
-                role = authUser.role === 'admin' ? 'admin' : 'editor';
-            }
-        } else {
-            role = urlRole;
-        }
+        let role = urlRole === 'viewer' ? 'viewer' : 'editor';
 
         // 隨機選取顏色
         const color = PRESENCE_COLORS[Math.floor(Math.random() * PRESENCE_COLORS.length)];

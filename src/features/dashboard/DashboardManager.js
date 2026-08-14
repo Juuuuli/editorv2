@@ -895,7 +895,8 @@ export default class DashboardManager {
         const urlParams = new URLSearchParams(window.location.search);
         const urlRole = urlParams.get('role');
         
-        if (!isOwner && urlRole === 'viewer' && (!currentUser || currentUser.role !== 'admin')) {
+        // 只要不是擁有者，且網址指定 viewer，就鎖定為檢視模式 (不再特權放行系統 admin)
+        if (!isOwner && urlRole === 'viewer') {
             document.body.classList.add('viewer-mode');
         } else {
             document.body.classList.remove('viewer-mode');
