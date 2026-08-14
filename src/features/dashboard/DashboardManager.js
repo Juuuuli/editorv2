@@ -406,6 +406,8 @@ export default class DashboardManager {
             this.eventBus.on('ROUTER:DASHBOARD_REQUESTED', async () => {
                 if (this.currentProjectId) {
                     await this.closeProjectToDashboard(false);
+                } else {
+                    this.showDashboard();
                 }
             });
 
