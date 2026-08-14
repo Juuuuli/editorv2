@@ -50,14 +50,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // 檢查是否為僅供檢視 (Viewer) 模式，若是則套用全域 CSS class 禁用 UI 工具
     let isViewer = false;
     const currentUser = authManager.getCurrentUser();
+    const searchParams = new URLSearchParams(window.location.search);
+    const urlRole = searchParams.get('role');
     
     if (currentUser) {
-        // 若已登入，以帳號權限為主
-        if (currentUser.role === 'viewer') isViewer = true;
+        // 若已登入，且網址強制為 viewer (非 admin)，或本身就是 viewer
+        if ((urlRole === 'viewer' && currentUser.role !== 'admin') || currentUser.role === 'viewer') {
+            isViewer = true;
+        }
     } else {
         // 若未登入，以 URL 參數為主
-        const searchParams = new URLSearchParams(window.location.search);
-        if (searchParams.get('role') === 'viewer') isViewer = true;
+        if (urlRole === 'viewer') isViewer = true;
     }
     
     if (isViewer) {
@@ -220,8 +223,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ★ 監聽登入成功事件：根據新帳號角色重新套用 viewer-mode
     eventBus.on('AUTH:LOGIN_SUCCESS', (user) => {
-        if (user && user.role === 'viewer') {
-            document.body.classList.add('viewer-mode');
+        const currentUrlRole = new URLSearchParams(window.location.search).get('role');
+        if (user) {
+            if ((currentUrlRole === 'viewer' && user.role !== 'admin') || user.role === 'viewer') {
+                document.body.classList.add('viewer-mode');
+            } else {
+                document.body.classList.remove('viewer-mode');
+            }
         } else {
             document.body.classList.remove('viewer-mode');
         }
