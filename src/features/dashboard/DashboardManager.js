@@ -542,7 +542,7 @@ export default class DashboardManager {
         if (btnCancelCreate) btnCancelCreate.addEventListener('click', closeModal);
 
         // 選擇模板卡片
-        let selectedTemplate = 'pdf_16_9';
+        let selectedTemplate = 'image_16_9';
         const templateCards = this.dashboardContainer.querySelectorAll('.template-card');
         templateCards.forEach(card => {
             card.addEventListener('click', () => {

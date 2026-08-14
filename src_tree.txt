@@ -1,0 +1,177 @@
+列出磁碟區 OS 的資料夾 PATH
+磁碟區序號為 0000029C CCB7:A25F
+C:\EDITORV2\SRC
+|   main.js
+|   style.css
+|   style.css.bak
+|   
++---assets
++---config
+|       firebase.js
+|       
++---core
+|       AIProviderAdapter.js
+|       CanvasEngine.js
+|       canvas_engine_規則v0.md
+|       canvas_engine_規格書v0.md
+|       history_manager_規則v0.md
+|       history_manager_規格書v0.md
+|       ProjectRouter.js
+|       storage_manager_規則v0.md
+|       
++---features
+|   +---assets
+|   |       assets_規則v0.md
+|   |       
+|   +---auth
+|   |   |   AuthManager.js
+|   |   |   AuthManager.js.bak
+|   |   |   auth_規則v0.md
+|   |   |   auth_規格書v0.md
+|   |   |   
+|   |   \---components
+|   +---canvas_auxiliary
+|   |       index.js
+|   |       RetinaRenderer.js
+|   |       SmartGuides.js
+|   |       
+|   +---collaboration
+|   |       CollabChannel.js
+|   |       CollabEngine.js
+|   |       FirebaseProvider.js
+|   |       index.js
+|   |       MultiplayerCursorOverlay.js
+|   |       ObjectLeaseManager.js
+|   |       PresenceManager.js
+|   |       README.md
+|   |       ShareModal.js
+|   |       YjsAdapter.js
+|   |       
+|   +---dashboard
+|   |       DashboardManager.js
+|   |       dashboard_規則v0.md
+|   |       專案檔案管理_規則v1.md
+|   |       
+|   +---floating_tools
+|   |       FloatingToolsManager.js
+|   |       floating_tools_規則v0.md
+|   |       
+|   +---layers
+|   |       layers_規則v0.md
+|   |       
+|   +---manual
+|   |       manual.css
+|   |       ManualPanel.js
+|   |       manual_規則v0.md
+|   |       
+|   +---panels
+|   |       AssetsManager.js
+|   |       AssetsPanel.js
+|   |       LayersPanel.js
+|   |       PanelManager.js
+|   |       panels_規則v0.md
+|   |       PropertiesPanel.js
+|   |       
+|   +---properties
+|   |       properties_規則v0.md
+|   |       properties_規格書v0.md
+|   |       
+|   +---storage
+|   |       ProjectStorageEngine.js
+|   |       storage_規則v0.md
+|   |       
+|   +---system
+|   |       ContextualHelper.js
+|   |       system_規則v0.md
+|   |       
+|   +---theme
+|   |       ThemeManager.js
+|   |       theme_規則v0.md
+|   |       
+|   +---thumbnails
+|   |       ThumbnailsPanel.js
+|   |       thumbnails_規則v0.md
+|   |       thumbnails_規格書v0.md
+|   |       
+|   +---tools
+|   |   +---basic
+|   |   |       BasicTools.js
+|   |   |       basic_tools_規則v0.md
+|   |   |       basic_tools_規格書v0.md
+|   |   |       
+|   |   +---objects
+|   |   |       ObjectsTools.js
+|   |   |       objects_tools_規則v0.md
+|   |   |       tableBuilder.js
+|   |   |       
+|   |   +---shared
+|   |   |       KeyboardShortcuts.js
+|   |   |       shared_tools_規則v0.md
+|   |   |       
+|   |   \---smart
+|   |           SmartTools.js
+|   |           smart_tools_規則v0.md
+|   |           smart_tools_規格書v0.md
+|   |           
+|   +---vault
+|   |       ApiVaultManager.js
+|   |       README.md
+|   |       
+|   \---workspace
+|           ExportManager.js
+|           FileImportManager.js
+|           RatioManager.js
+|           WorkspaceManager.js
+|           workspace_規則v0.md
+|           workspace_規格書v0.md
+|           
++---shared
+|       api_client_規則v0.md
+|       EventBus.js
+|       keyboard_shortcuts_規則v0.md
+|       
+\---themes
+    |   index.css
+    |   風格指令.md
+    |   風格指令v2.md
+    |   
+    +---auth-modal
+    |       auth-modal.css
+    |       風格指令.md
+    |       風格指令v2.md
+    |       風格指令v3.md
+    |       
+    +---dark-geek
+    |       dark-geek.css
+    |       風格指令.md
+    |       風格指令v2.md
+    |       風格指令v3.md
+    |       風格指令v4.md
+    |       
+    +---light-sketch
+    |       light-sketch.css
+    |       風格指令.md
+    |       風格指令v2.md
+    |       風格指令v3.md
+    |       風格指令v4.md
+    |       
+    +---pro-slate
+    |       pro-slate.css
+    |       風格指令.md
+    |       風格指令v2.md
+    |       風格指令v3.md
+    |       風格指令v4.md
+    |       
+    +---retro-warm
+    |       retro-warm.css
+    |       風格指令.md
+    |       風格指令v2.md
+    |       風格指令v3.md
+    |       風格指令v4.md
+    |       
+    \---settings-modal
+            settings-modal.css
+            風格指令.md
+            風格指令v2.md
+            風格指令v3.md
+            
