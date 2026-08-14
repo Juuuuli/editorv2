@@ -222,6 +222,13 @@ export default class AuthManager {
     }
 
     /**
+     * 取得當前登入的使用者
+     */
+    getCurrentUser() {
+        return this.currentUser;
+    }
+
+    /**
      * 取得所有註冊使用者清單
      */
     getAllUsers() {
