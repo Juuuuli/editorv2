@@ -1176,7 +1176,7 @@ export default class DashboardManager {
                 scaleX: 1,
                 scaleY: 1,
                 src: finalSrc,
-                crossOrigin: 'anonymous',
+                // crossOrigin: 'anonymous', // 移除以避免 Firebase CORS 政策導致圖片完全無法載入
                 selectable: false,
                 evented: false,
                 hasControls: false,
@@ -1265,7 +1265,7 @@ export default class DashboardManager {
                                     scaleX: 1,
                                     scaleY: 1,
                                     src: finalSrc,
-                                    crossOrigin: 'anonymous',
+                                    // crossOrigin: 'anonymous', // 移除以避免 Firebase CORS 政策導致圖片完全無法載入
                                     selectable: false,
                                     evented: false,
                                     hasControls: false,
