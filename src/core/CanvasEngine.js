@@ -655,6 +655,13 @@ export default class CanvasEngine {
             });
         } catch (error) {
             console.warn('無法產生縮圖 (可能是 CORS 跨域限制導致 canvas 被污染):', error);
+            // Fallback: 如果無法擷取 canvas，嘗試直接使用當前頁面的背景圖
+            if (this.pageStates && this.pageStates[this.currentPageId]) {
+                const bgImg = this.pageStates[this.currentPageId].find(o => o.type === 'image' && o.src);
+                if (bgImg && bgImg.src) {
+                    dataUrl = bgImg.src;
+                }
+            }
         } finally {
             this.canvas.setViewportTransform(originalVpt);
             this.canvas.renderAll();

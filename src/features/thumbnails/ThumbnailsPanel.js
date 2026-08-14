@@ -104,12 +104,15 @@ export default class ThumbnailsPanel {
             
             const currentActiveId = this.pages.find(p => p.active)?.id;
             
-            // 合併遠端與本地，以遠端為主，保留本地的 active 狀態
-            this.pages = pages.map(p => ({
-                id: p.id,
-                thumbnail: p.thumbnail || null,
-                active: p.id === currentActiveId
-            }));
+            // 合併遠端與本地，以遠端為主，保留本地的 active 狀態與縮圖
+            this.pages = pages.map(p => {
+                const existing = this.pages.find(ep => ep.id === p.id);
+                return {
+                    id: p.id,
+                    thumbnail: p.thumbnail || (existing ? existing.thumbnail : null),
+                    active: p.id === currentActiveId
+                };
+            });
 
             // 如果原本選中的頁面被遠端刪除了，或是目前沒有活躍頁面，預設切換到第一頁
             if (!this.pages.find(p => p.active)) {
