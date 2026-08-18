@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSelection = null;
 
     // ----- 初始化：載入並標記筆記 -----
+    const noteTooltipEl = document.createElement('div');
+    noteTooltipEl.className = 'wiki-tooltip note-tooltip'; // 共用 wiki-tooltip 的樣式
+    noteTooltipEl.style.cssText = 'max-width: 300px; white-space: pre-wrap;';
+    document.body.appendChild(noteTooltipEl);
+
     function initNotes() {
         renderNotesPanel();
         notes.forEach(note => restoreHighlight(note));
@@ -136,6 +141,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.stopPropagation();
                 openNotesPanel();
                 scrollToNote(noteId);
+            });
+
+            // 滑鼠移入顯示筆記內容 Tooltip
+            mark.addEventListener('mouseenter', (e) => {
+                const note = notes.find(n => n.id === noteId);
+                if (!note) return;
+                
+                const content = note.content.trim() || '<span style="color:var(--text-3);font-style:italic;">(空筆記，點擊以編輯)</span>';
+                noteTooltipEl.innerHTML = `<div class="tt-desc" style="font-size:13px; line-height:1.6;">${content}</div>`;
+                noteTooltipEl.classList.add('show');
+                
+                const rect = mark.getBoundingClientRect();
+                let top = rect.bottom + window.scrollY + 8;
+                let left = rect.left + window.scrollX;
+                
+                if (left + noteTooltipEl.offsetWidth > window.innerWidth - 20) {
+                    left = window.innerWidth - noteTooltipEl.offsetWidth - 20;
+                }
+                
+                noteTooltipEl.style.top = `${top}px`;
+                noteTooltipEl.style.left = `${left}px`;
+            });
+
+            mark.addEventListener('mouseleave', () => {
+                noteTooltipEl.classList.remove('show');
             });
         } catch (e) {
             console.warn("Could not highlight range (might cross HTML boundaries):", e);

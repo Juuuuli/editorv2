@@ -1210,6 +1210,17 @@ sequenceDiagram
       <i class="ti ti-alert-triangle"></i>
       <div><b>迴圈防護：</b>YjsAdapter 內部用 flag 區分「本地操作」和「遠端同步」，避免 Fabric→Yjs→Fabric 的無限迴圈。當收到遠端更新並 apply 到畫布時，會暫時忽略 Fabric 的事件。</div>
     </div>
+
+    <div class="card" style="margin-top: 15px;">
+      <div class="card-h"><i class="ti ti-tool"></i><h2>核心同步修正與防卡死機制 (v1.5)</h2></div>
+      <div class="card-sub">在近期的更新中，大幅強化了 <code>YjsAdapter</code> 與 <code>CanvasEngine</code> 的同步穩定性：</div>
+      <ol style="padding-left:20px; line-height:1.6; margin:10px 0;">
+        <li><b>解決載入時間差 (Race Condition)：</b>廢除不穩定的 <code>100ms</code> 延遲，改為嚴格監聽 <code>CANVAS:PAGE_LOADING_END</code> 事件。確保主端畫布預設內容完全渲染後，才推送至 Yjs，防止畫面被異常清空。</li>
+        <li><b>切換模式的防刪保護：</b>當 <code>CanvasEngine</code> 執行 <code>WORKSPACE:MODE_CHANGED</code> 清空畫布時，透過廣播 <code>CANVAS:PAGE_LOADING_START/END</code> 讓 YjsAdapter 暫停監聽。避免系統重置行為被 Yjs 誤判為「使用者全選刪除」而清空遠端資料。</li>
+        <li><b>防止巨型背景卡死 WebSocket：</b>在 <code>DashboardManager</code> 生成 PDF 時寫入 <code>isBackgroundTemplate: true</code> 屬性。<code>YjsAdapter</code> 在同步時會<b>徹底略過</b>此類背景物件。因客端在加入時已透過快照 (Snapshot) 取得背景，略過同步可省下數 MB 的頻寬，讓鼠標的 Awareness 封包得以即時傳輸。</li>
+        <li><b>伺服器記憶體回收：</b>後端 <code>y-websocket-server/server.js</code> 啟用 <code>{ gc: true }</code>，主動清理已刪除物件的 Tombstone，根絕 <code>out of memory</code> 崩潰。</li>
+      </ol>
+    </div>
   </div>
 
   <!-- Presence -->
@@ -1219,6 +1230,87 @@ sequenceDiagram
     <div class="card">
       <div class="card-h"><i class="ti ti-cursor-text"></i><h2>游標渲染機制</h2></div>
       <div class="card-sub"><code>CursorOverlay</code> 是一個覆蓋在 Canvas 上方的 <b>DOM 層</b>（不是畫在 Canvas 裡面），避免干擾畫布渲染。每個遠端使用者的游標用 <code>&lt;div&gt;</code> 呈現，包含色彩圓點和使用者名稱標籤。</div>
+      
+      <div style="margin-top: 15px;">
+        <p><b>具體實現方式：</b><br>
+        為避免頻繁的 <code>canvas.renderAll()</code> 造成效能瓶頸，我們將游標獨立為一個 HTML <code>&lt;div id="cursor-overlay-container"&gt;</code>，其 <code>pointer-events: none;</code> 且絕對定位於 Canvas 正上方。
+        當透過 Yjs 的 <code>awareness.on('change')</code> 收到其他使用者的游標座標 <code>(x, y)</code> 時，會利用 CSS 的 <code>transform: translate(x, y)</code> 來平滑移動 <code>&lt;div&gt;</code>，這比重新重繪整個 Canvas 效能高出許多。</p>
+        <pre><code class="language-javascript">// MultiplayerCursorOverlay 核心概念
+this.awareness.on('change', () => {
+    const states = this.awareness.getStates();
+    states.forEach((state, clientId) => {
+        if (clientId === this.awareness.clientID) return; // 略過自己
+        const user = state.user;
+        if (!user || user.currentPageId !== this.currentPageId) return; // 只顯示同頁面的游標
+
+        // 建立或更新 DOM 游標
+        let cursorEl = document.getElementById(`cursor-${clientId}`);
+        if (!cursorEl) {
+            cursorEl = document.createElement('div');
+            cursorEl.className = 'remote-cursor';
+            cursorEl.innerHTML = `
+                <div class="cursor-dot" style="background-color: ${user.color};"></div>
+                <div class="cursor-label" style="background-color: ${user.color};">${user.name}</div>
+            `;
+            this.container.appendChild(cursorEl);
+        }
+        
+        // 更新位置 (將 Canvas 內座標轉換為螢幕 DOM 座標，並包含目前的平移與縮放係數)
+        const canvasZoom = this.canvas.getZoom();
+        const vpt = this.canvas.viewportTransform;
+        const screenX = user.x * canvasZoom + vpt[4];
+        const screenY = user.y * canvasZoom + vpt[5];
+        
+        cursorEl.style.transform = `translate(${screenX}px, ${screenY}px)`;
+    });
+});</code></pre>
+      </div>
+    </div>
+  </div>
+  <!-- CollabChannel & BroadcastChannel -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-broadcast"></i>CollabChannel — 雙軌即時通訊機制</div>
+    <div class="sub-desc"><code>CollabChannel</code> 負責協作前置的握手連線，它同時結合了 <code>BroadcastChannel</code>（同機跨分頁）與 <code>WebRTC / WebSocket</code>（跨網路）的雙軌架構。</div>
+    
+    <div class="note purple">
+      <i class="ti ti-bulb"></i>
+      <div><b>單機即時測試提示：</b>可點擊「複製連結」後，於<b>無痕視窗</b>或另一個瀏覽器分頁貼上開啟，即可透過 <code>BroadcastChannel</code> 體驗無伺服器跨視窗即時 Presence 感知！</div>
+    </div>
+    
+    <div class="card">
+      <div class="card-h"><i class="ti ti-code"></i><h2>BroadcastChannel 具體實現</h2></div>
+      <div class="card-sub">在同一個瀏覽器的不同分頁（例如一般視窗與無痕視窗）中，可以直接利用瀏覽器原生的 <code>BroadcastChannel</code> API 進行 P2P 通訊。無須經過任何遠端 WebRTC 或 WebSocket 伺服器，因此速度極快、延遲極低且非常穩定，非常適合用來做單機的除錯與模擬測試。</div>
+      <pre><code class="language-javascript">// CollabChannel.js 中的 BroadcastChannel 實作概念
+class CollabChannel {
+    connect(projectId) {
+        // 1. 初始化廣播通道，以專案 ID 為頻道名稱
+        this.broadcastChannel = new BroadcastChannel(`collab_room_${projectId}`);
+        
+        // 2. 監聽來自同瀏覽器其他分頁的即時訊息
+        this.broadcastChannel.onmessage = (event) => {
+            const { type, data } = event.data;
+            
+            if (type === 'PRESENCE_HEARTBEAT') {
+                // 收到別的分頁的心跳包，更新在線名單
+                this.presenceManager.updateRemoteUser(data.user);
+                
+            } else if (type === 'PROJECT_SNAPSHOT') {
+                // 客端收到主端發送的專案快照，立刻進行畫面載入
+                this.eventBus.emit('COLLAB:SNAPSHOT_RECEIVED', data);
+            }
+        };
+        
+        // 3. 加入時，主動向其他分頁廣播自己的存在 (Presence)
+        this.send('PRESENCE_HEARTBEAT', { user: this.presenceManager.getLocalUser() });
+    }
+
+    send(type, data) {
+        // 將訊息廣播給同頻道的所有其他分頁
+        if (this.broadcastChannel) {
+            this.broadcastChannel.postMessage({ type, data });
+        }
+    }
+}</code></pre>
     </div>
   </div>
 </section>

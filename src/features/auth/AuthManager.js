@@ -39,6 +39,30 @@ export default class AuthManager {
             createdAt: 1700000001000
         };
 
+        // ★ 新增第三組預設授權協作者帳號 (行銷企劃)
+        this.defaultMarketer = {
+            id: 'user_marketer_emily',
+            username: 'marketer_emily',
+            password: 'Canvas@Collab2026#Mkt!',
+            name: 'Emily (行銷企劃)',
+            email: 'emily.mkt@editor.local',
+            role: 'editor',
+            avatarColor: '#f43f5e',
+            createdAt: 1700000002000
+        };
+
+        // ★ 新增第四組預設授權帳號 (外部檢視者)
+        this.defaultViewer = {
+            id: 'user_viewer_bob',
+            username: 'viewer_bob',
+            password: 'Canvas@Collab2026#View!',
+            name: 'Bob (外部訪客)',
+            email: 'bob.viewer@editor.local',
+            role: 'viewer',
+            avatarColor: '#8b5cf6',
+            createdAt: 1700000003000
+        };
+
         this.currentUser = null;
         this.authGateElement = null;
         this.apiVaultModal = null;
@@ -112,6 +136,36 @@ export default class AuthManager {
                 };
             } else {
                 users.push(this.defaultCollabEditor);
+            }
+
+            // 確保第三隻行銷企劃帳號存在
+            const marketerIdx = users.findIndex(u => u.username === 'marketer_emily');
+            if (marketerIdx >= 0) {
+                users[marketerIdx] = {
+                    ...users[marketerIdx],
+                    username: 'marketer_emily',
+                    password: 'Canvas@Collab2026#Mkt!',
+                    name: 'Emily (行銷企劃)',
+                    role: 'editor',
+                    avatarColor: '#f43f5e'
+                };
+            } else {
+                users.push(this.defaultMarketer);
+            }
+
+            // 確保第四隻外部訪客帳號存在
+            const viewerIdx = users.findIndex(u => u.username === 'viewer_bob');
+            if (viewerIdx >= 0) {
+                users[viewerIdx] = {
+                    ...users[viewerIdx],
+                    username: 'viewer_bob',
+                    password: 'Canvas@Collab2026#View!',
+                    name: 'Bob (外部訪客)',
+                    role: 'viewer',
+                    avatarColor: '#8b5cf6'
+                };
+            } else {
+                users.push(this.defaultViewer);
             }
 
             localStorage.setItem(this.storageKeyUsers, JSON.stringify(users));
