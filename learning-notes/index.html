@@ -84,16 +84,16 @@
   <!-- 技術棧卡片 -->
   <div class="card">
     <div class="card-h"><i class="ti ti-stack-2"></i><h2>技術棧總覽</h2></div>
-    <div class="card-sub">EditorV2 基於純 JavaScript（無框架），以 Vite 打包、<span class="wiki-link" data-title="Fabric.js" data-icon="ti-artboard" data-desc="強大的 HTML5 Canvas 函式庫，提供物件模型、群組、互動操作與 SVG 解析功能，為此編輯器的核心繪圖引擎。">Fabric.js</span> 驅動畫布、Firebase 做後端、<span class="wiki-link" data-title="Yjs" data-icon="ti-arrows-exchange" data-desc="高效能的 CRDT 實作，專為協作網頁應用程式設計，支援離線編輯與自動合併衝突。">Yjs</span> 做 <span class="wiki-link" data-title="CRDT" data-icon="ti-git-merge" data-desc="無衝突複製資料型別 (Conflict-free Replicated Data Type)，允許多個節點同時修改資料而不需要中央伺服器鎖定，最終會自動收斂一致。">CRDT</span> 協作同步。</div>
+    <div class="card-sub">EditorV2 基於純 JavaScript（無框架），以 Vite 打包、<span class="wiki-link" data-title="Fabric.js" data-icon="ti-artboard" data-desc="強大的 HTML5 Canvas 函式庫，提供物件模型、群組、互動操作與 SVG 解析功能，為此編輯器的核心繪圖引擎。">Fabric.js</span> 驅動畫布、Firebase (登入/儲存) 與 Render 自建 WebSocket 伺服器做後端、<span class="wiki-link" data-title="Yjs" data-icon="ti-arrows-exchange" data-desc="高效能的 CRDT 實作，專為協作網頁應用程式設計，支援離線編輯與自動合併衝突。">Yjs</span> 做 <span class="wiki-link" data-title="CRDT" data-icon="ti-git-merge" data-desc="無衝突複製資料型別 (Conflict-free Replicated Data Type)，允許多個節點同時修改資料而不需要中央伺服器鎖定，最終會自動收斂一致。">CRDT</span> 協作同步。</div>
     <div class="grid4">
       <div class="tech-card"><div class="tc-icon"><i class="ti ti-brand-vite"></i></div><div class="tc-name">Vite</div><div class="tc-desc">建置工具<br>Dev Server + HMR</div><div class="tc-ver">^8.1.5</div></div>
       <div class="tech-card"><div class="tc-icon"><i class="ti ti-artboard"></i></div><div class="tc-name">Fabric.js</div><div class="tc-desc">HTML5 Canvas 物件模型<br>核心繪圖引擎</div><div class="tc-ver">^5.3.0</div></div>
-      <div class="tech-card"><div class="tc-icon"><i class="ti ti-brand-firebase"></i></div><div class="tc-name">Firebase</div><div class="tc-desc">Auth / RTDB / Storage<br>Firestore</div><div class="tc-ver">^12.17.1</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-brand-firebase"></i></div><div class="tc-name">Firebase</div><div class="tc-desc">Auth / Storage<br>(靜態資源與登入)</div><div class="tc-ver">^12.17.1</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-plug-connected"></i></div><div class="tc-name">y-websocket</div><div class="tc-desc">Node.js 獨立伺服器<br>WebSocket 連線</div><div class="tc-ver">^2.0.4</div></div>
       <div class="tech-card"><div class="tc-icon"><i class="ti ti-arrows-exchange"></i></div><div class="tc-name">Yjs</div><div class="tc-desc">CRDT 即時協作<br>衝突自動合併</div><div class="tc-ver">^13.6.32</div></div>
       <div class="tech-card"><div class="tc-icon"><i class="ti ti-file-type-pdf"></i></div><div class="tc-name">jsPDF</div><div class="tc-desc">PDF 匯出生成</div><div class="tc-ver">^4.2.1</div></div>
       <div class="tech-card"><div class="tc-icon"><i class="ti ti-file-import"></i></div><div class="tc-name">pdf.js</div><div class="tc-desc">PDF 解析匯入</div><div class="tc-ver">^6.1.200</div></div>
-      <div class="tech-card"><div class="tc-icon"><i class="ti ti-presentation"></i></div><div class="tc-name">PptxGenJS</div><div class="tc-desc">PPT 簡報匯出</div><div class="tc-ver">^4.0.1</div></div>
-      <div class="tech-card"><div class="tc-icon"><i class="ti ti-photo-ai"></i></div><div class="tc-name">@imgly/bg-removal</div><div class="tc-desc">客戶端 AI 去背</div><div class="tc-ver">^1.4.5</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-photo-ai"></i></div><div class="tc-name">@imgly</div><div class="tc-desc">客戶端 AI 去背</div><div class="tc-ver">^1.4.5</div></div>
     </div>
   </div>
 
@@ -139,7 +139,7 @@ graph TB
 
   subgraph Collab["👥 協作層"]
     COL["CollabEngine<br><small>Yjs 房間管理</small>"]
-    FP["FirebaseProvider<br><small>Firebase ↔ Yjs 橋接</small>"]
+    WP["WebsocketProvider<br><small>WebSocket ↔ Yjs 橋接</small>"]
     YA["YjsAdapter<br><small>Fabric ↔ Yjs 綁定</small>"]
     PRES["PresenceManager<br><small>使用者在線狀態</small>"]
     CURSOR["CursorOverlay<br><small>遠端游標渲染</small>"]
@@ -1071,7 +1071,7 @@ graph TB
   end
 
   subgraph Cloud["☁️ Firebase"]
-    RTDB[("Realtime Database<br>yjs_updates/ &amp; awareness/")]
+    RTDB[(Realtime Database yjs_updates and awareness)]
   end
 
   subgraph Client_B["👤 使用者 B"]
@@ -1083,17 +1083,17 @@ graph TB
     CO_B["CursorOverlay"]
   end
 
-  FA_A -->|"object:modified"| YA_A
-  YA_A -->|"yObjects.set()"| YD_A
-  YD_A -->|"update event"| FP_A
-  FP_A -->|"push Base64"| RTDB
-  RTDB -->|"sync"| FP_B
-  FP_B -->|"apply update"| YD_B
-  YD_B -->|"observe"| YA_B
-  YA_B -->|"canvas.add/modify"| FA_B
+  FA_A -->|object:modified| YA_A
+  YA_A -->|yObjects.set| YD_A
+  YD_A -->|update event| FP_A
+  FP_A -->|push Base64| RTDB
+  RTDB -->|sync| FP_B
+  FP_B -->|apply update| YD_B
+  YD_B -->|observe| YA_B
+  YA_B -->|canvas.add/modify| FA_B
 
-  PM_A -->|"awareness"| RTDB
-  RTDB -->|"awareness"| CO_B
+  PM_A -->|awareness| RTDB
+  RTDB -->|awareness| CO_B
       </pre>
     </div>
   </div>
