@@ -42,6 +42,7 @@
     <a data-section="sec-ai"><i class="ti ti-sparkles"></i>AI 功能</a>
     <a data-section="sec-theme"><i class="ti ti-palette"></i>主題與輔助</a>
     <a data-section="sec-build"><i class="ti ti-settings-cog"></i>建置與部署</a>
+    <a data-section="sec-onprem"><i class="ti ti-server"></i>地端與內網部署</a>
   </nav>
 
   <div class="side-foot">
@@ -1595,8 +1596,62 @@ flowchart TD
   LLM -->|"生成結果"| CANVAS
   IMGAI -->|"處理結果"| CANVAS
       </pre>
-    </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION: 地端與內網部署                                      ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-onprem">
+  <h1 class="section-title">🏢 地端與內網部署 (On-Premise)</h1>
+  <p class="section-sub">將 EditorV2 部署於公司內網，不僅能提升傳輸速度、降低延遲，更能確保企業機敏資料不外流。以下說明如何將架構從雲端轉移至地端區域網路。</p>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-building"></i><h2>核心原理與架構轉換</h2></div>
+    <div class="card-sub">我們的系統架構主要分為兩部分，要搬到內網，就是把這兩部分都放在公司同一台伺服器電腦上執行。</div>
+    <ul>
+      <li><strong>前端 (Vite 網頁)</strong>：原本託管在 GitHub Pages，改為由內網的 Web Server (如 Nginx 或 Node.js serve) 提供靜態檔案。</li>
+      <li><strong>後端 (WebSocket Server)</strong>：原本運行在 Render，改為在內網伺服器上透過 Node.js 直接運行 <code>y-websocket</code>。</li>
+    </ul>
+    <p>其他同事只要連上公司區域網路 (LAN)，在瀏覽器輸入該伺服器的 IP 位址，就能直接連線並即時協作！</p>
   </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-check"></i><h2>具體準備與設定步驟</h2></div>
+    
+    <h3>1. 準備伺服器環境</h3>
+    <ul>
+      <li>需要一台固定不關機的電腦 (Windows / Mac / Linux 皆可)。</li>
+      <li>安裝 <a href="https://nodejs.org/" target="_blank">Node.js</a>。</li>
+      <li>設定 <strong>固定虛擬 IP</strong> (例如 <code>192.168.1.100</code>)，方便其他設備連線。</li>
+    </ul>
+
+    <h3>2. 修改前端連線網址並重新打包</h3>
+    <p>原本前端預設連向 Render 雲端，現在需要將其指向您的內網伺服器 IP。</p>
+    <pre><code class="language-env"># 編輯前端根目錄的 .env 或 .env.production 檔案
+VITE_WS_URL=ws://192.168.1.100:1234</code></pre>
+    <p>接著在前端專案資料夾下執行 <code>npm run build</code>，這會產生一個包含靜態檔案的 <code>dist</code> 資料夾。</p>
+
+    <h3>3. 啟動後端共編伺服器</h3>
+    <p>將 <code>editor-yjs-server</code> 資料夾放置於伺服器上，開啟終端機執行：</p>
+    <pre><code class="language-bash">cd editor-yjs-server
+npm install
+npm start # 或使用 node server.js</code></pre>
+    <p>確保伺服器運行在設定的 Port 上 (預設通常為 <code>1234</code>)。</p>
+
+    <h3>4. 啟動前端網頁伺服器</h3>
+    <p>使用任何 Web Server 軟體來託管 <code>dist</code> 資料夾，最簡單的方式是使用 npm 套件 <code>serve</code>：</p>
+    <pre><code class="language-bash">npx serve -s dist -p 80</code></pre>
+    <p>進階環境則建議交由 IT 部門設定 Nginx 或 Apache。</p>
+  </div>
+
+  <div class="card info-box">
+    <h3><i class="ti ti-alert-triangle text-amber-500"></i> 注意事項：防火牆與對外網路</h3>
+    <ul>
+      <li><strong>防火牆設定：</strong>伺服器的作業系統防火牆必須設定「允許通訊埠 (Port) <code>80</code> 與 <code>1234</code> 通過」，否則外部電腦無法連入。</li>
+      <li><strong>外部 API 連線：</strong>雖然系統架設在內網，但若仍使用 Gemini 或 CloudConvert 等第三方 AI 服務，伺服器與使用者的電腦<strong>依然需要有對外連網能力</strong>。若需全斷網環境，可透過 <code>ApiVaultManager</code> 串接公司內部自建的 Local LLM (如 vLLM / Ollama)。</li>
+    </ul>
+  </div>
+
 </section>
 
   </div><!-- /content -->
