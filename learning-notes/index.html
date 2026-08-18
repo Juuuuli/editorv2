@@ -43,6 +43,7 @@
     <a data-section="sec-theme"><i class="ti ti-palette"></i>主題與輔助</a>
     <a data-section="sec-build"><i class="ti ti-settings-cog"></i>建置與部署</a>
     <a data-section="sec-onprem"><i class="ti ti-server"></i>地端與內網部署</a>
+    <a data-section="sec-dev"><i class="ti ti-tool"></i>開發與除錯指南</a>
   </nav>
 
   <div class="side-foot">
@@ -1671,6 +1672,80 @@ npm start # 確保伺服器運行在預設 Port 1234 上</code></pre>
       <b>注意事項：防火牆與對外網路</b><br>
       1. 伺服器的作業系統防火牆必須設定「允許通訊埠 (Port) <code>80</code> 與 <code>1234</code> 通過」，否則外部電腦無法連入。<br>
       2. 雖然系統架設在內網，但若仍使用 Gemini 或 CloudConvert 等第三方服務，伺服器與使用者的電腦<b>依然需要有對外連網能力</b>。若需全斷網環境，可透過 <code>ApiVaultManager</code> 串接公司內部的 Local LLM。
+    </div>
+  </div>
+
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION: 開發與除錯指南                                      ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-dev">
+  <h1 class="section-title">🛠️ 開發與除錯指南 (Development Guide)</h1>
+  <p class="section-sub">若您未來需要親自修改或擴充 EditorV2 系統，了解專案的開發工作流與架構守則能幫助您避開許多地雷。以下是修改本系統時必須遵守的核心原則。</p>
+
+  <!-- 工作流 -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-terminal"></i>1. 本地端開發環境啟動</div>
+    <div class="sub-desc">請勿直接修改 <code>dist/</code> 資料夾內的檔案！所有開發都必須在 <code>src/</code> 目錄下進行。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-brand-vite"></i><h2>啟動 Vite 開發伺服器</h2></div>
+      <pre><code class="language-bash"># 安裝所有相依套件 (只需執行一次)
+npm install
+
+# 啟動具備 Hot Module Replacement (HMR) 的開發伺服器
+npm run dev</code></pre>
+      <div class="card-sub" style="margin-top: 12px; margin-bottom: 0;">修改 <code>src/</code> 內的任何 <code>.js</code> 或 <code>.css</code> 檔案後，瀏覽器會自動重新載入，無須手動重整。</div>
+    </div>
+  </div>
+
+  <!-- 架構限制 -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-broadcast"></i>2. 嚴格遵守 EventBus 事件驅動架構</div>
+    <div class="sub-desc">EditorV2 的核心理念是「模組解耦」。各個功能模組 (如：工具列、面板、畫布) 之間 <strong>絕對不可互相 import 呼叫</strong>。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-x"></i><h2 style="color: var(--red);">錯誤示範 (直接呼叫)</h2></div>
+      <pre><code class="language-javascript">// ❌ 絕對不要這樣做！會導致循環依賴與架構混亂
+import PropertiesPanel from '../panels/PropertiesPanel.js';
+PropertiesPanel.updateSelection(object);</code></pre>
+    </div>
+    <div class="card" style="margin-top: 14px;">
+      <div class="card-h"><i class="ti ti-check"></i><h2 style="color: var(--green);">正確示範 (透過 EventBus)</h2></div>
+      <pre><code class="language-javascript">// ✅ 永遠透過 eventBus 發送與監聽事件
+this.eventBus.emit('canvas:selection:created', { object });
+
+// 在另一個模組接收
+this.eventBus.on('canvas:selection:created', (data) => {
+    this.updateUI(data.object);
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- 共編限制 -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-users-group"></i>3. 共編狀態同步原則 (Yjs)</div>
+    <div class="sub-desc">如果您新增了需要「多人同步」的資料 (例如：新畫布物件、頁面順序)，請記得它必須寫入 CRDT 模型中。</div>
+    <div class="card info-box">
+      <div class="card-h"><i class="ti ti-arrows-exchange"></i><h2>不要只修改本地畫布</h2></div>
+      <p style="font-size: 13px; color: var(--text); line-height: 1.6;">當您執行 <code>canvas.add(obj)</code> 時，只有您的畫面會看到該物件。要讓所有人看到，您必須確保該操作被 <code>YjsAdapter.js</code> 捕捉，或者直接將資料寫入 <code>ydoc.getMap('canvas')</code>。大多數原生 Fabric.js 操作已經由 <code>YjsAdapter</code> 自動攔截，但若您新增了客製化的資料結構，請務必處理其 Yjs 的同步邏輯。</p>
+    </div>
+  </div>
+
+  <!-- UI 限制 -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-palette"></i>4. 介面樣式與 UI 修改</div>
+    <div class="sub-desc">EditorV2 混用了 Tailwind CSS Utility Classes 與原生 CSS。</div>
+    <ul>
+      <li><strong>基礎排版</strong>：使用 HTML 中的 Tailwind Classes (如 <code>flex</code>, <code>justify-between</code>, <code>p-4</code>)。</li>
+      <li><strong>主題色彩</strong>：必須使用 CSS 變數 (如 <code>var(--surface)</code>, <code>var(--text)</code>)，請勿在程式碼中寫死色碼 (如 <code>#ffffff</code>)，否則切換主題時會失效。</li>
+    </ul>
+  </div>
+
+  <div class="note blue" style="margin-top: 24px;">
+    <i class="ti ti-bulb"></i>
+    <div>
+      <b>💡 常見除錯技巧：</b><br>
+      若您遇到事件沒有觸發的問題，可以在 <code>EventBus.js</code> 的 <code>emit</code> 函數中加上 <code>console.log(eventName, data)</code>，這樣就能在 Chrome 開發者工具的 Console 中追蹤整個系統所有的事件流向！
     </div>
   </div>
 
