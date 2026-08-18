@@ -80,9 +80,13 @@ export default class DashboardManager {
                     }
                 } else {
                     // 我是尚未拿到資料的純訪客，監聽雲端資料庫
+                    let hasSynced = false;
                     const checkSync = () => {
+                        if (hasSynced) return;
                         const projSync = this.yMetadata.get('projectData');
                         if (projSync) {
+                            hasSynced = true;
+                            this.yMetadata.unobserve(checkSync);
                             this.eventBus.emit('COLLAB:SNAPSHOT_RECEIVED', {
                                 projectData: projSync,
                                 projectId: projSync.id
