@@ -203,12 +203,14 @@ export default class AuthManager {
         try {
             const raw = localStorage.getItem(this.storageKeyApiVault);
             const envOpenai = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_OPENAI_API_KEY : '';
+            const envGemini = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_GEMINI_API_KEY : '';
             const envClipdrop = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_CLIPDROP_API_KEY : '';
             const envCloudConvert = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_CLOUDCONVERT_API_KEY : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTk1MjU4NGI1MGU3ZTExNWRmYmU3MjhhNTM1NGRlZWVkZTY2MzUzYjUwMTE1YmFlOGMwNGFmOTk5ZTBmOGM4NWZlMTgxYjJlMDdlYThiZDEiLCJpYXQiOjE3ODYzNTAyNDAuNDc0MDk4LCJuYmYiOjE3ODYzNTAyNDAuNDc0MSwiZXhwIjo0OTQyMDIzODQwLjQ2NTY0LCJzdWIiOiI3MTM4MDUxOCIsInNjb3BlcyI6WyJ1c2VyLnJlYWQiLCJ1c2VyLndyaXRlIiwidGFzay5yZWFkIiwidGFzay53cml0ZSIsIndlYmhvb2sucmVhZCIsIndlYmhvb2sud3JpdGUiLCJwcmVzZXQucmVhZCIsInByZXNldC53cml0ZSJdfQ.f2j6DK4qLVaJIcWbXdwaqgMu-aV8Tk-Y6kWsvi94KbX2QfU6D3M9JqkIiLiUHVV_iQw6Ll-mSUgSwS649K1ghzh5qUSszkHTNT6tu6SKVa1BUiro2prSEsyUn3WhCTdlfhYk9aWHB6zM3XEIvM3pqaxRQ7Y0v8jWCFrFaCyOOIw6hTv5vvOKZqFaaAEqXoCdNZ6QxD65PplChk93VHHRkthjK-9mWI0cahzEtSOISgvVrTGZLu7PJdRKIfNbXJXaDye-7BV8Uq2VclCWKdnQRgcMndVKPhtPUTuSmScSvE843OYmYgvNOCXvbThTGEYeOOn6uZHDlZp-TB51CnnoElMR5qk5bDy5LK3PhmtgzgxRZsKumMFkR60hQHxo3d1wAFZ0F1o80sTpwqE9tKQ5Z5ndsdZRToJQEh2ix9bofScHFCUZIxLKWY4EPXyiY8JFBNGZqCcE6FEWT8Cn49XSkA4_fR4kMY5ibYC8FbRzOFiDvEQhog2DpQ1DxzMUFDEIyvozDJMAPVE96S1tX2Xf8JrdQKcgyDm-X7y1gWEtsEFVKu19EcrUSDssv8giCWsdrcZjThp0FYg42oprSdPwnPxBSk5gIiEIk8DtHZxbnMky3B21c_6VgKBklBPQxWB8ryNPx6W2vfcjXd4OYl9s_VE4er7zv-GgjUbgNbJyBYc';
 
             if (!raw) {
                 const initialVault = {
                     openaiApiKey: localStorage.getItem('openai_api_key') || envOpenai || '',
+                    geminiApiKey: localStorage.getItem('gemini_api_key') || envGemini || '',
                     clipdropKey: localStorage.getItem('clipdrop_api_key') || envClipdrop || '',
                     cloudconvertApiKey: localStorage.getItem('cloudconvert_secret') || envCloudConvert || '',
                     updatedAt: Date.now()
