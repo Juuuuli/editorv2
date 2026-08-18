@@ -99,16 +99,49 @@ export default class YjsAdapter {
         this.eventBus.on('PAGE:LIST_CHANGED', ({ pages }) => {
             if (this.isViewer) return;
             
-            // 寫入 Yjs
             this.ydoc.transact(() => {
-                this.yPages.delete(0, this.yPages.length);
-                pages.forEach(p => {
-                    const yMap = new Y.Map();
-                    yMap.set('id', p.id);
-                    // 不透過 Yjs 同步 thumbnail 避免影響即時性與 Firebase 負載
-                    this.yPages.push([yMap]);
-                });
+                const currentPages = this.yPages.toArray().map(yMap => yMap.get('id'));
+                const newPages = pages.map(p => p.id);
+                
+                if (JSON.stringify(currentPages) !== JSON.stringify(newPages)) {
+                    this.yPages.delete(0, this.yPages.length);
+                    
+                    pages.forEach(p => {
+                        const yMap = new Y.Map();
+                        yMap.set('id', p.id);
+                        // 不透過 Yjs 同步 thumbnail 避免影響即時性與 Firebase 負載
+                        this.yPages.push([yMap]);
+                    });
+                }
             });
+        });
+
+        // 監聽專案載入完成，同步正確的 pageId
+        this.eventBus.on('PROJECT:LOADED', (project) => {
+            if (project && project.pages && project.pages.length > 0) {
+                const activePage = project.pages.find(p => p.active) || project.pages[0];
+                const newPageId = activePage.id;
+                if (this.pageId === newPageId) return;
+                
+                this.isSyncing = true;
+                
+                if (this._yjsObserver) {
+                    this.yObjects.unobserveDeep(this._yjsObserver);
+                }
+                
+                this.pageId = newPageId;
+                this.yObjects = this.ydoc.getArray(`page_objects_${this.pageId}`);
+                this.bindYjsEvents();
+                
+                setTimeout(() => {
+                    if (this.yObjects && this.yObjects.length > 0) {
+                        this.syncCanvasFromYjs();
+                    } else {
+                        this.pushLocalToYjs();
+                    }
+                    this.isSyncing = false;
+                }, 100);
+            }
         });
     }
 
