@@ -49,7 +49,7 @@ export default class AIProviderAdapter {
             builtin: { provider: 'gemini', model: 'gemini-1.5-flash', geminiApiKey: '', openaiApiKey: '' },
             customEndpoints: [], activeCustomId: '',
             imageProcessing: { provider: 'clipdrop', apiKey: '' },
-            pptParsing: { provider: 'convertapi', secret: '' }
+            pptParsing: { provider: 'cloudconvert', secret: '' }
         };
     }
 

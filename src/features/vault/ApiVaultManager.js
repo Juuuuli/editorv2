@@ -63,7 +63,7 @@ export default class ApiVaultManager {
                 apiKey: ''
             },
             pptParsing: {
-                provider: 'convertapi',
+                provider: 'cloudconvert',
                 secret: ''
             },
             updatedAt: Date.now()

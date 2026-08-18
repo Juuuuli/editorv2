@@ -1415,6 +1415,14 @@ export default class DashboardManager {
     }
 
     async _importPPTWithCloudConvert(file, secret) {
+        if (!secret) {
+            try {
+                const legacyVault = JSON.parse(localStorage.getItem('editor_api_vault') || '{}');
+                secret = legacyVault.cloudconvertApiKey || localStorage.getItem('cloudconvert_secret') || (import.meta.env && import.meta.env.VITE_CLOUDCONVERT_API_KEY) || '';
+            } catch (e) {
+                secret = (import.meta.env && import.meta.env.VITE_CLOUDCONVERT_API_KEY) || '';
+            }
+        }
         if (!secret) throw new Error("未設定 CloudConvert API Key（請至金鑰保險箱設定）");
 
         // 1. Create Job
