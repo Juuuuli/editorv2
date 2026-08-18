@@ -117,10 +117,9 @@ export default class YjsAdapter {
         });
 
         // 監聽專案載入完成，同步正確的 pageId
-        this.eventBus.on('PROJECT:LOADED', (project) => {
-            if (project && project.pages && project.pages.length > 0) {
-                const activePage = project.pages.find(p => p.active) || project.pages[0];
-                const newPageId = activePage.id;
+        this.eventBus.on('PROJECT:IMPORTED', ({ projectData }) => {
+            if (projectData && projectData.currentPageId) {
+                const newPageId = projectData.currentPageId;
                 if (this.pageId === newPageId) return;
                 
                 this.isSyncing = true;

@@ -60,10 +60,9 @@ export default class MultiplayerCursorOverlay {
                 this.renderCursors();
             });
 
-            this.eventBus.on('PROJECT:LOADED', (project) => {
-                if (project && project.pages && project.pages.length > 0) {
-                    const activePage = project.pages.find(p => p.active) || project.pages[0];
-                    this.currentPageId = activePage.id;
+            this.eventBus.on('PROJECT:IMPORTED', ({ projectData }) => {
+                if (projectData && projectData.currentPageId) {
+                    this.currentPageId = projectData.currentPageId;
                     const user = this.awareness.getLocalState()?.user;
                     if (user) {
                         this.awareness.setLocalStateField('user', { ...user, currentPageId: this.currentPageId });
