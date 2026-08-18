@@ -39,14 +39,19 @@ export default class ApiVaultManager {
      * 讀取儲存庫設定 (含向下相容)
      */
     loadConfig() {
+        const envOpenai = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_OPENAI_API_KEY : '';
+        const envGemini = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_GEMINI_API_KEY : '';
+        const envClipdrop = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_CLIPDROP_API_KEY : '';
+        const envCloudConvert = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.VITE_CLOUDCONVERT_API_KEY : '';
+
         const defaultConfig = {
             activeLlmType: 'builtin',
             builtin: {
                 provider: 'gemini', // 預設推薦 Gemini
                 model: 'gemini-1.5-flash',
-                apiKey: '',
-                geminiApiKey: '',
-                openaiApiKey: '',
+                apiKey: envOpenai || envGemini || '',
+                geminiApiKey: envGemini || '',
+                openaiApiKey: envOpenai || '',
                 geminiModel: 'gemini-1.5-flash',
                 openaiModel: 'gpt-4o-mini'
             },
@@ -60,11 +65,11 @@ export default class ApiVaultManager {
             activeCustomId: '',
             imageProcessing: {
                 provider: 'clipdrop',
-                apiKey: ''
+                apiKey: envClipdrop || ''
             },
             pptParsing: {
                 provider: 'cloudconvert',
-                secret: ''
+                secret: envCloudConvert || ''
             },
             updatedAt: Date.now()
         };
