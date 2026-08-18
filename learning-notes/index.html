@@ -1605,51 +1605,73 @@ flowchart TD
   <h1 class="section-title">🏢 地端與內網部署 (On-Premise)</h1>
   <p class="section-sub">將 EditorV2 部署於公司內網，不僅能提升傳輸速度、降低延遲，更能確保企業機敏資料不外流。以下說明如何將架構從雲端轉移至地端區域網路。</p>
 
+  <!-- 核心原理 -->
   <div class="card">
     <div class="card-h"><i class="ti ti-building"></i><h2>核心原理與架構轉換</h2></div>
     <div class="card-sub">我們的系統架構主要分為兩部分，要搬到內網，就是把這兩部分都放在公司同一台伺服器電腦上執行。</div>
-    <ul>
-      <li><strong>前端 (Vite 網頁)</strong>：原本託管在 GitHub Pages，改為由內網的 Web Server (如 Nginx 或 Node.js serve) 提供靜態檔案。</li>
-      <li><strong>後端 (WebSocket Server)</strong>：原本運行在 Render，改為在內網伺服器上透過 Node.js 直接運行 <code>y-websocket</code>。</li>
-    </ul>
-    <p>其他同事只要連上公司區域網路 (LAN)，在瀏覽器輸入該伺服器的 IP 位址，就能直接連線並即時協作！</p>
+    <div class="tablewrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>模組</th><th>原始環境 (雲端)</th><th>目標環境 (內網地端)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="nm">前端 (Vite 網頁)</td>
+            <td>GitHub Pages</td>
+            <td>內網的 Web Server (如 Nginx 或 Node.js serve)</td>
+          </tr>
+          <tr>
+            <td class="nm">後端 (WebSocket)</td>
+            <td>Render 雲端服務</td>
+            <td>內網伺服器直接執行 <code>y-websocket</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top: 14px; font-size: 13px; color: var(--text-2); line-height: 1.6;">其他同事只要連上公司區域網路 (LAN)，在瀏覽器輸入該伺服器的 IP 位址，就能直接連線並即時協作！</p>
   </div>
 
-  <div class="card">
-    <div class="card-h"><i class="ti ti-check"></i><h2>具體準備與設定步驟</h2></div>
-    
-    <h3>1. 準備伺服器環境</h3>
-    <ul>
-      <li>需要一台固定不關機的電腦 (Windows / Mac / Linux 皆可)。</li>
-      <li>安裝 <a href="https://nodejs.org/" target="_blank">Node.js</a>。</li>
-      <li>設定 <strong>固定虛擬 IP</strong> (例如 <code>192.168.1.100</code>)，方便其他設備連線。</li>
-    </ul>
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-server"></i>1. 準備伺服器環境</div>
+    <div class="sub-desc">需要一台固定不關機的電腦 (Windows / Mac / Linux 皆可) 並設定 <strong>固定虛擬 IP</strong> (例如 <code>192.168.1.100</code>)，接著安裝 <a href="https://nodejs.org/" target="_blank" style="color: var(--blue);">Node.js</a>。</div>
+  </div>
 
-    <h3>2. 修改前端連線網址並重新打包</h3>
-    <p>原本前端預設連向 Render 雲端，現在需要將其指向您的內網伺服器 IP。</p>
-    <pre><code class="language-env"># 編輯前端根目錄的 .env 或 .env.production 檔案
-VITE_WS_URL=ws://192.168.1.100:1234</code></pre>
-    <p>接著在前端專案資料夾下執行 <code>npm run build</code>，這會產生一個包含靜態檔案的 <code>dist</code> 資料夾。</p>
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-plug"></i>2. 修改前端連線網址並重新打包</div>
+    <div class="sub-desc">原本前端預設連向 Render 雲端，現在需要將其指向您的內網伺服器 IP。編輯前端根目錄的 <code>.env</code> 或 <code>.env.production</code> 檔案。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-code"></i><h2>修改環境變數</h2></div>
+      <pre><code class="language-env">VITE_WS_URL=ws://192.168.1.100:1234</code></pre>
+      <div class="card-sub" style="margin-top: 12px; margin-bottom: 0;">接著在前端專案資料夾下執行 <code>npm run build</code>，這會產生一個包含靜態檔案的 <code>dist</code> 資料夾。</div>
+    </div>
+  </div>
 
-    <h3>3. 啟動後端共編伺服器</h3>
-    <p>將 <code>editor-yjs-server</code> 資料夾放置於伺服器上，開啟終端機執行：</p>
-    <pre><code class="language-bash">cd editor-yjs-server
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-terminal"></i>3. 啟動後端共編伺服器</div>
+    <div class="sub-desc">將 <code>editor-yjs-server</code> 資料夾放置於伺服器上，開啟終端機執行：</div>
+    <div class="card">
+      <pre><code class="language-bash">cd editor-yjs-server
 npm install
-npm start # 或使用 node server.js</code></pre>
-    <p>確保伺服器運行在設定的 Port 上 (預設通常為 <code>1234</code>)。</p>
-
-    <h3>4. 啟動前端網頁伺服器</h3>
-    <p>使用任何 Web Server 軟體來託管 <code>dist</code> 資料夾，最簡單的方式是使用 npm 套件 <code>serve</code>：</p>
-    <pre><code class="language-bash">npx serve -s dist -p 80</code></pre>
-    <p>進階環境則建議交由 IT 部門設定 Nginx 或 Apache。</p>
+npm start # 確保伺服器運行在預設 Port 1234 上</code></pre>
+    </div>
   </div>
 
-  <div class="card info-box">
-    <h3><i class="ti ti-alert-triangle text-amber-500"></i> 注意事項：防火牆與對外網路</h3>
-    <ul>
-      <li><strong>防火牆設定：</strong>伺服器的作業系統防火牆必須設定「允許通訊埠 (Port) <code>80</code> 與 <code>1234</code> 通過」，否則外部電腦無法連入。</li>
-      <li><strong>外部 API 連線：</strong>雖然系統架設在內網，但若仍使用 Gemini 或 CloudConvert 等第三方 AI 服務，伺服器與使用者的電腦<strong>依然需要有對外連網能力</strong>。若需全斷網環境，可透過 <code>ApiVaultManager</code> 串接公司內部自建的 Local LLM (如 vLLM / Ollama)。</li>
-    </ul>
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-world-www"></i>4. 啟動前端網頁伺服器</div>
+    <div class="sub-desc">使用任何 Web Server 軟體來託管 <code>dist</code> 資料夾，最簡單的方式是使用 npm 套件 <code>serve</code>：</div>
+    <div class="card">
+      <pre><code class="language-bash">npx serve -s dist -p 80</code></pre>
+      <div class="card-sub" style="margin-top: 12px; margin-bottom: 0;">進階環境則建議交由 IT 部門設定 Nginx 或 Apache。</div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top: 24px;">
+    <i class="ti ti-alert-triangle"></i>
+    <div>
+      <b>注意事項：防火牆與對外網路</b><br>
+      1. 伺服器的作業系統防火牆必須設定「允許通訊埠 (Port) <code>80</code> 與 <code>1234</code> 通過」，否則外部電腦無法連入。<br>
+      2. 雖然系統架設在內網，但若仍使用 Gemini 或 CloudConvert 等第三方服務，伺服器與使用者的電腦<b>依然需要有對外連網能力</b>。若需全斷網環境，可透過 <code>ApiVaultManager</code> 串接公司內部的 Local LLM。
+    </div>
   </div>
 
 </section>
