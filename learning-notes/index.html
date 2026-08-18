@@ -952,8 +952,94 @@ flowchart LR
      ╚═══════════════════════════════════════════════════════════════╝ -->
 <section class="page-section" id="sec-collab">
   <h1 class="section-title">👥 即時多人協作</h1>
-  <p class="section-sub">協作系統是整個 EditorV2 最複雜的模組。基於 <b><span class="wiki-link" data-title="Yjs" data-icon="ti-arrows-exchange" data-desc="高效能的 CRDT 實作，專為協作網頁應用程式設計，支援離線編輯與自動合併衝突。">Yjs</span> (<span class="wiki-link" data-title="CRDT" data-icon="ti-git-merge" data-desc="無衝突複製資料型別 (Conflict-free Replicated Data Type)，允許多個節點同時修改資料而不需要中央伺服器鎖定，最終會自動收斂一致。">CRDT</span>)</b> 實現衝突自動合併，透過 <b>Firebase Realtime Database</b> 做資料同步。</p>
+  <p class="section-sub">協作系統是整個 EditorV2 最複雜的模組。基於 <b><span class="wiki-link" data-title="Yjs" data-icon="ti-arrows-exchange" data-desc="高效能的 CRDT 實作，專為協作網頁應用程式設計，支援離線編輯與自動合併衝突。">Yjs</span> (<span class="wiki-link" data-title="CRDT" data-icon="ti-git-merge" data-desc="無衝突複製資料型別 (Conflict-free Replicated Data Type)，允許多個節點同時修改資料而不需要中央伺服器鎖定，最終會自動收斂一致。">CRDT</span>)</b> 實現衝突自動合併。</p>
 
+  <div style="display: flex; gap: 10px; margin-bottom: 20px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    <button onclick="document.getElementById('collab-websocket').style.display='block'; document.getElementById('collab-firebase').style.display='none'; this.style.background='#3b82f6'; this.style.color='white'; this.nextElementSibling.style.background='white'; this.nextElementSibling.style.color='black';" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #cbd5e1; background: #3b82f6; color: white; cursor: pointer; font-weight: bold; transition: all 0.2s;">🔌 y-websocket 架構 (當前版本)</button>
+    <button onclick="document.getElementById('collab-websocket').style.display='none'; document.getElementById('collab-firebase').style.display='block'; this.style.background='#3b82f6'; this.style.color='white'; this.previousElementSibling.style.background='white'; this.previousElementSibling.style.color='black';" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; color: black; cursor: pointer; font-weight: bold; transition: all 0.2s;">🔥 Firebase 架構 (舊版紀錄)</button>
+  </div>
+
+  <div class="note blue">
+    <i class="ti ti-info-circle"></i>
+    <div><b>什麼是 CRDT？</b>Conflict-free Replicated Data Type（無衝突複製資料型別）。多個使用者同時修改同一份資料時，CRDT 保證所有人最終收斂到一致的狀態，<b>不需要集中式鎖定或衝突解決</b>。Yjs 是最流行的 JavaScript CRDT 實現。</div>
+  </div>
+
+  <!-- 新版 y-websocket 架構 -->
+  <div id="collab-websocket" style="display:block;">
+    <div class="card">
+      <div class="card-h"><i class="ti ti-hierarchy-3"></i><h2>協作系統架構圖 (y-websocket)</h2></div>
+      <div class="mermaid-wrap">
+        <pre class="mermaid">
+graph TB
+  subgraph Client_A["👤 使用者 A"]
+    FA_A["Fabric.js Canvas"]
+    YA_A["YjsAdapter"]
+    YD_A["Y.Doc"]
+    WP_A["WebsocketProvider"]
+    PM_A["PresenceManager"]
+    CO_A["CursorOverlay"]
+  end
+
+  subgraph Cloud["☁️ Render 自建伺服器"]
+    WS[("y-websocket Server<br>Node.js")]
+  end
+
+  subgraph Client_B["👤 使用者 B"]
+    WP_B["WebsocketProvider"]
+    YD_B["Y.Doc"]
+    YA_B["YjsAdapter"]
+    FA_B["Fabric.js Canvas"]
+    PM_B["PresenceManager"]
+    CO_B["CursorOverlay"]
+  end
+
+  FA_A -->|"object:modified"| YA_A
+  YA_A -->|"yObjects.set()"| YD_A
+  YD_A -->|"binary sync"| WP_A
+  WP_A -->|"WebSocket"| WS
+  WS -->|"WebSocket"| WP_B
+  WP_B -->|"apply update"| YD_B
+  YD_B -->|"observe"| YA_B
+  YA_B -->|"canvas.add/modify"| FA_B
+
+  PM_A -->|"awareness"| WP_A
+  WP_A -->|"WebSocket"| WS
+  WS -->|"WebSocket"| WP_B
+  WP_B -->|"awareness"| CO_B
+        </pre>
+      </div>
+    </div>
+
+    <!-- CollabEngine -->
+    <div class="subsection">
+      <div class="sub-title"><i class="ti ti-plug-connected"></i>CollabEngine — 房間管理</div>
+      <div class="sub-desc">負責 Yjs 房間的生命週期：建立 <code>Y.Doc</code>、連線 <code>WebsocketProvider</code>、管理 <code>Awareness</code> 狀態。</div>
+      <div class="card">
+        <div class="card-h"><i class="ti ti-code"></i><h2>連線流程</h2></div>
+        <pre><code class="language-javascript">connect(projectId, roomId) {
+    if (this.projectId === projectId && this.provider) return; // 已連線
+
+    this.disconnect();
+    const roomName = `editorv2_yjs_${projectId}_${roomId}`;
+
+    // 1. 建立 Y.Doc (CRDT 文件)
+    this.ydoc = new Y.Doc();
+    
+    // 2. 建立 WebSocket Provider (連接 Render 伺服器)
+    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:4444';
+    this.provider = new WebsocketProvider(wsUrl, roomName, this.ydoc);
+
+    // 3. 初始化本地 Awareness 狀態
+    this.awareness = this.provider.awareness;
+    const localUser = this.presenceManager.getLocalUser();
+    this.awareness.setLocalStateField('user', localUser);
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 舊版 Firebase 架構 -->
+  <div id="collab-firebase" style="display:none;">
   <div class="note blue">
     <i class="ti ti-info-circle"></i>
     <div><b>什麼是 CRDT？</b>Conflict-free Replicated Data Type（無衝突複製資料型別）。多個使用者同時修改同一份資料時，CRDT 保證所有人最終收斂到一致的狀態，<b>不需要集中式鎖定或衝突解決</b>。Yjs 是最流行的 JavaScript CRDT 實現。</div>
@@ -1064,6 +1150,7 @@ sequenceDiagram
         </pre>
       </div>
     </div>
+  </div>
   </div>
 
   <!-- YjsAdapter -->
