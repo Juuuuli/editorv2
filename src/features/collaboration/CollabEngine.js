@@ -63,13 +63,7 @@ export default class CollabEngine {
         // 初始化 Y.Doc
         this.ydoc = new Y.Doc();
         
-        // 為了避免重新整理後產生「幽靈鼠標分身」，將 clientID 持久化在 sessionStorage
-        let myClientId = sessionStorage.getItem('yjs_client_id');
-        if (myClientId) {
-            this.ydoc.clientID = parseInt(myClientId, 10);
-        } else {
-            sessionStorage.setItem('yjs_client_id', this.ydoc.clientID.toString());
-        }
+        // 每次連線都讓 Y.Doc 產生全新的隨機 clientID，避免新分頁複製 sessionStorage 導致 ID 衝突
 
         // 建立 WebSocket Provider
         const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:4444';
