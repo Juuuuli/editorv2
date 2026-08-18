@@ -1666,6 +1666,32 @@ npm start # 確保伺服器運行在預設 Port 1234 上</code></pre>
     </div>
   </div>
 
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-refresh"></i>5. 線上伺服器維護與修改流程</div>
+    <div class="sub-desc">當系統已經在公司伺服器上線提供同事使用時，若您需要修改功能，請嚴格遵循以下「不中斷服務」的更新流程。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-shield-lock"></i><h2>修改三步驟 (Safe Update Workflow)</h2></div>
+      <div class="tablewrap" style="border: none; border-top: .5px solid var(--border); border-radius: 0 0 var(--r-lg) var(--r-lg);">
+        <table class="tbl">
+          <tbody>
+            <tr>
+              <td class="nm" style="width: 28%; color: var(--blue);">1. 獨立測試 (開發模式)</td>
+              <td style="line-height: 1.6;"><strong>千萬不要直接修改 <code>dist/</code> 資料夾！</strong><br>請在伺服器開啟另一個終端機，執行 <code>npm run dev</code> 啟動「測試伺服器」(通常在 Port 5176)。修改 <code>src/</code> 內的原始碼後，在測試網頁確認功能。這完全不會影響到正在使用正式版 (<code>dist/</code>) 的同事。</td>
+            </tr>
+            <tr>
+              <td class="nm" style="color: var(--green);">2. 重新打包 (前端更新)</td>
+              <td style="line-height: 1.6;">確認測試無誤後，關閉開發伺服器並執行 <code>npm run build</code>。系統會將新的程式碼覆寫到 <code>dist/</code>。<br><strong>影響：無感更新。</strong>同事只要按 <code>F5</code> 重新整理網頁，就會立刻載入最新版本。</td>
+            </tr>
+            <tr>
+              <td class="nm" style="color: var(--amber);">3. 後端重啟 (若有修改)</td>
+              <td style="line-height: 1.6;">如果您修改的是 <code>editor-yjs-server</code> (共編邏輯)，您必須將後端 Node.js 服務關閉並重新啟動 (<code>npm start</code>)。<br><strong>影響：短暫斷線。</strong>關閉瞬間同事會顯示斷線，重啟後他們的瀏覽器會<strong>自動重新連線</strong>並接續狀態，資料不會遺失。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <div class="note" style="margin-top: 24px;">
     <i class="ti ti-alert-triangle"></i>
     <div>
