@@ -64,6 +64,37 @@ export default class DashboardManager {
             });
         }
 
+        // 監聽 Yjs 引擎準備完成事件，用於同步專案 Metadata (取代跨分頁 BroadcastChannel)
+        if (this.eventBus) {
+            this.eventBus.on('COLLAB:ENGINE_READY', async ({ ydoc }) => {
+                this.ydoc = ydoc;
+                this.yMetadata = ydoc.getMap('metadata');
+                
+                if (this.currentProjectId) {
+                    // 我是房主 (或已載入專案的訪客)，將當前專案資料推上雲端
+                    const proj = await this.storageEngine.getProject(this.currentProjectId);
+                    if (proj) {
+                        const projSync = { ...proj };
+                        delete projSync.thumbnail; // 過濾縮圖以節省頻寬
+                        this.yMetadata.set('projectData', projSync);
+                    }
+                } else {
+                    // 我是尚未拿到資料的純訪客，監聽雲端資料庫
+                    const checkSync = () => {
+                        const projSync = this.yMetadata.get('projectData');
+                        if (projSync) {
+                            this.eventBus.emit('COLLAB:SNAPSHOT_RECEIVED', {
+                                projectData: projSync,
+                                projectId: projSync.id
+                            });
+                        }
+                    };
+                    this.yMetadata.observe(checkSync);
+                    checkSync(); // 初次連線立即檢查一次
+                }
+            });
+        }
+
         // 若當前已處於登入狀態，立即處理 Deep Link
         const isAuthed = Boolean(localStorage.getItem('editorv2_current_user') || sessionStorage.getItem('editorv2_current_user'));
         if (isAuthed) {
@@ -92,7 +123,7 @@ export default class DashboardManager {
         }
 
         console.log(`[DashboardManager] 本地資料庫查無專案 ${urlProjectId}，啟動房間握手同步...`);
-        this.eventBus.emit('LOADING:START', { message: '正在連線協作房間，向房主同步專案資料中...\n(請保持房主視窗開啟，單螢幕切換請稍候 2~3 秒)' });
+        this.eventBus.emit('LOADING:START', { message: '正在連線協作房間，向雲端同步專案資料中...\n(若免費伺服器休眠中，喚醒約需等待 1 分鐘，請稍候)' });
 
         // 連線協作房間並請求快照 (isGuest: true)
         this.eventBus.emit('COLLAB:CONNECT_ROOM', {
@@ -105,12 +136,12 @@ export default class DashboardManager {
         const syncTimeout = setTimeout(() => {
             if (!syncCompleted) {
                 this.eventBus.emit('LOADING:END');
-                alert('無法從房主取得專案資料（可能因切換分頁暫停連線或房主分頁未開啟），已為您返回專案儀表板。');
+                alert('無法取得專案資料（可能因連線不穩定或免費伺服器喚醒失敗），已為您返回專案儀表板。');
                 if (this.eventBus) {
                     this.eventBus.emit('ROUTER:NAVIGATE_DASHBOARD', { replace: true });
                 }
             }
-        }, 25000);
+        }, 60000);
 
         this.eventBus.on('COLLAB:SNAPSHOT_RECEIVED', async (data) => {
             if (data && data.projectData && (data.projectId === urlProjectId || data.projectData.id === urlProjectId)) {
