@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
@@ -981,7 +981,7 @@ graph TB
   end
 
   subgraph Cloud["☁️ Render 自建伺服器"]
-    WS[("y-websocket Server<br>Node.js")]
+    WS[(y-websocket Server Node.js)]
   end
 
   subgraph Client_B["👤 使用者 B"]
@@ -993,19 +993,19 @@ graph TB
     CO_B["CursorOverlay"]
   end
 
-  FA_A -->|"object:modified"| YA_A
-  YA_A -->|"yObjects.set()"| YD_A
-  YD_A -->|"binary sync"| WP_A
-  WP_A -->|"WebSocket"| WS
-  WS -->|"WebSocket"| WP_B
-  WP_B -->|"apply update"| YD_B
-  YD_B -->|"observe"| YA_B
-  YA_B -->|"canvas.add/modify"| FA_B
+  FA_A -->|object:modified| YA_A
+  YA_A -->|yObjects.set| YD_A
+  YD_A -->|binary sync| WP_A
+  WP_A -->|WebSocket| WS
+  WS -->|WebSocket| WP_B
+  WP_B -->|apply update| YD_B
+  YD_B -->|observe| YA_B
+  YA_B -->|canvas.add/modify| FA_B
 
-  PM_A -->|"awareness"| WP_A
-  WP_A -->|"WebSocket"| WS
-  WS -->|"WebSocket"| WP_B
-  WP_B -->|"awareness"| CO_B
+  PM_A -->|awareness| WP_A
+  WP_A -->|WebSocket| WS
+  WS -->|WebSocket| WP_B
+  WP_B -->|awareness| CO_B
         </pre>
       </div>
     </div>
@@ -1036,14 +1036,25 @@ graph TB
 }</code></pre>
       </div>
     </div>
+    <!-- Render 部署 -->
+    <div class="subsection">
+      <div class="sub-title"><i class="ti ti-cloud-upload"></i>Render 免費雲端部署</div>
+      <div class="sub-desc">將 WebSocket 伺服器託管至 Render 平台，實現 24 小時免費自動連線。</div>
+      <div class="card">
+        <div class="card-h"><i class="ti ti-server"></i><h2>部署與設定步驟</h2></div>
+        <ol style="padding-left:20px; line-height:1.6; margin:10px 0;">
+          <li>將 <code>y-websocket-server</code> 目錄下的程式碼推送到 GitHub Repository。</li>
+          <li>在 <a href="https://render.com" target="_blank" style="color:#3b82f6;">Render.com</a> 建立 <b>Web Service</b> 並綁定該 Repo。</li>
+          <li>維持預設的 Build Command (<code>npm install</code>) 與 Start Command (<code>npm start</code>)，選擇 Free 方案。</li>
+          <li>部署成功後，在前端根目錄建立或修改 <code>.env.production</code>，加入：<br><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;">VITE_WS_URL=wss://你的應用名稱.onrender.com</code></li>
+          <li>提交前端程式碼 (Git Push)，GitHub Pages 將自動套用新的 WebSocket 網址，無縫切換上線！</li>
+        </ol>
+      </div>
+    </div>
   </div>
 
   <!-- 舊版 Firebase 架構 -->
   <div id="collab-firebase" style="display:none;">
-  <div class="note blue">
-    <i class="ti ti-info-circle"></i>
-    <div><b>什麼是 CRDT？</b>Conflict-free Replicated Data Type（無衝突複製資料型別）。多個使用者同時修改同一份資料時，CRDT 保證所有人最終收斂到一致的狀態，<b>不需要集中式鎖定或衝突解決</b>。Yjs 是最流行的 JavaScript CRDT 實現。</div>
-  </div>
 
   <div class="card">
     <div class="card-h"><i class="ti ti-hierarchy-3"></i><h2>協作系統架構圖</h2></div>
