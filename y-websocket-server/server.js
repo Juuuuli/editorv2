@@ -11,7 +11,8 @@ const wss = new WebSocketServer({ server })
 
 wss.on('connection', (ws, req) => {
   // setupWSConnection 內部會自動處理房間與 CRDT 的同步邏輯
-  setupWSConnection(ws, req)
+  // 開啟 gc: true 允許自動回收已被刪除的物件，避免長期運作或大量修改時撐爆記憶體
+  setupWSConnection(ws, req, { gc: true })
 })
 
 const port = process.env.PORT || 4444
