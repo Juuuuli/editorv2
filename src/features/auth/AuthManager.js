@@ -63,6 +63,18 @@ export default class AuthManager {
             createdAt: 1700000003000
         };
 
+        // ★ 新增批量測試帳號 (測試多人共編上限)
+        this.testUsers = Array.from({ length: 6 }).map((_, i) => ({
+            id: `user_tester_${i + 1}`,
+            username: `tester_${i + 1}`,
+            password: 'TestPassword123!',
+            name: `測試員 ${i + 1} 號`,
+            email: `tester${i + 1}@editor.local`,
+            role: 'editor',
+            avatarColor: `hsl(${(i * 50) % 360}, 70%, 50%)`,
+            createdAt: 1700000004000 + i * 1000
+        }));
+
         this.currentUser = null;
         this.authGateElement = null;
         this.apiVaultModal = null;
@@ -167,6 +179,16 @@ export default class AuthManager {
             } else {
                 users.push(this.defaultViewer);
             }
+
+            // 確保測試帳號群存在
+            this.testUsers.forEach(testUser => {
+                const idx = users.findIndex(u => u.username === testUser.username);
+                if (idx >= 0) {
+                    users[idx] = { ...users[idx], ...testUser };
+                } else {
+                    users.push(testUser);
+                }
+            });
 
             localStorage.setItem(this.storageKeyUsers, JSON.stringify(users));
         } catch (e) {
