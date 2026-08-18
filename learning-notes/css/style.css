@@ -269,3 +269,47 @@ mark.note-highlight:hover, mark.note-highlight.active { background: #ffe373; }
 }
 .add-note-btn.show { display: flex; }
 .add-note-btn i { font-size: 15px; }
+
+/* ===== Stats Detail Modal & Flash Effect ===== */
+.stats-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.5); z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.stats-modal-overlay.show { opacity: 1; pointer-events: auto; }
+.stats-modal {
+  background: var(--surface); border-radius: var(--r-lg); width: 400px;
+  max-width: 90vw; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.stats-modal-overlay.show .stats-modal { transform: translateY(0); }
+.stats-modal-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface2);
+}
+.stats-modal-header h3 { font-size: 16px; font-weight: 600; color: var(--text); }
+.stats-modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-2); }
+.stats-modal-list { padding: 12px; display: flex; flex-direction: column; gap: 4px; max-height: 60vh; overflow-y: auto; }
+.stats-modal-item {
+  padding: 12px 16px; background: transparent; border: none; text-align: left;
+  border-radius: var(--r-md); font-size: 14px; color: var(--text); cursor: pointer;
+  display: flex; align-items: center; gap: 10px; transition: background 0.2s;
+}
+.stats-modal-item:hover { background: var(--surface2); color: var(--green); }
+
+@keyframes flash-highlight {
+  0% { box-shadow: 0 0 0px var(--green); background-color: transparent; transform: scale(1); }
+  25% { box-shadow: 0 0 20px var(--green); background-color: var(--green-bg); transform: scale(1.01); }
+  50% { box-shadow: 0 0 0px var(--green); background-color: transparent; transform: scale(1); }
+  75% { box-shadow: 0 0 20px var(--green); background-color: var(--green-bg); transform: scale(1.01); }
+  100% { box-shadow: 0 0 0px var(--green); background-color: transparent; transform: scale(1); }
+}
+.flash-target {
+  animation: flash-highlight 1.5s ease-in-out;
+}
+
+.stat { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.stat:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }

@@ -391,7 +391,7 @@ export default class CanvasEngine {
         // 監聽工作區切換，執行畫布清除 (但保留工作板)
         if (this.eventBus) {
             this.eventBus.on('WORKSPACE:MODE_CHANGED', () => {
-                this.canvas.discardActiveObject();
+                this.eventBus.emit('CANVAS:PAGE_LOADING_START'); // 暫停 Yjs 同步
                 this.canvas.discardActiveObject();
                 const objects = [...this.canvas.getObjects()];
                 objects.forEach(obj => {
@@ -403,6 +403,7 @@ export default class CanvasEngine {
                 this.currentPageId = 'page-1';
                 this.canvas.requestRenderAll();
                 this.eventBus.emit('CANVAS:DIRTY', false); // 清除後狀態歸零
+                this.eventBus.emit('CANVAS:PAGE_LOADING_END'); // 恢復 Yjs 同步
             });
 
             // 監聽頁面切換 (存取快取)

@@ -1220,6 +1220,7 @@ export default class DashboardManager {
                 lockScalingX: true,
                 lockScalingY: true,
                 lockRotation: true,
+                isBackgroundTemplate: true,
                 layerName: 'PDF 背景'
             }];
         }

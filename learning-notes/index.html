@@ -210,6 +210,11 @@ graph TB
 ├── vite.config.js            <span class="comment">← Vite 設定 (port 5176, proxy)</span>
 ├── tailwind.config.js        <span class="comment">← Tailwind CSS 設定</span>
 ├── .env                      <span class="comment">← 環境變數 (API Keys)</span>
+├── .env.production           <span class="comment">← 生產環境變數 (VITE_WS_URL)</span>
+│
+├── <span class="folder">y-websocket-server/</span>     <span class="comment">← [獨立專案] Yjs WebSocket 後端伺服器</span>
+│   ├── package.json
+│   └── server.js             <span class="comment">← 處理 CRDT 協作與 Awareness</span>
 │
 ├── <span class="folder">src/</span>
 │   ├── main.js               <span class="comment">← 應用進入點：模組實例化與串接</span>
@@ -258,8 +263,8 @@ graph TB
 │   │   │
 │   │   ├── <span class="folder">collaboration/</span>
 │   │   │   ├── index.js            <span class="comment">← 協作模組入口</span>
-│   │   │   ├── CollabEngine.js     <span class="comment">← Yjs 房間生命週期</span>
-│   │   │   ├── FirebaseProvider.js <span class="comment">← Firebase ↔ Yjs 橋接</span>
+│   │   │   ├── CollabEngine.js     <span class="comment">← 協作房間生命週期 (Yjs WebSocket)</span>
+│   │   │   ├── FirebaseProvider.js <span class="comment">← Firebase Auth/Storage 橋接</span>
 │   │   │   ├── YjsAdapter.js      <span class="comment">← Fabric ↔ Yjs 雙向綁定</span>
 │   │   │   ├── PresenceManager.js  <span class="comment">← 使用者在線狀態</span>
 │   │   │   ├── MultiplayerCursorOverlay.js <span class="comment">← 遠端游標</span>
@@ -1409,10 +1414,9 @@ export default defineConfig({
   </div>
 
   <div class="card">
-    <div class="card-h"><i class="ti ti-brand-firebase"></i><h2>Firebase 設定</h2></div>
-    <div class="card-sub">Firebase 提供四大服務：Authentication（登入）、Realtime Database（協作同步）、Storage（素材上傳）、Firestore（其他資料）。</div>
+    <div class="card-h"><i class="ti ti-brand-firebase"></i><h2>Firebase 設定 (解耦後)</h2></div>
+    <div class="card-sub">目前 Firebase 僅提供兩大基礎服務：Authentication（身分驗證）與 Storage（素材上傳）。已將協作同步抽離以節省讀寫成本，降級至免費 Spark 方案即可運作。</div>
     <pre><code class="language-javascript">import { initializeApp } from 'firebase/app';
-import { getDatabase } from 'firebase/database';
 import { getStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
@@ -1420,16 +1424,27 @@ import { getFirestore } from 'firebase/firestore';
 const firebaseConfig = {
   apiKey: "AIzaSy...",
   authDomain: "editor-4348c.firebaseapp.com",
-  databaseURL: "https://editor-4348c-default-rtdb.asia-southeast1...",
   projectId: "editor-4348c",
   storageBucket: "editor-4348c.firebasestorage.app",
 };
 
 const app = initializeApp(firebaseConfig);
-export const rtdb = getDatabase(app);    // 即時資料庫 (Yjs 同步)
 export const storage = getStorage(app);  // 檔案儲存 (素材上傳)
 export const auth = getAuth(app);        // 身分認證
-export const db = getFirestore(app);     // 文件資料庫</code></pre>
+export const db = getFirestore(app);     // 文件資料庫 (選用)</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-server"></i><h2>後端 WebSocket 伺服器 (y-websocket)</h2></div>
+    <div class="card-sub">負責所有 CRDT 即時同步與連線 Awareness，位於 <code>y-websocket-server/</code> 目錄。</div>
+    <pre><code class="language-javascript">// server.js (獨立 Node.js 專案)
+const WebSocket = require('ws');
+const setupWSConnection = require('y-websocket/bin/utils').setupWSConnection;
+
+const wss = new WebSocket.Server({ port: process.env.PORT || 1234 });
+wss.on('connection', (conn, req) => {
+  setupWSConnection(conn, req, { gc: true });
+});</code></pre>
   </div>
 
   <div class="card">
@@ -1453,6 +1468,7 @@ export const db = getFirestore(app);     // 文件資料庫</code></pre>
         <tbody>
           <tr><td class="mono nm">VITE_CLIPDROP_API_KEY</td><td class="muted">Clipdrop 圖片處理 API 金鑰</td><td class="muted">SmartTools.js</td></tr>
           <tr><td class="mono nm">VITE_CONVERTAPI_SECRET</td><td class="muted">ConvertAPI PPT 解析金鑰</td><td class="muted">FileImportManager.js</td></tr>
+          <tr><td class="mono nm">VITE_WS_URL</td><td class="muted">後端 y-websocket 伺服器網址</td><td class="muted">CollabEngine.js (生產環境: .env.production)</td></tr>
         </tbody>
       </table>
     </div>
@@ -1477,9 +1493,9 @@ flowchart TD
   
   CANVAS -->|"object:modified"| YA["YjsAdapter"]
   YA -->|"yObjects.set()"| YDOC["Y.Doc (CRDT)"]
-  YDOC -->|"update"| FP["FirebaseProvider"]
-  FP --> RTDB[("Firebase RTDB")]
-  RTDB -->|"sync"| REMOTE["🌐 遠端使用者"]
+  YDOC -->|"update"| WS["WebsocketProvider"]
+  WS --> YWS[("y-websocket Server")]
+  YWS -->|"sync"| REMOTE["🌐 遠端使用者"]
 
   USER -->|"AI 指令"| AIA["AIProviderAdapter"]
   AIA --> LLM["Gemini / OpenAI / Claude"]
@@ -1520,5 +1536,6 @@ flowchart TD
   </button>
     <script src="js/app.js"></script>
     <script src="js/notes.js"></script>
+    <script src="js/stats-detail.js"></script>
 </body>
 </html>

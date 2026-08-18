@@ -28,33 +28,13 @@ export default class YjsAdapter {
             this.isViewer = document.body.classList.contains('viewer-mode');
         }
 
+        this.isSyncing = true;
+        this.isPageSwitching = false;
+        this._pendingInitialSync = true; // 標記等待 Canvas 載入完成再同步
+
         this.bindFabricEvents();
         this.bindYjsEvents();
         this.bindPageEvents();
-        
-        // 初始載入：檢查 Firebase 遠端是否有資料
-        if (this.provider && typeof this.provider.isRoomEmpty === 'function') {
-            this.provider.isRoomEmpty().then(empty => {
-                if (empty) {
-                    // 如果是房主初始建立，且畫布上有物件，推送至 Yjs (Firebase)
-                    this.pushLocalToYjs();
-                } else {
-                    // Firebase 已經有資料，自動觸發 observer 同步
-                    if (this.yObjects.length > 0) {
-                        this.syncCanvasFromYjs();
-                    }
-                }
-            });
-        } else {
-            // Fallback (for non-Firebase providers)
-            setTimeout(() => {
-                if (this.yObjects.length > 0) {
-                    this.syncCanvasFromYjs();
-                } else {
-                    this.pushLocalToYjs();
-                }
-            }, 100);
-        }
     }
 
     bindPageEvents() {
@@ -66,6 +46,16 @@ export default class YjsAdapter {
         
         this.eventBus.on('CANVAS:PAGE_LOADING_END', () => {
             this.isPageSwitching = false;
+            
+            if (this._pendingInitialSync) {
+                this._pendingInitialSync = false;
+                if (this.yObjects && this.yObjects.length > 0) {
+                    this.syncCanvasFromYjs();
+                } else {
+                    this.pushLocalToYjs();
+                }
+                this.isSyncing = false;
+            }
         });
         
         // 監聽頁面切換
@@ -83,16 +73,7 @@ export default class YjsAdapter {
             this.yObjects = this.ydoc.getArray(`page_objects_${this.pageId}`);
             this.bindYjsEvents();
             
-            // 由於 EventBus 的執行順序，CanvasEngine 可能已經同步執行完 loadPageState 並發出了 CANVAS:PAGE_LOADING_END。
-            // 我們稍微延遲來檢查並執行同步，確保所有畫布重繪都已完成。
-            setTimeout(() => {
-                if (this.yObjects && this.yObjects.length > 0) {
-                    this.syncCanvasFromYjs();
-                } else {
-                    this.pushLocalToYjs();
-                }
-                this.isSyncing = false;
-            }, 100);
+            this._pendingInitialSync = true;
         });
         
         // 監聽 ThumbnailsPanel 的本地頁面清單變更，推送到 Yjs
@@ -120,7 +101,6 @@ export default class YjsAdapter {
         this.eventBus.on('PROJECT:IMPORTED', ({ projectData }) => {
             if (projectData && projectData.currentPageId) {
                 const newPageId = projectData.currentPageId;
-                if (this.pageId === newPageId) return;
                 
                 this.isSyncing = true;
                 
@@ -132,14 +112,7 @@ export default class YjsAdapter {
                 this.yObjects = this.ydoc.getArray(`page_objects_${this.pageId}`);
                 this.bindYjsEvents();
                 
-                setTimeout(() => {
-                    if (this.yObjects && this.yObjects.length > 0) {
-                        this.syncCanvasFromYjs();
-                    } else {
-                        this.pushLocalToYjs();
-                    }
-                    this.isSyncing = false;
-                }, 100);
+                this._pendingInitialSync = true;
             }
         });
     }
@@ -151,7 +124,7 @@ export default class YjsAdapter {
         this.canvas.on('object:added', (e) => {
             if (this.isViewer || this.isPageSwitching || e.target.isRemoteSync) return;
             // 過濾底板與輔助線
-            if (e.target.id === 'artboard' || e.target.isArtboard || e.target === this.canvas.artboard || e.target.isSmartGuide || e.target.excludeFromExport) return;
+            if (e.target.id === 'artboard' || e.target.isArtboard || e.target === this.canvas.artboard || e.target.isSmartGuide || e.target.excludeFromExport || e.target.isBackgroundTemplate) return;
             
             if (!e.target.id) e.target.id = 'obj_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
             
@@ -175,7 +148,7 @@ export default class YjsAdapter {
         this.canvas.on('object:modified', (e) => {
             if (this.isViewer || this.isPageSwitching) return;
             const target = e.target;
-            if (!target || !target.id) return;
+            if (!target || !target.id || target.isBackgroundTemplate) return;
             
             let objJson;
             try {
@@ -203,7 +176,7 @@ export default class YjsAdapter {
         this.canvas.on('object:removed', (e) => {
             if (this.isViewer || this.isPageSwitching || e.target.isRemoteSync) return;
             const target = e.target;
-            if (!target || !target.id) return;
+            if (!target || !target.id || target.isBackgroundTemplate) return;
             
             this.ydoc.transact(() => {
                 const yArr = this.yObjects.toArray();
@@ -221,7 +194,7 @@ export default class YjsAdapter {
     pushLocalToYjs() {
         if (this.yObjects.length > 0) return; // 已經有資料就不蓋掉
         
-        const objects = this.canvas.getObjects().filter(obj => obj.id !== 'artboard' && !obj.isArtboard && obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport);
+        const objects = this.canvas.getObjects().filter(obj => obj.id !== 'artboard' && !obj.isArtboard && obj !== this.canvas.artboard && !obj.isSmartGuide && !obj.excludeFromExport && !obj.isBackgroundTemplate);
         if (objects.length === 0) return;
 
         this.ydoc.transact(() => {
