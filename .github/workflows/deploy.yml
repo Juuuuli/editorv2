@@ -37,7 +37,8 @@ jobs:
         run: npm run build
         env:
           VITE_CLIPDROP_API_KEY: ${{ secrets.VITE_CLIPDROP_API_KEY }}
-          VITE_CONVERTAPI_SECRET: ${{ secrets.VITE_CONVERTAPI_SECRET }}
+          VITE_CLOUDCONVERT_API_KEY: ${{ secrets.VITE_CLOUDCONVERT_API_KEY }}
+          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
         
       - name: Setup Pages
         uses: actions/configure-pages@v4
