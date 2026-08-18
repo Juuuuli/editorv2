@@ -58,7 +58,7 @@ export default class AuthManager {
             password: 'Canvas@Collab2026#View!',
             name: 'Bob (外部訪客)',
             email: 'bob.viewer@editor.local',
-            role: 'viewer',
+            role: 'editor', // 修改為 editor，讓所有帳號都能自由使用系統
             avatarColor: '#8b5cf6',
             createdAt: 1700000003000
         };
@@ -161,7 +161,7 @@ export default class AuthManager {
                     username: 'viewer_bob',
                     password: 'Canvas@Collab2026#View!',
                     name: 'Bob (外部訪客)',
-                    role: 'viewer',
+                    role: 'editor', // 放開權限
                     avatarColor: '#8b5cf6'
                 };
             } else {
