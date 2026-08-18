@@ -5,7 +5,7 @@
  */
 
 import * as Y from 'yjs';
-import FirebaseProvider from './FirebaseProvider.js';
+import { WebsocketProvider } from 'y-websocket';
 
 export default class CollabEngine {
     constructor(eventBus, presenceManager) {
@@ -71,8 +71,9 @@ export default class CollabEngine {
             sessionStorage.setItem('yjs_client_id', this.ydoc.clientID.toString());
         }
 
-        // 建立 Firebase Provider
-        this.provider = new FirebaseProvider(roomName, this.ydoc);
+        // 建立 WebSocket Provider
+        const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:4444';
+        this.provider = new WebsocketProvider(wsUrl, roomName, this.ydoc);
 
         this.awareness = this.provider.awareness;
 

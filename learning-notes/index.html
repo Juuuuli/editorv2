@@ -1,0 +1,1409 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EditorV2 系統架構學習筆記</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== 側欄導航 ===== -->
+<aside class="side">
+  <div class="brand">
+    <div class="logo"><i class="ti ti-code"></i></div>
+    <div><div class="bt">EditorV2 學習筆記</div><div class="bs">ARCHITECTURE GUIDE · v1.5</div></div>
+  </div>
+
+  <div class="search-box">
+    <i class="ti ti-search"></i>
+    <input type="text" id="nav-search" placeholder="搜尋章節…">
+  </div>
+
+  <nav class="nav" id="main-nav">
+    <a data-section="sec-overview" class="on"><i class="ti ti-compass"></i>系統總覽<span class="badge">START</span></a>
+
+    <div class="grp">核心層</div>
+    <a data-section="sec-core"><i class="ti ti-engine"></i>核心引擎</a>
+    <a data-section="sec-eventbus"><i class="ti ti-broadcast"></i>EventBus 事件匯流排</a>
+
+    <div class="grp">功能模組</div>
+    <a data-section="sec-tools"><i class="ti ti-brush"></i>畫布工具</a>
+    <a data-section="sec-panels"><i class="ti ti-layout-sidebar"></i>面板系統</a>
+    <a data-section="sec-workspace"><i class="ti ti-artboard"></i>工作區與頁面</a>
+
+    <div class="grp">資料層</div>
+    <a data-section="sec-storage"><i class="ti ti-database"></i>儲存與專案</a>
+    <a data-section="sec-collab"><i class="ti ti-users-group"></i>即時協作</a>
+
+    <div class="grp">輔助系統</div>
+    <a data-section="sec-ai"><i class="ti ti-sparkles"></i>AI 功能</a>
+    <a data-section="sec-theme"><i class="ti ti-palette"></i>主題與輔助</a>
+    <a data-section="sec-build"><i class="ti ti-settings-cog"></i>建置與部署</a>
+  </nav>
+
+  <div class="side-foot">
+    <a onclick="window.print()"><i class="ti ti-printer"></i>列印筆記</a>
+  </div>
+</aside>
+
+<!-- ===== 主區域 ===== -->
+<div class="main">
+  <div class="topbar">
+    <div class="crumb">
+      <i class="ti ti-book-2"></i>
+      <span id="crumb-section">系統總覽</span>
+      <i class="ti ti-chevron-right"></i>
+      <span class="cur" id="crumb-page">EditorV2 多媒體畫布編輯器</span>
+    </div>
+    <div class="user">
+      <span class="tag t-green"><i class="ti ti-git-branch"></i> v1.5.0</span>
+      <span class="tag t-blue"><i class="ti ti-stack-2"></i> Vite + Fabric.js</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 1: 系統總覽                                          ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section active" id="sec-overview">
+  <h1 class="section-title">🏗️ EditorV2 系統總覽</h1>
+  <p class="section-sub">EditorV2 是一套以瀏覽器為載體的<b>多媒體畫布編輯器</b>，支援 PDF 分頁編輯、無邊界圖片畫布、即時多人協作、AI 輔助工具等功能。以下是系統的全局鳥瞰。</p>
+
+  <!-- 統計概覽 -->
+  <div class="stats">
+    <div class="stat blue"><div class="n">26+</div><div class="l"><i class="ti ti-file-code"></i>原始碼模組</div></div>
+    <div class="stat green"><div class="n">13</div><div class="l"><i class="ti ti-package"></i>NPM 套件</div></div>
+    <div class="stat amber"><div class="n">4</div><div class="l"><i class="ti ti-palette"></i>主題風格</div></div>
+    <div class="stat purple"><div class="n">3+</div><div class="l"><i class="ti ti-robot"></i>AI Provider</div></div>
+  </div>
+
+  <!-- 技術棧卡片 -->
+  <div class="card">
+    <div class="card-h"><i class="ti ti-stack-2"></i><h2>技術棧總覽</h2></div>
+    <div class="card-sub">EditorV2 基於純 JavaScript（無框架），以 Vite 打包、<span class="wiki-link" data-title="Fabric.js" data-icon="ti-artboard" data-desc="強大的 HTML5 Canvas 函式庫，提供物件模型、群組、互動操作與 SVG 解析功能，為此編輯器的核心繪圖引擎。">Fabric.js</span> 驅動畫布、Firebase 做後端、<span class="wiki-link" data-title="Yjs" data-icon="ti-arrows-exchange" data-desc="高效能的 CRDT 實作，專為協作網頁應用程式設計，支援離線編輯與自動合併衝突。">Yjs</span> 做 <span class="wiki-link" data-title="CRDT" data-icon="ti-git-merge" data-desc="無衝突複製資料型別 (Conflict-free Replicated Data Type)，允許多個節點同時修改資料而不需要中央伺服器鎖定，最終會自動收斂一致。">CRDT</span> 協作同步。</div>
+    <div class="grid4">
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-brand-vite"></i></div><div class="tc-name">Vite</div><div class="tc-desc">建置工具<br>Dev Server + HMR</div><div class="tc-ver">^8.1.5</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-artboard"></i></div><div class="tc-name">Fabric.js</div><div class="tc-desc">HTML5 Canvas 物件模型<br>核心繪圖引擎</div><div class="tc-ver">^5.3.0</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-brand-firebase"></i></div><div class="tc-name">Firebase</div><div class="tc-desc">Auth / RTDB / Storage<br>Firestore</div><div class="tc-ver">^12.17.1</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-arrows-exchange"></i></div><div class="tc-name">Yjs</div><div class="tc-desc">CRDT 即時協作<br>衝突自動合併</div><div class="tc-ver">^13.6.32</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-file-type-pdf"></i></div><div class="tc-name">jsPDF</div><div class="tc-desc">PDF 匯出生成</div><div class="tc-ver">^4.2.1</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-file-import"></i></div><div class="tc-name">pdf.js</div><div class="tc-desc">PDF 解析匯入</div><div class="tc-ver">^6.1.200</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-presentation"></i></div><div class="tc-name">PptxGenJS</div><div class="tc-desc">PPT 簡報匯出</div><div class="tc-ver">^4.0.1</div></div>
+      <div class="tech-card"><div class="tc-icon"><i class="ti ti-photo-ai"></i></div><div class="tc-name">@imgly/bg-removal</div><div class="tc-desc">客戶端 AI 去背</div><div class="tc-ver">^1.4.5</div></div>
+    </div>
+  </div>
+
+  <!-- 全域架構圖 -->
+  <div class="card">
+    <div class="card-h"><i class="ti ti-hierarchy-2"></i><h2>全域架構圖</h2></div>
+    <div class="card-sub">所有模組之間透過 <code>EventBus</code> 解耦通訊，不直接互相引用。下圖展示模組分層與資料流向。</div>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+graph TB
+  subgraph Entry["🚀 入口層"]
+    HTML["index.html<br><small>骨架 + Tailwind</small>"]
+    MAIN["main.js<br><small>模組實例化 &amp; 串接</small>"]
+  end
+
+  subgraph Core["⚙️ 核心層"]
+    EB["EventBus<br><small>Pub/Sub 事件匯流排</small>"]
+    CE["CanvasEngine<br><small>Fabric.js 包裝器</small>"]
+    PR["ProjectRouter<br><small>URL 路由 / 深連結</small>"]
+    AIA["AIProviderAdapter<br><small>多 AI 供應商抽象</small>"]
+  end
+
+  subgraph Features["🧩 功能層"]
+    direction LR
+    BT["BasicTools<br>選取/平移/形狀/筆刷"]
+    OT["ObjectsTools<br>文字/表格/圖片/QR"]
+    ST["SmartTools<br>AI 去背/修補/OCR"]
+    PM["PanelManager<br>面板切換"]
+    PP["PropertiesPanel<br>屬性編輯"]
+    LP["LayersPanel<br>圖層管理"]
+    AP["AssetsPanel<br>素材管理"]
+    WM["WorkspaceManager<br>IMAGE/PDF 模式"]
+    TP["ThumbnailsPanel<br>頁面縮圖"]
+    EM["ExportManager<br>匯出 PDF/PPT/PNG"]
+    FM["FileImportManager<br>匯入 PDF/圖片"]
+  end
+
+  subgraph Data["💾 資料層"]
+    PSE["ProjectStorageEngine<br><small>IndexedDB CRUD</small>"]
+    DM["DashboardManager<br><small>專案儀表板</small>"]
+    IDB[("IndexedDB<br>EditorV2_ProjectsDB")]
+  end
+
+  subgraph Collab["👥 協作層"]
+    COL["CollabEngine<br><small>Yjs 房間管理</small>"]
+    FP["FirebaseProvider<br><small>Firebase ↔ Yjs 橋接</small>"]
+    YA["YjsAdapter<br><small>Fabric ↔ Yjs 綁定</small>"]
+    PRES["PresenceManager<br><small>使用者在線狀態</small>"]
+    CURSOR["CursorOverlay<br><small>遠端游標渲染</small>"]
+  end
+
+  subgraph Aux["🎨 輔助層"]
+    TH["ThemeManager<br>4 套主題"]
+    SG["SmartGuides<br>智慧對齊"]
+    CH["ContextualHelper<br>工具提示"]
+    AV["ApiVaultManager<br>API 金鑰保險箱"]
+    AUTH["AuthManager<br>身分認證"]
+  end
+
+  HTML --> MAIN
+  MAIN --> EB
+  MAIN --> CE
+  EB -.->|"事件驅動"| Features
+  EB -.->|"事件驅動"| Data
+  EB -.->|"事件驅動"| Collab
+  EB -.->|"事件驅動"| Aux
+  CE --> BT
+  CE --> OT
+  CE --> ST
+  PSE --> IDB
+  COL --> FP
+  FP --> YA
+  YA --> CE
+  AIA --> ST
+      </pre>
+    </div>
+  </div>
+
+  <!-- 初始化流程 -->
+  <div class="card">
+    <div class="card-h"><i class="ti ti-player-play"></i><h2>系統啟動初始化流程</h2></div>
+    <div class="card-sub">當瀏覽器載入 <code>index.html</code> 後，<code>main.js</code> 在 <code>DOMContentLoaded</code> 事件中依序實例化所有模組。以下是啟動順序。</div>
+    <pre><code class="language-javascript">document.addEventListener('DOMContentLoaded', () => {
+    // 實例化全域 EventBus
+    const eventBus = new EventBus();
+
+    // 實例化 SPA 專案路由管理器
+    const projectRouter = new ProjectRouter(eventBus);
+
+    // 實例化繪圖核心引擎 CanvasEngine
+    const canvas = new CanvasEngine('main-canvas', {
+        width: 1280, height: 720
+    }, eventBus);
+
+    // 實例化即時協作模組 (Yjs + Firebase)
+    const collabModule = new CollaborationModule(eventBus, authManager, projectRouter, canvas);
+
+    // 實例化專案儲存引擎 (IndexedDB)
+    const storageEngine = new ProjectStorageEngine(authManager);
+
+    // 解析 URL 並執行路由跳轉
+    projectRouter.init();
+});</code></pre>
+  </div>
+
+  <!-- 專案目錄結構 -->
+  <div class="card">
+    <div class="card-h"><i class="ti ti-folder-open"></i><h2>專案目錄結構</h2></div>
+    <div class="card-sub">以 <code>src/</code> 為核心，依功能領域分資料夾。<code>.md</code> 檔為各模組的開發規格書。</div>
+    <div class="file-tree">
+<span class="folder">EditorV2/</span>
+├── index.html                <span class="comment">← UI 骨架 (Header / Sidebar / Canvas / Modals)</span>
+├── package.json              <span class="comment">← 套件清單 (13 dependencies)</span>
+├── vite.config.js            <span class="comment">← Vite 設定 (port 5176, proxy)</span>
+├── tailwind.config.js        <span class="comment">← Tailwind CSS 設定</span>
+├── .env                      <span class="comment">← 環境變數 (API Keys)</span>
+│
+├── <span class="folder">src/</span>
+│   ├── main.js               <span class="comment">← 應用進入點：模組實例化與串接</span>
+│   ├── style.css             <span class="comment">← 全域樣式</span>
+│   │
+│   ├── <span class="folder">shared/</span>
+│   │   └── EventBus.js       <span class="comment">← Pub/Sub 事件匯流排</span>
+│   │
+│   ├── <span class="folder">core/</span>
+│   │   ├── CanvasEngine.js   <span class="comment">← Fabric.js 畫布引擎 (Undo/Redo/Zoom)</span>
+│   │   ├── AIProviderAdapter.js <span class="comment">← AI 多供應商抽象層</span>
+│   │   └── ProjectRouter.js  <span class="comment">← URL 路由 / 深連結</span>
+│   │
+│   ├── <span class="folder">config/</span>
+│   │   └── firebase.js       <span class="comment">← Firebase 初始化 (Auth/RTDB/Storage)</span>
+│   │
+│   ├── <span class="folder">features/</span>
+│   │   ├── <span class="folder">tools/</span>
+│   │   │   ├── <span class="folder">basic/</span>     BasicTools.js       <span class="comment">← 選取/平移/形狀/筆刷</span>
+│   │   │   ├── <span class="folder">objects/</span>   ObjectsTools.js     <span class="comment">← 文字/表格/圖片/QR</span>
+│   │   │   │              tableBuilder.js     <span class="comment">← 表格渲染邏輯</span>
+│   │   │   ├── <span class="folder">smart/</span>    SmartTools.js       <span class="comment">← AI 去背/修補/OCR</span>
+│   │   │   └── <span class="folder">shared/</span>   KeyboardShortcuts.js<span class="comment">← 快捷鍵管理</span>
+│   │   │
+│   │   ├── <span class="folder">panels/</span>
+│   │   │   ├── PanelManager.js     <span class="comment">← 左側面板 Tab 切換</span>
+│   │   │   ├── PropertiesPanel.js  <span class="comment">← 物件屬性編輯器</span>
+│   │   │   ├── LayersPanel.js      <span class="comment">← 圖層管理 (拖拽排序)</span>
+│   │   │   ├── AssetsPanel.js      <span class="comment">← 素材上傳與插入</span>
+│   │   │   └── AssetsManager.js    <span class="comment">← 素材 IndexedDB 儲存</span>
+│   │   │
+│   │   ├── <span class="folder">workspace/</span>
+│   │   │   ├── WorkspaceManager.js <span class="comment">← IMAGE / PDF 模式切換</span>
+│   │   │   ├── ExportManager.js    <span class="comment">← 匯出 (PDF/PPT/PNG)</span>
+│   │   │   ├── FileImportManager.js<span class="comment">← 匯入 (PDF/圖片)</span>
+│   │   │   └── RatioManager.js     <span class="comment">← 畫布比例管理</span>
+│   │   │
+│   │   ├── <span class="folder">thumbnails/</span>
+│   │   │   └── ThumbnailsPanel.js  <span class="comment">← 右側頁面縮圖面板</span>
+│   │   │
+│   │   ├── <span class="folder">storage/</span>
+│   │   │   └── ProjectStorageEngine.js <span class="comment">← IndexedDB 持久化 CRUD</span>
+│   │   │
+│   │   ├── <span class="folder">dashboard/</span>
+│   │   │   └── DashboardManager.js <span class="comment">← 專案儀表板 / 自動存檔</span>
+│   │   │
+│   │   ├── <span class="folder">collaboration/</span>
+│   │   │   ├── index.js            <span class="comment">← 協作模組入口</span>
+│   │   │   ├── CollabEngine.js     <span class="comment">← Yjs 房間生命週期</span>
+│   │   │   ├── FirebaseProvider.js <span class="comment">← Firebase ↔ Yjs 橋接</span>
+│   │   │   ├── YjsAdapter.js      <span class="comment">← Fabric ↔ Yjs 雙向綁定</span>
+│   │   │   ├── PresenceManager.js  <span class="comment">← 使用者在線狀態</span>
+│   │   │   ├── MultiplayerCursorOverlay.js <span class="comment">← 遠端游標</span>
+│   │   │   ├── ObjectLeaseManager.js<span class="comment">← 物件鎖定</span>
+│   │   │   ├── ShareModal.js       <span class="comment">← 分享彈窗</span>
+│   │   │   └── CollabChannel.js    <span class="comment">← 通訊頻道</span>
+│   │   │
+│   │   ├── <span class="folder">auth/</span>         AuthManager.js      <span class="comment">← SSO / 身分認證</span>
+│   │   ├── <span class="folder">theme/</span>        ThemeManager.js     <span class="comment">← 主題切換 (4 套)</span>
+│   │   ├── <span class="folder">vault/</span>        ApiVaultManager.js  <span class="comment">← API 金鑰保險箱</span>
+│   │   ├── <span class="folder">system/</span>       ContextualHelper.js <span class="comment">← 情境提示</span>
+│   │   ├── <span class="folder">manual/</span>       ManualPanel.js      <span class="comment">← 使用說明面板</span>
+│   │   ├── <span class="folder">floating_tools/</span> FloatingToolsManager.js <span class="comment">← 浮動工具列</span>
+│   │   └── <span class="folder">canvas_auxiliary/</span>
+│   │       ├── SmartGuides.js      <span class="comment">← 智慧對齊線</span>
+│   │       └── RetinaRenderer.js   <span class="comment">← Retina 高解析渲染</span>
+│   │
+│   └── <span class="folder">themes/</span>           <span class="comment">← CSS 主題檔案</span>
+│       ├── index.css
+│       ├── <span class="folder">light-sketch/</span>  light-sketch.css
+│       ├── <span class="folder">dark-geek/</span>     dark-geek.css
+│       ├── <span class="folder">pro-slate/</span>     pro-slate.css
+│       └── <span class="folder">retro-warm/</span>    retro-warm.css
+│
+├── <span class="folder">public/</span>               <span class="comment">← 靜態資源 (說明文件/規格書)</span>
+└── <span class="folder">dist/</span>                 <span class="comment">← Vite 打包產出</span></div>
+  </div>
+
+  <!-- NPM 依賴表 -->
+  <div class="card">
+    <div class="card-h"><i class="ti ti-package"></i><h2>NPM 套件依賴一覽</h2></div>
+    <div class="tablewrap">
+      <table class="tbl">
+        <thead><tr><th>套件名稱</th><th>版本</th><th>用途</th><th>使用位置</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">fabric</td><td class="mono muted">^5.3.0</td><td>HTML5 Canvas 物件模型框架</td><td class="muted">CanvasEngine.js</td></tr>
+          <tr><td class="nm">firebase</td><td class="mono muted">^12.17.1</td><td>Auth / Realtime DB / Storage / Firestore</td><td class="muted">firebase.js, CollabEngine, AuthManager</td></tr>
+          <tr><td class="nm">yjs</td><td class="mono muted">^13.6.32</td><td>CRDT 衝突無感合併資料結構</td><td class="muted">CollabEngine.js</td></tr>
+          <tr><td class="nm">y-protocols</td><td class="mono muted">^1.0.7</td><td>Yjs Awareness / Sync 協定</td><td class="muted">FirebaseProvider.js</td></tr>
+          <tr><td class="nm">y-webrtc</td><td class="mono muted">^10.3.0</td><td>Yjs WebRTC P2P 連線</td><td class="muted">備用通道</td></tr>
+          <tr><td class="nm">jspdf</td><td class="mono muted">^4.2.1</td><td>客戶端 PDF 生成</td><td class="muted">ExportManager.js</td></tr>
+          <tr><td class="nm">pdfjs-dist</td><td class="mono muted">^6.1.200</td><td>PDF 解析與渲染</td><td class="muted">FileImportManager.js</td></tr>
+          <tr><td class="nm">pptxgenjs</td><td class="mono muted">^4.0.1</td><td>PowerPoint 簡報生成</td><td class="muted">ExportManager.js</td></tr>
+          <tr><td class="nm">@imgly/background-removal</td><td class="mono muted">^1.4.5</td><td>客戶端 ML 背景移除</td><td class="muted">SmartTools.js</td></tr>
+          <tr><td class="nm">peerjs</td><td class="mono muted">^1.5.5</td><td>WebRTC 點對點連線</td><td class="muted">CollabChannel.js</td></tr>
+          <tr><td class="nm">vite</td><td class="mono muted">^8.1.5</td><td>前端建置工具</td><td class="muted">vite.config.js</td></tr>
+          <tr><td class="nm">tailwindcss</td><td class="mono muted">^4.3.3</td><td>Utility-first CSS 框架</td><td class="muted">index.html, style.css</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 2: 核心引擎                                          ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-core">
+  <h1 class="section-title">⚙️ 核心引擎</h1>
+  <p class="section-sub">核心層的三大引擎 — <b><span class="wiki-link" data-title="CanvasEngine" data-icon="ti-artboard" data-desc="核心繪圖引擎，包裝 Fabric.js 並管理畫板、歷史紀錄及視圖縮放平移。">CanvasEngine</span></b>（畫布）、<b><span class="wiki-link" data-title="ProjectRouter" data-icon="ti-route" data-desc="URL 路由管理器，負責解析深連結並觸發對應的載入或協作連線行為。">ProjectRouter</span></b>（路由）、<b><span class="wiki-link" data-title="AIProviderAdapter" data-icon="ti-robot" data-desc="多 AI 供應商的統一抽象層，讓系統無縫切換 Gemini、OpenAI 或 Claude 等模型。">AIProviderAdapter</span></b>（AI 抽象）— 是整個系統的基石。</p>
+
+  <!-- CanvasEngine -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-artboard"></i><span class="wiki-link" data-title="CanvasEngine" data-icon="ti-artboard" data-desc="核心繪圖引擎，包裝 Fabric.js 並管理畫板、歷史紀錄及視圖縮放平移。">CanvasEngine</span> — <span class="wiki-link" data-title="Fabric.js" data-icon="ti-artboard" data-desc="強大的 HTML5 Canvas 函式庫，提供物件模型、群組、互動操作與 SVG 解析功能，為此編輯器的核心繪圖引擎。">Fabric.js</span> 畫布引擎</div>
+    <div class="sub-desc">包裝 <code><span class="wiki-link" data-title="Fabric.js" data-icon="ti-artboard" data-desc="強大的 HTML5 Canvas 函式庫，提供物件模型、群組、互動操作與 SVG 解析功能，為此編輯器的核心繪圖引擎。">fabric.js</span></code>，提供 Artboard（畫板）、History（Undo/Redo）、Zoom/Pan 三大功能。所有畫布操作都透過它進行。</div>
+
+    <div class="note blue">
+      <i class="ti ti-info-circle"></i>
+      <div><b>CJK 修正：</b>CanvasEngine 開頭 patch 了 Fabric.js 的 <code>enlargeSpaces</code> 和 <code>_renderChars</code> 方法，修正中文字在 <code>justify</code> 對齊模式下無法正確分散排列的問題。這是因為 Fabric.js 原生只用空白字元分割，而中文沒有空白。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><i class="ti ti-list-check"></i><h2>CanvasEngine 核心功能</h2></div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>功能</th><th>說明</th><th>關鍵方法</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">Artboard 畫板</td><td class="muted">建立固定尺寸的白色矩形作為「紙張」，所有物件在其上編輯</td><td class="mono muted">initArtboard()</td></tr>
+            <tr><td class="nm">History 歷史</td><td class="muted">基於狀態快照的 Undo/Redo，每次修改存整個 canvas JSON</td><td class="mono muted">undo() / redo() / saveState()</td></tr>
+            <tr><td class="nm">Zoom / Pan</td><td class="muted">滑鼠滾輪縮放、空白鍵拖曳平移</td><td class="mono muted">zoomIn() / zoomOut() / fitToScreen()</td></tr>
+            <tr><td class="nm">序列化</td><td class="muted">匯出/匯入整個畫布為 JSON，用於存檔與協作同步</td><td class="mono muted">toJSON() / loadFromJSON()</td></tr>
+            <tr><td class="nm">CJK Patch</td><td class="muted">修正中文字 Justify 對齊排列問題</td><td class="mono muted">enlargeSpaces() override</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><i class="ti ti-code"></i><h2>CJK Justify 修正程式碼</h2></div>
+      <div class="card-sub">此 Patch 解決了 Fabric.js 原生無法處理 CJK 字元分散對齊的問題。</div>
+      <pre><code class="language-javascript">// CJK 修正：若沒有空白字元，則平均分配給所有字元（除最後一個）
+numberOfSpaces = line.length - 1;
+if (numberOfSpaces &gt; 0) {
+    diffSpace = (this.width - currentLineWidth) / numberOfSpaces;
+    for (var j = 0, jlen = line.length; j &lt;= jlen; j++) {
+        charBound = this.__charBounds[i][j];
+        charBound.left += accumulatedSpace;
+        if (j &lt; jlen - 1) {
+            charBound.width += diffSpace;
+            charBound.kernedWidth += diffSpace;
+            accumulatedSpace += diffSpace;
+        }
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- ProjectRouter -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-route"></i><span class="wiki-link" data-title="ProjectRouter" data-icon="ti-route" data-desc="URL 路由管理器，負責解析深連結並觸發對應的載入或協作連線行為。">ProjectRouter</span> — URL 路由管理</div>
+    <div class="sub-desc">處理深連結，解析 URL 參數如 <code>?project=xxx&room=yyy</code>，實現「點連結直接加入協作房間」的功能。</div>
+
+    <div class="card">
+      <div class="card-h"><i class="ti ti-link"></i><h2>路由解析流程</h2></div>
+    <pre><code class="language-javascript">init() {
+    if (this.isInitialized || typeof window === 'undefined') return;
+
+    // 初始化載入時解析當前網址
+    const { projectId, roomId } = this.getQueryParams();
+    this.currentProjectId = projectId;
+    this.currentRoomId = roomId;
+
+    // 監聽瀏覽器 (Popstate) 事件
+    window.addEventListener('popstate', (event) => this.handlePopState(event));
+
+    // 觸發對應的事件讓 CollabEngine 或 Dashboard 接手
+    if (projectId && roomId) {
+        this.eventBus.emit('COLLAB:CONNECT_ROOM', { projectId, roomId });
+    } else if (projectId) {
+        this.eventBus.emit('PROJECT:LOAD', { projectId });
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- AIProviderAdapter -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-robot"></i><span class="wiki-link" data-title="AIProviderAdapter" data-icon="ti-robot" data-desc="多 AI 供應商的統一抽象層，讓系統無縫切換 Gemini、OpenAI 或 Claude 等模型。">AIProviderAdapter</span> — 多 AI 供應商抽象層</div>
+    <div class="sub-desc">統一封裝 Gemini、OpenAI、Anthropic 與自訂端點的 API 呼叫。UI 模組只需呼叫 <code>generateText()</code>，不用關心底層用哪個模型。</div>
+
+    <div class="card">
+      <div class="card-h"><i class="ti ti-arrows-split-2"></i><h2>Provider 路由架構</h2></div>
+      <pre><code class="language-javascript">getActiveLlmModelName() {
+    const isCustom = this.config.activeLlmType === 'custom';
+    if (isCustom) {
+        const activeEp = this.config.customEndpoints?.find(e => e.id === this.config.activeCustomId);
+        return activeEp?.modelId || '未知自訂模型';
+    } else {
+        const provider = this.config.builtin?.provider || 'gemini';
+        if (provider === 'gemini') {
+            return this.config.builtin?.geminiModel || 'gemini-1.5-flash';
+        } else if (provider === 'openai') {
+            return this.config.builtin?.openaiModel || 'gpt-4o-mini';
+        } else if (provider === 'anthropic') {
+            return this.config.builtin?.anthropicModel || 'claude-3-5-sonnet';
+        }
+        return '未知內建模型';
+    }
+}</code></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><i class="ti ti-code"></i><h2>金鑰配置載入邏輯</h2></div>
+      <pre><code class="language-javascript">loadConfig() {
+    const raw = localStorage.getItem('EDITOR_V2_VAULT_CONFIG');
+    if (raw) {
+        try {
+            if (raw.startsWith('ENC:')) {
+                // Base64 編碼的加密配置
+                return JSON.parse(decodeURIComponent(atob(raw.substring(4))));
+            }
+            return JSON.parse(raw);
+        } catch (e) {
+            console.warn('Failed to parse EDITOR_V2_VAULT_CONFIG', e);
+        }
+    }
+    // 預設配置
+    return {
+        activeLlmType: 'builtin',
+        builtin: { provider: 'gemini', model: 'gemini-1.5-flash' },
+        customEndpoints: [],
+        imageProcessing: { provider: 'clipdrop' },
+        pptParsing: { provider: 'convertapi' }
+    };
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 3: EventBus 事件匯流排                                ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-eventbus">
+  <h1 class="section-title">📡 EventBus 事件匯流排</h1>
+  <p class="section-sub"><span class="wiki-link" data-title="EventBus" data-icon="ti-broadcast" data-desc="一種設計模式，允許不同元件之間透過發佈/訂閱 (Pub/Sub) 進行通訊，達到完全解耦。">EventBus</span> 是整個系統的<b>神經系統</b>。所有模組之間不直接呼叫彼此的方法，而是透過 <span class="wiki-link" data-title="EventBus" data-icon="ti-broadcast" data-desc="一種設計模式，允許不同元件之間透過發佈/訂閱 (Pub/Sub) 進行通訊，達到完全解耦。">EventBus</span> 發送與監聽事件來通訊，實現完全解耦。</p>
+
+  <div class="note green">
+    <i class="ti ti-shield-check"></i>
+    <div><b>為什麼用 Pub/Sub？</b>因為模組之間如果直接互相 import，一旦要抽換或刪除某個模組，會牽一髮動全身。用 EventBus 後，每個模組只認識 EventBus，不認識其他模組。新增功能只要監聽對應事件即可，不用改任何既有程式碼。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-code"></i><h2>EventBus 完整原始碼</h2></div>
+    <div class="card-sub">極簡設計 — 只有 <code>on</code>（監聽）、<code>off</code>（取消監聽）、<code>emit</code>（發送）三個方法。</div>
+    <pre><code class="language-javascript">export default class EventBus {
+    constructor() {
+        this.listeners = {};   // { eventName: [callback1, callback2, ...] }
+    }
+
+    // 註冊事件監聽器
+    on(event, callback) {
+        if (!this.listeners[event]) {
+            this.listeners[event] = [];
+        }
+        this.listeners[event].push(callback);
+    }
+
+    // 取消事件監聽器
+    off(event, callback) {
+        if (this.listeners[event]) {
+            this.listeners[event] = this.listeners[event].filter(cb => cb !== callback);
+        }
+    }
+
+    // 發送事件（通知所有監聽者）
+    emit(event, data) {
+        if (this.listeners[event]) {
+            this.listeners[event].forEach(callback => callback(data));
+        }
+    }
+}</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-broadcast"></i><h2>事件通訊流程圖</h2></div>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+sequenceDiagram
+  participant BT as BasicTools
+  participant EB as EventBus
+  participant PP as PropertiesPanel
+  participant LP as LayersPanel
+  participant CE as CanvasEngine
+
+  BT->>CE: 使用者選取物件
+  CE->>EB: emit('CANVAS:SELECTION_CHANGED', {object})
+  EB->>PP: callback → 顯示物件屬性
+  EB->>LP: callback → 高亮對應圖層
+
+  PP->>EB: emit('PROPERTY:CHANGED', {color: 'red'})
+  EB->>CE: callback → 更新物件顏色
+  EB->>LP: callback → 更新圖層預覽
+      </pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-list-details"></i><h2>主要事件清單</h2></div>
+    <div class="card-sub">以下列出系統中最重要的事件名稱與用途。事件命名規則：<code>模組名:動作</code>。</div>
+    <div class="tablewrap">
+      <table class="tbl">
+        <thead><tr><th>事件名稱</th><th>發送者</th><th>說明</th><th>攜帶資料</th></tr></thead>
+        <tbody>
+          <tr><td class="nm mono">CANVAS:SELECTION_CHANGED</td><td class="muted">CanvasEngine</td><td>使用者選取/取消選取物件</td><td class="mono muted">{object}</td></tr>
+          <tr><td class="nm mono">CANVAS:DIRTY</td><td class="muted">CanvasEngine</td><td>畫布有未儲存的修改</td><td class="mono muted">{isDirty}</td></tr>
+          <tr><td class="nm mono">WORKSPACE:MODE_CHANGED</td><td class="muted">WorkspaceManager</td><td>切換 IMAGE/PDF 模式</td><td class="mono muted">{mode}</td></tr>
+          <tr><td class="nm mono">COLLAB:CONNECT_ROOM</td><td class="muted">ProjectRouter</td><td>要求連線協作房間</td><td class="mono muted">{projectId, roomId}</td></tr>
+          <tr><td class="nm mono">COLLAB:DISCONNECT_ROOM</td><td class="muted">UI/Auth</td><td>斷開協作連線</td><td class="mono muted">—</td></tr>
+          <tr><td class="nm mono">COLLAB:LOCAL_PRESENCE_UPDATED</td><td class="muted">PresenceManager</td><td>本地使用者狀態變更</td><td class="mono muted">{id, name, color}</td></tr>
+          <tr><td class="nm mono">VAULT:CONFIG_UPDATED</td><td class="muted">ApiVaultManager</td><td>API 金鑰配置更新</td><td class="mono muted">{config}</td></tr>
+          <tr><td class="nm mono">AUTH:LOGIN_SUCCESS</td><td class="muted">AuthManager</td><td>使用者登入成功</td><td class="mono muted">{user}</td></tr>
+          <tr><td class="nm mono">AUTH:LOGOUT</td><td class="muted">AuthManager</td><td>使用者登出</td><td class="mono muted">—</td></tr>
+          <tr><td class="nm mono">LOADING:START / END</td><td class="muted">各模組</td><td>全域 Loading 遮罩</td><td class="mono muted">{message}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 4: 畫布工具                                          ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-tools">
+  <h1 class="section-title">🎨 畫布工具</h1>
+  <p class="section-sub">畫布工具分為三層：<b>BasicTools</b>（基礎操作）、<b>ObjectsTools</b>（物件插入）、<b>SmartTools</b>（AI 智慧工具）。每一層都依賴 <code>CanvasEngine</code> 和 <code>EventBus</code>。</p>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-hierarchy-2"></i><h2>工具架構分層</h2></div>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+graph LR
+  subgraph L1["基礎操作 BasicTools"]
+    SEL["🖱️ 選取 Selection"]
+    PAN["✋ 平移 Pan"]
+    SHAPE["⬛ 形狀 Shapes"]
+    BRUSH["🖌️ 筆刷 Brush"]
+    ZOOM["🔍 縮放 Zoom"]
+  end
+  subgraph L2["物件插入 ObjectsTools"]
+    TXT["📝 文字方塊"]
+    TBL["📊 表格"]
+    IMG["🖼️ 外部圖片"]
+    QR["📱 QR Code"]
+  end
+  subgraph L3["AI 智慧工具 SmartTools"]
+    BGR["✂️ AI 去背"]
+    INP["🎨 AI 修補"]
+    OCR["📖 OCR 文字辨識"]
+    FILL["🪣 純色填充"]
+  end
+  CE["CanvasEngine"] --> L1
+  CE --> L2
+  CE --> L3
+  AIA["AIProviderAdapter"] --> L3
+      </pre>
+    </div>
+  </div>
+
+  <!-- BasicTools -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-pointer"></i>BasicTools — 基礎操作工具</div>
+    <div class="sub-desc">管理畫布的基礎互動模式。透過 <code>setMode()</code> 切換模式，每個模式有不同的滑鼠行為。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-list-check"></i><h2>操作模式一覽</h2></div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>模式</th><th>觸發</th><th>行為</th><th>快捷鍵</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">selection</td><td class="muted">工具列 / 預設</td><td class="muted">選取、移動、縮放、旋轉物件</td><td class="mono muted">V</td></tr>
+            <tr><td class="nm">pan</td><td class="muted">工具列 / 空白鍵</td><td class="muted">拖曳平移畫布視窗</td><td class="mono muted">Space (按住)</td></tr>
+            <tr><td class="nm">rectangle</td><td class="muted">形狀工具列</td><td class="muted">拖曳繪製矩形</td><td class="mono muted">R</td></tr>
+            <tr><td class="nm">circle</td><td class="muted">形狀工具列</td><td class="muted">拖曳繪製圓形</td><td class="mono muted">—</td></tr>
+            <tr><td class="nm">line</td><td class="muted">形狀工具列</td><td class="muted">拖曳繪製直線</td><td class="mono muted">—</td></tr>
+            <tr><td class="nm">brush</td><td class="muted">筆刷工具列</td><td class="muted">自由手繪筆觸</td><td class="mono muted">B</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ObjectsTools -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-components"></i>ObjectsTools — 物件插入工具</div>
+    <div class="sub-desc">負責將複雜物件（文字、表格、圖片、QR Code）插入畫布。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-table"></i><h2>表格建構流程</h2></div>
+      <div class="card-sub">表格不是用 HTML table，而是用 Fabric.js 的 <code>Group</code> 物件 — 由多個 <code>Rect</code>（格線）和 <code>Textbox</code>（文字）組合而成。</div>
+      <div class="mermaid-wrap">
+        <pre class="mermaid">
+flowchart TD
+  A["使用者點擊<br>插入表格"] --> B["tableBuilder.js<br>計算行列尺寸"]
+  B --> C["建立 Rect 陣列<br>（格線 + 背景）"]
+  C --> D["建立 Textbox 陣列<br>（每格一個）"]
+  D --> E["fabric.Group()<br>組合為群組"]
+  E --> F["canvas.add(group)<br>加入畫布"]
+        </pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><i class="ti ti-qrcode"></i><h2>QR Code 生成</h2></div>
+      <div class="card-sub">使用 <code>qr-code-styling</code> 庫生成向量 QR Code，轉為 SVG 後插入 Fabric.js 畫布。支援自訂顏色與 logo。</div>
+    </div>
+  </div>
+
+  <!-- SmartTools -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-sparkles"></i>SmartTools — AI 智慧工具</div>
+    <div class="sub-desc">透過 <code>AIProviderAdapter</code> 或客戶端 ML 模型實現 AI 功能。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-wand"></i><h2>AI 功能詳細說明</h2></div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>功能</th><th>技術</th><th>運行位置</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">AI 去背</td><td><span class="tag t-green">@imgly/background-removal</span></td><td><span class="tag t-blue">客戶端</span></td><td class="muted">使用 WebAssembly ML 模型在瀏覽器本地執行背景移除</td></tr>
+            <tr><td class="nm">AI 修補 (Inpainting)</td><td><span class="tag t-amber">Clipdrop API</span></td><td><span class="tag t-purple">伺服器端</span></td><td class="muted">使用者用筆刷標記區域，送 API 修補</td></tr>
+            <tr><td class="nm">純色填充</td><td><span class="tag t-amber">Clipdrop API</span></td><td><span class="tag t-purple">伺服器端</span></td><td class="muted">將標記區域填充為指定純色</td></tr>
+            <tr><td class="nm">OCR 文字辨識</td><td><span class="tag t-green">Gemini Vision</span></td><td><span class="tag t-purple">伺服器端</span></td><td class="muted">將圖片中的文字提取為可編輯文字方塊</td></tr>
+            <tr><td class="nm">AI 文字魔法</td><td><span class="tag t-green">LLM (多供應商)</span></td><td><span class="tag t-purple">伺服器端</span></td><td class="muted">翻譯、改寫、摘要等文字處理功能</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-keyboard"></i>KeyboardShortcuts — 快捷鍵管理</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-command"></i><h2>常用快捷鍵</h2></div>
+      <div class="grid2">
+        <div class="tablewrap">
+          <table class="tbl">
+            <thead><tr><th>快捷鍵</th><th>功能</th></tr></thead>
+            <tbody>
+              <tr><td class="mono nm">Ctrl+Z</td><td class="muted">復原 Undo</td></tr>
+              <tr><td class="mono nm">Ctrl+Y</td><td class="muted">重做 Redo</td></tr>
+              <tr><td class="mono nm">Ctrl+C</td><td class="muted">複製物件</td></tr>
+              <tr><td class="mono nm">Ctrl+V</td><td class="muted">貼上物件</td></tr>
+              <tr><td class="mono nm">Delete</td><td class="muted">刪除物件</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tablewrap">
+          <table class="tbl">
+            <thead><tr><th>快捷鍵</th><th>功能</th></tr></thead>
+            <tbody>
+              <tr><td class="mono nm">Ctrl+A</td><td class="muted">全選</td></tr>
+              <tr><td class="mono nm">Space (按住)</td><td class="muted">切換平移模式</td></tr>
+              <tr><td class="mono nm">Ctrl+滾輪</td><td class="muted">縮放畫布</td></tr>
+              <tr><td class="mono nm">Ctrl+0</td><td class="muted">適合螢幕</td></tr>
+              <tr><td class="mono nm">Ctrl+S</td><td class="muted">儲存專案</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 5: 面板系統                                          ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-panels">
+  <h1 class="section-title">📋 面板系統</h1>
+  <p class="section-sub">左側邊欄由 <b>PanelManager</b> 管理 Tab 切換，包含四個面板：工具、屬性、素材、圖層。每個面板都是獨立模組。</p>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-layout-sidebar"></i><h2>面板切換架構</h2></div>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+flowchart LR
+  PM["PanelManager<br>Tab 切換控制器"] --> T1["🔧 工具面板<br>BasicTools UI"]
+  PM --> T2["⚙️ 屬性面板<br>PropertiesPanel"]
+  PM --> T3["📁 素材面板<br>AssetsPanel"]
+  PM --> T4["📚 圖層面板<br>LayersPanel"]
+  T2 ---|"雙向綁定"| CE["CanvasEngine"]
+  T4 ---|"Z-index 管理"| CE
+  T3 ---|"上傳/插入"| CE
+      </pre>
+    </div>
+  </div>
+
+  <!-- PropertiesPanel -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-adjustments-alt"></i>PropertiesPanel — 屬性編輯器</div>
+    <div class="sub-desc">選取物件後，動態顯示該物件的可編輯屬性（位置、大小、顏色、字型、透明度等）。實現<b>雙向綁定</b>：改屬性面板 → 更新畫布；拖拽畫布物件 → 更新屬性面板。</div>
+    <div class="note blue">
+      <i class="ti ti-info-circle"></i>
+      <div><b>AI Text Magic：</b>PropertiesPanel 內還嵌入了「AI 文字魔法」按鈕列，選取文字方塊後可直接呼叫 LLM 進行翻譯、改寫、摘要等操作。</div>
+    </div>
+  </div>
+
+  <!-- LayersPanel -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-stack-2"></i>LayersPanel — 圖層管理</div>
+    <div class="sub-desc">將畫布上所有物件以圖層形式列出，支援：</div>
+    <div class="card">
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>功能</th><th>實現方式</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">可見性切換</td><td class="muted">設定 <code>object.visible = false</code> 並重新渲染</td></tr>
+            <tr><td class="nm">鎖定/解鎖</td><td class="muted">設定 <code>object.selectable = false</code> 和 <code>evented = false</code></td></tr>
+            <tr><td class="nm">拖拽排序</td><td class="muted">透過 DOM 拖拽事件重新排列，再呼叫 <code>canvas.moveTo(obj, index)</code></td></tr>
+            <tr><td class="nm">圖層重命名</td><td class="muted">透過自訂屬性 <code>object.customName</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- AssetsPanel -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-photo-up"></i>AssetsPanel — 素材管理</div>
+    <div class="sub-desc">上傳圖片至 Firebase Storage 或以 Base64 存入本地 IndexedDB (<code>EditorAssetsDB</code>)。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-upload"></i><h2>素材上傳流程</h2></div>
+      <div class="mermaid-wrap">
+        <pre class="mermaid">
+flowchart TD
+  A["使用者選擇圖片"] --> B{"檔案大小檢查"}
+  B -->|"小檔"| C["Base64 編碼<br>存入 IndexedDB"]
+  B -->|"大檔 / 已登入"| D["上傳 Firebase Storage<br>取得 URL"]
+  C --> E["插入畫布"]
+  D --> E
+  E --> F["AssetsManager<br>記錄素材清單"]
+        </pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 6: 工作區與頁面                                      ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-workspace">
+  <h1 class="section-title">📐 工作區與頁面</h1>
+  <p class="section-sub">系統支援兩種工作區模式：<b>IMAGE 模式</b>（單頁無邊界畫布）和 <b>PDF 模式</b>（多頁分頁文件）。由 <code>WorkspaceManager</code> 統一管理。</p>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-switch-horizontal"></i><h2>工作區模式對比</h2></div>
+    <div class="grid2">
+      <div class="card" style="border-color:var(--blue)">
+        <div class="card-h"><i class="ti ti-photo" style="color:var(--blue)"></i><h2>IMAGE 模式</h2></div>
+        <ul style="margin-left:16px;font-size:13px;color:var(--text-2);line-height:2">
+          <li>單頁、無邊界畫布</li>
+          <li>支援 16:9 / 4:3 等比例</li>
+          <li>適合設計海報、簡報投影片</li>
+          <li>右側欄隱藏（無頁面清單）</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--green)">
+        <div class="card-h"><i class="ti ti-file-text" style="color:var(--green)"></i><h2>PDF 模式</h2></div>
+        <ul style="margin-left:16px;font-size:13px;color:var(--text-2);line-height:2">
+          <li>多頁分頁文件</li>
+          <li>支援直式 / 橫式</li>
+          <li>適合編輯教材、講義</li>
+          <li>右側欄顯示頁面縮圖</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-code"></i><h2>模式切換核心邏輯</h2></div>
+    <pre><code class="language-javascript">switchMode(newMode, force = false) {
+    if (this.currentMode === newMode) return;
+    
+    // 有未儲存修改時，詢問使用者
+    if (!force &amp;&amp; this.isDirty) {
+        const confirmSwitch = window.confirm(
+            "目前畫布有未儲存的變更，切換工作區將清除畫布，是否繼續？"
+        );
+        if (!confirmSwitch) return;
+    }
+
+    this.currentMode = newMode;
+    this.isDirty = false;
+    
+    this.updateUI(newMode);
+    
+    // 廣播事件，CanvasEngine 和 ThumbnailsPanel 會回應
+    this.eventBus.emit('WORKSPACE:MODE_CHANGED', { mode: newMode });
+}</code></pre>
+  </div>
+
+  <!-- ThumbnailsPanel -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-layout-list"></i>ThumbnailsPanel — 頁面縮圖面板</div>
+    <div class="sub-desc">右側邊欄，只在 PDF 模式顯示。管理多頁文件的頁面清單。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-list-check"></i><h2>頁面操作</h2></div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>操作</th><th>說明</th><th>同步機制</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">新增頁面</td><td class="muted">在清單末尾加入空白頁</td><td class="muted">emit PAGE:ADDED</td></tr>
+            <tr><td class="nm">複製頁面</td><td class="muted">深拷貝當前頁面所有物件</td><td class="muted">emit PAGE:COPIED</td></tr>
+            <tr><td class="nm">刪除頁面</td><td class="muted">移除頁面並切到相鄰頁</td><td class="muted">emit PAGE:DELETED</td></tr>
+            <tr><td class="nm">切換頁面</td><td class="muted">儲存當前頁 → 載入目標頁</td><td class="muted">emit PAGE:SWITCHED</td></tr>
+            <tr><td class="nm">拖曳排序</td><td class="muted">拖拽調整頁面順序</td><td class="muted">emit PAGE:REORDERED</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-download"></i>ExportManager &amp; FileImportManager</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-file-export"></i><h2>匯出/匯入支援格式</h2></div>
+      <div class="grid2">
+        <div>
+          <h3 style="font-size:13px;font-weight:700;margin-bottom:8px">📤 匯出</h3>
+          <div class="tablewrap">
+            <table class="tbl">
+              <thead><tr><th>格式</th><th>套件</th></tr></thead>
+              <tbody>
+                <tr><td class="nm">PDF</td><td class="muted">jsPDF</td></tr>
+                <tr><td class="nm">PPTX</td><td class="muted">PptxGenJS</td></tr>
+                <tr><td class="nm">PNG / JPG</td><td class="muted">Canvas API toDataURL</td></tr>
+                <tr><td class="nm">JSON</td><td class="muted">原生 Fabric.js 序列化</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size:13px;font-weight:700;margin-bottom:8px">📥 匯入</h3>
+          <div class="tablewrap">
+            <table class="tbl">
+              <thead><tr><th>格式</th><th>套件</th></tr></thead>
+              <tbody>
+                <tr><td class="nm">PDF</td><td class="muted">pdfjs-dist</td></tr>
+                <tr><td class="nm">圖片</td><td class="muted">FileReader API</td></tr>
+                <tr><td class="nm">JSON</td><td class="muted">原生 Fabric.js 反序列化</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 7: 儲存與專案                                        ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-storage">
+  <h1 class="section-title">💾 儲存與專案管理</h1>
+  <p class="section-sub">專案資料全部儲存在瀏覽器的 <b>IndexedDB</b>（<code>EditorV2_ProjectsDB</code>），不經過伺服器。由 <code>ProjectStorageEngine</code> 提供 CRUD，<code>DashboardManager</code> 提供 UI 與自動存檔。</p>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-database"></i><h2>儲存架構圖</h2></div>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+flowchart LR
+  subgraph UI["使用者介面"]
+    DASH["DashboardManager<br>專案儀表板"]
+    EDITOR["畫布編輯器"]
+  end
+  subgraph Engine["儲存引擎"]
+    PSE["ProjectStorageEngine"]
+  end
+  subgraph Storage["持久化"]
+    IDB[("IndexedDB<br>EditorV2_ProjectsDB")]
+    JSON["JSON 匯出檔"]
+  end
+
+  DASH -->|"建立/讀取/刪除"| PSE
+  EDITOR -->|"自動存檔 (debounce)"| PSE
+  PSE -->|"CRUD 操作"| IDB
+  PSE -->|"匯出/匯入"| JSON
+      </pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-code"></i><h2>IndexedDB 初始化</h2></div>
+    <div class="card-sub">使用瀏覽器原生 IndexedDB API，建立 <code>projects</code> Object Store，以 <code>id</code> 為主鍵。</div>
+    <pre><code class="language-javascript">async init() {
+    if (this.db) return this.db;
+
+    return new Promise((resolve, reject) =&gt; {
+        const request = indexedDB.open(this.dbName, this.dbVersion);
+
+        request.onupgradeneeded = (event) =&gt; {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(this.storeName)) {
+                const store = db.createObjectStore(this.storeName, { keyPath: 'id' });
+                store.createIndex('updatedAt', 'updatedAt', { unique: false });
+                store.createIndex('type', 'type', { unique: false });
+            }
+        };
+
+        request.onsuccess = (event) =&gt; {
+            this.db = event.target.result;
+            resolve(this.db);
+        };
+    });
+}</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-list-check"></i><h2>CRUD 操作對照表</h2></div>
+    <div class="tablewrap">
+      <table class="tbl">
+        <thead><tr><th>操作</th><th>方法</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">列出所有專案</td><td class="mono muted">getAllProjects()</td><td class="muted">依 updatedAt 降冪排序，相容舊專案自動補 ownerId</td></tr>
+          <tr><td class="nm">取得專案</td><td class="mono muted">getProject(id)</td><td class="muted">依主鍵查詢單筆</td></tr>
+          <tr><td class="nm">儲存/更新</td><td class="mono muted">saveProject(project)</td><td class="muted">使用 put() — 存在則更新，不存在則新增</td></tr>
+          <tr><td class="nm">刪除專案</td><td class="mono muted">deleteProject(id)</td><td class="muted">依主鍵刪除</td></tr>
+          <tr><td class="nm">匯出 JSON</td><td class="mono muted">exportProject(id)</td><td class="muted">將專案序列化為 JSON 檔案下載</td></tr>
+          <tr><td class="nm">匯入 JSON</td><td class="mono muted">importProject(file)</td><td class="muted">解析 JSON 檔並儲存為新專案</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="note">
+    <i class="ti ti-alert-circle"></i>
+    <div><b>自動存檔機制：</b><code>DashboardManager</code> 使用 debounced auto-save — 畫布每次修改後等待一段時間（避免頻繁寫入），再自動呼叫 <code>saveProject()</code>。存檔時也會更新縮圖 (canvas 的 <code>toDataURL()</code>)。</div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 8: 即時協作                                          ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-collab">
+  <h1 class="section-title">👥 即時多人協作</h1>
+  <p class="section-sub">協作系統是整個 EditorV2 最複雜的模組。基於 <b><span class="wiki-link" data-title="Yjs" data-icon="ti-arrows-exchange" data-desc="高效能的 CRDT 實作，專為協作網頁應用程式設計，支援離線編輯與自動合併衝突。">Yjs</span> (<span class="wiki-link" data-title="CRDT" data-icon="ti-git-merge" data-desc="無衝突複製資料型別 (Conflict-free Replicated Data Type)，允許多個節點同時修改資料而不需要中央伺服器鎖定，最終會自動收斂一致。">CRDT</span>)</b> 實現衝突自動合併，透過 <b>Firebase Realtime Database</b> 做資料同步。</p>
+
+  <div class="note blue">
+    <i class="ti ti-info-circle"></i>
+    <div><b>什麼是 CRDT？</b>Conflict-free Replicated Data Type（無衝突複製資料型別）。多個使用者同時修改同一份資料時，CRDT 保證所有人最終收斂到一致的狀態，<b>不需要集中式鎖定或衝突解決</b>。Yjs 是最流行的 JavaScript CRDT 實現。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-hierarchy-3"></i><h2>協作系統架構圖</h2></div>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+graph TB
+  subgraph Client_A["👤 使用者 A"]
+    FA_A["Fabric.js Canvas"]
+    YA_A["YjsAdapter"]
+    YD_A["Y.Doc"]
+    FP_A["FirebaseProvider"]
+    PM_A["PresenceManager"]
+    CO_A["CursorOverlay"]
+  end
+
+  subgraph Cloud["☁️ Firebase"]
+    RTDB[("Realtime Database<br>yjs_updates/ &amp; awareness/")]
+  end
+
+  subgraph Client_B["👤 使用者 B"]
+    FP_B["FirebaseProvider"]
+    YD_B["Y.Doc"]
+    YA_B["YjsAdapter"]
+    FA_B["Fabric.js Canvas"]
+    PM_B["PresenceManager"]
+    CO_B["CursorOverlay"]
+  end
+
+  FA_A -->|"object:modified"| YA_A
+  YA_A -->|"yObjects.set()"| YD_A
+  YD_A -->|"update event"| FP_A
+  FP_A -->|"push Base64"| RTDB
+  RTDB -->|"sync"| FP_B
+  FP_B -->|"apply update"| YD_B
+  YD_B -->|"observe"| YA_B
+  YA_B -->|"canvas.add/modify"| FA_B
+
+  PM_A -->|"awareness"| RTDB
+  RTDB -->|"awareness"| CO_B
+      </pre>
+    </div>
+  </div>
+
+  <!-- CollabEngine -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-plug-connected"></i>CollabEngine — 房間管理</div>
+    <div class="sub-desc">負責 Yjs 房間的生命週期：建立 <code>Y.Doc</code>、連線 <code>FirebaseProvider</code>、管理 <code>Awareness</code> 狀態。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-code"></i><h2>連線流程</h2></div>
+      <pre><code class="language-javascript">connect(projectId, roomId) {
+    if (this.projectId === projectId &amp;&amp; this.provider) return; // 已連線
+
+    this.disconnect();
+    const roomName = `editorv2_yjs_${projectId}_${roomId}`;
+
+    // 1. 建立 Y.Doc (CRDT 文件)
+    this.ydoc = new Y.Doc();
+    
+    // 持久化 clientID 避免重新整理後產生「幽靈鼠標分身」
+    let myClientId = sessionStorage.getItem('yjs_client_id');
+    if (myClientId) {
+        this.ydoc.clientID = parseInt(myClientId, 10);
+    } else {
+        sessionStorage.setItem('yjs_client_id', this.ydoc.clientID.toString());
+    }
+
+    // 2. 建立 Firebase Provider (負責把 Y.Doc 更新推送到 Firebase)
+    this.provider = new FirebaseProvider(roomName, this.ydoc);
+    this.awareness = this.provider.awareness;
+
+    // 3. 初始化本地 Awareness 狀態 (游標位置、使用者名稱、顏色)
+    const localUser = this.presenceManager.getLocalUser();
+    this.awareness.setLocalStateField('user', localUser);
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- FirebaseProvider -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-brand-firebase"></i>FirebaseProvider — Firebase ↔ Yjs 橋接</div>
+    <div class="sub-desc">將 Yjs 的 binary update 編碼為 Base64 推送到 Firebase Realtime Database，反之從 Firebase 收到更新後 apply 到本地 Y.Doc。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-arrows-exchange"></i><h2>資料同步流程</h2></div>
+      <div class="mermaid-wrap">
+        <pre class="mermaid">
+sequenceDiagram
+  participant Local as 本地 Y.Doc
+  participant FP as FirebaseProvider
+  participant FB as Firebase RTDB
+  participant Remote as 遠端 Y.Doc
+
+  Note over Local,Remote: 本地修改 → 推送
+  Local->>FP: Y.Doc update event
+  FP->>FP: 將 binary update 轉為 Base64
+  FP->>FB: push to /yjs_updates/{room}
+  FB->>FP: onChildAdded (遠端的 Provider)
+  FP->>Remote: Y.applyUpdate(doc, binary)
+
+  Note over Local,Remote: Awareness 同步 (游標/在線狀態)
+  Local->>FP: awareness.on('update')
+  FP->>FB: set /awareness/{room}/{clientId}
+  FB->>FP: onValue (遠端的 Provider)
+  FP->>Remote: awarenessProtocol.applyUpdate()
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- YjsAdapter -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-transform"></i>YjsAdapter — Fabric ↔ Yjs 雙向綁定</div>
+    <div class="sub-desc">這是協作系統最關鍵的橋接模組。它在 Fabric.js 事件與 Yjs 共享資料結構之間建立雙向同步。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-arrows-exchange"></i><h2>雙向同步機制</h2></div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>方向</th><th>觸發事件</th><th>動作</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">Fabric → Yjs</td><td class="mono muted">object:added</td><td class="muted">將物件 JSON 存入 yObjects Map</td></tr>
+            <tr><td class="nm">Fabric → Yjs</td><td class="mono muted">object:modified</td><td class="muted">更新 yObjects 中對應物件</td></tr>
+            <tr><td class="nm">Fabric → Yjs</td><td class="mono muted">object:removed</td><td class="muted">從 yObjects 中刪除物件</td></tr>
+            <tr><td class="nm">Yjs → Fabric</td><td class="mono muted">yObjects.observe()</td><td class="muted">偵測變更，執行 canvas.add/modify/remove</td></tr>
+            <tr><td class="nm">頁面同步</td><td class="mono muted">yPages.observe()</td><td class="muted">同步多頁文件的頁面結構</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note">
+      <i class="ti ti-alert-triangle"></i>
+      <div><b>迴圈防護：</b>YjsAdapter 內部用 flag 區分「本地操作」和「遠端同步」，避免 Fabric→Yjs→Fabric 的無限迴圈。當收到遠端更新並 apply 到畫布時，會暫時忽略 Fabric 的事件。</div>
+    </div>
+  </div>
+
+  <!-- Presence -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-users"></i>PresenceManager &amp; MultiplayerCursorOverlay</div>
+    <div class="sub-desc"><code>PresenceManager</code> 管理使用者在線狀態（名稱、顏色）。<code>MultiplayerCursorOverlay</code> 在畫布上方渲染其他使用者的即時游標位置。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-cursor-text"></i><h2>游標渲染機制</h2></div>
+      <div class="card-sub"><code>CursorOverlay</code> 是一個覆蓋在 Canvas 上方的 <b>DOM 層</b>（不是畫在 Canvas 裡面），避免干擾畫布渲染。每個遠端使用者的游標用 <code>&lt;div&gt;</code> 呈現，包含色彩圓點和使用者名稱標籤。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 9: AI 功能                                           ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-ai">
+  <h1 class="section-title">🤖 AI 功能</h1>
+  <p class="section-sub">EditorV2 整合多種 AI 能力，從文字生成到圖片處理。統一由 <code>AIProviderAdapter</code> 管理供應商路由，金鑰由 <code>ApiVaultManager</code> 安全儲存。</p>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-brain"></i><h2>AI 功能全景圖</h2></div>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+graph TB
+  subgraph TextAI["📝 文字 AI"]
+    TR["翻譯"]
+    RW["改寫"]
+    SM["摘要"]
+    FM["格式化"]
+  end
+  subgraph ImageAI["🖼️ 圖片 AI"]
+    BGR["去背<br>@imgly (本地)"]
+    INP["修補 Inpainting<br>Clipdrop API"]
+    OCR["OCR 文字辨識<br>Gemini Vision"]
+    FILL["純色填充<br>Clipdrop API"]
+  end
+  subgraph Providers["🔌 供應商"]
+    GEM["Google Gemini"]
+    OAI["OpenAI GPT"]
+    ANT["Anthropic Claude"]
+    CLIP["Clipdrop"]
+    IMGLY["@imgly/bg-removal"]
+  end
+  
+  AIA["AIProviderAdapter"] --> TextAI
+  AIA --> ImageAI
+  TextAI --> GEM
+  TextAI --> OAI
+  TextAI --> ANT
+  ImageAI --> CLIP
+  ImageAI --> IMGLY
+  OCR --> GEM
+      </pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-shield-lock"></i><h2>API 金鑰安全機制 (ApiVaultManager)</h2></div>
+    <div class="card-sub">所有 API 金鑰儲存在 <code>localStorage</code>，使用 Base64 編碼（前綴 <code>ENC:</code>）。</div>
+    <div class="tablewrap">
+      <table class="tbl">
+        <thead><tr><th>設定項</th><th>預設值</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">activeLlmType</td><td class="mono muted">'builtin'</td><td class="muted">使用內建或自訂端點</td></tr>
+          <tr><td class="nm">builtin.provider</td><td class="mono muted">'gemini'</td><td class="muted">內建 LLM 供應商</td></tr>
+          <tr><td class="nm">builtin.geminiApiKey</td><td class="mono muted">''</td><td class="muted">Gemini API Key</td></tr>
+          <tr><td class="nm">builtin.openaiApiKey</td><td class="mono muted">''</td><td class="muted">OpenAI API Key</td></tr>
+          <tr><td class="nm">imageProcessing.provider</td><td class="mono muted">'clipdrop'</td><td class="muted">圖片處理 API</td></tr>
+          <tr><td class="nm">pptParsing.provider</td><td class="mono muted">'convertapi'</td><td class="muted">PPT 解析 API</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 10: 主題與輔助                                       ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-theme">
+  <h1 class="section-title">🎭 主題與輔助系統</h1>
+  <p class="section-sub">EditorV2 支援 4 套主題風格，加上智慧對齊、情境提示等輔助功能，提升編輯體驗。</p>
+
+  <!-- ThemeManager -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-palette"></i>ThemeManager — 主題切換</div>
+    <div class="sub-desc">透過在 <code>&lt;body&gt;</code> 上切換 CSS class 來載入不同主題的 CSS 變數。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-swatches"></i><h2>四套主題</h2></div>
+      <div class="grid4">
+        <div class="tech-card" style="border-left:4px solid #e8e5df">
+          <div class="tc-name">Light Sketch</div>
+          <div class="tc-desc" style="font-size:11px">暖白素雅風<br>預設主題</div>
+          <div style="display:flex;gap:3px;justify-content:center;margin-top:8px">
+            <span style="width:16px;height:16px;border-radius:50%;background:#f8f7f4;border:1px solid #ddd"></span>
+            <span style="width:16px;height:16px;border-radius:50%;background:#1a1a18"></span>
+            <span style="width:16px;height:16px;border-radius:50%;background:#3B6D11"></span>
+          </div>
+        </div>
+        <div class="tech-card" style="border-left:4px solid #1e1e2e">
+          <div class="tc-name">Dark Geek</div>
+          <div class="tc-desc" style="font-size:11px">深色極客風<br>護眼模式</div>
+          <div style="display:flex;gap:3px;justify-content:center;margin-top:8px">
+            <span style="width:16px;height:16px;border-radius:50%;background:#1e1e2e"></span>
+            <span style="width:16px;height:16px;border-radius:50%;background:#cdd6f4"></span>
+            <span style="width:16px;height:16px;border-radius:50%;background:#89b4fa"></span>
+          </div>
+        </div>
+        <div class="tech-card" style="border-left:4px solid #2d3748">
+          <div class="tc-name">Pro Slate</div>
+          <div class="tc-desc" style="font-size:11px">專業石板風<br>商務風格</div>
+          <div style="display:flex;gap:3px;justify-content:center;margin-top:8px">
+            <span style="width:16px;height:16px;border-radius:50%;background:#2d3748"></span>
+            <span style="width:16px;height:16px;border-radius:50%;background:#e2e8f0"></span>
+            <span style="width:16px;height:16px;border-radius:50%;background:#4299e1"></span>
+          </div>
+        </div>
+        <div class="tech-card" style="border-left:4px solid #f5e6d3">
+          <div class="tc-name">Retro Warm</div>
+          <div class="tc-desc" style="font-size:11px">復古暖色風<br>懷舊色調</div>
+          <div style="display:flex;gap:3px;justify-content:center;margin-top:8px">
+            <span style="width:16px;height:16px;border-radius:50%;background:#f5e6d3"></span>
+            <span style="width:16px;height:16px;border-radius:50%;background:#5c4033"></span>
+            <span style="width:16px;height:16px;border-radius:50%;background:#c97a4e"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note green">
+      <i class="ti ti-shield-check"></i>
+      <div><b>實作原理：</b>每個主題是一個獨立的 CSS 檔案（如 <code>dark-geek.css</code>），覆寫 CSS 變數。<code>ThemeManager</code> 切換時只需更改 <code>&lt;body&gt;</code> 的 <code>data-theme</code> 屬性，瀏覽器自動套用對應變數。使用者選擇存在 <code>localStorage</code>，下次開啟自動套用。</div>
+    </div>
+  </div>
+
+  <!-- SmartGuides -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-ruler-2"></i>SmartGuides — 智慧對齊線</div>
+    <div class="sub-desc">類似 Canva/Figma 的對齊輔助線。拖曳物件時自動吸附到畫板中心、其他物件的邊緣/中心。</div>
+    <div class="card">
+      <div class="card-h"><i class="ti ti-magnet"></i><h2>對齊偵測點</h2></div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>偵測類型</th><th>吸附點</th><th>視覺提示</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">畫板中心</td><td class="muted">水平中線、垂直中線</td><td class="muted">紅色虛線</td></tr>
+            <tr><td class="nm">物件邊緣</td><td class="muted">上、下、左、右</td><td class="muted">藍色實線</td></tr>
+            <tr><td class="nm">物件中心</td><td class="muted">水平中心、垂直中心</td><td class="muted">藍色實線</td></tr>
+            <tr><td class="nm">等距分布</td><td class="muted">物件間距相等時觸發</td><td class="muted">粉色線段</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ContextualHelper -->
+  <div class="subsection">
+    <div class="sub-title"><i class="ti ti-help-circle"></i>ContextualHelper &amp; FloatingToolsManager</div>
+    <div class="card">
+      <div class="grid2">
+        <div>
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:8px"><i class="ti ti-bulb" style="color:var(--green)"></i> ContextualHelper</h3>
+          <p style="font-size:12.5px;color:var(--text-2);line-height:1.7">管理互動式工具提示。當使用者首次使用某功能時，顯示引導提示。提示狀態記錄在 <code>localStorage</code>，看過就不再顯示。</p>
+        </div>
+        <div>
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:8px"><i class="ti ti-layout-bottombar" style="color:var(--green)"></i> FloatingToolsManager</h3>
+          <p style="font-size:12.5px;color:var(--text-2);line-height:1.7">右下角浮動工具列，提供：全螢幕切換、快速圖層面板 popover、評論 popover。固定在視窗右下角，不隨畫布縮放。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  SECTION 11: 建置與部署                                       ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section class="page-section" id="sec-build">
+  <h1 class="section-title">⚙️ 建置與部署</h1>
+  <p class="section-sub">EditorV2 使用 <b>Vite</b> 作為建置工具，<b>Tailwind CSS v4</b> 做樣式，部署路徑為 <code>/editorv2/</code>。</p>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-brand-vite"></i><h2>Vite 設定檔</h2></div>
+    <pre><code class="language-javascript">import { defineConfig } from 'vite';
+import pkg from './package.json' with { type: 'json' };
+
+export default defineConfig({
+  base: '/editorv2/',              // 部署路徑前綴
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),  // 注入版本號
+  },
+  server: {
+    port: 5176,
+    strictPort: true,              // Port 被佔用就報錯，不換 port
+    proxy: {
+      '/api/clipdrop': {           // 代理 Clipdrop API 避免 CORS
+        target: 'https://clipdrop-api.co',
+        changeOrigin: true,
+        rewrite: (path) =&gt; path.replace(/^\/api\/clipdrop/, '')
+      }
+    }
+  },
+});</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-brand-firebase"></i><h2>Firebase 設定</h2></div>
+    <div class="card-sub">Firebase 提供四大服務：Authentication（登入）、Realtime Database（協作同步）、Storage（素材上傳）、Firestore（其他資料）。</div>
+    <pre><code class="language-javascript">import { initializeApp } from 'firebase/app';
+import { getDatabase } from 'firebase/database';
+import { getStorage } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "editor-4348c.firebaseapp.com",
+  databaseURL: "https://editor-4348c-default-rtdb.asia-southeast1...",
+  projectId: "editor-4348c",
+  storageBucket: "editor-4348c.firebasestorage.app",
+};
+
+const app = initializeApp(firebaseConfig);
+export const rtdb = getDatabase(app);    // 即時資料庫 (Yjs 同步)
+export const storage = getStorage(app);  // 檔案儲存 (素材上傳)
+export const auth = getAuth(app);        // 身分認證
+export const db = getFirestore(app);     // 文件資料庫</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-terminal-2"></i><h2>開發 &amp; 建置指令</h2></div>
+    <div class="tablewrap">
+      <table class="tbl">
+        <thead><tr><th>指令</th><th>說明</th><th>產出</th></tr></thead>
+        <tbody>
+          <tr><td class="mono nm">npm run dev</td><td class="muted">啟動 Vite Dev Server (port 5176)</td><td class="muted">http://localhost:5176/editorv2/</td></tr>
+          <tr><td class="mono nm">npm run build</td><td class="muted">Vite 正式建置 (minify + tree-shake)</td><td class="muted">dist/ 目錄</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><i class="ti ti-variable"></i><h2>環境變數 (.env)</h2></div>
+    <div class="tablewrap">
+      <table class="tbl">
+        <thead><tr><th>變數名</th><th>用途</th><th>使用位置</th></tr></thead>
+        <tbody>
+          <tr><td class="mono nm">VITE_CLIPDROP_API_KEY</td><td class="muted">Clipdrop 圖片處理 API 金鑰</td><td class="muted">SmartTools.js</td></tr>
+          <tr><td class="mono nm">VITE_CONVERTAPI_SECRET</td><td class="muted">ConvertAPI PPT 解析金鑰</td><td class="muted">FileImportManager.js</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      <i class="ti ti-alert-triangle"></i>
+      <div><b>安全注意：</b>前端的 <code>VITE_</code> 前綴變數會被打包進客戶端程式碼中。因此 API 金鑰實際上是可見的。生產環境應改用後端 proxy 或 Firebase Functions 轉發。目前 <code>vite.config.js</code> 中的 Clipdrop proxy 就是這個用途。</div>
+    </div>
+  </div>
+
+  <!-- 全系統資料流總結 -->
+  <div class="card">
+    <div class="card-h"><i class="ti ti-chart-dots-3"></i><h2>全系統資料流總結</h2></div>
+    <div class="card-sub">以下圖表總結了所有重要的資料流向：從使用者操作到持久化儲存。</div>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+flowchart TD
+  USER["👤 使用者操作"] --> CANVAS["Fabric.js Canvas"]
+  CANVAS -->|"物件增刪改"| HISTORY["History Stack<br>(Undo/Redo)"]
+  CANVAS -->|"序列化 JSON"| SAVE["ProjectStorageEngine"]
+  SAVE --> IDB[("IndexedDB")]
+  SAVE --> EXPORT["JSON / PDF / PPT 匯出"]
+  
+  CANVAS -->|"object:modified"| YA["YjsAdapter"]
+  YA -->|"yObjects.set()"| YDOC["Y.Doc (CRDT)"]
+  YDOC -->|"update"| FP["FirebaseProvider"]
+  FP --> RTDB[("Firebase RTDB")]
+  RTDB -->|"sync"| REMOTE["🌐 遠端使用者"]
+
+  USER -->|"AI 指令"| AIA["AIProviderAdapter"]
+  AIA --> LLM["Gemini / OpenAI / Claude"]
+  AIA --> IMGAI["Clipdrop / @imgly"]
+  LLM -->|"生成結果"| CANVAS
+  IMGAI -->|"處理結果"| CANVAS
+      </pre>
+    </div>
+  </div>
+</section>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- 回頂端按鈕 -->
+<button class="back-top" id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <i class="ti ti-arrow-up"></i>
+</button>
+
+<!-- ===== Scripts ===== -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
+  <!-- ===== 筆記面板 ===== -->
+  <div class="notes-panel" id="notes-panel">
+    <div class="np-header">
+      <h3><i class="ti ti-notes"></i> 我的筆記</h3>
+      <button id="close-notes-btn" class="icon-btn"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="np-content" id="notes-list">
+      <!-- 筆記列表 -->
+    </div>
+  </div>
+
+  <!-- 浮動新增按鈕 -->
+  <button class="add-note-btn" id="add-note-btn" title="新增筆記">
+    <i class="ti ti-pencil-plus"></i> 新增筆記
+  </button>
+    <script src="js/app.js"></script>
+    <script src="js/notes.js"></script>
+</body>
+</html>

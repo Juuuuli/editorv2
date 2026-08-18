@@ -1,0 +1,13 @@
+{
+  "name": "y-websocket-server",
+  "version": "1.0.0",
+  "description": "Self-hosted y-websocket server for EditorV2",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0",
+    "y-websocket": "^2.0.4"
+  }
+}

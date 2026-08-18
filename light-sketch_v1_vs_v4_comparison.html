@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Sketch V1 vs V4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .sketch-radius {
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+        }
+        .sketch-shadow {
+            box-shadow: 2px 2px 0px rgba(51, 65, 85, 0.15);
+        }
+        .sketch-shadow-hard {
+            box-shadow: 4px 4px 0px rgba(51, 65, 85, 1);
+        }
+        .sketch-btn {
+            border: 2px solid #334155;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sketch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px rgba(51, 65, 85, 1);
+        }
+        .sketch-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0px 0px 0px rgba(51, 65, 85, 0);
+        }
+        .canvas-bg {
+            background-color: #fbfbfb;
+            background-image: linear-gradient(to right, #e5e7eb 1.5px, transparent 1.5px), linear-gradient(to bottom, #e5e7eb 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden text-[#334155] bg-gray-100">
+
+    <!-- Top: V1 (風格指令.md) -->
+    <div class="flex-1 flex flex-col relative border-b-4 border-red-500 overflow-y-auto canvas-bg p-8">
+        <div class="absolute top-0 right-0 bg-red-600 text-white px-5 py-2 rounded-bl-xl font-bold text-sm z-10 shadow-md">
+            ❌ V1 (風格指令.md) - 缺乏互動約定，AI 容易將所有資訊攤平
+        </div>
+        
+        <div class="max-w-5xl mx-auto w-full flex flex-col">
+            <h2 class="text-2xl font-black mb-6">🎨 畫布設計管理 (V1 產出示意)</h2>
+            
+            <div class="bg-white border-2 border-[#334155] sketch-radius p-8 sketch-shadow space-y-6">
+                <p class="text-[#64748b] font-bold">⚠️ 問題點：V1 只有視覺規範，AI 產出版面時容易將表單、詳細設定全部攤開在同一個畫面，缺乏抽屜或層級概念，按鈕也沒有規範明確的物理回饋。</p>
+                
+                <!-- Item 1 with inline form -->
+                <div class="border-2 border-[#334155] p-6 sketch-radius sketch-shadow">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="font-black text-xl">畫布 Alpha</span>
+                    </div>
+                    <!-- 攤平的表單 -->
+                    <div class="bg-gray-50 p-4 border border-gray-300">
+                        <label class="block font-bold mb-1">修改名稱</label>
+                        <input type="text" value="畫布 Alpha" class="w-full border p-2 mb-3">
+                        
+                        <label class="block font-bold mb-1">狀態設定</label>
+                        <select class="w-full border p-2 mb-4">
+                            <option>公開</option>
+                            <option>草稿</option>
+                        </select>
+                        
+                        <button class="bg-[#334155] text-white px-6 py-2 font-bold sketch-radius">直接儲存</button>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="border-2 border-[#334155] p-6 sketch-radius sketch-shadow flex justify-between items-center">
+                    <span class="font-black text-xl">畫布 Beta</span>
+                    <button class="bg-white border-2 border-[#334155] px-4 py-2 font-bold sketch-radius">展開設定 ▼</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom: V4 (風格指令v4.md) -->
+    <div class="flex-1 flex flex-col relative overflow-hidden canvas-bg p-8">
+        <div class="absolute top-0 right-0 bg-[#059669] text-white px-5 py-2 rounded-bl-xl font-bold text-sm z-10 shadow-md">
+            ✅ V4 (風格指令v4.md) - 嚴格遵守互動慣例 (抽屜、防呆、硬陰影)
+        </div>
+        
+        <div class="max-w-5xl mx-auto w-full flex h-full gap-8 relative overflow-hidden">
+            
+            <!-- List (Left) -->
+            <div class="flex-1 flex flex-col h-full pb-8">
+                <h2 class="text-2xl font-black mb-6">🎨 畫布設計管理 (V4 產出示意)</h2>
+                <div class="bg-white border-[2px] border-[#334155] sketch-radius p-8 sketch-shadow-hard flex flex-col gap-5 overflow-y-auto">
+                    
+                    <div class="bg-[#1e293b] text-white p-4 sketch-radius border-[2px] border-[#334155] mb-2">
+                        <p class="font-bold text-[#fef08a]">💡 設計慣例提示</p>
+                        <p class="text-sm mt-1">「第一層只給列表，點選某列後從右側抽屜展開」- 保持左側畫面乾淨隨性。</p>
+                    </div>
+
+                    <div class="flex justify-between items-center border-b-[2px] border-[#334155] pb-5">
+                        <div>
+                            <span class="font-black text-xl block mb-1">畫布 Project Alpha</span>
+                            <span class="text-sm font-bold text-[#475569] bg-gray-100 px-2 py-1 rounded">公開中</span>
+                        </div>
+                        <button class="bg-[#fef08a] text-[#334155] font-black px-6 py-2.5 sketch-radius sketch-btn flex items-center gap-2" onclick="document.getElementById('v4-drawer').classList.remove('translate-x-[110%]')">
+                            詳細設定 <span class="text-lg">➔</span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex justify-between items-center border-b-[2px] border-[#334155] pb-5">
+                        <div>
+                            <span class="font-black text-xl block mb-1">畫布 Project Beta</span>
+                            <span class="text-sm font-bold text-[#475569] bg-gray-100 px-2 py-1 rounded">草稿</span>
+                        </div>
+                        <button class="bg-white text-[#334155] font-black px-6 py-2.5 sketch-radius sketch-btn flex items-center gap-2">
+                            詳細設定 <span class="text-lg">➔</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drawer (Right) -->
+            <div id="v4-drawer" class="w-[420px] bg-white border-l-[3px] border-t-[3px] border-[#334155] rounded-tl-[30px] shadow-[-8px_8px_0px_rgba(51,65,85,1)] flex flex-col transform transition-transform duration-300 translate-x-[110%] absolute right-0 top-0 h-full z-20">
+                <!-- Drawer Header -->
+                <div class="px-6 py-5 border-b-[3px] border-[#334155] flex justify-between items-center bg-[#fef08a] rounded-tl-[27px]">
+                    <h3 class="font-black text-xl text-[#334155]">⚙️ Alpha 設定</h3>
+                    <button class="font-black text-2xl hover:scale-110 transition-transform text-[#334155]" onclick="document.getElementById('v4-drawer').classList.add('translate-x-[110%]')">✕</button>
+                </div>
+                
+                <!-- Drawer Body -->
+                <div class="p-8 flex-1 overflow-y-auto space-y-8 bg-[#fbfbfb]">
+                    <div>
+                        <label class="block font-black text-[#334155] mb-2 text-lg">名稱</label>
+                        <input type="text" value="Project Alpha" class="w-full bg-white border-[2px] border-[#334155] sketch-radius p-3 outline-none font-bold text-[#334155] focus:shadow-[4px_4px_0px_rgba(51,65,85,1)] transition-shadow">
+                    </div>
+                    
+                    <div>
+                        <label class="block font-black text-[#334155] mb-2 text-lg">狀態</label>
+                        <select class="w-full bg-white border-[2px] border-[#334155] sketch-radius p-3 outline-none font-bold text-[#334155] focus:shadow-[4px_4px_0px_rgba(51,65,85,1)] transition-shadow appearance-none cursor-pointer">
+                            <option>公開</option>
+                            <option>封存</option>
+                        </select>
+                    </div>
+                    
+                    <div class="bg-white p-5 sketch-radius border-[2px] border-red-500 shadow-[4px_4px_0px_rgba(239,68,68,1)]">
+                        <p class="font-black text-red-600 mb-2">🚨 刪除畫布 (防呆說明)</p>
+                        <p class="text-sm font-bold text-[#475569] mb-4 leading-relaxed">
+                            <strong>取捨標題：為什麼需要再三確認？</strong><br>
+                            因為刪除操作將清空所有圖層資料，若改為一鍵刪除會導致使用者誤觸無法挽回。
+                        </p>
+                        <button class="w-full bg-white border-[2px] border-red-500 text-red-600 font-black py-2 sketch-radius hover:bg-red-50 transition-colors">
+                            危險：確認刪除
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Drawer Footer -->
+                <div class="p-6 border-t-[3px] border-[#334155] bg-white">
+                    <button class="w-full bg-[#fef08a] text-[#334155] font-black py-3.5 sketch-radius sketch-btn text-lg">
+                        💾 儲存變更
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>
