@@ -86,6 +86,12 @@ export default class ApiVaultManager {
                 merged.imageProcessing = { ...defaultConfig.imageProcessing, ...(saved.imageProcessing || {}) };
                 merged.pptParsing = { ...defaultConfig.pptParsing, ...(saved.pptParsing || {}) };
                 
+                // 強制套用環境變數，如果本機儲存的設定是空的話 (防止之前存了空字串蓋掉 env)
+                if (!merged.builtin.openaiApiKey && envOpenai) merged.builtin.openaiApiKey = envOpenai;
+                if (!merged.builtin.geminiApiKey && envGemini) merged.builtin.geminiApiKey = envGemini;
+                if (!merged.imageProcessing.apiKey && envClipdrop) merged.imageProcessing.apiKey = envClipdrop;
+                if (!merged.pptParsing.secret && envCloudConvert) merged.pptParsing.secret = envCloudConvert;
+
                 return merged;
             }
 
