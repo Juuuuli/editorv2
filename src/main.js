@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化 Floating Tools
     const floatingToolsManager = new FloatingToolsManager(canvasEngine, eventBus);
 
-    console.log('多媒體畫布編輯器V2 - 系統初始化完成 (v1.5.0)');
+    console.log('多媒體畫布編輯器V2 - 系統初始化完成 (v2.0.0)');
 
     // Undo / Redo
     const btnUndo = document.getElementById('btn-undo');

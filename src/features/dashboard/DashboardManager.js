@@ -198,7 +198,7 @@ export default class DashboardManager {
                         <div class="min-w-0 flex flex-col justify-center">
                             <div class="flex items-center gap-2">
                                 <h1 class="text-sm sm:text-xl font-black text-slate-800 tracking-wide whitespace-nowrap truncate">專案儀表板</h1>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 whitespace-nowrap hidden sm:inline shrink-0">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.5.0'}</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 whitespace-nowrap hidden sm:inline shrink-0">v${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '2.0.0'}</span>
                             </div>
                             <p class="hidden lg:block text-xs text-slate-500 font-medium truncate mt-0.5">隨時管理、複製、刪除或開啟您的多媒體專案</p>
                         </div>

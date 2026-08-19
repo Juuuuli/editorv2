@@ -164,7 +164,7 @@ export default class ProjectStorageEngine {
             ],
             createdAt: Date.now(),
             updatedAt: Date.now(),
-            version: '1.5.0'
+            version: '2.0.0'
         };
 
         await this.saveProject(newProject);

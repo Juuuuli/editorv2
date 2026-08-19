@@ -43,8 +43,8 @@ export default class ShareModal {
                         </div>
                         <div>
                             <h3 class="text-base font-black text-slate-800 tracking-wide flex items-center gap-2">
-                                專案協作與分享
-                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">v1.5.0</span>
+                                專案分享與協作
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">v2.0.0</span>
                             </h3>
                             <p id="collab-share-project-name" class="text-xs text-slate-500 font-medium truncate max-w-[280px]">載入中...</p>
                         </div>

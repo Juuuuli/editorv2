@@ -1,6 +1,6 @@
 {
-  "name": "editorv2",
-  "version": "1.5.0",
+  "name": "editor-v2",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "directories": {
